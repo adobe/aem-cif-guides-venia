@@ -1,0 +1,42 @@
+/*******************************************************************************
+ * ADOBE CONFIDENTIAL
+ * __________________
+ *
+ * Copyright 2019 Adobe Systems Incorporated
+ * All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ ******************************************************************************/
+
+.icon__root {
+    height: 25px;
+    width: 25px;
+}
+
+.icon__root.icon__root-close {
+    background: url('../../resources/images/close.svg');
+}
+
+.icon__root.icon__root-kebab {
+    background: url('../../resources/images/kebab.svg');
+}
+.icon__root.icon__root_heart {
+    background: no-repeat center center url('../../resources/images/heart.svg');
+}
+.icon__root.icon__root_pencil {
+    background: no-repeat center center url('../../resources/images/pencil.svg');
+}
+.icon__root.icon__root_trash {
+    background: no-repeat center center url('../../resources/images/trash.svg');
+}
+
+.icon__root.icon__root_lock {
+    background: no-repeat center center url('../../resources/images/lock.svg');
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" 
+    xmlns:cq="http://www.day.com/jcr/cq/1.0" 
+    xmlns:jcr="http://www.jcp.org/jcr/1.0" 
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:contextHubPath="/etc/cloudsettings/default/contexthub" 
+        cq:contextHubSegmentsPath="/etc/segmentation/contexthub" 
+        cq:template="/conf/venia/settings/wcm/templates/landing-page" 
+        cq:cifCategoryPage="/content/venia/language-masters/en/products/category-page" 
+        cq:cifProductPage="/content/venia/language-masters/en/products/product-page" 
+        cq:cifSearchResultsPage="/content/venia/language-masters/en/search" 
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]" 
+        jcr:primaryType="cq:PageContent" 
+        jcr:title="en" 
+        navRoot="{Boolean}true" 
+        sling:resourceType="venia/components/page" 
+        pageTitle="Venia">
+        <root jcr:primaryType="nt:unstructured" 
+            sling:resourceType="venia/components/container" 
+            layout="responsiveGrid">
+            <container jcr:primaryType="nt:unstructured" 
+                sling:resourceType="venia/components/container">
+                <container jcr:primaryType="nt:unstructured" 
+                    sling:resourceType="venia/components/container" 
+                    layout="responsiveGrid">
+                    <heroimage jcr:mixinTypes="[cq:LiveRelationship]" 
+                        jcr:primaryType="nt:unstructured" 
+                        sling:resourceType="venia/components/heroimage" 
+                        fileReference="/content/dam/venia/landing_page_hero.jpg" 
+                        heading="All-new reference storefront" 
+                        title="venia" />
+                </container>
+            </container>
+        </root>
+    </jcr:content>
+</jcr:root>
