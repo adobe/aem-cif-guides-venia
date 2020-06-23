@@ -1,0 +1,517 @@
+.clickable__root {
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    pointer-events: auto;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.errorDisplay__root {
+    background-color: $venia-error-alt;
+    border: 1px solid $venia-error;
+    border-radius: 2px;
+    color: $venia-error;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 1rem 0;
+    max-height: 5rem;
+    overflow-x: auto;
+    padding: 0;
+}
+
+.errorDisplay__body {
+    display: inline-block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin: 1rem;
+}
+
+.createAccount__root {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: stretch;
+    padding: 0 1.5rem;
+}
+
+.createAccount__actions {
+    display: grid;
+    justify-items: center;
+    margin-top: 1rem;
+    padding: 1rem 0;
+}
+
+.createAccount__lead {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.input__helpText {
+    font-size: 0.7rem;
+    margin: 0.4rem 0;
+}
+
+.input__requiredSymbol {
+    background-color: black;
+    width: 0.4em;
+    height: 0.4em;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.input__hint {
+    color: $venia-text-alt;
+}
+
+.input__error {
+    color: red;
+}
+
+.input__success {
+    color: green;
+}
+
+.input__root {
+    padding: 0.5rem 1.5rem;
+}
+
+.input__input {
+    width: 100%;
+    height: 1.85rem;
+    border: 1px solid black;
+    padding: 1rem;
+    margin: 0.2rem 0 0 0;
+    outline: none;
+}
+
+.input__label {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.input__labelFocused {
+    color: $venia-teal;
+    transition: 200ms;
+}
+
+.input__rootFocused {
+    background-color: $venia-teal-alt;
+    transition: 200ms;
+}
+
+.signIn__signInDivider {
+    border-color: $venia-border;
+    border-style: solid;
+    border-width: 0 0 1px;
+    margin: 2rem 1rem;
+}
+
+.signIn__signInButton,
+.signIn__showCreateAccountButton {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.signIn__forgotPassword {
+    display: block;
+    text-decoration: underline;
+    color: $venia-error;
+    font-size: 0.8rem;
+    margin: 2rem auto 0;
+}
+
+.forgotPasswordForm__form {
+    display: flex;
+    flex-direction: column;
+}
+
+.forgotPasswordForm__buttonContainer {
+    align-self: center;
+    margin-top: 2rem;
+}
+
+.formSubmissionSuccessful__text {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.25rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    overflow-wrap: break-word;
+}
+
+.formSubmissionSuccessful__buttonContainer {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.forgotPassword__instructions {
+    padding: 0.5rem 1.5rem 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.25rem;
+}
+
+.categoryLeaf__root {
+    align-items: stretch;
+    display: flex;
+    height: 3.5rem;
+    padding: 0 1.25rem;
+    width: 100%;
+}
+
+.categoryLeaf__inactive {
+    position: fixed;
+    visibility: hidden;
+}
+
+.categoryLeaf__text {
+    align-items: center;
+    border-bottom: 1px solid $venia-border;
+    display: flex;
+    flex: auto;
+    height: 3.5rem;
+    padding: 0 0.25rem;
+}
+
+.categoryLeaf__button,
+.categoryLeaf__link {
+}
+
+.categoryTree__root {
+}
+
+.categoryTree__tree {
+}
+
+.categoryTree__leaf {
+}
+
+.categoryTree__branch {
+}
+
+.categoryTree__inactive {
+    position: fixed;
+    visibility: hidden;
+}
+
+.navHeader__title {
+    align-items: center;
+    display: inline-flex;
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.navigation__root {
+    background-color: white;
+    bottom: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    transform: translate3d(-100%, 0, 0);
+    transition-duration: 192ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-property: opacity, transform, visibility;
+    visibility: hidden;
+    width: 100%;
+    max-width: 360px;
+    z-index: 3;
+}
+
+.navigation__header {
+    align-content: center;
+    background-color: $venia-grey;
+    box-shadow: 0 1px $venia-border;
+    display: grid;
+    grid-auto-columns: 3.5rem;
+    grid-auto-flow: column;
+    grid-auto-rows: 3.5rem;
+    grid-template-columns: 3.5rem 1fr 3.5rem;
+    height: 3.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.navigation__body {
+    min-height: 0;
+    overflow: auto;
+}
+
+.navigation__footer {
+    box-shadow: 0 -1px $venia-border;
+}
+
+.navigation__authBar {
+    align-items: center;
+    background-color: white;
+    display: flex;
+    height: 5.5rem;
+    justify-content: center;
+    padding: 1.5rem 1rem 1rem;
+    width: 100%;
+}
+
+.navigation__userChip {
+    align-content: center;
+    align-items: center;
+    background-color: $venia-grey;
+    display: grid;
+    flex: 0 0 100%;
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-rows: 3.5rem;
+    height: 4rem;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.navigation__userEmail {
+    color: $venia-text-alt;
+    font-size: 0.8125rem;
+    line-height: 1rem;
+}
+
+.navigation__userAvatar,
+.navigation__userMore {
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+.navigation__signIn {
+    animation-duration: 244ms;
+    animation-fill-mode: forwards;
+    background: white;
+    bottom: 0;
+    left: 0;
+    padding-top: 4.5rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
+.navigation__signIn_open {
+    animation-name: navigation__slidein;
+}
+
+.navigation__signIn_closed {
+    animation-name: navigation__slideout;
+}
+
+.navigation__form_open {
+    animation-name: navigation__slideinSide;
+}
+
+.navigation__form_closed {
+    animation-name: navigation__slideoutSide;
+}
+
+/* state: open */
+
+.navigation__root_open {
+    box-shadow: 1px 0 $venia-border;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition-duration: 224ms;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    visibility: visible;
+}
+
+.navigation__mask {
+    background-color: black;
+    cursor: pointer;
+    display: block;
+    height: 100vh;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    transition-duration: 192ms;
+    transition-property: opacity, visibility;
+    transition-timing-function: linear;
+    visibility: hidden;
+    width: 100vw;
+    z-index: 2;
+    -webkit-appearance: none;
+}
+
+.navigation__mask_active {
+    opacity: 0.5;
+    transition-duration: 224ms;
+    visibility: visible;
+}
+
+/* keyframes */
+
+@keyframes navigation__slidein {
+    from {
+        transform: translate3d(0, 100%, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes navigation__slideout {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 100%, 0);
+    }
+}
+
+@keyframes navigation__slideinSide {
+    from {
+        transform: translate3d(-100%, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes navigation__slideoutSide {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+.myAccountMenuTrigger__userChip {
+    align-content: center;
+    align-items: center;
+    background-color: $venia-grey;
+    display: grid;
+    flex: 0 0 100%;
+    grid-template-columns: 1fr 3.5rem;
+    grid-template-rows: 3.5rem;
+    height: 4rem;
+    width: 100%;
+}
+
+.myAccountMenuTrigger__userEmail {
+    color: $venia-text-alt;
+    font-size: 0.8125rem;
+    line-height: 1rem;
+}
+
+.myAccountMenuTrigger__userMore {
+    height: 3.5rem;
+    width: 3.5rem;
+}
+
+.myAccountMenuTrigger__menuOpen {
+    position: fixed;
+    z-index: 5;
+    background-color: white;
+    transition: top 244ms;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
+.myAccountMenuTrigger__menuClosed {
+    top: 101%;
+}
+
+.userInformation__root {
+    display: flex;
+    align-items: center;
+}
+
+.userInformation__userInformationContainer {
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1rem;
+}
+
+.userInformation__email {
+    color: $venia-text-alt;
+    font-size: 0.8125rem;
+    line-height: 1rem;
+}
+
+.userInformation__iconContainer {
+    margin: 0 1rem 0 1.25rem;
+}
+
+.menuItem__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 3.5rem;
+    border-bottom: 1px solid $venia-border;
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 0.875rem;
+}
+
+.myAccountMenu__list {
+    padding: 0 1.5rem;
+}
+
+.myAccountMenu__signOutTitle {
+    color: $venia-text-spot;
+}
+
+.myAccountMenu__rewardsPoints {
+    font-size: 0.625rem;
+    font-weight: 300;
+    line-height: 0.875rem;
+}
+
+.header__closeButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3.5rem;
+}
+
+.myAccountMenuPage__root {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+
+.myAccountMenuPage__logoContainer {
+    margin: 2rem auto;
+}
+
+.categoryTree__root--shadow {
+    display: none;
+}
+
+.cmp-navigation__item--active .categoryLeaf__text {
+    color: #c53457;
+}
+
+.cmp-navigation__item--active .icon__root--active {
+    color: #c53457;
+}
+
+.categoryLeaf__root--link {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.categoryLeaf__root--box {
+    border-bottom: 1px solid $venia-border;
+    padding-left: 0;
+    padding-right: 0;
+}
