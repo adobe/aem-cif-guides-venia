@@ -51,6 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <aem.sdk.api>2020.6.3729.20200615T010731Z-200604</aem.sdk.api>
+        <jacoco.version>0.7.9</jacoco.version>
     </properties>
 
     <build>
@@ -271,6 +272,12 @@ Bundle-DocURL:
                         <userId>${vault.user}</userId>
                         <password>${vault.password}</password>
                     </configuration>
+                </plugin>
+                <!-- Maven jacoco Plugin -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
                 </plugin>
                 <!-- Maven Enforcer Plugin -->
                 <plugin>

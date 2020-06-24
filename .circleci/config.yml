@@ -31,13 +31,9 @@ jobs:
             - ~/.m2
           key: maven-repo-v1-{{ checksum "pom.xml" }}
       - store_test_results:
-          path: bundles/core/target/surefire-reports
+          path: core/target/surefire-reports
       - store_artifacts:
-          path: bundles/core/target/surefire-reports
-      - store_test_results:
-          path: examples/bundle/target/surefire-reports
-      - store_artifacts:
-          path: examples/bundle/target/surefire-reports
+          path: core/target/surefire-reports
       - codecov/upload:
           flags: unittests
 
