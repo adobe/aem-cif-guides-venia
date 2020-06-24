@@ -50,3 +50,4 @@ workflows:
           filters:
             tags:
               only: /.*/
+
