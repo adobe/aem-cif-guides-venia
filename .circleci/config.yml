@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.5
+
+executors:
+  cif_executor:
+    docker:
+      - image: circleci/openjdk:11-jdk-node
+
+jobs:
+  build:
+    executor: cif_executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Update permissions
+          command: sudo chown -R circleci /usr/local/lib/node_modules
+      - run:
+          name: Build
+          command: |
+            java -version
+            mvn -v
+            mvn -B clean install
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ checksum "pom.xml" }}
+      - store_test_results:
+          path: bundles/core/target/surefire-reports
+      - store_artifacts:
+          path: bundles/core/target/surefire-reports
+      - store_test_results:
+          path: examples/bundle/target/surefire-reports
+      - store_artifacts:
+          path: examples/bundle/target/surefire-reports
+      - codecov/upload:
+          conf: .circleci/codecov.yml
+          flags: unittests
+
+workflows:
+  version: 2
+  build-and-release:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
