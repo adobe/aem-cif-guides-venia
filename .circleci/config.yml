@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  codecov: codecov/codecov@1.0.5
+  codecov: codecov/codecov@1.1.0
 
 executors:
   cif_executor:
@@ -39,7 +39,6 @@ jobs:
       - store_artifacts:
           path: examples/bundle/target/surefire-reports
       - codecov/upload:
-          conf: .circleci/codecov.yml
           flags: unittests
 
 workflows:
