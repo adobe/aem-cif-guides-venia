@@ -37,6 +37,24 @@ jobs:
       - codecov/upload:
           flags: unittests
 
+  deploy-sample:
+    executor: cif_executor
+
+    working_directory: ~/repo
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run:
+          name: Deploy Venia Sample Project to GitHub
+          command: node .circleci/ci/deploy-venia.js
+
 workflows:
   version: 2
   build-and-release:
@@ -46,3 +64,11 @@ workflows:
             tags:
               only: /.*/
 
+      - deploy-sample:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
