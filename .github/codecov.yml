@@ -1,0 +1,22 @@
+coverage:
+  status:
+    project:
+      default: off
+      unittests:
+        enabled: true
+        target: 80%
+        threshold: 10%
+        base: auto
+        flags: unittests
+    patch:
+      default: off
+      unittests:
+        enabled: true
+        target: 80%
+        threshold: 10%
+        base: auto
+        flags: unittests
+flags:
+  unittests:
+    paths:
+      - core/
