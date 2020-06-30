@@ -2,10 +2,11 @@
     display: grid;
     grid-template-columns: minmax(240px, 1fr) auto;
     grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
 }
 
 .filterSection-header {
-    padding: 1.5rem 0
+    padding: 1.5rem 0;
 }
 
 .filterSection-title {
@@ -22,7 +23,7 @@
 }
 
 .filterBlock__toggler {
-    opacity: 0
+    opacity: 0;
 }
 
 .filterBlock__header {
@@ -89,7 +90,7 @@ label {
     gap: 0.5rem;
     grid-auto-flow: column;
     justify-content: center;
-    padding:0.2rem 0.5rem;
+    padding: 0.2rem 0.5rem;
     white-space: nowrap;
 }
 
@@ -99,4 +100,22 @@ label {
 
 .icon-open {
     display: none;
+}
+
+.search__filters {
+    grid-row-start: 1;
+    grid-row-end: 2 span;
+}
+
+.sort__fields {
+    float: right;
+}
+
+.sort__fields label {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.sort__fields select {
+    font-size: 1rem;
 }
