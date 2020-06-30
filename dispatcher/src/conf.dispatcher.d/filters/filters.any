@@ -8,3 +8,9 @@ $include "./default_filters.any"
 
 # Allow components JSON model
 /0101 { /type "allow" /extension "json" /selectors "model" /path "/content/*" }
+
+#
+# Venia specific filter for category pages and header
+#
+/0200 { /type "allow" /method "GET" /path "/content/venia/*" /selectors '[0-9-]+' /extension "html" }
+/0201 { /type "allow" /method "GET" /path "/conf/venia/settings/wcm/templates/*" /extension "svg" }
