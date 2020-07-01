@@ -72,9 +72,21 @@
 }
 
 .header__navTrigger,
+.header__accountTrigger,
 .header__cartTrigger {
     height: 3rem;
     width: 3rem;
+}
+
+.header__accountTrigger {
+    position: relative;
+    display: inline-block;
+}
+
+@media (max-width: 1023px) {
+    .header__accountTrigger {
+        display: none;
+    }
 }
 
 .header__logo {
@@ -90,7 +102,7 @@
     grid-area: secondary;
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     justify-items: end;
 }
 
