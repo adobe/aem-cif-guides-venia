@@ -106,6 +106,12 @@
     justify-items: end;
 }
 
+@media (max-width: 1023px) {
+    .header__secondaryActions {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .indicator__root {
     align-content: center;
     align-items: center;
