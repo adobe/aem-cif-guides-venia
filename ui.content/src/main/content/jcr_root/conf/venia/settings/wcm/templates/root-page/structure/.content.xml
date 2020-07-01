@@ -27,8 +27,8 @@
                     <miniaccount jcr:primaryType="nt:unstructured" 
                         sling:resourceType="venia/components/content/miniaccount" />
                 </navigation>
-                <account jcr:primaryType="nt:unstructured"
-                    sling:resourceType="venia/components/commerce/account" />
+                <miniaccount jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/commerce/miniaccount" />
                 <minicart jcr:primaryType="nt:unstructured" 
                     sling:resourceType="venia/components/commerce/minicart" />
                 <searchbar jcr:primaryType="nt:unstructured" 
