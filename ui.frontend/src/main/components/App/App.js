@@ -11,32 +11,30 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-const merge = require('webpack-merge');
-const common = require('./webpack.common.js');
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {I18nextProvider} from 'react-i18next';
+import {CommerceApp, Cart, AuthBar} from '@adobe/aem-core-cif-react-components';
 
-const SOURCE_ROOT = __dirname + '/src/main';
+import i18n from './i18n';
+import '../../site/main.scss';
 
-module.exports = merge(common, {
-    mode: 'development',
-    devtool: 'inline-source-map',
-    performance: {hints: 'warning'},
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: path.resolve(
-                __dirname,
-                SOURCE_ROOT + '/static/index.html'
-            ),
-        }),
-    ],
-    devServer: {
-        inline: true,
-        proxy: [
-            {
-                context: ['/content', '/etc.clientlibs'],
-                target: 'http://localhost:4502',
-            },
-        ],
-    },
-});
+const App = () => {
+    console.log(`Loading the app...`);
+    const {storeView, graphqlEndpoint} = document.querySelector('body').dataset;
+    return (
+        <I18nextProvider i18n={i18n} defaultNS="common">
+            <CommerceApp uri={graphqlEndpoint} storeView={storeView}>
+                <Cart />
+                <AuthBar />
+            </CommerceApp>
+        </I18nextProvider>
+    );
+};
+
+window.onload = () => {
+    const mountPoint = document.getElementById('minicart');
+    ReactDOM.render(<App />, mountPoint);
+};
+
+export default App;
