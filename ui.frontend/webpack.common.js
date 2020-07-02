@@ -7,7 +7,7 @@ const TSConfigPathsPlugin     = require('tsconfig-paths-webpack-plugin');
 const CopyWebpackPlugin       = require('copy-webpack-plugin');
 const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
 
-const SOURCE_ROOT = __dirname + '/src/main/webpack';
+const SOURCE_ROOT = __dirname + '/src/main';
 
 module.exports = {
     resolve: {

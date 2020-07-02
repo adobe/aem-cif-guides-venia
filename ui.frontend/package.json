@@ -7,7 +7,7 @@
     "url": "https://github.com/adobe/aem-project-archetype"
   },
   "private": true,
-  "main": "src/main/webpack/site/main.ts",
+  "main": "src/main/site/main.ts",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
     "dev": "webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
