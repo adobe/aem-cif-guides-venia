@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 import i18n from 'i18next';
-import {initReactI18next} from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
 
 import Backend from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -36,26 +36,25 @@ i18n.use(Backend)
                 if (format === 'price') {
                     return new Intl.NumberFormat(lng, {
                         style: 'currency',
-                        currency: value.currency,
+                        currency: value.currency
                     }).format(value.value);
                 }
                 return value;
-            },
+            }
         },
 
         detection: {
             order: ['htmlTag', 'path', 'subdomain'],
 
             lookupFromPathIndex: 1,
-            lookupFromSubdomainIndex: 0,
+            lookupFromSubdomainIndex: 0
         },
 
         backend: {
-            loadPath:
-                '/etc.clientlibs//venia/clientlibs/clientlib-site/resources/i18n/{{lng}}/{{ns}}.json',
+            loadPath: '/etc.clientlibs//venia/clientlibs/clientlib-site/resources/i18n/{{lng}}/{{ns}}.json',
             allowMultiLoading: false,
-            withCredentials: true,
-        },
+            withCredentials: true
+        }
     });
 
 export default i18n;

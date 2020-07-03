@@ -12,7 +12,9 @@
   "scripts": {
     "dev": "webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
     "prod": "webpack -p --config ./webpack.prod.js && clientlib --verbose",
-    "start": "webpack-dev-server --open --config ./webpack.dev.js"
+    "start": "webpack-dev-server --open --config ./webpack.dev.js",
+    "prettier:check": "prettier --check '{src,test}/**/*.{js,css}' --config ./.prettierrc",
+    "prettier:fix": "prettier --write '{src,test}/**/*.{js,css}' --config ./.prettierrc"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
@@ -42,6 +44,7 @@
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss-loader": "^3.0.0",
+    "prettier": "^2.0.5",
     "sass": "^1.17.2",
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
