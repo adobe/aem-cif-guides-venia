@@ -61,6 +61,7 @@
         <aem.sdk.api>2020.6.3729.20200615T010731Z-200604</aem.sdk.api>
         <jacoco.version>0.7.9</jacoco.version>
         <project.classifier>cloud</project.classifier>
+        <adobe.public.profile>true</adobe.public.profile>
     </properties>
 
     <build>
@@ -406,7 +407,10 @@ Bundle-DocURL:
             <id>adobe-public</id>
 
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <!-- we don't use 'activeByDefault' because it's false when -Pclassic is set -->
+                <property>
+                    <name>${adobe.public.profile}</name>
+                </property>
             </activation>
 
             <properties>
