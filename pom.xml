@@ -397,6 +397,9 @@ Bundle-DocURL:
             <properties>
                 <project.classifier>classic</project.classifier>
             </properties>
+            <modules>
+                <module>dispatcher-ams</module>
+            </modules>
         </profile>
 
         <!-- Development profile: install only the bundle -->
