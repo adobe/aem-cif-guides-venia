@@ -15,7 +15,7 @@
 
   <artifactId>venia.dispatcher.cloud</artifactId>
   <packaging>pom</packaging>
-  <name>Venia - Dispatcher</name>
+  <name>Venia - Dispatcher Cloud</name>
   <description>HTTP &amp; Dispatcher configurations for Venia</description>
 
 
