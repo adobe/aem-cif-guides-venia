@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/adobe/aem-cif-guides-venia.svg?style=svg)](https://circleci.com/gh/aem-cif-guides-venia)
+![GitHub](https://img.shields.io/github/license/adobe/aem-cif-guides-venia.svg)
+
 # AEM Guides - CIF Venia Project
 
 This project contains the AEM CIF Venia reference site. It demonstrates the usage of [CIF Core Components](https://github.com/adobe/aem-core-cif-components) for Adobe Experience Manager (AEM). It is intended as a best-practice set of examples as well as a potential starting point to develop your own functionality.
