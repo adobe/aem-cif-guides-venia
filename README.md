@@ -24,7 +24,7 @@ For local development an AEM as a Cloud Service SDK with the CIF Add-On installe
 
 ### Classic AEM
 
-In this variant the project is built and deploy on AEM 6.5 hosted by Adobe Managed Services or self-hosted. The minimum requirements are AEM 6.5 with the [CIF Connector](https://github.com/adobe/commerce-cif-connector) installed. The CIF Connector is not included in the generated project and must be installed separately. See [CIF Connector](https://github.com/adobe/commerce-cif-connector) project for instructions.
+In this variant the project is built and deployed on AEM 6.5 hosted by Adobe Managed Services or self-hosted. The minimum requirements are AEM 6.5 with the [CIF Connector](https://github.com/adobe/commerce-cif-connector) installed. The CIF Connector is not included in the generated project and must be installed separately. See [CIF Connector](https://github.com/adobe/commerce-cif-connector) project for instructions.
 
 The CIF Core Components and the CIF Connector connect to a Magento (or alternative) via GraphQL. This connection has to be configured in the `com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config` config. A reference is included in the project template. Consult [documentation](https://github.com/adobe/aem-core-cif-components/wiki/configuration) for detailed configuation steps.
 
