@@ -15,25 +15,33 @@ The main parts of the template are:
 
 ## How to build
 
-To build all the modules run in the project root directory the following command with Maven 3:
+**Important**: The Venia project has two build profiles depending on the target platform where you deploy the project:
+* `cloud` (default profile): this is the default profile and targets AEM as a Cloud Service (AEMaaCS). This is active by default if you don't specify a profile or if `-Pcloud` is defined.
+* `classic`: this profile is for Abobe Managed Services (AMS) or on-premise deployments. This is defined with the `-Pclassic` profile.
+
+_Note that while the 'cloud' profile is active by default, the default behavior of maven is to disable it when any other profile is specified on the command line. This means that, for example, one has to explicitly specify the 'cloud' profile when using one of the installation profiles shown below._
+
+To build all the modules with the default `cloud` profile, run in the project root directory the following command with Maven 3:
 
     mvn clean install
 
 If you have a running AEM instance you can build and package the whole project and deploy into AEM with
 
-    mvn clean install -PautoInstallPackage
+    mvn clean install -PautoInstallPackage,cloud
 
 Or to deploy it to a publish instance, run
 
-    mvn clean install -PautoInstallPackagePublish
+    mvn clean install -PautoInstallPackagePublish,cloud
 
 Or alternatively
 
-    mvn clean install -PautoInstallPackage -Daem.port=4503
+    mvn clean install -PautoInstallPackage,cloud -Daem.port=4503
 
 Or to deploy only the bundle to the author, run
 
-    mvn clean install -PautoInstallBundle
+    mvn clean install -PautoInstallBundle,cloud
+
+If you are bulding the Venia demo for on-premise deployment, simply use `mvn clean install -Pclassic` for the top-level command that builds all the modules, and replace the `cloud` profile with `classic` in the other example commands like `mvn clean install -PautoInstallPackage,classic`.
 
 ## Testing
 
