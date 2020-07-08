@@ -1,6 +1,31 @@
-# Sample AEM project template
+# AEM Guides - CIF Venia Project
 
-This is a project template for AEM-based applications. It is intended as a best-practice set of examples as well as a potential starting point to develop your own functionality.
+This project contains the AEM CIF Venia reference site. It demonstrates the usage of [CIF Core Components](https://github.com/adobe/aem-core-cif-components) for Adobe Experience Manager (AEM). It is intended as a best-practice set of examples as well as a potential starting point to develop your own functionality.
+
+The project can be used in two variants:
+
+* AEM as a Cloud Service deployments
+* AEM on-prem or AEM hosted by Adobe Managed Services deployments
+
+This project was generated using the [aem-project-archetype](https://github.com/adobe/aem-project-archetype).
+
+## Variants
+
+### AEM as a Cloud Service
+
+The default variant of the project is built and deployed on AEM as a Cloud Service. It requires an AEM as a Cloud Service with entitlement for the CIF Add-On. The CIF Add-On provides the commerce authoring tooling like product & category pickers or product search for authors it also manages the backend connection to Magento (or alternative commerce system) via GraphQL. Once provisioned it is deployed on AEM as a Cloud Service environments automatically.
+
+The deployment on AEM as a Cloud Service happens via [Cloud Manager](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/implementing/deploying/overview.html) and this project can be transferred into the Cloud Manager git repository.
+
+For local development an AEM as a Cloud Service SDK with the CIF Add-On installed is required. Both can be downloaded via the Software Distribution channel. See [Set up local AEM Runtime](https://docs.adobe.com/content/help/en/experience-manager-learn/cloud-service/local-development-environment-set-up/aem-runtime.html) for instructions. For build and deployment steps see below.
+
+### Classic AEM
+
+In this variant the project is built and deploy on AEM 6.5 hosted by Adobe Managed Services or self-hosted. The minimum requirements are AEM 6.5 with the [CIF Connector](https://github.com/adobe/commerce-cif-connector) installed. The CIF Connector is not included in the generated project and must be installed separately. See [CIF Connector](https://github.com/adobe/commerce-cif-connector) project for instructions.
+
+The CIF Core Components and the CIF Connector connect to a Magento (or alternative) via GraphQL. This connection has to be configured in the `com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config` config. A reference is included in the project template. Consult [documentation](https://github.com/adobe/aem-core-cif-components/wiki/configuration) for detailed configuation steps.
+
+The project deployment can be done via Cloud Manager or AEM package install. For project build and deployment use the `classic` profile, see steps below.
 
 ## Modules
 
@@ -12,6 +37,10 @@ The main parts of the template are:
 * ui.tests: Java bundle containing JUnit tests that are executed server-side. This bundle is not to be deployed onto production.
 * ui.launcher: contains glue code that deploys the ui.tests bundle (and dependent bundles) to the server and triggers the remote JUnit execution
 * ui.frontend: an optional dedicated front-end build mechanism (Angular, React or general Webpack project)
+
+## Customization
+
+The Venia reference project code demonstrates how [CIF core components can be customized](https://github.com/adobe/aem-core-cif-components/wiki/Customizing-CIF-Core-Components) and extended is included in the `core` bundle module. The Sling modules package contains an example `MyProductTeaser` model.
 
 ## How to build
 
@@ -41,7 +70,7 @@ Or to deploy only the bundle to the author, run
 
     mvn clean install -PautoInstallBundle,cloud
 
-If you are bulding the Venia demo for on-premise deployment, simply use `mvn clean install -Pclassic` for the top-level command that builds all the modules, and replace the `cloud` profile with `classic` in the other example commands like `mvn clean install -PautoInstallPackage,classic`.
+If you are building the Venia demo for on-premise deployment, simply use `mvn clean install -Pclassic` for the top-level command that builds all the modules, and replace the `cloud` profile with `classic` in the other example commands like `mvn clean install -PautoInstallPackage,classic`.
 
 ## Testing
 
@@ -101,3 +130,11 @@ A ClientLib will consist of the following files and directories:
 The project comes with the auto-public repository configured. To setup the repository in your Maven settings, refer to:
 
     http://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html
+
+## Contributing
+
+Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
+
+## Licensing
+
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
