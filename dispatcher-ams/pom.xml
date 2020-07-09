@@ -13,9 +13,9 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>venia.dispatcher.cloud</artifactId>
+  <artifactId>venia.dispatcher.ams</artifactId>
+  <name>Venia - Dispatcher AMS</name>
   <packaging>pom</packaging>
-  <name>Venia - Dispatcher</name>
   <description>HTTP &amp; Dispatcher configurations for Venia</description>
 
 
