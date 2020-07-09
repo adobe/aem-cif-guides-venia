@@ -3,6 +3,7 @@
     jcr:primaryType="cq:Page">
     <jcr:content
         cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!xf-).*]"
+        cq:template="/conf/venia/settings/wcm/templates/root-page"
         cq:conf="/conf/venia"
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia"

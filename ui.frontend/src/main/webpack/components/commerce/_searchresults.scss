@@ -1,0 +1,121 @@
+.search__root {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) auto;
+    grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
+}
+
+.filterSection-header {
+    padding: 1.5rem 0;
+}
+
+.filterSection-title {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 14px;
+}
+
+.filterBlock__root {
+    display: grid;
+    border-color: $venia-border;
+    border-style: solid;
+    border-width: 1px 0 0;
+}
+
+.filterBlock__toggler {
+    opacity: 0;
+}
+
+.filterBlock__header {
+    align-items: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr auto;
+    min-height: 3rem;
+    cursor: pointer;
+}
+
+.filterBlock-name {
+    height: 1.5rem;
+    line-height: 1.5rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+label {
+    cursor: pointer;
+}
+
+.filterBlock__toggler:checked ~ .filterList-items {
+    display: grid;
+}
+
+.filterBlock__toggler:checked + .filterBlock__header > .icon-closed {
+    display: none;
+}
+
+.filterBlock__toggler:checked + .filterBlock__header > .icon-open {
+    display: block;
+}
+
+.filterList-items {
+    display: none;
+    gap: 1rem;
+    grid-template-columns: 100%;
+    padding: 0.5rem 0;
+}
+
+.filterDefault-icon {
+    background-color: white;
+    border: 1px solid $venia-text;
+    width: 1rem;
+    height: 1rem;
+    display: inline-flex;
+    border-radius: 3px;
+    margin-right: 1rem;
+}
+
+.currentFilters__root {
+    display: grid;
+    gap: 0.5rem;
+    grid-auto-flow: row;
+    padding: 0.5rem 0;
+}
+
+.currentFilter__root {
+    align-items: center;
+    border: 1px solid $venia-border;
+    border-radius: 4px;
+    display: inline-grid;
+    gap: 0.5rem;
+    grid-auto-flow: column;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+}
+
+.icon-closed {
+    display: block;
+}
+
+.icon-open {
+    display: none;
+}
+
+.search__filters {
+    grid-row-start: 1;
+    grid-row-end: 2 span;
+}
+
+.sort__fields {
+    float: right;
+}
+
+.sort__fields label {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.sort__fields select {
+    font-size: 1rem;
+}

@@ -37,6 +37,28 @@ jobs:
       - codecov/upload:
           flags: unittests
 
+  build-classic:
+    executor: cif_executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
+      - run:
+          name: Update permissions
+          command: sudo chown -R circleci /usr/local/lib/node_modules
+      - run:
+          name: Build
+          command: |
+            java -version
+            mvn -v
+            mvn -B clean install -Pclassic
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v1-{{ checksum "pom.xml" }}
+
   deploy-sample:
     executor: cif_executor
 
@@ -49,8 +71,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
-            - v1-dependencies-
+            - maven-repo-v1-{{ checksum "pom.xml" }}
+            - maven-repo-v1-
       - run:
           name: Deploy Venia Sample Project to GitHub
           command: node .circleci/ci/deploy-venia.js
@@ -64,9 +86,15 @@ workflows:
             tags:
               only: /.*/
 
+      - build-classic:
+          filters:
+            tags:
+              only: /.*/
+
       - deploy-sample:
           requires:
             - build
+            - build-classic
           filters:
             branches:
               ignore: /.*/

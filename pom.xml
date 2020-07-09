@@ -27,7 +27,7 @@
     <scm>
         <connection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</connection>
         <developerConnection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</developerConnection>
-        <url>https://github.com/adobe/aem-cif-guides-venia/tree/master/</url>
+        <url>https://github.com/adobe/aem-cif-guides-venia/tree/main/</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -39,7 +39,6 @@
         <module>ui.apps.structure</module>
         <module>ui.content</module>
         <module>it.tests</module>
-        <module>dispatcher</module>
     </modules>
 
     <properties>
@@ -58,7 +57,10 @@
         <bnd.version>5.0.0</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <uber.jar.version>6.5.0</uber.jar.version>
+        <aem.sdk.api>2020.6.3729.20200615T010731Z-200604</aem.sdk.api>
         <jacoco.version>0.7.9</jacoco.version>
+        <project.classifier>cloud</project.classifier>
     </properties>
 
     <build>
@@ -378,51 +380,26 @@ Bundle-DocURL:
     </build>
 
     <profiles>
-        <!-- ====================================================== -->
-        <!-- A D O B E P U B L I C P R O F I L E -->
-        <!-- ====================================================== -->
         <profile>
-            <id>adobe-public</id>
-
+            <id>cloud</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
+            <modules>
+                <module>dispatcher-cloud</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>classic</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <properties>
-                <releaseRepository-Id>adobe-public-releases</releaseRepository-Id>
-                <releaseRepository-Name>Adobe Public Releases</releaseRepository-Name>
-                <releaseRepository-URL>https://repo.adobe.com/nexus/content/groups/public</releaseRepository-URL>
+                <project.classifier>classic</project.classifier>
             </properties>
-
-            <repositories>
-                <repository>
-                    <id>adobe-public-releases</id>
-                    <name>Adobe Public Repository</name>
-                    <url>https://repo.adobe.com/nexus/content/groups/public</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>adobe-public-releases</id>
-                    <name>Adobe Public Repository</name>
-                    <url>https://repo.adobe.com/nexus/content/groups/public</url>
-                    <releases>
-                        <enabled>true</enabled>
-                        <updatePolicy>never</updatePolicy>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
+            <modules>
+                <module>dispatcher-ams</module>
+            </modules>
         </profile>
 
         <!-- Development profile: install only the bundle -->
@@ -547,7 +524,62 @@ Bundle-DocURL:
     <!-- ====================================================================== -->
     <dependencyManagement>
         <dependencies>
-            <!-- OSGi Dependencies -->
+            <!-- Default AEM dependency is cloud SDK -->
+            <dependency>
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>aem-sdk-api</artifactId>
+                <version>${aem.sdk.api}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.cq</groupId>
+                <artifactId>core.wcm.components.core</artifactId>
+                <version>${core.wcm.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.cq</groupId>
+                <artifactId>core.wcm.components.content</artifactId>
+                <type>zip</type>
+                <version>${core.wcm.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.cq</groupId>
+                <artifactId>core.wcm.components.config</artifactId>
+                <type>zip</type>
+                <version>${core.wcm.components.version}</version>
+            </dependency>
+
+            <!-- Adobe CIF Dependencies -->
+            <dependency>
+                <groupId>com.adobe.commerce.cif</groupId>
+                <artifactId>core-cif-components-apps</artifactId>
+                <type>zip</type>
+                <version>${core.cif.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.commerce.cif</groupId>
+                <artifactId>core-cif-components-core</artifactId>
+                <version>${core.cif.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.commerce.cif</groupId>
+                <artifactId>graphql-client</artifactId>
+                <version>${graphql.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.commerce.cif</groupId>
+                <artifactId>magento-graphql</artifactId>
+                <version>${magento.graphql.version}</version>
+            </dependency>
+
+            <!-- AEM "classic" dependencies -->
+            <dependency>
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>uber-jar</artifactId>
+                <version>${uber.jar.version}</version>
+                <classifier>apis</classifier>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.annotation.versioning</artifactId>
@@ -633,14 +665,6 @@ Bundle-DocURL:
                 <version>1.7.25</version>
                 <scope>test</scope>
             </dependency>
-            <!-- Adobe AEM Dependencies -->
-            <dependency>
-                <groupId>com.adobe.aem</groupId>
-                <artifactId>uber-jar</artifactId>
-                <version>6.5.0</version>
-                <classifier>apis</classifier>
-                <scope>provided</scope>
-            </dependency>
             <!-- Apache Sling Dependencies -->
             <dependency>
                 <groupId>org.apache.sling</groupId>
@@ -661,7 +685,6 @@ Bundle-DocURL:
                 <version>2.1</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
@@ -682,46 +705,6 @@ Bundle-DocURL:
                 <version>5.7.4</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>com.adobe.cq</groupId>
-                <artifactId>core.wcm.components.core</artifactId>
-                <version>${core.wcm.components.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.cq</groupId>
-                <artifactId>core.wcm.components.content</artifactId>
-                <type>zip</type>
-                <version>${core.wcm.components.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.cq</groupId>
-                <artifactId>core.wcm.components.config</artifactId>
-                <type>zip</type>
-                <version>${core.wcm.components.version}</version>
-            </dependency>
-            <!-- Adobe CIF Dependencies -->
-            <dependency>
-                <groupId>com.adobe.commerce.cif</groupId>
-                <artifactId>core-cif-components-apps</artifactId>
-                <type>zip</type>
-                <version>${core.cif.components.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.commerce.cif</groupId>
-                <artifactId>core-cif-components-core</artifactId>
-                <version>${core.cif.components.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.commerce.cif</groupId>
-                <artifactId>graphql-client</artifactId>
-                <version>${graphql.client.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.commerce.cif</groupId>
-                <artifactId>magento-graphql</artifactId>
-                <version>${magento.graphql.version}</version>
-            </dependency>
-
 
             <!-- Testing -->
             <dependency>
@@ -763,5 +746,35 @@ Bundle-DocURL:
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>adobe-public-releases</id>
+            <name>Adobe Public Repository</name>
+            <url>https://repo.adobe.com/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>adobe-public-releases</id>
+            <name>Adobe Public Repository</name>
+            <url>https://repo.adobe.com/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

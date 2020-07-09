@@ -66,14 +66,9 @@
                         <embedded>
                             <groupId>com.venia</groupId>
                             <artifactId>venia.core</artifactId>
+                            <classifier>${project.classifier}</classifier>
                             <target>/apps/venia/install</target>
                         </embedded>
-                        <embedded>
-                            <groupId>com.adobe.cq</groupId>
-                            <artifactId>core.wcm.components.core</artifactId>
-                            <target>/apps/venia/install</target>
-                        </embedded>
-
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-core</artifactId>
@@ -84,23 +79,10 @@
                             <artifactId>magento-graphql</artifactId>
                             <target>/apps/venia/install</target>
                         </embedded>
-                        <embedded>
-                            <groupId>com.adobe.commerce.cif</groupId>
-                            <artifactId>graphql-client</artifactId>
-                            <target>/apps/venia/install</target>
-                        </embedded>
                     </embeddeds>
                     <subPackages>
                     </subPackages>
                     <dependencies>
-                        <dependency>
-                            <groupId>com.adobe.cq</groupId>
-                            <artifactId>core.wcm.components.content</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.adobe.cq</groupId>
-                            <artifactId>core.wcm.components.config</artifactId>
-                        </dependency>
                         <dependency>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-apps</artifactId>
@@ -144,6 +126,107 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>cloud</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.jackrabbit</groupId>
+                        <artifactId>filevault-package-maven-plugin</artifactId>
+                        <configuration>
+                            <!-- Exclude configs only needed for the 'classic' profile -->
+                            <excludes>
+                                <exclude>**/com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config</exclude>
+                                <exclude>**/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl-default.config</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>aem-sdk-api</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>classic</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.jackrabbit</groupId>
+                        <artifactId>filevault-package-maven-plugin</artifactId>
+                        <configuration>
+                            <embeddeds combine.children="append">
+                                <embedded>
+                                    <groupId>com.adobe.cq</groupId>
+                                    <artifactId>core.wcm.components.core</artifactId>
+                                    <target>/apps/venia/install</target>
+                                </embedded>
+                                <embedded>
+                                    <groupId>com.adobe.commerce.cif</groupId>
+                                    <artifactId>graphql-client</artifactId>
+                                    <target>/apps/venia/install</target>
+                                </embedded>
+                            </embeddeds>
+                            <dependencies combine.children="append">
+                                <dependency>
+                                    <groupId>com.adobe.cq</groupId>
+                                    <artifactId>core.wcm.components.content</artifactId>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.adobe.cq</groupId>
+                                    <artifactId>core.wcm.components.config</artifactId>
+                                </dependency>
+                            </dependencies>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.adobe.cq</groupId>
+                    <artifactId>core.wcm.components.core</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.cq</groupId>
+                    <artifactId>core.wcm.components.content</artifactId>
+                    <type>zip</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.cq</groupId>
+                    <artifactId>core.wcm.components.config</artifactId>
+                    <type>zip</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>uber-jar</artifactId>
+                    <classifier>apis</classifier>
+                </dependency>
+                <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.day.cq.wcm</groupId>
+                    <artifactId>cq-wcm-taglib</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <!-- ====================================================================== -->
     <!-- D E P E N D E N C I E S                                                -->
     <!-- ====================================================================== -->
@@ -152,6 +235,7 @@
             <groupId>com.venia</groupId>
             <artifactId>venia.core</artifactId>
             <version>${project.version}</version>
+            <classifier>${project.classifier}</classifier>
         </dependency>
 
         <dependency>
@@ -169,40 +253,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.adobe.cq</groupId>
-            <artifactId>core.wcm.components.core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.adobe.cq</groupId>
-            <artifactId>core.wcm.components.content</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq</groupId>
-            <artifactId>core.wcm.components.config</artifactId>
-            <type>zip</type>
-        </dependency>
-
-        <dependency>
             <groupId>com.adobe.aem</groupId>
-            <artifactId>uber-jar</artifactId>
-            <classifier>apis</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-taglib</artifactId>
+            <artifactId>aem-sdk-api</artifactId>
         </dependency>
 
         <!-- Adobe CIF Dependencies -->

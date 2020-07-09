@@ -46,7 +46,7 @@ module.exports = class CI {
     /**
      * Checkout git repository with the given branch into the given folder.
      */
-    checkout(repo, branch = "master", folder = "") {
+    checkout(repo, branch = "main", folder = "") {
         this.sh("git clone -b " + branch + " " + repo + " " + folder);
     }
 
