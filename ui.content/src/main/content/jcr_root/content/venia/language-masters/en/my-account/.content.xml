@@ -6,8 +6,9 @@
         cq:lastModifiedBy="admin"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Account"
+        jcr:title="My Account"
         sling:resourceType="venia/components/page"
+        hideInNav="true"
         pageTitle="Account information">
         <root
             jcr:primaryType="nt:unstructured"

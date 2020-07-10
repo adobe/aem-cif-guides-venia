@@ -9,8 +9,9 @@
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:mixinTypes="[cq:LiveRelationship]"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Account"
+        jcr:title="My Account"
         sling:resourceType="venia/components/page"
+        hideInNav="true"
         pageTitle="Account information">
         <root
             cq:lastRolledout="{Date}2020-07-08T09:32:42.225+03:00"
