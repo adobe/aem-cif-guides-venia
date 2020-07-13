@@ -30,16 +30,17 @@
                         jcr:mixinTypes="[cq:LiveRelationship]"
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="venia/components/title"/>
-                <addressbook jcr:primaryType="nt:unstructured"
-                             sling:resourceType="venia/components/commerce/addressbook"
-                             jcr:mixinTypes="[cq:LiveRelationship]"/>
                 <container
                         cq:lastRolledout="{Date}2020-07-08T09:32:42.261+03:00"
                         cq:lastRolledoutBy="admin"
                         jcr:mixinTypes="[cq:LiveRelationship]"
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="venia/components/container"
-                        layout="responsiveGrid"/>
+                        layout="responsiveGrid">
+                    <addressbook jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="venia/components/commerce/addressbook"
+                                 jcr:mixinTypes="[cq:LiveRelationship]"/>
+                </container>
             </container>
         </root>
     </jcr:content>

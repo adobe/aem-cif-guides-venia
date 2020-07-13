@@ -18,12 +18,13 @@
                 <title
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="venia/components/title"/>
-                <addressbook jcr:primaryType="nt:unstructured"
-                             sling:resourceType="venia/components/commerce/addressbook"/>
                 <container
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="venia/components/container"
-                    layout="responsiveGrid"/>
+                    layout="responsiveGrid">
+                    <addressbook jcr:primaryType="nt:unstructured"
+                                 sling:resourceType="venia/components/commerce/addressbook"/>
+                </container>
             </container>
         </root>
     </jcr:content>
