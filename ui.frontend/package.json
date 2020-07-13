@@ -7,7 +7,7 @@
     "url": "https://github.com/adobe/aem-project-archetype"
   },
   "private": true,
-  "main": "src/main/site/main.ts",
+  "main": "src/main/site/main.js",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
     "dev": "webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
@@ -38,7 +38,9 @@
     "eslint": "^6.8.0",
     "eslint-loader": "^3.0.3",
     "eslint-plugin-header": "^3.0.0",
+    "eslint-plugin-jest": "^23.18.0",
     "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.7",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.11.0",
