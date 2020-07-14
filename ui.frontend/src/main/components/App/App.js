@@ -21,7 +21,6 @@ import config from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    console.log(`Loading the app...`);
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
