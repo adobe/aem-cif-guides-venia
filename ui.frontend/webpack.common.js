@@ -36,8 +36,29 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        options: {
+                            eslintPath: require.resolve('eslint')
+                        },
+                        loader: require.resolve('eslint-loader')
+                    },
+                    {
+                        loader: 'ts-loader'
+                    },
+                    {
+                        loader: 'webpack-import-glob-loader',
+                        options: {
+                            url: false
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.js$/,
-                exclude: /(node_modules|dist)/,
+                include: /src/,
                 loader: ['babel-loader', 'eslint-loader']
             },
             {
@@ -73,13 +94,6 @@ module.exports = {
                 ]
             }
         ]
-    },
-    resolve: {
-        alias: {
-            react: path.resolve('./node_modules/react'),
-            'react-dom': path.resolve('./node_modules/react-dom'),
-            'react-i18next': path.resolve(__dirname, './node_modules/react-i18next')
-        }
     },
     plugins: [
         new CleanWebpackPlugin(),

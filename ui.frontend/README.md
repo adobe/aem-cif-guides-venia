@@ -78,19 +78,29 @@ The above inclusion can of course be modified by updating the Page Policy and/or
 
 Since Venia is acting like a consumer for `aem-core-cif-react-components` you may want to use it to test changes in that library. For this, you have to use `npm link` to consume the local snapshot.
 
-1. Go to the `aem-core-cif-react-components/react-components` project type
+As a prerequisite, you need to have `node` and `npm` installed before you perform any of the steps below:
+
+1. Go to the `aem-core-cif-react-components/react-components` and use the following commands:
 
 ```bash
+npm run webpack:dev
 npm link
 ```
 
-2. Go to `aem-cif-guides-venia/ui.frontend` and type
+This will generate a development build and link it to you global NPM library
+
+2. Install the Venia demo using the following command (in the root folder):
 
 ```bash
-npm link @adobe/aem-core-cif-components
+mvn clean install -P autoInstallPackage,fedDev
 ```
 
-For more details on how `npm link` works you can check [the official documentation](https://docs.npmjs.com/cli/link)
+If you want to install it on a regular AEM quickstart instance (i.e. not AEM SDK) don't forget to add the `classic` profile to the command above.
+
+The `fedDev` Maven profile will fo the following:
+
+-   make sure that the dependency to `@adobe/aem-core-cif-react-components` is properly linked
+-   run the Webpack development build
 
 ### Static Webpack Development Server
 
