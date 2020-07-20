@@ -14,20 +14,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { CommerceApp, Cart, AuthBar, AccountContainer } from '@adobe/aem-core-cif-react-components';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { CommerceApp, Cart, AuthBar, AccountContainer, AddressBook } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
-import config from './config';
+import config, { addressBookPath } from './config';
 import '../../site/main.scss';
 
 const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
+    const baseURL = '/content/venia/us/en'; // This is suppose to be exposed by server side
+
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
             <CommerceApp uri={graphqlEndpoint} storeView={storeView} config={config}>
                 <Cart />
                 <AuthBar />
                 <AccountContainer />
+                <Route path={baseURL + addressBookPath} component={AddressBook} />
             </CommerceApp>
         </I18nextProvider>
     );
@@ -35,7 +39,12 @@ const App = () => {
 
 window.onload = () => {
     const mountPoint = document.getElementById('minicart');
-    ReactDOM.render(<App />, mountPoint);
+    ReactDOM.render(
+        <Router>
+            <App />
+        </Router>,
+        mountPoint
+    );
 };
 
 export default App;
