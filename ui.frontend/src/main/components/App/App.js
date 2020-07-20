@@ -19,6 +19,7 @@ import { CommerceApp, Cart, AuthBar, AccountContainer, AddressBook } from '@adob
 
 import i18n from './i18n';
 import config, { addressBookPath } from './config';
+
 import '../../site/main.scss';
 
 const App = () => {
