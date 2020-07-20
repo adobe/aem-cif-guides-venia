@@ -251,6 +251,12 @@
     box-shadow: 0 -1px $venia-border;
 }
 
+@media (min-width: 1024px) {
+    .navigation__footer {
+        display: none;
+    }
+}
+
 .navigation__authBar {
     align-items: center;
     background-color: white;

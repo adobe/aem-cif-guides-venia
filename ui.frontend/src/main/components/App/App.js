@@ -14,19 +14,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { CommerceApp, Cart, AuthBar } from '@adobe/aem-core-cif-react-components';
+import { CommerceApp, Cart, AuthBar, AccountContainer } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
+import config from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    console.log(`Loading the app...`);
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
-            <CommerceApp uri={graphqlEndpoint} storeView={storeView}>
+            <CommerceApp uri={graphqlEndpoint} storeView={storeView} config={config}>
                 <Cart />
                 <AuthBar />
+                <AccountContainer />
             </CommerceApp>
         </I18nextProvider>
     );
