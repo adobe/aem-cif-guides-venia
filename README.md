@@ -41,9 +41,23 @@ The main parts of the template are:
 * ui.launcher: contains glue code that deploys the ui.tests bundle (and dependent bundles) to the server and triggers the remote JUnit execution
 * ui.frontend: an optional dedicated front-end build mechanism (Angular, React or general Webpack project)
 
-## Customization
+## Best Practice
 
-The Venia reference project code demonstrates how [CIF core components can be customized](https://github.com/adobe/aem-core-cif-components/wiki/Customizing-CIF-Core-Components) and extended is included in the `core` bundle module. The Sling modules package contains an example `MyProductTeaser` model.
+### Component Customization
+
+The Venia reference project code demonstrates how CIF core component can be adopted, customized, and extended for a project. The project includes an extended product teaser component example called `MyProductTeaser`. It demonstrates the [CIF core components customization](https://github.com/adobe/aem-core-cif-components/wiki/Customizing-CIF-Core-Components) options by using an extended Sling `MyProductTeaser` model and a proxy component overlay.
+
+### Individual product and category page URLs
+
+This project includes sample configurations to demonstrate the usage of custom URLs for product and category pages. This allows each project to setup individual URL patterns for product and category pages according to their SEO needs. A combination of [UrlProvider](ui.apps/src/main/content/jcr_root/apps/venia/config.publish/com.adobe.cq.commerce.core.components.internal.services.UrlProviderImpl.config) config with [Sling Mappings](https://sling.apache.org/documentation/the-sling-engine/mappings-for-resource-resolution.html) is used.
+
+This configuration must be adjusted with the external domain used by the project. The Sling Mappings are working based on the hostname and domain. Therefore this configuration is disabled by default and must be enabled before deployment. To do so rename the Sling Mapping `hostname.adobeaemcloud.com` folder in `ui.content/src/main/content/jcr_root/etc/map.publish/https` according to the used domain name and enable this config by adding `resource.resolver.map.location="/etc/map.publish"` to the [JcrResourceResolver](ui.apps/src/main/content/jcr_root/apps/venia/config.publish/org.apache.sling.jcr.resource.internal.JcrResourceResolverFactoryImpl.xml) config.
+
+For detailed configuration options see [Configuring and customizing product and category pages URLs](https://github.com/adobe/aem-core-cif-components/wiki/configuration#configuring-and-customising-product-and-category-pages-url) in the CIF Core Components Wiki and the [AEM Resource Mapping](https://docs.adobe.com/content/help/en/experience-manager-65/deploying/configuring/resource-mapping.html) documentation.
+
+### Component Caching
+
+[CIF Core Components](https://github.com/adobe/aem-core-cif-components) already have built-in support for [caching GraphQL responses for individual components](https://github.com/adobe/aem-core-cif-components/wiki/caching#graphql-caching-recommendations). This feature can be used to reduce the number of GraphQL backend calls by a large factor. An effective caching can be achieved especially for repeating queries like retrieving the category tree for a navigation component or fetching all the available aggregations/facets values displayed on the product search and category pages.
 
 ## How to build
 
