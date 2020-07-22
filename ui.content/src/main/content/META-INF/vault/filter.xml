@@ -5,4 +5,5 @@
     <filter root="/content/dam/venia" mode="merge"/>
     <filter root="/content/experience-fragments/venia" mode="merge"/>
     <filter root="/etc/map.publish" mode="merge"/>
+    <filter root="/var/commerce/products/venia-default" mode="merge"/>
 </workspaceFilter>
