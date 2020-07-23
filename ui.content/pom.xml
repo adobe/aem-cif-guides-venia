@@ -64,9 +64,9 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <!-- Copies the right .content.xml file depending on the profile -->
-                            <sourceFile>${basedir}/src/main/content/jcr_root/var/.content-${project.classifier}.xml</sourceFile>
-                            <destinationFile>${basedir}/src/main/content/jcr_root/var/.content.xml</destinationFile>
+                            <!-- Copies the right filter.xml file depending on the profile -->
+                            <sourceFile>${basedir}/src/main/content/filter-templates/filter-${project.classifier}.xml</sourceFile>
+                            <destinationFile>${basedir}/src/main/content/META-INF/vault/filter.xml</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -98,7 +98,6 @@
                         <!-- but they are both excluded from the content package -->
                         <exclude>**/.content-cloud.xml</exclude>
                         <exclude>**/.content-classic.xml</exclude>
-                        <exclude>**/.content-cloud.xml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -120,6 +119,24 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.jackrabbit</groupId>
+                        <artifactId>filevault-package-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <excludes>
+                                <!-- Depending on the profile, one of these two files is copied to .content.xml -->
+                                <!-- but they are both excluded from the content package -->
+                                <exclude>**/.content-cloud.xml</exclude>
+                                <exclude>**/.content-classic.xml</exclude>
+                                <exclude>**/commerce/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.adobe.aem</groupId>
