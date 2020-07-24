@@ -119,24 +119,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.jackrabbit</groupId>
-                        <artifactId>filevault-package-maven-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <excludes>
-                                <!-- Depending on the profile, one of these two files is copied to .content.xml -->
-                                <!-- but they are both excluded from the content package -->
-                                <exclude>**/.content-cloud.xml</exclude>
-                                <exclude>**/.content-classic.xml</exclude>
-                                <exclude>**/commerce/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
             <dependencies>
                 <dependency>
                     <groupId>com.adobe.aem</groupId>
