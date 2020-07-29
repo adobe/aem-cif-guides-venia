@@ -68,7 +68,8 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            url: false
+                            url: false,
+                            import: true
                         }
                     },
                     {
@@ -87,6 +88,18 @@ module.exports = {
                     },
                     {
                         loader: 'webpack-import-glob-loader',
+                        options: {
+                            url: false
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.css/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
                         options: {
                             url: false
                         }
