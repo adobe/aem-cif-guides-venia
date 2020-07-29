@@ -24,7 +24,6 @@ import '../../site/main.scss';
 
 const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
-    const baseURL = '/content/venia/us/en'; // This is suppose to be exposed by server side
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
@@ -32,7 +31,7 @@ const App = () => {
                 <Cart />
                 <AuthBar />
                 <AccountContainer />
-                <Route path={baseURL + addressBookPath} component={AddressBook} />
+                <Route path={addressBookPath} component={AddressBook} />
             </CommerceApp>
         </I18nextProvider>
     );

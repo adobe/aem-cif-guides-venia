@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 const addressBookContainerQuerySelector = '#addressbook';
-export const addressBookPath = '/my-account/address-book.html';
+export const addressBookPath = '/content/venia/us/en/my-account/address-book.html';
 
 const config = {
     userContext: {
@@ -22,7 +22,6 @@ const config = {
     },
     navigationContext: {
         authBarContainerQuerySelector: 'aside.navigation__root #miniaccount',
-        addressBookContainerQuerySelector,
         addressBookPath
     }
 };
