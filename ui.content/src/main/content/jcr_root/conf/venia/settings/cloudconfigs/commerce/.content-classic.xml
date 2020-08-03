@@ -9,6 +9,7 @@
         sling:resourceType="commerce/gui/components/configuration/page"
         cq:catalogDataResourceProviderFactory="magento-graphql"
         cq:catalogIdentifier="default"
+        cq:catalogPath="/var/commerce/products/venia-default"
         cq:graphqlClient="default"
         magentoRootCategoryId="2"
         magentoStore="default"/>

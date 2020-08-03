@@ -57,6 +57,18 @@
                             <destinationFile>${basedir}/src/main/content/jcr_root/conf/venia/settings/cloudconfigs/commerce/.content.xml</destinationFile>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>copy-cq-var-content</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Copies the right filter.xml file depending on the profile -->
+                            <sourceFile>${basedir}/src/main/content/filter-templates/filter-${project.classifier}.xml</sourceFile>
+                            <destinationFile>${basedir}/src/main/content/META-INF/vault/filter.xml</destinationFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- ====================================================================== -->
