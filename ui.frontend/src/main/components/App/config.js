@@ -11,12 +11,18 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
+const addressBookContainerQuerySelector = '#addressbook';
+export const addressBookPath = '/content/venia/us/en/my-account/address-book.html';
+
 const config = {
     userContext: {
-        accountContainerQuerySelector: '.header__accountTrigger #miniaccount'
+        accountContainerQuerySelector: '.header__accountTrigger #miniaccount',
+        addressBookContainerQuerySelector,
+        addressBookPath
     },
     navigationContext: {
-        authBarContainerQuerySelector: 'aside.navigation__root #miniaccount'
+        authBarContainerQuerySelector: 'aside.navigation__root #miniaccount',
+        addressBookPath
     }
 };
 

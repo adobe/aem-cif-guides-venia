@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2020-07-08T09:32:42.235+03:00"
+        cq:lastModifiedBy="admin"
+        cq:lastRolledout="{Date}2020-07-08T09:32:42.236+03:00"
+        cq:lastRolledoutBy="admin"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:mixinTypes="[cq:LiveRelationship]"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="My Account"
+        sling:resourceType="venia/components/page"
+        hideInNav="true"
+        pageTitle="Account information">
+        <root
+            cq:lastRolledout="{Date}2020-07-08T09:32:42.225+03:00"
+            cq:lastRolledoutBy="admin"
+            jcr:mixinTypes="[cq:LiveRelationship]"
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                cq:lastRolledout="{Date}2020-07-08T09:32:42.231+03:00"
+                cq:lastRolledoutBy="admin"
+                jcr:mixinTypes="[cq:LiveRelationship]"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    cq:lastRolledout="{Date}2020-07-08T09:32:42.234+03:00"
+                    cq:lastRolledoutBy="admin"
+                    jcr:mixinTypes="[cq:LiveRelationship]"
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    cq:lastRolledout="{Date}2020-07-08T09:32:42.236+03:00"
+                    cq:lastRolledoutBy="admin"
+                    jcr:mixinTypes="[cq:LiveRelationship]"
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid"/>
+            </container>
+        </root>
+    </jcr:content>
+    <address-book/>
+</jcr:root>
