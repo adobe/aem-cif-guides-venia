@@ -33,9 +33,9 @@ ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
 
 let profiles = ['cloud', 'classic'];
 profiles.forEach(profile => {
-	ci.stage(`Build and install Venia '${profile}'`);
-	ci.sh(`mvn clean install -P${profile}`);
-	ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}-${profile}.zip artifacts`);
+    ci.stage(`Build and install Venia '${profile}'`);
+    ci.sh(`mvn clean install -P${profile}`);
+    ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}-${profile}.zip artifacts`);
 })
 
 ci.stage("Deploy Venia Sample Project to GitHub");
