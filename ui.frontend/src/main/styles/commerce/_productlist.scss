@@ -174,7 +174,7 @@
     background: none;
     border: 0;
     cursor: pointer;
-    font-family: var(--venia-font);
+    font-family: var($venia-font);
     font-size: 100%;
     padding: 0;
     touch-action: manipulation;
@@ -195,4 +195,13 @@
     background-size: cover;
     position: relative;
     text-align: center;
+}
+
+.results__count {
+    color: $venia-text;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 200;
 }
