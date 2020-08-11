@@ -15,7 +15,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { CommerceApp, Cart, AuthBar, AccountContainer, AddressBook } from '@adobe/aem-core-cif-react-components';
+import { CommerceApp, Cart, AuthBar, AccountContainer, AddressBook, ProductOptions } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
 import config, { addressBookPath } from './config';
@@ -31,6 +31,7 @@ const App = () => {
                 <Cart />
                 <AuthBar />
                 <AccountContainer />
+                <ProductOptions />
                 <Route path={addressBookPath} component={AddressBook} />
             </CommerceApp>
         </I18nextProvider>
