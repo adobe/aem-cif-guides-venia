@@ -81,6 +81,7 @@
                 <configuration>
                     <group>com.venia</group>
                     <name>venia.ui.content</name>
+                    <classifier>${project.classifier}</classifier>
                     <packageType>content</packageType>
                     <accessControlHandling>merge</accessControlHandling>
                     <properties>
@@ -91,6 +92,7 @@
                             <groupId>com.venia</groupId>
                             <artifactId>venia.ui.apps</artifactId>
                             <version>${project.version}</version>
+                            <classifier>${project.classifier}</classifier>
                         </dependency>
                     </dependencies>
                     <excludes>
@@ -155,6 +157,7 @@
             <groupId>com.venia</groupId>
             <artifactId>venia.ui.apps</artifactId>
             <version>${project.version}</version>
+            <classifier>${project.classifier}</classifier>
             <type>zip</type>
         </dependency>
     </dependencies>

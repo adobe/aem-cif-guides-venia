@@ -50,6 +50,29 @@
 
                     </filters>
                 </configuration>
+                <!-- These two configs disable the use of classifiers added by default in the parent POM -->
+                <executions>
+                    <execution>
+                        <id>default-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <workDirectory>${project.build.directory}/vault-work</workDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-validate-files</id>
+                        <phase>validate-files</phase>
+                        <goals>
+                            <goal>process-classes</goal>
+                        </goals>
+                        <configuration>
+                            <workDirectory>${project.build.directory}/vault-work</workDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

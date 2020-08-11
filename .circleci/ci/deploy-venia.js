@@ -18,8 +18,6 @@ const ci = new (require("./ci.js"))();
 
 ci.context();
 
-ci.stage("Build and install Venia");
-ci.sh("mvn clean install");
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
 
@@ -31,10 +29,18 @@ ci.sh(
 ci.sh("mv tmp/**/ghr ./ghr");
 ci.sh("chmod +x ghr");
 
+ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
+
+let profiles = ['cloud', 'classic'];
+profiles.forEach(profile => {
+    ci.stage(`Build and install Venia '${profile}'`);
+    ci.sh(`mvn clean install -P${profile}`);
+    ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}-${profile}.zip artifacts`);
+})
+
 ci.stage("Deploy Venia Sample Project to GitHub");
-const allPackagePath = `all/target/${releaseArtifact}.all-${releaseVersion}.zip`;
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
     -u ${ci.env("CIRCLE_PROJECT_USERNAME")} \
     -r ${ci.env("CIRCLE_PROJECT_REPONAME")} \
     -c ${ci.env("CIRCLE_SHA1")} \
-    -replace ${ci.env("CIRCLE_TAG")} ${allPackagePath}`);
+    -replace ${ci.env("CIRCLE_TAG")} artifacts/`);

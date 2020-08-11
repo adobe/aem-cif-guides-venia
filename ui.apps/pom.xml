@@ -51,6 +51,7 @@
                 <configuration>
                     <group>com.venia</group>
                     <name>venia.ui.apps</name>
+                    <classifier>${project.classifier}</classifier>
                     <packageType>application</packageType>
                     <accessControlHandling>merge</accessControlHandling>
                     <properties>

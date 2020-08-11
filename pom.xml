@@ -267,10 +267,59 @@ Bundle-DocURL:
                 <plugin>
                     <groupId>org.apache.jackrabbit</groupId>
                     <artifactId>filevault-package-maven-plugin</artifactId>
-                    <version>1.0.3</version>
+                    <version>1.1.4</version>
                     <configuration>
                         <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
                     </configuration>
+                    <executions>
+                        <!-- Disables the long output of the analyze goal -->
+                        <execution>
+                            <id>default-analyze-classes</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>analyze-classes</goal>
+                            </goals>
+                            <configuration>
+                                <showImportPackageReport>false</showImportPackageReport>
+                            </configuration>
+                        </execution>
+                        <!--
+                            With the introduction of classifiers in version 1.1.4 of the filevault-package-maven-plugin,
+                            some goals automatically add the classifier to the vault-work directory and/or the package file,
+                            but some others don't or somehow dot not properly handle the work directory parameter.
+                            These 3 configs fix these issues but the plugin still displays some warnings that can be ignored.
+                        -->
+                        <execution>
+                            <id>default-package</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                            <configuration>
+                                <workDirectory>${project.build.directory}/vault-work-${project.classifier}</workDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>default-validate-package</id>
+                            <phase>validate-package</phase>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <packageFile>${project.artifact.file}</packageFile>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>default-validate-files</id>
+                            <phase>validate-files</phase>
+                            <goals>
+                                <goal>process-classes</goal>
+                            </goals>
+                            <configuration>
+                                <workDirectory>${project.build.directory}/vault-work-${project.classifier}</workDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <!-- Content Package Plugin -->
                 <plugin>
