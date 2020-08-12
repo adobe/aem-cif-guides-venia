@@ -13,7 +13,7 @@
         cq:cifSearchResultsPage="/content/venia/language-masters/en/search" 
         cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]" 
         jcr:primaryType="cq:PageContent" 
-        jcr:title="en" 
+        jcr:title="Venia Demo Store - Home"
         navRoot="{Boolean}true" 
         sling:resourceType="venia/components/page" 
         pageTitle="Venia">

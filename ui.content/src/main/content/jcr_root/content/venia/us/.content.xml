@@ -8,7 +8,7 @@
         cq:redirectTarget="/content/venia/us/en" 
         cq:template="/conf/venia/settings/wcm/templates/page-content" 
         jcr:primaryType="cq:PageContent" 
-        jcr:title="us" 
+        jcr:title="Venia Demo Store"
         sling:resourceType="foundation/components/redirect" />
     <en />
 </jcr:root>

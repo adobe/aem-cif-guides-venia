@@ -9,7 +9,7 @@
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:mixinTypes="[cq:LiveRelationship]"
         jcr:primaryType="cq:PageContent"
-        jcr:title="My Account"
+        jcr:title="Venia Demo Store - My Account"
         sling:resourceType="venia/components/page"
         hideInNav="true"
         pageTitle="Account information">
