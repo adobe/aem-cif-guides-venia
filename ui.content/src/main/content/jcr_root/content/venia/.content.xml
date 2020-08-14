@@ -6,7 +6,7 @@
         cq:template="/conf/venia/settings/wcm/templates/root-page"
         cq:conf="/conf/venia"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Venia"
+        jcr:title="Venia Demo Store"
         sling:redirect="{Boolean}true"
         sling:redirectStatus="{Long}302"
         sling:resourceType="foundation/components/redirect"

@@ -6,7 +6,7 @@
         cq:redirectTarget="/content/venia/language-masters/en"
         cq:template="/conf/venia/settings/wcm/templates/root-page"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Language Masters"
+        jcr:title="Venia Demo Store"
         sling:resourceType="foundation/components/redirect"
         hideInNav="true"/>
     <en/>
