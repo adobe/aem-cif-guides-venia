@@ -453,9 +453,7 @@ Bundle-DocURL:
         <profile>
             <id>release-prepare</id> <!-- Use with release:prepare to update the versions of all modules -->
             <activation>
-                <property>
-                    <name>!release-prepare</name>
-                </property>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
                 <module>dispatcher-cloud</module>
