@@ -7,7 +7,7 @@
     <jcr:content cq:template="/conf/venia/settings/wcm/templates/product-page" 
         jcr:mixinTypes="[cq:LiveRelationship]" 
         jcr:primaryType="cq:PageContent" 
-        jcr:title="Product page" 
+        jcr:title="Venia Demo Store - Product page"
         sling:resourceType="venia/components/page">
         <root jcr:primaryType="nt:unstructured"
             jcr:mixinTypes="[cq:LiveRelationship]"  

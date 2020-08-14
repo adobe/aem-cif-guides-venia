@@ -6,7 +6,7 @@
         cq:lastModifiedBy="admin"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Address Book"
+        jcr:title="Venia Demo Store - Address Book"
         sling:resourceType="venia/components/page"
         pageTitle="Address Book">
         <root
