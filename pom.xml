@@ -58,7 +58,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <uber.jar.version>6.5.0</uber.jar.version>
-        <aem.sdk.api>2020.6.3729.20200615T010731Z-200604</aem.sdk.api>
+        <aem.sdk.api>2020.8.4039.20200813T011654Z-200730</aem.sdk.api>
         <jacoco.version>0.7.9</jacoco.version>
         <project.classifier>cloud</project.classifier>
     </properties>
@@ -447,6 +447,16 @@ Bundle-DocURL:
                 <project.classifier>classic</project.classifier>
             </properties>
             <modules>
+                <module>dispatcher-ams</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release-prepare</id> <!-- Use with release:prepare to update the versions of all modules -->
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>dispatcher-cloud</module>
                 <module>dispatcher-ams</module>
             </modules>
         </profile>

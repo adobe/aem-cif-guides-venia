@@ -148,6 +148,12 @@ The project comes with the auto-public repository configured. To setup the repos
 
     http://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html
 
+## Releases
+
+The Venia demo is ony released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
+
+`mvn release:prepare release:clean -Prelease-prepare`
+
 ## Contributing
 
 Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
