@@ -6,7 +6,7 @@
     <jcr:content cq:template="/conf/venia/settings/wcm/templates/page-content" 
         jcr:primaryType="cq:PageContent"
         jcr:mixinTypes="[cq:LiveRelationship]" 
-        jcr:title="Search Results" 
+        jcr:title="Venia Demo Store - Search Results"
         sling:resourceType="venia/components/page" 
         hideInNav="true">
         <root jcr:primaryType="nt:unstructured"
