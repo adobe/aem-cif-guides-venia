@@ -14,14 +14,12 @@
  |  See the License for the specific language governing permissions and
  |  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
                     <modelVersion>4.0.0</modelVersion>
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>2020.8.15-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
@@ -58,7 +56,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <uber.jar.version>6.5.0</uber.jar.version>
-        <aem.sdk.api>2020.6.3729.20200615T010731Z-200604</aem.sdk.api>
+        <aem.sdk.api>2020.8.4039.20200813T011654Z-200730</aem.sdk.api>
         <jacoco.version>0.7.9</jacoco.version>
         <project.classifier>cloud</project.classifier>
     </properties>
@@ -447,6 +445,16 @@ Bundle-DocURL:
                 <project.classifier>classic</project.classifier>
             </properties>
             <modules>
+                <module>dispatcher-ams</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release-prepare</id> <!-- Use with release:prepare to update the versions of all modules -->
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>dispatcher-cloud</module>
                 <module>dispatcher-ams</module>
             </modules>
         </profile>
