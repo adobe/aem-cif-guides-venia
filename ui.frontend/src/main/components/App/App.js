@@ -15,52 +15,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import {
-    CommerceApp,
-    Portal,
-    ConfigContextProvider,
-    Cart,
-    CartTrigger,
-    AuthBar,
-    AccountContainer,
-    AddressBook
-} from '@adobe/aem-core-cif-react-components';
+import { CommerceApp, Cart, AuthBar, AccountContainer, AddressBook } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
-import partialConfig from './config';
+import config, { addressBookPath } from './config';
 
 import '../../site/main.scss';
 
 const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths } = partialConfig;
-    const config = {
-        ...partialConfig,
-        storeView,
-        graphqlEndpoint
-    };
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
-            <ConfigContextProvider config={config}>
-                <CommerceApp>
-                    <Portal selector={mountingPoints.cartTrigger}>
-                        <CartTrigger />
-                    </Portal>
-                    <Cart />
-                    <Portal selector={mountingPoints.authBarContainer}>
-                        <AuthBar />
-                    </Portal>
-                    <Portal selector={mountingPoints.accountContainer}>
-                        <AccountContainer />
-                    </Portal>
-                    <Route path={pagePaths.addressBook}>
-                        <Portal selector={mountingPoints.addressBookContainer}>
-                            <AddressBook />
-                        </Portal>
-                    </Route>
-                </CommerceApp>
-            </ConfigContextProvider>
+            <CommerceApp uri={graphqlEndpoint} storeView={storeView} config={config}>
+                <Cart />
+                <AuthBar />
+                <AccountContainer />
+                <Route path={addressBookPath} component={AddressBook} />
+            </CommerceApp>
         </I18nextProvider>
     );
 };
