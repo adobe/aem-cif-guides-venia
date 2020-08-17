@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2020.8.15-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -51,6 +51,7 @@
                 <configuration>
                     <group>com.venia</group>
                     <name>venia.ui.apps</name>
+                    <classifier>${project.classifier}</classifier>
                     <packageType>application</packageType>
                     <accessControlHandling>merge</accessControlHandling>
                     <properties>
