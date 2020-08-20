@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2020.8.15-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -102,6 +102,10 @@
                         <exclude>**/.content-classic.xml</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
