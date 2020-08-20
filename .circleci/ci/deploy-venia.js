@@ -18,6 +18,11 @@ const ci = new (require("./ci.js"))();
 
 ci.context();
 
+if (ci.env("DEPENDENCIES") !== "production") {
+    console.log("Skip deployment, since non-production dependencies are required.");
+    return;
+}
+
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
 
