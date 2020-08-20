@@ -33,6 +33,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}-{{ .Environment.DEPENDENCIES }}
             - maven-repo-v1-{{ checksum "pom.xml" }}
             - maven-repo-v1-
       - run:
@@ -52,7 +53,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v1-{{ checksum "pom.xml" }}
+          key: maven-repo-v1-{{ checksum "pom.xml" }}-{{ .Environment.DEPENDENCIES }}
       - store_test_results:
           path: core/target/surefire-reports
       - store_artifacts:
@@ -66,6 +67,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
+            - maven-repo-v1-{{ checksum "pom.xml" }}-{{ .Environment.DEPENDENCIES }}
             - maven-repo-v1-{{ checksum "pom.xml" }}
             - maven-repo-v1-
       - run:
@@ -85,7 +87,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v1-{{ checksum "pom.xml" }}
+          key: maven-repo-v1-{{ checksum "pom.xml" }}-{{ .Environment.DEPENDENCIES }}
 
   deploy-sample:
     executor: cif_executor
@@ -99,6 +101,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
+            - maven-repo-v1-{{ checksum "pom.xml" }}-{{ .Environment.DEPENDENCIES }}
             - maven-repo-v1-{{ checksum "pom.xml" }}
             - maven-repo-v1-
       - run:
