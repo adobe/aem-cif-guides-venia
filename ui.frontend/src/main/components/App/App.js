@@ -31,7 +31,7 @@ import partialConfig from './config';
 
 import '../../site/main.scss';
 
-const App = () => {
+export const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
     const { mountingPoints, pagePaths } = partialConfig;
     const config = {
