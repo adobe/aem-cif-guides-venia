@@ -1,0 +1,6 @@
+.cmp-breadcrumb__item:before {
+    content: "> ";
+}
+.cmp-breadcrumb__item--active {
+    color: $venia-text-alt;
+}
