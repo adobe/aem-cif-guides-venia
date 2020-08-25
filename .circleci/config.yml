@@ -37,6 +37,7 @@ common:
 jobs:
   build:
     executor: cif_executor
+    working_directory: /home/circleci/build
     steps:
       - checkout
       - *restore_cache
@@ -66,6 +67,7 @@ jobs:
 
   build-classic:
     executor: cif_executor
+    working_directory: /home/circleci/build
     steps:
       - checkout
       - *restore_cache
