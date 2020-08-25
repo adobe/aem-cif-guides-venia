@@ -15,10 +15,7 @@
 'use strict';
 
 const ci = new (require('./ci.js'))();
-
 ci.context();
-
-ci.stage('Project Configuration');
 const qpPath = '/home/circleci/cq';
 
 try {
