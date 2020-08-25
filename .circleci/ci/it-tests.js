@@ -23,7 +23,7 @@ const qpPath = '/home/circleci/cq';
 
 try {
     ci.stage("Integration Tests");
-    ci.sh('export VENIA_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)');
+    let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
@@ -48,7 +48,7 @@ try {
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:1.2.0:jar \
             ${extras} \
-            --install-file all/target/venia.all-${process.env.VENIA_VERSION}-${classifier} \
+            --install-file all/target/venia.all-${veniaVersion}-${classifier} \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
