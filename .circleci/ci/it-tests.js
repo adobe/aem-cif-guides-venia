@@ -23,7 +23,7 @@ const qpPath = '/home/circleci/cq';
 
 try {
     ci.stage("Integration Tests");
-    ci.sh('VENIA_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)');
+    ci.sh('export VENIA_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)');
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
