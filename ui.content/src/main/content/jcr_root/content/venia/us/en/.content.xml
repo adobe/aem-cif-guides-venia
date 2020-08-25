@@ -17,7 +17,7 @@
         jcr:title="Venia Demo Store - Home"
         navRoot="{Boolean}true" 
         sling:resourceType="venia/components/page" 
-        pageTitle="Venia">
+        pageTitle="Home">
         <root jcr:primaryType="nt:unstructured"
             jcr:mixinTypes="[cq:LiveRelationship]"
             sling:resourceType="venia/components/container" 
