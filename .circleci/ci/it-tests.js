@@ -19,8 +19,6 @@ const ci = new (require('./ci.js'))();
 ci.context();
 
 ci.stage('Project Configuration');
-const config = ci.restoreConfiguration();
-console.log(config);
 const qpPath = '/home/circleci/cq';
 
 try {
