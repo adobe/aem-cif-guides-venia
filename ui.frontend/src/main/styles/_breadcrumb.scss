@@ -1,5 +1,12 @@
 .cmp-breadcrumb {}
-.cmp-breadcrumb__list {}
+.cmp-breadcrumb__list {
+    margin-bottom: 5px;
+}
+.cmp-breadcrumb__item:before {
+    content: "> ";
+}
 .cmp-breadcrumb__item {}
-.cmp-breadcrumb__item--active {}
+.cmp-breadcrumb__item--active {
+    color: $venia-text-alt;
+}
 .cmp-breadcrumb__item-link {}
