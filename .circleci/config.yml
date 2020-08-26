@@ -8,18 +8,13 @@ executors:
     docker:
       - image: circleci/openjdk:11-jdk-node
 
-common:
-  restore_cache: &restore_cache
-    restore_cache:
-      keys: 
-        - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-        - maven-repo-v2-{{ arch }}-{{ .Branch }}
-        - maven-repo-v2-
-
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
-      - *restore_cache
+      - restore_cache:
+          keys:
+            - maven-repo-v2-{{ .Environment.AEM }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-{{ .Environment.AEM }}-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - attach_workspace:
           at: /home/circleci/build
       - run:
@@ -28,7 +23,7 @@ common:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-{{ .Environment.AEM }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
           path: it.tests/target/failsafe-reports
       # Save test results as artifacts
@@ -49,7 +44,12 @@ jobs:
     working_directory: /home/circleci/build
     steps:
       - checkout
-      - *restore_cache
+      - restore_cache:
+          keys:
+            - maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-classic
+            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }} 
+            - maven-repo-v2-
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
@@ -62,7 +62,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - persist_to_workspace:
           root: /home/circleci/build
           paths:
@@ -79,7 +79,12 @@ jobs:
     working_directory: /home/circleci/build
     steps:
       - checkout
-      - *restore_cache
+      - restore_cache:
+          keys:
+            - maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-cloud-
+            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
@@ -92,7 +97,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - persist_to_workspace:
           root: /home/circleci/build
           paths:
@@ -117,7 +122,7 @@ jobs:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:3919
         <<: *docker_auth
     environment:
-      AEM: addon
+      AEM: cloud
     resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps

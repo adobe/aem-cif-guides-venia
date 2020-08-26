@@ -21,9 +21,7 @@ const qpPath = '/home/circleci/cq';
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
-    
-    // Default classifier is 'cloud'
-    let classifier = 'cloud';
+    let classifier = process.env.AEM;
     
     ci.dir(qpPath, () => {
         // Connect to QP
@@ -31,11 +29,10 @@ try {
         
         // We install the graphql-client by default except with the CIF Add-On
         let extras = '--bundle com.adobe.commerce.cif:graphql-client:1.6.1:jar';
-        if (process.env.AEM == 'classic') {
+        if (classifier == 'classic') {
             // The core components are already installed in the Cloud SDK
             extras += ' --bundle com.adobe.cq:core.wcm.components.all:2.9.0:zip';
-            classifier = 'classic';
-        } else if (process.env.AEM == 'addon') {
+        } else if (classifier == 'cloud') {
             // Download the CIF Add-On
             ci.sh(`curl -s "${process.env.CIF_ADDON_URL}" -o cif-addon.far`);
             extras = '--install-file cif-addon.far';
