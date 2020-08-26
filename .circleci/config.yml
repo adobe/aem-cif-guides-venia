@@ -8,6 +8,7 @@ executors:
     docker:
       - image: circleci/openjdk:11-jdk-node
 
+common:
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
@@ -33,7 +34,6 @@ executors:
       - store_artifacts:
           path: logs
 
-common:
   docker_auth: &docker_auth
     auth:
       username: $DOCKER_USER
