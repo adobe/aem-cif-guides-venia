@@ -25,6 +25,11 @@ common:
       - run:
           name: Integration tests
           command: node .circleci/ci/it-tests.js
+      - store_test_results:
+          path: it.tests/target/failsafe-reports
+      # Save test results as artifacts
+      - store_artifacts:
+          path: it.tests/target/failsafe-reports
       # Save AEM logs as artifacts
       - store_artifacts:
           path: logs

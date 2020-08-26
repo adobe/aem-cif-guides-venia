@@ -49,7 +49,10 @@ try {
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
-    // TODO: Run integration tests
+    // Run integration tests
+    ci.dir('it.tests', () => {
+        ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
+    });
     
     ci.dir(qpPath, () => {
         // Stop CQ
