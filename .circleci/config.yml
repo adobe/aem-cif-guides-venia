@@ -47,8 +47,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-classic
+            - maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-cloud
             - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }} 
             - maven-repo-v2-
       - run:
@@ -63,7 +63,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - persist_to_workspace:
           root: /home/circleci/build
           paths:
@@ -82,8 +82,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-cloud-
+            - maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-classic-
             - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-v2-
       - run:
@@ -98,7 +98,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-classic-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - persist_to_workspace:
           root: /home/circleci/build
           paths:
