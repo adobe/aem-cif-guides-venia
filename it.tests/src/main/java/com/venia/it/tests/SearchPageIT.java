@@ -29,7 +29,6 @@ import org.junit.Test;
 
 public class SearchPageIT extends CommerceTestBase {
 
-    // Differentiates between the HTML output of the component itself, and the tab displaying the HTML output
     private static final String SEARCHRESULTS_SELECTOR = ".searchresults ";
 
     @Test
