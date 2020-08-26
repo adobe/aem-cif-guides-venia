@@ -14,8 +14,8 @@ common:
       - checkout
       - restore_cache:
           keys:
-            - maven-repo-v2-{{ .Environment.AEM }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-{{ .Environment.AEM }}-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-<< parameters.classifier >>-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-<< parameters.classifier >>-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - attach_workspace:
           at: /home/circleci/build
       - run:
@@ -24,7 +24,7 @@ common:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-{{ .Environment.AEM }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-v2-<< parameters.classifier >>-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
           path: it.tests/target/failsafe-reports
       # Save test results as artifacts
@@ -112,6 +112,10 @@ jobs:
         <<: *docker_auth
     environment:
       AEM: classic
+    parameters:
+      classifier:
+        default: "classic"
+        type: string
     resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps
@@ -124,6 +128,10 @@ jobs:
         <<: *docker_auth
     environment:
       AEM: cloud
+    parameters:
+      classifier:
+        default: "cloud"
+        type: string
     resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps
