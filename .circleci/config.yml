@@ -32,7 +32,8 @@ executors:
       # Save AEM logs as artifacts
       - store_artifacts:
           path: logs
-          
+
+common:
   docker_auth: &docker_auth
     auth:
       username: $DOCKER_USER
