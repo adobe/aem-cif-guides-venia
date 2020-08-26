@@ -25,6 +25,10 @@ common:
       - run:
           name: Integration tests
           command: node .circleci/ci/it-tests.js
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
           path: it.tests/target/failsafe-reports
       # Save test results as artifacts
