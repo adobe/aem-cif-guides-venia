@@ -21,12 +21,13 @@ const qpPath = '/home/circleci/cq';
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
+    
+    // Default classifier is 'cloud'
+    let classifier = 'cloud';
+    
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
-
-        // Default classifier is 'cloud'
-        let classifier = 'cloud';
         
         // We install the graphql-client by default except with the CIF Add-On
         let extras = '--bundle com.adobe.commerce.cif:graphql-client:1.6.1:jar';
