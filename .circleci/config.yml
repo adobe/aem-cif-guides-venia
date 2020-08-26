@@ -137,7 +137,12 @@ jobs:
 
     steps:
       - checkout
-      - *restore_cache
+      - restore_cache:
+          keys:
+            - maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-cloud-
+            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v2-
       - run:
           name: Deploy Venia Sample Project to GitHub
           command: node .circleci/ci/deploy-venia.js
