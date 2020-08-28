@@ -74,6 +74,18 @@ The final inclusion of client libraries on the sites page is as follows:
 
 The above inclusion can of course be modified by updating the Page Policy and/or modifying the categories and embed properties of respective client libraries.
 
+### Customizing Component Styling
+#### React Components
+The `@adobe/aem-core-cif-react-components` package comes with a set of sample styles which implement the Venia design. You can add those styles by adding
+```css
+@import url('~@adobe/aem-core-cif-react-components/dist/main.css');
+```
+to your `main.scss` file in `/src/main/site`.
+
+To customize the styles of the components, we provide a CSS template file that comes with the `@adobe/aem-core-cif-react-components` package. It includes all classes that are used by the React components. The file is located in `/node_modules/@adobe/aem-core-cif-react-components/dist/css-api`.
+
+Copy the file into `/src/main/site/styles` and remove the import of the default Venia styles from the `main.scss` file.
+
 ### Developing with aem-core-cif-react-components
 
 Since Venia is acting like a consumer for `aem-core-cif-react-components` you may want to use it to test changes in that library. For this, you have to use `npm link` to consume the local snapshot.
