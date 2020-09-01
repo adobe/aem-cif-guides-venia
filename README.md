@@ -89,6 +89,16 @@ Or to deploy only the bundle to the author, run
 
 If you are building the Venia demo for on-premise deployment, simply use `mvn clean install -Pclassic` for the top-level command that builds all the modules, and replace the `cloud` profile with `classic` in the other example commands like `mvn clean install -PautoInstallPackage,classic`.
 
+## Client-side Components
+The client-side CIF core components access the Magento GraphQL endpoint directly, so all calls have to either be served from the same endpoint as AEM or served via a proxy that adds CORS headers.
+
+* For AEMaaCS installations this is pre-configured as part of the CIF onboarding.
+* For AEM on-prem installations, please add a proxy to your dispatcher configuration. You can find an example dispatcher configuration in the [CIF Core Components](https://github.com/adobe/aem-core-cif-components/tree/master/dispatcher) project.
+* For local development, you can start a proxy using the following command. The GraphQL endpoint is then available at `http://localhost:3002/graphql`.
+```
+npx local-cors-proxy --proxyUrl https://my.magento.cloud --port 3002 --proxyPartial ''
+```
+
 ## Testing
 
 There are two levels of testing contained in the project:
