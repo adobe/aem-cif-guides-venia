@@ -48,7 +48,9 @@ const App = () => {
                     <Portal selector={mountingPoints.cartTrigger}>
                         <CartTrigger />
                     </Portal>
-                    <Cart />
+                    <Portal selector={mountingPoints.minicart}>
+                        <Cart />
+                    </Portal>
                     <Portal selector={mountingPoints.authBarContainer}>
                         <AuthBar />
                     </Portal>
@@ -70,12 +72,13 @@ const App = () => {
 };
 
 window.onload = () => {
-    const mountPoint = document.getElementById('minicart');
+    const root = document.createElement('div');
+    document.body.appendChild(root);
     ReactDOM.render(
         <Router>
             <App />
         </Router>,
-        mountPoint
+        root
     );
 };
 

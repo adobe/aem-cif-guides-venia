@@ -17,7 +17,8 @@ export default {
         addressBookContainer: '#addressbook',
         authBarContainer: 'aside.navigation__root #miniaccount',
         cartTrigger: '.header__cartTrigger',
-        bundleProductOptionsContainer: '#bundle-product-options'
+        bundleProductOptionsContainer: '#bundle-product-options',
+        minicart: '#minicart'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html'
