@@ -17,6 +17,7 @@ export default {
         addressBookContainer: '#addressbook',
         authBarContainer: 'aside.navigation__root #miniaccount',
         cartTrigger: '.header__cartTrigger',
+        bundleProductOptionsContainer: '#bundle-product-options',
         minicart: '#minicart'
     },
     pagePaths: {
