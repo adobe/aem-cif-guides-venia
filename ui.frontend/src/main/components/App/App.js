@@ -23,7 +23,8 @@ import {
     CartTrigger,
     AuthBar,
     AccountContainer,
-    AddressBook
+    AddressBook,
+    BundleProductOptions
 } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
@@ -47,7 +48,9 @@ const App = () => {
                     <Portal selector={mountingPoints.cartTrigger}>
                         <CartTrigger />
                     </Portal>
-                    <Cart />
+                    <Portal selector={mountingPoints.minicart}>
+                        <Cart />
+                    </Portal>
                     <Portal selector={mountingPoints.authBarContainer}>
                         <AuthBar />
                     </Portal>
@@ -59,6 +62,9 @@ const App = () => {
                             <AddressBook />
                         </Portal>
                     </Route>
+                    <Portal selector={mountingPoints.bundleProductOptionsContainer}>
+                        <BundleProductOptions />
+                    </Portal>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>
@@ -66,12 +72,13 @@ const App = () => {
 };
 
 window.onload = () => {
-    const mountPoint = document.getElementById('minicart');
+    const root = document.createElement('div');
+    document.body.appendChild(root);
     ReactDOM.render(
         <Router>
             <App />
         </Router>,
-        mountPoint
+        root
     );
 };
 
