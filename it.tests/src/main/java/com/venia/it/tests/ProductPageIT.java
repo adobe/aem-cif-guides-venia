@@ -41,8 +41,8 @@ public class ProductPageIT extends CommerceTestBase {
         Assert.assertEquals(0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
         // Verify breadcrumb: Home > Outdoor > Collection > Chaz Kangeroo Hoodie
-        // elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        // Assert.assertEquals(4, elements.size());
+        elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
+        Assert.assertEquals(4, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
@@ -72,7 +72,7 @@ public class ProductPageIT extends CommerceTestBase {
         Assert.assertEquals("Product name", elements.first().html());
 
         // Verify breadcrumb: Home
-        // elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        // Assert.assertEquals(1, elements.size());
+        elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
+        Assert.assertEquals(1, elements.size());
     }
 }
