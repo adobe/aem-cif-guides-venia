@@ -41,7 +41,7 @@ try {
         // Start CQ
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
-            --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:1.2.0:jar \
+            --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:1.3.0:jar \
             ${extras} \
             --install-file /home/circleci/build/all/target/venia.all-${veniaVersion}-${classifier}.zip \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
