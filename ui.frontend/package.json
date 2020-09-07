@@ -62,7 +62,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@adobe/aem-core-cif-react-components": "^1.2.0",
+    "@adobe/aem-core-cif-react-components": "^1.3.0",
     "@magento/peregrine": "^3.0.0",
     "i18next": "^19.5.3",
     "i18next-browser-languagedetector": "^5.0.0",
