@@ -23,9 +23,10 @@ import {
     CartTrigger,
     AuthBar,
     AccountContainer,
-    AddressBook,
-    BundleProductOptions
+    AddressBook
 } from '@adobe/aem-core-cif-react-components';
+
+import Countries from '../Countries/Countries';
 
 import i18n from './i18n';
 import partialConfig from './config';
@@ -62,8 +63,11 @@ const App = () => {
                             <AddressBook />
                         </Portal>
                     </Route>
-                    <Portal selector={mountingPoints.bundleProductOptionsContainer}>
+                    {/* <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                         <BundleProductOptions />
+                    </Portal> */}
+                    <Portal selector={mountingPoints.countriesList}>
+                        <Countries />
                     </Portal>
                 </CommerceApp>
             </ConfigContextProvider>

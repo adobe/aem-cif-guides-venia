@@ -11,17 +11,34 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-export default {
-    mountingPoints: {
-        accountContainer: '.header__accountTrigger #miniaccount',
-        addressBookContainer: '#addressbook',
-        authBarContainer: 'aside.navigation__root #miniaccount',
-        cartTrigger: '.header__cartTrigger',
-        bundleProductOptionsContainer: '#bundle-product-options',
-        minicart: '#minicart',
-        countriesList: '#countries'
-    },
-    pagePaths: {
-        addressBook: '/content/venia/us/en/my-account/address-book.html'
+import React from 'react';
+import gql from 'graphql-tag';
+
+import { useQuery } from '@apollo/react-hooks';
+const countries = gql`
+    query {
+        country {
+            id
+            full_name_locale
+        }
     }
+`;
+const Countries = props => {
+    const { data, loading } = useQuery(countries);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    return (
+        <div>
+            This is a list with countries:{' '}
+            {data &&
+                data.countries.map(c => {
+                    return <div key={c.id}>{c.full_name_locale}</div>;
+                })}
+        </div>
+    );
 };
+
+export default Countries;
