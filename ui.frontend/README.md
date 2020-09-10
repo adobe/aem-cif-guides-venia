@@ -1,131 +1,56 @@
-# Frontend Build
+# Frontend Build: React App
 
-## Overview
+This project was bootstrapped with [`create-react-app`](https://github.com/facebook/create-react-app).
 
-A React app which bootstraps the client-side components used in the store-front (details at https://github.com/adobe/aem-core-cif-components/blob/master/react-components/README.md). This app uses the `@adobe/aem-core-cif-react-components` library as a dependency.
+This application is built to consume the AEM model of a site. It will automatically generate the layout using the helper components from the [`@adobe/cq-react-editable-components`](https://www.npmjs.com/package/@adobe/cq-react-editable-components) package.
 
-## Usage
+## Scripts
 
-The following npm scripts drive the frontend workflow:
+In the project directory, you can run the following commands:
 
--   `npm run dev` - Full build of client libraries with JS optimization disabled (tree shaking, etc) and source maps enabled and CSS optimization disabled.
--   `npm run prod` - Full build of client libraries build with JS optimization enabled (tree shaking, etc), source maps disabled and CSS optimization enabled.
+### `npm start`
 
-### General
+Runs the app in development mode by proxying the JSON model from a local AEM instance running at http://localhost:4502. This assumes that the entire project has been deployed to AEM at least once (`mvn clean install -PautoInstallPackage` **in the project root**).
 
-The ui.frontend module compiles the code under the `ui.frontend/src` folder and outputs the compiled CSS and JS, and any resources beneath a folder named `ui.frontend/dist`.
+After running `npm start` **in the `ui.frontend` directory**, your app will be automatically opened in your browser (at path http://localhost:3000/content/venia/us/en/home.html). If you make edits, the page will reload.
 
--   **Site** - `site.js`, `site.css` and a `resources/` folder for layout dependent images and fonts are created in a `dist/clientlib-site` folder.
--   **Dependencies** - `dependencies.js` and `dependencies.css` are created in a `dist/clientlib-dependencies` folder.
+If you are getting errors related to CORS, you might want to configure AEM as follows:
 
-### JavaScript
+1. Navigate to the Configuration Manager (http://localhost:4502/system/console/configMgr)
+2. Open the configuration for "Adobe Granite Cross-Origin Resource Sharing Policy"
+3. Create a new configuration with the following additional values:
+   - Allowed Origins: http://localhost:3000
+   - Supported Headers: Authorization
+   - Allowed Methods: OPTIONS
 
--   **Optimization** - for production builds, all JS that is not being used or
-    called is removed.
+### `npm test`
 
-### CSS
+Launches the test runner in the interactive watch mode. See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
--   **Autoprefixing** - all CSS is run through a prefixer and any properties that require prefixing will automatically have those added in the CSS.
--   **Optimization** - at post, all CSS is run through an optimizer (cssnano) which normalizes it according to the following default rules:
-    -   Reduces CSS calc expression wherever possible, ensuring both browser compatibility and compression.
-    -   Converts between equivalent length, time and angle values. Note that by default, length values are not converted.
-    -   Removes comments in and around rules, selectors & declarations.
-    -   Removes duplicated rules, at-rules and declarations. Note that this only works for exact duplicates.
-    -   Removes empty rules, media queries and rules with empty selectors, as they do not affect the output.
-    -   Merges adjacent rules by selectors and overlapping property/value pairs.
-    -   Ensures that only a single `@charset` is present in the CSS file and moves it to the top of the document.
-    -   Replaces the CSS initial keyword with the actual value, when the resulting output is smaller.
-    -   Compresses inline SVG definitions with SVGO.
--   **Cleaning** - explicit clean task for wiping out the generated CSS, JS and Map files on demand.
--   **Source Mapping** - development build only.
+### `npm run build`
 
-#### Notes
+Builds the app for production to the `build` folder. It bundles React in production mode and optimizes the build for the best performance. See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
--   Utilizes dev-only and prod-only webpack config files that share a common config file. This way the development and production settings can be tweaked independently.
+Furthermore, an AEM ClientLib is generated from the app using the [`aem-clientlib-generator`](https://github.com/wcm-io-frontend/aem-clientlib-generator) package.
 
-### Client Library Generation
+## Browser Support
 
-The second part of the ui.frontend module build process leverages the [aem-clientlib-generator](https://www.npmjs.com/package/aem-clientlib-generator) plugin to move the compiled CSS, JS and any resources into the `ui.apps` module. The aem-clientlib-generator configuration is defined in `clientlib.config.js`. The following client libraries are generated:
+By default, this project uses [Browserslist](https://github.com/browserslist/browserslist)'s `defaults` option to identify target browsers. Additionally, it includes polyfills for modern language features to support older browsers (e.g. Internet Explorer 11). If supporting such browsers isn't a requirement, the polyfill dependencies and imports can be removed.
 
--   **clientlib-site** - `ui.apps/src/main/content/jcr_root/apps/<app>/clientlibs/clientlib-site`
--   **clientlib-dependencies** - `ui.apps/src/main/content/jcr_root/apps/<app>/clientlibs/clientlib-dependencies`
+## Code Splitting
 
-### Page Inclusion
+The React app is configured to make use of [code splitting](https://webpack.js.org/guides/code-splitting) by default. When building the app for production, the code will be output in several chunks:
 
-`clientlib-site` and `clientlib-dependencies` categories are included on pages via the Page Policy configuration as part of the default template. To view the policy, edit the **Content Page Template** > **Page Information** > **Page Policy**.
-
-The final inclusion of client libraries on the sites page is as follows:
-
-```html
-<html>
-    <head>
-        <link rel="stylesheet" href="clientlib-base.css" type="text/css" />
-        <script type="text/javascript" src="clientlib-dependencies.js"></script>
-        <link rel="stylesheet" href="clientlib-dependencies.css" type="text/css" />
-        <link rel="stylesheet" href="clientlib-site.css" type="text/css" />
-    </head>
-    <body>
-        ....
-        <script type="text/javascript" src="clientlib-site.js"></script>
-        <script type="text/javascript" src="clientlib-base.js"></script>
-    </body>
-</html>
+```sh
+$ ls build/static/js
+2.5b77f553.chunk.js
+2.5b77f553.chunk.js.map
+main.cff1a559.chunk.js
+main.cff1a559.chunk.js.map
+runtime~main.a8a9905a.js
+runtime~main.a8a9905a.js.map
 ```
 
-The above inclusion can of course be modified by updating the Page Policy and/or modifying the categories and embed properties of respective client libraries.
+Loading chunks only when they are required can improve the app performance significantly.
 
-### Customizing Component Styling
-#### React Components
-The `@adobe/aem-core-cif-react-components` package comes with a set of sample styles which implement the Venia design. You can add those styles by adding
-```css
-@import url('~@adobe/aem-core-cif-react-components/dist/main.css');
-```
-to your `main.scss` file in `/src/main/site`.
-
-To customize the styles of the components, we provide a CSS template file that comes with the `@adobe/aem-core-cif-react-components` package. It includes all classes that are used by the React components. The file is located in `/node_modules/@adobe/aem-core-cif-react-components/dist/css-api`.
-
-Copy the file into `/src/main/site/styles` and remove the import of the default Venia styles from the `main.scss` file.
-
-### Developing with aem-core-cif-react-components
-
-Since Venia is acting like a consumer for `aem-core-cif-react-components` you may want to use it to test changes in that library. For this, you have to use `npm link` to consume the local snapshot.
-
-As a prerequisite, you need to have `node` and `npm` installed before you perform any of the steps below:
-
-1. Go to the `aem-core-cif-react-components/react-components` and use the following commands:
-
-```bash
-npm run webpack:dev
-npm link
-```
-
-This will generate a development build and link it to you global NPM library
-
-2. Install the Venia demo using the following command (in the root folder):
-
-```bash
-mvn clean install -P autoInstallPackage,fedDev
-```
-
-If you want to install it on a regular AEM quickstart instance (i.e. not AEM SDK) don't forget to add the `classic` profile to the command above.
-
-The `fedDev` Maven profile will fo the following:
-
--   make sure that the dependency to `@adobe/aem-core-cif-react-components` is properly linked
--   run the Webpack development build
-
-### Static Webpack Development Server
-
-Included in the ui.frontend module is a [webpack-dev-server](https://github.com/webpack/webpack-dev-server) that provides live reloading for rapid front-end development outside of AEM. The setup leverages the [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) to automatically inject CSS and JS compiled from the ui.frontend module into a static HTML template.
-
-#### Important files
-
--   `ui.frontend/webpack.dev.js` - This contains the configuration for the webpack-dev-serve and points to the html template to use. It also contains a proxy configuration to an AEM instance running on `localhost:4502`.
--   `ui.frontend/src/main/webpack/static/index.html` - This is the static HTML that the server will run against. This allows a developer to make CSS/JS changes and see them immediately reflected in the markup. It is assumed that the markup placed in this file accurately reflects generated markup by AEM components. Note\* that markup in this file does **not** get automatically synced with AEM component markup. This file also contains references to client libraries stored in AEM, like Core Component CSS and Responsive Grid CSS. The webpack development server is set up to proxy these CSS/JS includes from a local running AEM instance based on the configuration found in `ui.frontend/webpack.dev.js`.
-
-#### Using
-
-1. From within the root of the project run the command `mvn -PautoInstallSinglePackage clean install` to install the entire project to an AEM instance running at `localhost:4502`
-2. Navigate inside the `ui.frontend` folder.
-3. Run the following command `npm run start` to start the webpack dev server. Once started it should open a browser (localhost:8080 or the next available port).
-4. You can now modify CSS, JS, SCSS, and TS files and see the changes immediately reflected in the webpack dev server.
+To get this feature to work with AEM, the app needs to be able to identify which JS and CSS files need to be requested from the HTML generated by AEM. This can be achieved using the `"entrypoints"` key in the `asset-manifest.json` file: The file is parsed in `clientlib.config.js` and only the entrypoint files are bundled into the ClientLib. The remaining files are placed in the ClientLib's `resources` directory and will be requested dynamically and therefore only loaded when they are actually needed.
