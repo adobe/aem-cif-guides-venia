@@ -48,7 +48,8 @@ common:
           cd aem-core-cif-components
           components_branch=$(git ls-remote --heads origin ${CIRCLE_BRANCH})
           if [[ ! -z ${components_branch} ]]; then
-              git checkout $CIRCLE_BRANCH
+            git fetch
+            git checkout $CIRCLE_BRANCH
           fi
           mvn -B clean install
           cd react-components
