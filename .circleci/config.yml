@@ -44,7 +44,7 @@ common:
       name: Install CIF Components
       command: |
         if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-          git clone --depth 1 https://github.com/adobe/aem-core-cif-components.git
+          git clone https://github.com/adobe/aem-core-cif-components.git
           cd aem-core-cif-components
           components_branch=$(git ls-remote --heads origin ${CIRCLE_BRANCH})
           if [[ ! -z ${components_branch} ]]; then
