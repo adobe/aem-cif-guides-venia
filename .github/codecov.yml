@@ -7,7 +7,8 @@ coverage:
         target: 80%
         threshold: 10%
         base: auto
-        flags: unittests
+        flags: 
+          - unittests
     patch:
       default: off
       unittests:
@@ -15,7 +16,8 @@ coverage:
         target: 80%
         threshold: 10%
         base: auto
-        flags: unittests
+        flags: 
+          - unittests
 flags:
   unittests:
     paths:
