@@ -20,3 +20,5 @@ flags:
   unittests:
     paths:
       - core/
+ignore:
+  - "dependencies"
