@@ -59,6 +59,7 @@
         <aem.sdk.api>2020.9.4152.20200902T030730Z-200827</aem.sdk.api>
         <jacoco.version>0.7.9</jacoco.version>
         <project.classifier>cloud</project.classifier>
+        <componentGroupName>Venia</componentGroupName>
     </properties>
 
     <build>
@@ -268,6 +269,9 @@ Bundle-DocURL:
                     <version>1.1.4</version>
                     <configuration>
                         <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                        <properties>
+                            <cloudManagerTarget>none</cloudManagerTarget>
+                        </properties>
                     </configuration>
                     <executions>
                         <!-- Disables the long output of the analyze goal -->
@@ -639,6 +643,12 @@ Bundle-DocURL:
             </dependency>
             <dependency>
                 <groupId>com.adobe.commerce.cif</groupId>
+                <artifactId>core-cif-components-config</artifactId>
+                <type>zip</type>
+                <version>${core.cif.components.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.adobe.commerce.cif</groupId>
                 <artifactId>core-cif-components-core</artifactId>
                 <version>${core.cif.components.version}</version>
             </dependency>
@@ -651,6 +661,12 @@ Bundle-DocURL:
                 <groupId>com.adobe.commerce.cif</groupId>
                 <artifactId>magento-graphql</artifactId>
                 <version>${magento.graphql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.8</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- AEM "classic" dependencies -->

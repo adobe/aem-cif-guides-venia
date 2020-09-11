@@ -54,9 +54,6 @@
                     <classifier>${project.classifier}</classifier>
                     <packageType>application</packageType>
                     <accessControlHandling>merge</accessControlHandling>
-                    <properties>
-                        <cloudManagerTarget>none</cloudManagerTarget>
-                    </properties>
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
                             <groupId>com.venia</groupId>
@@ -80,6 +77,11 @@
                             <artifactId>magento-graphql</artifactId>
                             <target>/apps/venia/install</target>
                         </embedded>
+                        <embedded>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-text</artifactId>
+                            <target>/apps/venia/install</target>
+                        </embedded>
                     </embeddeds>
                     <subPackages>
                     </subPackages>
@@ -87,6 +89,10 @@
                         <dependency>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-apps</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-config</artifactId>
                         </dependency>
                     </dependencies>
                 </configuration>
@@ -270,6 +276,11 @@
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-config</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-core</artifactId>
         </dependency>
         <dependency>
@@ -279,6 +290,10 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
         </dependency>
         <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->
         <dependency>
