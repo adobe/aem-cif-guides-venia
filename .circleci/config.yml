@@ -39,6 +39,19 @@ common:
       username: $DOCKER_USER
       password: $DOCKER_PASS
 
+  install_components: &install_components
+    run:
+      name: Install CIF Components
+      command: |
+        if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+          git clone --depth 1 https://github.com/adobe/aem-core-cif-components.git
+          cd aem-core-cif-components
+          mvn -B clean install
+          cd react-components
+          npm link
+        fi
+      working_directory: ./dependencies
+
 jobs:
   build:
     executor: cif_executor
@@ -54,12 +67,17 @@ jobs:
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
+      - *install_components
       - run:
           name: Build
           command: |
             java -version
             mvn -v
-            mvn -B clean install
+            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+              mvn -B clean install -Pcloud,fedDev
+            else
+              mvn -B clean install
+            fi
       - save_cache:
           paths:
             - ~/.m2
@@ -89,12 +107,17 @@ jobs:
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
+      - *install_components
       - run:
           name: Build
           command: |
             java -version
             mvn -v
-            mvn -B clean install -Pclassic
+            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+              mvn -B clean install -Pclassic,fedDev
+            else
+              mvn -B clean install -Pclassic
+            fi
       - save_cache:
           paths:
             - ~/.m2
