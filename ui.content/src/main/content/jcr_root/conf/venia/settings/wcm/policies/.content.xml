@@ -263,10 +263,10 @@
                                 droptarget="contentfragment"
                                 resourceType="venia/components/contentfragment"/>
                             <mapping_1575030271082
-                                jcr:primaryType="nt:unstructured" 
-                                assetGroup="product" 
-                                droptarget="product-data-reference" 
-                                resourceType="venia/components/commerce/productteaser" />
+                                jcr:primaryType="nt:unstructured"
+                                assetGroup="product"
+                                droptarget="product-data-reference"
+                                resourceType="venia/components/commerce/productteaser"/>
                         </assetToComponentMapping>
                     </cq:authoring>
                 </policy_1574695586800>
@@ -305,10 +305,11 @@
                                 assetMimetype="[text/html,application/vnd.adobe.contentfragment]"
                                 droptarget="contentfragment"
                                 resourceType="venia/components/contentfragment"/>
-                            <mapping_1575030271082 jcr:primaryType="nt:unstructured" 
-                                assetGroup="product" 
-                                droptarget="product-data-reference" 
-                                resourceType="venia/components/commerce/productteaser" />
+                            <mapping_1575030271082
+                                jcr:primaryType="nt:unstructured"
+                                assetGroup="product"
+                                droptarget="product-data-reference"
+                                resourceType="venia/components/commerce/productteaser"/>
                         </assetToComponentMapping>
                     </cq:authoring>
                 </policy_1575040440977>
@@ -340,10 +341,12 @@
             <page jcr:primaryType="nt:unstructured">
                 <policy
                     jcr:description="Includes the required client libraries."
+                    jcr:lastModified="{Date}2020-09-14T17:22:41.174+03:00"
+                    jcr:lastModifiedBy="admin"
                     jcr:primaryType="nt:unstructured"
                     jcr:title="Generic Page"
                     sling:resourceType="wcm/core/components/policy/policy"
-                    clientlibs="[venia.dependencies,venia.site]"
+                    clientlibs="[venia.dependencies,venia.site,venia.react]"
                     clientlibsJsHead="venia.dependencies">
                     <jcr:content jcr:primaryType="nt:unstructured"/>
                 </policy>
@@ -357,8 +360,8 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="AEM CIF Core Components Product List"
                         sling:resourceType="wcm/core/components/policy/policy"
-                        showTitle="true"
-                        showImage="true">
+                        showImage="true"
+                        showTitle="true">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                         <cq:styleGroups jcr:primaryType="nt:unstructured">
                             <item0
@@ -366,15 +369,15 @@
                                 jcr:primaryType="nt:unstructured">
                                 <cq:styles jcr:primaryType="nt:unstructured">
                                     <item0
-                                        jcr:primaryType="nt:unstructured"
                                         cq:styleClasses="category__style_grid"
                                         cq:styleId="1570700958199"
-                                        cq:styleLabel="Grid" />
+                                        cq:styleLabel="Grid"
+                                        jcr:primaryType="nt:unstructured"/>
                                     <item1
-                                        jcr:primaryType="nt:unstructured"
                                         cq:styleClasses="category__style_list"
                                         cq:styleId="1570700958900"
-                                        cq:styleLabel="List" />
+                                        cq:styleLabel="List"
+                                        jcr:primaryType="nt:unstructured"/>
                                 </cq:styles>
                             </item0>
                         </cq:styleGroups>

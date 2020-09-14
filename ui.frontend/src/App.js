@@ -9,9 +9,7 @@ import {
 } from '@adobe/aem-core-cif-react-components';
 import i18n from './i18n';
 import {I18nextProvider} from 'react-i18next';
-
-require('@adobe/aem-core-cif-react-components/dist/main.css');
-
+import './index.css';
 const partialConfig = {
     mountingPoints: {
         accountContainer: '.header__accountTrigger #miniaccount',

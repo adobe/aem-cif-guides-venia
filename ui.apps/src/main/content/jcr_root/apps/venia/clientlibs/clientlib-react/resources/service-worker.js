@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/precache-manifest.8a368c5fd3f4e142823e7d561bdf301a.js"
+  "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/precache-manifest.7f3b9a080d181b063fe8b596863ca959.js"
 );
 
 self.addEventListener('message', (event) => {

@@ -1,22 +1,25 @@
 {
   "files": {
-    "main.css": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/main.b58af175.chunk.css",
-    "main.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/main.430b11d8.chunk.js",
-    "main.js.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/main.430b11d8.chunk.js.map",
+    "main.css": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/main.bc14d63a.chunk.css",
+    "main.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/main.3408cc2a.chunk.js",
+    "main.js.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/main.3408cc2a.chunk.js.map",
     "runtime-main.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/runtime-main.a375f43a.js",
     "runtime-main.js.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/runtime-main.a375f43a.js.map",
-    "static/js/2.690da571.chunk.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.690da571.chunk.js",
-    "static/js/2.690da571.chunk.js.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.690da571.chunk.js.map",
+    "static/css/2.84b6afb5.chunk.css": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/2.84b6afb5.chunk.css",
+    "static/js/2.35d5d3fe.chunk.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.35d5d3fe.chunk.js",
+    "static/js/2.35d5d3fe.chunk.js.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.35d5d3fe.chunk.js.map",
     "index.html": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/index.html",
-    "precache-manifest.8a368c5fd3f4e142823e7d561bdf301a.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/precache-manifest.8a368c5fd3f4e142823e7d561bdf301a.js",
+    "precache-manifest.7f3b9a080d181b063fe8b596863ca959.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/precache-manifest.7f3b9a080d181b063fe8b596863ca959.js",
     "service-worker.js": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/service-worker.js",
-    "static/css/main.b58af175.chunk.css.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/main.b58af175.chunk.css.map",
-    "static/js/2.690da571.chunk.js.LICENSE.txt": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.690da571.chunk.js.LICENSE.txt"
+    "static/css/2.84b6afb5.chunk.css.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/2.84b6afb5.chunk.css.map",
+    "static/css/main.bc14d63a.chunk.css.map": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/css/main.bc14d63a.chunk.css.map",
+    "static/js/2.35d5d3fe.chunk.js.LICENSE.txt": "/etc.clientlibs/venia/clientlibs/clientlib-react/resources/static/js/2.35d5d3fe.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.a375f43a.js",
-    "static/js/2.690da571.chunk.js",
-    "static/css/main.b58af175.chunk.css",
-    "static/js/main.430b11d8.chunk.js"
+    "static/css/2.84b6afb5.chunk.css",
+    "static/js/2.35d5d3fe.chunk.js",
+    "static/css/main.bc14d63a.chunk.css",
+    "static/js/main.3408cc2a.chunk.js"
   ]
 }
