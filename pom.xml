@@ -662,12 +662,6 @@ Bundle-DocURL:
                 <artifactId>magento-graphql</artifactId>
                 <version>${magento.graphql.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-text</artifactId>
-                <version>1.8</version>
-                <scope>provided</scope>
-            </dependency>
 
             <!-- AEM "classic" dependencies -->
             <dependency>
