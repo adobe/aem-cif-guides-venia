@@ -19,9 +19,11 @@ export default {
         cartTrigger: '.header__cartTrigger',
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
-        minicart: '#minicart'
+        minicart: '#minicart',
+        accountDetails: '#accountdetails'
     },
     pagePaths: {
-        addressBook: '/content/venia/us/en/my-account/address-book.html'
+        addressBook: '/content/venia/us/en/my-account/address-book.html',
+        accountDetails: '/content/venia/us/en/my-account/account-details.html'
     }
 };

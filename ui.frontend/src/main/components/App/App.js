@@ -24,7 +24,8 @@ import {
     AuthBar,
     AccountContainer,
     AddressBook,
-    BundleProductOptions
+    BundleProductOptions,
+    AccountDetails
 } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
@@ -65,6 +66,11 @@ const App = () => {
                     <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                         <BundleProductOptions />
                     </Portal>
+                    <Route path={pagePaths.accountDetails}>
+                        <Portal selector={mountingPoints.accountDetails}>
+                            <AccountDetails />
+                        </Portal>
+                    </Route>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>
