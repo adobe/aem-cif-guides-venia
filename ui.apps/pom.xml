@@ -54,9 +54,6 @@
                     <classifier>${project.classifier}</classifier>
                     <packageType>application</packageType>
                     <accessControlHandling>merge</accessControlHandling>
-                    <properties>
-                        <cloudManagerTarget>none</cloudManagerTarget>
-                    </properties>
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
                             <groupId>com.venia</groupId>
@@ -87,6 +84,10 @@
                         <dependency>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-apps</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-config</artifactId>
                         </dependency>
                     </dependencies>
                 </configuration>
@@ -266,6 +267,11 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-apps</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-config</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
