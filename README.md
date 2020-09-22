@@ -115,7 +115,7 @@ test, execute:
 This allows running integration tests that exercise the capabilities of AEM via
 HTTP calls to its API. To run the integration tests, run:
 
-    mvn clean verify -Plocal
+    mvn clean verify -Plocal,cloud
 
 Test classes must be saved in the `src/main/java` directory (or any of its
 subdirectories), and must be contained in files matching the pattern `*IT.java`.
