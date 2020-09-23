@@ -34,12 +34,14 @@ import '../../site/main.scss';
 
 const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths } = partialConfig;
+    const { mountingPoints, pagePaths, baseUrl } = partialConfig;
     const config = {
         ...partialConfig,
         storeView,
         graphqlEndpoint
     };
+
+    console.log('baseUrl :', baseUrl);
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
