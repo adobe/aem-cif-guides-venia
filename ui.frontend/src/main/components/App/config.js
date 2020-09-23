@@ -22,6 +22,7 @@ export default {
         minicart: '#minicart'
     },
     pagePaths: {
-        addressBook: '/content/venia/us/en/my-account/address-book.html'
+        addressBook: '/content/venia/us/en/my-account/address-book.html',
+        baseUrl: document.querySelector('.header__logo').parentElement.pathname
     }
 };
