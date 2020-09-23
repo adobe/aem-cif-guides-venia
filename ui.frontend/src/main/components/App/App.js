@@ -24,7 +24,8 @@ import {
     AuthBar,
     AccountContainer,
     AddressBook,
-    BundleProductOptions
+    BundleProductOptions,
+    ResetPassword
 } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
@@ -60,6 +61,11 @@ const App = () => {
                     <Route path={pagePaths.addressBook}>
                         <Portal selector={mountingPoints.addressBookContainer}>
                             <AddressBook />
+                        </Portal>
+                    </Route>
+                    <Route path={pagePaths.resetPassword}>
+                        <Portal selector={mountingPoints.resetPasswordPage}>
+                            <ResetPassword />
                         </Portal>
                     </Route>
                     <Portal selector={mountingPoints.bundleProductOptionsContainer}>
