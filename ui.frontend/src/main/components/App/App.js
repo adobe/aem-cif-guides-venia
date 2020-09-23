@@ -41,8 +41,6 @@ const App = () => {
         graphqlEndpoint
     };
 
-    console.log('baseUrl :', baseUrl);
-
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
             <ConfigContextProvider config={config}>
