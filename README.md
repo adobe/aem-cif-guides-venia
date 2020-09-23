@@ -30,6 +30,11 @@ The CIF Core Components and the CIF Connector connect to a Magento (or alternati
 
 The project deployment can be done via Cloud Manager or AEM package install. For project build and deployment use the `classic` profile, see steps below.
 
+## Branching Strategy
+This project uses a `dev` branch for the development cycle between releases. On `dev` there can be dependencies to snapshot versions of the CIF Core components project. CircleCI will provide the snapshot dependencies including the `react-components` package on all branches except `main`.
+
+After a release of the required dependencies, all dependencies have to be updated to release versions and the current state of the `dev` branch is merged to `main`. All releases of this project will be done from the `main` branch. This guarantees that the state on `main` can always be built and installed as-is.
+
 ## Modules
 
 The main parts of the template are:
@@ -163,6 +168,8 @@ The project comes with the auto-public repository configured. To setup the repos
 The Venia demo is ony released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
 
 `mvn release:prepare release:clean -Prelease-prepare`
+
+Releases must be done on the `main` branch.
 
 ## Contributing
 
