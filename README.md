@@ -93,7 +93,7 @@ If you are building the Venia demo for on-premise deployment, simply use `mvn cl
 The client-side CIF core components access the Magento GraphQL endpoint directly, so all calls have to either be served from the same endpoint as AEM or served via a proxy that adds CORS headers.
 
 * For AEMaaCS installations this is pre-configured as part of the CIF onboarding.
-* For AEM on-prem installations, please add a proxy to your dispatcher configuration. You can find an example dispatcher configuration in the [CIF Core Components](https://github.com/adobe/aem-core-cif-components/tree/master/dispatcher) project.
+* For AEM on-prem installations, please add a proxy to your dispatcher configuration. You can find an example of dispatcher configuration in the [CIF Core Components](https://github.com/adobe/aem-core-cif-components/tree/master/dispatcher) project.
 * For local development, you can start a proxy using the following command. The GraphQL endpoint is then available at `http://localhost:3002/graphql`.
 ```
 npx local-cors-proxy --proxyUrl https://my.magento.cloud --port 3002 --proxyPartial ''
@@ -113,9 +113,16 @@ test, execute:
 ### Integration tests
 
 This allows running integration tests that exercise the capabilities of AEM via
-HTTP calls to its API. To run the integration tests, run:
+HTTP calls to its API. To run the integration tests, use one of the following two
+commands depending on your [project variant](#variants).
+
+For AEM as a Cloud project:
 
     mvn clean verify -Plocal,cloud
+
+For AEM classic project:
+
+    mvn clean verify -Plocal,classic
 
 Test classes must be saved in the `src/main/java` directory (or any of its
 subdirectories), and must be contained in files matching the pattern `*IT.java`.
@@ -154,13 +161,13 @@ A ClientLib will consist of the following files and directories:
 
 ## Maven settings
 
-The project comes with the auto-public repository configured. To setup the repository in your Maven settings, refer to:
+The project comes with the auto-public repository configured. To set up the repository in your Maven settings, refer to:
 
     http://helpx.adobe.com/experience-manager/kb/SetUpTheAdobeMavenRepository.html
 
 ## Releases
 
-The Venia demo is ony released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
+The Venia demo is only released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
 
 `mvn release:prepare release:clean -Prelease-prepare`
 
