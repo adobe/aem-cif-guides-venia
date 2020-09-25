@@ -24,6 +24,6 @@ export default {
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
-        resetPassword: '/content/venia/us/en/my-account/reset-password.html'
+        resetPassword: '/content/venia/us/en/reset-password.html'
     }
 };

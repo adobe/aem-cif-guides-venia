@@ -11,7 +11,8 @@
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Reset Password"
         sling:resourceType="venia/components/page"
-        pageTitle="Reset Password">
+        pageTitle="Reset Password"
+        hideInNav="{Boolean}true">
         <root
             cq:lastRolledout="{Date}2020-09-17T16:03:08.051+02:00"
             cq:lastRolledoutBy="admin"
