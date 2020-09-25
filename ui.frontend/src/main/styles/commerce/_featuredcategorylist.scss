@@ -1,19 +1,65 @@
 .cmp-categorylist {
-    padding: 1rem;
+    position: relative;
+    margin: 25px auto;
+    width: 240px;
+}
+
+@media screen and (min-width: 790px) {
+    .cmp-categorylist {
+        width: 720px;
+    }
+}
+
+@media screen and (min-width: 1090px) {
+    .cmp-categorylist {
+        width: 960px;
+    }
+}
+
+@media screen and (min-width: 1380px) {
+    .cmp-categorylist {
+        width: 1200px;
+    }
+}
+
+@media screen and (min-width: 1650px) {
+    .cmp-categorylist {
+        width: 1440px;
+    }
+}
+
+.cmp-categorylist__cardsroot {
+  overflow: hidden;
+
+  :before,
+  :after {
+    content: "";
+    display: table;
+  }
+
+  :after {
+    clear: both;
+  }
 }
 
 .cmp-categorylist__content {
-    display: grid;
-    grid-gap: 3rem 1rem;
-    grid-template-columns: repeat(auto-fit, 6rem);
-    justify-content: center;
+    margin: auto;
+
+    :before,
+    :after {
+        content: "";
+        display: table;
+    }
+
+    :after {
+        clear: both;
+    }
 }
 
 .cmp-categorylist__anchor {
-    display: block;
+    display: inline-block;
     line-height: 1rem;
     text-align: center;
-    width: 6rem;
 }
 
 .cmp-categorylist__imagewrapper {
@@ -22,9 +68,9 @@
     border-radius: 50%;
     box-shadow: 0 0 0 1px;
     display: block;
-    height: 5rem;
+    height: 7rem;
     margin: 0 auto 1rem auto;
-    width: 5rem;
+    width: 7rem;
 }
 
 .cmp-categorylist__image {
@@ -38,5 +84,47 @@
 
 .cmp-categorylist__title {
     text-align: center;
-    padding: 2rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.cmp-categorylist__btn {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    height: 20px;
+    margin-top: -25px;
+    position: absolute;
+    top: 50%;
+    width: 20px;
+}
+
+.cmp-categorylist__btn--next {
+    border-bottom: 8px solid #aaa;
+    border-right: 8px solid #aaa;
+    right: 0;
+    -moz-transform: rotate(315deg);
+    -webkit-transform: rotate(315deg);
+    transform: rotate(315deg);
+}
+
+.cmp-categorylist__btn--prev {
+    border-bottom: 8px solid #aaa;
+    border-left: 8px solid #aaa;
+    left: 0;
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+@media screen and (max-width: 769px) {
+    .cmp-categorylist__btn--next {
+        right: 8%;
+    }
+
+    .cmp-categorylist__btn--prev {
+        left: 8%;
+    }
 }
