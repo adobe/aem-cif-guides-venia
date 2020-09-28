@@ -14,7 +14,8 @@
                 <container jcr:primaryType="nt:unstructured" 
                     sling:resourceType="venia/components/container" 
                     layout="responsiveGrid">
-                    <productlist sling:resourceType="venia/components/commerce/productlist" 
+                    <productlist jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/commerce/productlist" 
                         cq:styleIds="[1570700958900]" />
                 </container>
             </container>
