@@ -49,6 +49,10 @@
                 <configuration>
                     <group>com.venia</group>
                     <classifier>${project.classifier}</classifier>
+                    <packageType>container</packageType>
+                    <properties>
+                        <cloudManagerTarget>all</cloudManagerTarget>
+                    </properties>
                     <embeddeds>
                         <embedded>
                             <groupId>com.venia</groupId>
@@ -70,9 +74,13 @@
                             <type>zip</type>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-config</artifactId>
+                            <type>zip</type>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
                     </embeddeds>
-                    <subPackages>
-                    </subPackages>
                 </configuration>
             </plugin>
             <plugin>
@@ -228,6 +236,11 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-apps</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-config</artifactId>
             <type>zip</type>
         </dependency>
     </dependencies>

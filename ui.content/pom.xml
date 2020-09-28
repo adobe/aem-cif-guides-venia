@@ -84,9 +84,6 @@
                     <classifier>${project.classifier}</classifier>
                     <packageType>content</packageType>
                     <accessControlHandling>merge</accessControlHandling>
-                    <properties>
-                        <cloudManagerTarget>none</cloudManagerTarget>
-                    </properties>
                     <dependencies>
                         <dependency>
                             <groupId>com.venia</groupId>
