@@ -205,3 +205,37 @@
     margin-bottom: 1.5rem;
     font-weight: 200;
 }
+
+.loadmore__button {
+    display: block;
+    margin: 5px auto;
+    background-color: #000;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.loadmore__spinner {
+    display: none;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+}
+.loadmore__spinner:after {
+    content: " ";
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: $venia-grey-dark transparent;
+    animation: loadmore__spinner 1.2s linear infinite;
+}
+@keyframes loadmore__spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
