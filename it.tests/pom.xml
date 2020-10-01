@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>2020.10.1</version>
+        <version>2020.10.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
