@@ -25,6 +25,7 @@ import {
     AccountContainer,
     AddressBook,
     BundleProductOptions,
+    AccountDetails,
     ResetPassword
 } from '@adobe/aem-core-cif-react-components';
 
@@ -71,6 +72,11 @@ const App = () => {
                     <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                         <BundleProductOptions />
                     </Portal>
+                    <Route path={pagePaths.accountDetails}>
+                        <Portal selector={mountingPoints.accountDetails}>
+                            <AccountDetails />
+                        </Portal>
+                    </Route>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>
