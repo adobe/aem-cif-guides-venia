@@ -16,23 +16,23 @@ const path = require('path');
 
 const BUILD_DIR = path.join(__dirname, 'dist');
 const CLIENTLIB_DIR = path.join(
-    __dirname,
-    '..',
-    'ui.apps',
-    'src',
-    'main',
-    'content',
-    'jcr_root',
-    'apps',
-    'venia',
-    'clientlibs'
+  __dirname,
+  '..',
+  'ui.apps',
+  'src',
+  'main',
+  'content',
+  'jcr_root',
+  'apps',
+  'venia',
+  'clientlibs'
 );
 
 const libsBaseConfig = {
-    allowProxy: true,
-    serializationFormat: 'xml',
-    cssProcessor: ['default:none', 'min:none'],
-    jsProcessor: ['default:none', 'min:none']
+  allowProxy: true,
+  serializationFormat: 'xml',
+  cssProcessor: ['default:none', 'min:none'],
+  jsProcessor: ['default:none', 'min:none']
 };
 
 // Config for `aem-clientlib-generator`
