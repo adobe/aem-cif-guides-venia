@@ -29,7 +29,8 @@ public class CategoryPageIT extends CommerceTestBase {
 
     @Test
     public void testProductListPageWithSampleData() throws ClientException {
-        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".1.html", 200);
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".1.html";
+        SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify category name
@@ -51,6 +52,19 @@ public class CategoryPageIT extends CommerceTestBase {
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
         Assert.assertEquals(7, elements.size());
+
+        // Check the meta data
+        elements = doc.select("title");
+        Assert.assertEquals("Meta title for Outdoor Collection", elements.first().html());
+
+        elements = doc.select("meta[name=keywords]");
+        Assert.assertEquals("Meta keywords for Outdoor Collection", elements.first().attr("content"));
+
+        elements = doc.select("meta[name=description]");
+        Assert.assertEquals("Meta description for Outdoor Collection", elements.first().attr("content"));
+
+        elements = doc.select("link[rel=canonical]");
+        Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
     }
 
     @Test
