@@ -35,12 +35,13 @@ import partialConfig from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
+    const { storeView, graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
     const { mountingPoints, pagePaths } = partialConfig;
     const config = {
         ...partialConfig,
         storeView,
-        graphqlEndpoint
+        graphqlEndpoint,
+        graphqlMethod
     };
 
     return (
