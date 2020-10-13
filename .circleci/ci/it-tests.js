@@ -17,13 +17,13 @@
 const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
+const { TYPE } = process.env;
 
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
-    let type = process.env.TYPE;
-    
+
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
@@ -49,12 +49,12 @@ try {
     });
 
     // Run integration tests
-    if (type === 'integration') {
+    if (TYPE === 'integration') {
         ci.dir('it.tests', () => {
             ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
         });
     }
-    if (type === 'selenium') {
+    if (TYPE === 'selenium') {
         ci.dir('ui.tests', () => {
             ci.sh('mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=chrome');
         });
@@ -68,10 +68,10 @@ try {
 } finally { 
     // Copy tests results
     ci.sh('mkdir test-reports');
-    if (type === 'integration') {
+    if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
     }
-    if (type === 'selenium') {
+    if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
     
