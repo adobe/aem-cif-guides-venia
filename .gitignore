@@ -106,3 +106,4 @@ ui.content/src/main/content/META-INF/vault/filter.xml
 
 # UI Tests
 ui.tests/test-module/reports
+test-reports

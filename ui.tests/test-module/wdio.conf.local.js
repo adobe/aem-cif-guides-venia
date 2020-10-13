@@ -21,16 +21,33 @@ let wdio_config = require('./wdio.conf.commons.js').config;
 let config = require('./lib/config');
 
 wdio_config.hostname = 'localhost';
-wdio_config.services = [
-    ['selenium-standalone', {
-        logPath: config.reports_path}
-    ]
-];
+if (process.env.CIRCLECI) {
+    // Set ChromeDriver version for CircleCI to a specific version.
+    // Can be found via running /usr/local/bin/chromedriver --version
+    const drivers = {
+        chrome: { version: '80.0.3987.16' }
+    };
+
+    wdio_config.services = [
+        ['selenium-standalone', {
+            logPath: config.reports_path,
+            installArgs: { drivers },
+            args: { drivers }
+        }]
+    ];
+} else {
+    wdio_config.services = [
+        ['selenium-standalone', {
+            logPath: config.reports_path
+        }]
+    ];
+}
+
 
 // Define capabilities based on configuration
 let capabilities = {};
 
-switch(config.selenium.browser) {
+switch (config.selenium.browser) {
 case config.CHROME:
     capabilities = {
         maxInstances: 1,

@@ -26,10 +26,10 @@ common:
             - ~/.m2
           key: maven-repo-v2-<< parameters.classifier >>-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save test results as artifacts
       - store_artifacts:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save AEM logs as artifacts
       - store_artifacts:
           path: logs

@@ -65,7 +65,17 @@ try {
         ci.sh('./qp.sh -v stop --id author');
     });
 
-} finally { // Always download logs from AEM container
+} finally { 
+    // Copy tests results
+    ci.sh('mkdir test-reports');
+    if (type === 'integration') {
+        ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
+    }
+    if (type === 'selenium') {
+        ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
+    }
+    
+    // Always download logs from AEM container
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
         // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
