@@ -22,6 +22,7 @@ try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
+    let type = process.env.TYPE;
     
     ci.dir(qpPath, () => {
         // Connect to QP
@@ -48,9 +49,16 @@ try {
     });
 
     // Run integration tests
-    ci.dir('it.tests', () => {
-        ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
-    });
+    if (type === 'integration') {
+        ci.dir('it.tests', () => {
+            ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
+        });
+    }
+    if (type === 'selenium') {
+        ci.dir('ui.tests', () => {
+            ci.sh('mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=chrome');
+        });
+    }
     
     ci.dir(qpPath, () => {
         // Stop CQ
