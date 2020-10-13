@@ -55,8 +55,13 @@ try {
         });
     }
     if (TYPE === 'selenium') {
+        // Get version of ChromeDriver
+        let chromedriver = ci.sh('chromedriver --version', true); // Returns something like ChromeDriver 80.0.3987.16 (320f6526c1632ad4f205ebce69b99a062ed78647-refs/branch-heads/3987@{#185})
+        chromedriver = chromedriver.split(' ');
+        chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
+
         ci.dir('ui.tests', () => {
-            ci.sh('mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=chrome');
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=chrome`);
         });
     }
     

@@ -21,11 +21,13 @@ let wdio_config = require('./wdio.conf.commons.js').config;
 let config = require('./lib/config');
 
 wdio_config.hostname = 'localhost';
-if (process.env.CIRCLECI) {
-    // Set ChromeDriver version for CircleCI to a specific version.
-    // Can be found via running /usr/local/bin/chromedriver --version
+
+const { CIRCLECI, CHROMEDRIVER } = process.env;
+
+if (CIRCLECI && CHROMEDRIVER) {
+    // Set ChromeDriver version to match the one on CircleCI.
     const drivers = {
-        chrome: { version: '80.0.3987.16' }
+        chrome: { version: CHROMEDRIVER }
     };
 
     wdio_config.services = [
@@ -42,7 +44,6 @@ if (process.env.CIRCLECI) {
         }]
     ];
 }
-
 
 // Define capabilities based on configuration
 let capabilities = {};
