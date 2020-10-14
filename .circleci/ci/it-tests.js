@@ -17,7 +17,7 @@
 const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
-const { TYPE } = process.env;
+const { TYPE, BROWSER } = process.env;
 
 try {
     ci.stage("Integration Tests");
@@ -61,7 +61,7 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=chrome`);
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER}`);
         });
     }
     

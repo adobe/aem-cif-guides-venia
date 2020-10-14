@@ -7,7 +7,7 @@ Sample UI tests using [Webdriver.IO](https://webdriver.io/) framework
 * `lib/config.js` Builds configuration object from Environment variables sent by EaaS
 * `package.json` Project definition: dependencies, npm scripts, ...
 * `wdio.conf.js` WDIO configuration: selenium endpoint, reporters, browser capabilities, ...
-* `specs/aem` Tests
+* `specs/venia` Tests
 
 
 * [Node.js LTS](https://nodejs.org/en/)
