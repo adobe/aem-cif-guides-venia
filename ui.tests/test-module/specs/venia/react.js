@@ -39,6 +39,11 @@ describe('Venia React Components', () => {
         }
     });
 
+    beforeEach(() => {
+        // Set window size to desktop
+        browser.setWindowSize(1280, 960);
+    });
+
     it('should render the minicart component', () => {
         // Go to the Venia homepage
         browser.url(venia_homepage);
@@ -65,6 +70,49 @@ describe('Venia React Components', () => {
         signInButton.click();
         const signInForm = $('.cmp-SignIn__signIn__form');
         expect(signInForm).toBeDisplayed();
+    });
+
+    it('should render the sign in component in the navigation', () => {
+        // Set window size to mobile
+        browser.setWindowSize(375, 812);
+
+        // Go to the Venia homepage
+        browser.url(venia_homepage);
+
+        // Open navigation
+        const navTrigger = $('.navTrigger__root');
+        expect(navTrigger).toBeDisplayed();
+        navTrigger.click();
+
+        // Check sign in button
+        const signInButton = $('.cmp-AuthBar__authBar__root > button');
+        expect(signInButton).toBeDisplayed();
+
+        // Check sign in form
+        signInButton.click();
+        const signInForm = $('.cmp-SignIn__signIn__form');
+        expect(signInForm).toBeDisplayed();
+    });
+
+    it('should render the address book component', () => {
+        // Go to address book page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
+
+        expect($('.cmp-AddressBook__addressBook__root')).toBeDisplayed();
+    });
+
+    it('should render the account details', () => {
+        // Go to account details page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
+
+        expect($('.cmp-AccountDetails__accountDetails__messageText')).toBeDisplayed();
+    });
+
+    it('should render the password reset component', () => {
+        // Go to password reset page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/reset-password.html?token=abc`);
+
+        expect($('.cmp-ResetPassword__ResetPassword__root')).toBeDisplayed();
     });
 
 });
