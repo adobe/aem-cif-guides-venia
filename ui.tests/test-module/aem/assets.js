@@ -14,10 +14,10 @@
  *  limitations under the License.
  */
 const path = require('path');
-const config = require('../../lib/config');
-const commons = require('../../lib/commons');
+const config = require('../lib/config');
+const commons = require('../lib/commons');
 
-describe('AEM Assets', () => {
+describe.skip('AEM Assets', () => {
 
     // AEM Login
     beforeEach(() => {

@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-const config = require('../../lib/config');
+const config = require('../lib/config');
 
-describe('AEM Basic', () => {
+describe.skip('AEM Basic', () => {
 
     // AEM Login
     beforeEach(() => {

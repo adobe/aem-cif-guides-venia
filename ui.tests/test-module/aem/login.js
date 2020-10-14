@@ -13,11 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-const config = require('../../lib/config');
+const config = require('../lib/config');
 const expect = require('chai').expect;
 const url = require('url');
 
-describe('AEM Login Page', () => {
+describe.skip('AEM Login Page', () => {
 
     // Force AEM Logout
     beforeEach(() => {

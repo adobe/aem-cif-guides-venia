@@ -14,8 +14,8 @@
  *  limitations under the License.
  */
 const path = require('path');
-const config = require('../../lib/config');
-const commons = require('../../lib/commons');
+const config = require('../lib/config');
+const commons = require('../lib/commons');
 const { expect } = require('chai');
 
 const AEM_SAMPLE_PAGE_PARENT = '/content/venia/us';
