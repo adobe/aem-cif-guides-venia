@@ -257,7 +257,7 @@ workflows:
             tags:
               only: /.*/
           requires:
-            - build
+            - build-classic
       - deploy-sample:
           requires:
             - build
