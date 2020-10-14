@@ -69,6 +69,7 @@ public class SearchPageIT extends CommerceTestBase {
         elements = doc.select(SEARCHRESULTS_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
         result = Utils.OBJECT_MAPPER.readTree(elements.stream()
             .map(e -> e.attr("data-cmp-data-layer"))
+            .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-searchresult-items.json"));
         Assert.assertEquals(expected, result);

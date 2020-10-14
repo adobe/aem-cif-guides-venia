@@ -25,6 +25,7 @@ import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 
@@ -69,6 +70,7 @@ public class CategoryPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
         result = Utils.OBJECT_MAPPER.readTree(elements.stream()
             .map(e -> e.attr("data-cmp-data-layer"))
+            .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-items.json"));
         Assert.assertEquals(expected, result);
@@ -105,6 +107,7 @@ public class CategoryPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
         result = Utils.OBJECT_MAPPER.readTree(elements.stream()
             .map(e -> e.attr("data-cmp-data-layer"))
+            .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/placeholder-category-items.json"));
         Assert.assertEquals(expected, result);

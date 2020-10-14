@@ -5,8 +5,7 @@
       "xdm:listPrice": 101.0,
       "xdm:SKU": "sku-1",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #1",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #1"
     }
   },
   {
@@ -15,8 +14,7 @@
       "xdm:listPrice": 102.0,
       "xdm:SKU": "sku-2",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #2",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #2"
     }
   },
   {
@@ -25,8 +23,7 @@
       "xdm:listPrice": 103.0,
       "xdm:SKU": "sku-3",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #3",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #3"
     }
   },
   {
@@ -35,8 +32,7 @@
       "xdm:listPrice": 104.0,
       "xdm:SKU": "sku-4",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #4",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #4"
     }
   },
   {
@@ -45,8 +41,7 @@
       "xdm:listPrice": 105.0,
       "xdm:SKU": "sku-5",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #5",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #5"
     }
   },
   {
@@ -55,8 +50,7 @@
       "xdm:listPrice": 106.0,
       "xdm:SKU": "sku-6",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Product #6",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Product #6"
     }
   }
 ]

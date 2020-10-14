@@ -5,8 +5,7 @@
       "xdm:listPrice": 59.0,
       "xdm:SKU": "24-MB02",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Fusion Backpack",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Fusion Backpack"
     }
   },
   {
@@ -15,8 +14,7 @@
       "xdm:listPrice": 54.0,
       "xdm:SKU": "24-MG03",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Summit Watch",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Summit Watch"
     }
   },
   {
@@ -25,8 +23,7 @@
       "xdm:listPrice": 49.0,
       "xdm:SKU": "24-WG01",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Bolo Sport Watch",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Bolo Sport Watch"
     }
   },
   {
@@ -35,8 +32,7 @@
       "xdm:listPrice": 52.0,
       "xdm:SKU": "MH01",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Chaz Kangeroo Hoodie",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Chaz Kangeroo Hoodie"
     }
   },
   {
@@ -45,8 +41,7 @@
       "xdm:listPrice": 63.0,
       "xdm:SKU": "MH03",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Bruno Compete Hoodie",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Bruno Compete Hoodie"
     }
   },
   {
@@ -55,8 +50,7 @@
       "xdm:listPrice": 84.0,
       "xdm:SKU": "WJ04",
       "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Ingrid Running Jacket",
-      "repo:modifyDate": "2020-09-17T16:12:08Z"
+      "dc:title": "Ingrid Running Jacket"
     }
   }
 ]
