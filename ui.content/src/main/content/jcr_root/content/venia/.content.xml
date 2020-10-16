@@ -11,10 +11,7 @@
         sling:redirect="{Boolean}true"
         sling:redirectStatus="{Long}302"
         sling:resourceType="foundation/components/redirect"
-        redirectTarget="/content/venia/us/en">
-        <image jcr:primaryType="nt:unstructured">
-            <file/>
-        </image>
-    </jcr:content>
+        redirectTarget="/content/venia/us/en"/>
     <us/>
+    <language-masters/>
 </jcr:root>
