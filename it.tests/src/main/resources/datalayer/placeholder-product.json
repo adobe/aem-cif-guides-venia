@@ -1,0 +1,10 @@
+{
+  "product-6603d4b5bd": {
+    "xdm:currencyCode": "USD",
+    "xdm:listPrice": 9.99,
+    "xdm:SKU": "product-sku",
+    "dc:description": "<p>Product description, can include <strong>html</strong> tags.</p>",
+    "@type": "venia/components/commerce/product",
+    "dc:title": "Product name"
+  }
+}

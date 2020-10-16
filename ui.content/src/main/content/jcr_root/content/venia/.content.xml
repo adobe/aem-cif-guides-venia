@@ -7,6 +7,7 @@
         cq:conf="/conf/venia"
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store"
+        sling:configRef="/conf/venia"
         sling:redirect="{Boolean}true"
         sling:redirectStatus="{Long}302"
         sling:resourceType="foundation/components/redirect"
