@@ -15,6 +15,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache } from '@apollo/client';
 import {
     CommerceApp,
     Portal,
@@ -26,9 +27,11 @@ import {
     AddressBook,
     BundleProductOptions,
     AccountDetails,
-    ResetPassword
+    ResetPassword,
+    graphqlAuthLink
 } from '@adobe/aem-core-cif-react-components';
 
+import TestComponent from './TestComponent';
 import i18n from './i18n';
 import partialConfig from './config';
 
@@ -42,6 +45,16 @@ const App = () => {
         storeView,
         graphqlEndpoint
     };
+
+    const clientConfig = {
+        link: from([
+            graphqlAuthLink,
+            new HttpLink({ uri: graphqlEndpoint, headers: { Store: storeView } })]
+        ),
+        cache: new InMemoryCache()
+    };
+
+    const client = new ApolloClient(clientConfig);
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
@@ -77,6 +90,11 @@ const App = () => {
                             <AccountDetails />
                         </Portal>
                     </Route>
+                    <ApolloProvider client={client}>
+                        <Portal selector={mountingPoints.testComponentPage}>
+                            <TestComponent />
+                        </Portal>
+                    </ApolloProvider>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>

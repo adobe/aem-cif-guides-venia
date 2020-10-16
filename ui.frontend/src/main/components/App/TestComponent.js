@@ -11,22 +11,25 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-export default {
-    mountingPoints: {
-        accountContainer: '.header__accountTrigger #miniaccount',
-        addressBookContainer: '#addressbook',
-        authBarContainer: 'aside.navigation__root #miniaccount',
-        cartTrigger: '.header__cartTrigger',
-        navPanel: 'aside.navigation__root',
-        bundleProductOptionsContainer: '#bundle-product-options',
-        minicart: '#minicart',
-        accountDetails: '#accountdetails',
-        resetPasswordPage: '#reset-password-page',
-        testComponentPage: '#prod-teaser-test'
-    },
-    pagePaths: {
-        addressBook: '/content/venia/us/en/my-account/address-book.html',
-        accountDetails: '/content/venia/us/en/my-account/account-details.html',
-        resetPassword: '/content/venia/us/en/reset-password.html'
+import React from 'react';
+import { gql, useQuery } from '@apollo/client';
+
+const GET_COUNTRIES = gql`
+  query {
+    countries {
+      id
     }
-};
+  }
+`;
+
+const TestComponent = () => {
+    const { loading, error, data } = useQuery(GET_COUNTRIES, {
+        variables: {},
+    });
+    if (loading) return <p>Loading ...</p>;
+    return (<ul>
+        {data.countries.map((c, i) => <li key={i}>{c.id}</li>)}
+    </ul>);
+}
+
+export default TestComponent;
