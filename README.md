@@ -78,15 +78,15 @@ To build all the modules with the default `cloud` profile, run in the project ro
 
 If you have a running AEM instance you can build and package the whole project and deploy into AEM with
 
-    mvn clean install -PautoInstallPackage,cloud
+    mvn clean install -PautoInstallSinglePackage,cloud
 
 Or to deploy it to a publish instance, run
 
-    mvn clean install -PautoInstallPackagePublish,cloud
+    mvn clean install -PautoInstallSinglePackagePublish,cloud
 
 Or alternatively
 
-    mvn clean install -PautoInstallPackage,cloud -Daem.port=4503
+    mvn clean install -PautoInstallSinglePackage,cloud -Daem.port=4503
 
 Or to deploy only the bundle to the author, run
 

@@ -34,9 +34,9 @@
                     jcr:title="Content Image"
                     sling:resourceType="wcm/core/components/policy/policy"
                     allowedRenditionWidths="[320,480,600,800,1024,1200,1600]"
+                    disableLazyLoading="false"
                     allowUpload="false"
                     altValueFromDAM="true"
-                    disableLazyLoading="false"
                     displayPopupTitle="true"
                     isDecorative="false"
                     jpegQuality="{Long}85"
@@ -305,7 +305,8 @@
                                 assetMimetype="[text/html,application/vnd.adobe.contentfragment]"
                                 droptarget="contentfragment"
                                 resourceType="venia/components/contentfragment"/>
-                            <mapping_1575030271082 jcr:primaryType="nt:unstructured" 
+                            <mapping_1590416532200
+                                jcr:primaryType="nt:unstructured" 
                                 assetGroup="product" 
                                 droptarget="product-data-reference" 
                                 resourceType="venia/components/commerce/productteaser" />
