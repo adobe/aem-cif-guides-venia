@@ -1,0 +1,56 @@
+[
+  {
+    "productlist-a8fbd236cd-item-57156ade50": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 101.0,
+      "xdm:SKU": "sku-1",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #1"
+    }
+  },
+  {
+    "productlist-a8fbd236cd-item-82bdbcb74c": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 102.0,
+      "xdm:SKU": "sku-2",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #2"
+    }
+  },
+  {
+    "productlist-a8fbd236cd-item-5ba5636200": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 103.0,
+      "xdm:SKU": "sku-3",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #3"
+    }
+  },
+  {
+    "productlist-a8fbd236cd-item-d3aa0e0626": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 104.0,
+      "xdm:SKU": "sku-4",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #4"
+    }
+  },
+  {
+    "productlist-a8fbd236cd-item-a4aa2834ff": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 105.0,
+      "xdm:SKU": "sku-5",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #5"
+    }
+  },
+  {
+    "productlist-a8fbd236cd-item-5d56015068": {
+      "xdm:currencyCode": "USD",
+      "xdm:listPrice": 106.0,
+      "xdm:SKU": "sku-6",
+      "@type": "core/cif/components/commerce/productlistitem",
+      "dc:title": "Product #6"
+    }
+  }
+]
