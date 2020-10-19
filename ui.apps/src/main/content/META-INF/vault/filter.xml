@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/venia"/>
+    <filter root="/apps/venia/clientlibs"/>
+    <filter root="/apps/venia/components"/>
+    <filter root="/apps/venia/i18n"/>
 </workspaceFilter>

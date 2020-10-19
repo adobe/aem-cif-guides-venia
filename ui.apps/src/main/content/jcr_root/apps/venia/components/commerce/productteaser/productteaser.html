@@ -20,7 +20,13 @@
     data-sly-test.isConfigured="${properties.selection}"
     data-sly-test.hasProduct="${product.url}">
 
-    <div data-sly-test="${isConfigured && hasProduct}" class="item__root" data-cmp-is="productteaser" data-virtual="${product.virtualProduct}">
+    <div 
+         data-sly-test="${isConfigured && hasProduct}" 
+         id="${product.id}"
+         class="item__root" 
+         data-cmp-is="productteaser" 
+         data-cmp-data-layer="${product.data.json}"
+         data-virtual="${product.virtualProduct}">
         <div data-sly-test="${product.showBadge}" class="item__badge">
             <span>${properties.text || 'New'}</span>
         </div>
