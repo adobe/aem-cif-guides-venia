@@ -1,0 +1,10 @@
+{
+  "product-500741b9f1": {
+    "xdm:currencyCode": "USD",
+    "xdm:listPrice": 52.0,
+    "xdm:SKU": "MH01",
+    "dc:description": "<p>Ideal for cold-weather training or work outdoors, the Chaz Hoodie promises superior warmth with every wear. Thick material blocks out the wind as ribbed cuffs and bottom band seal in body heat.</p>\n<p>• Two-tone gray heather hoodie.<br />• Drawstring-adjustable hood. <br />• Machine wash/dry.</p>",
+    "@type": "venia/components/commerce/product",
+    "dc:title": "Chaz Kangeroo Hoodie"
+  }
+}
