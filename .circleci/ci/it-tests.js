@@ -17,12 +17,13 @@
 const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
+const { TYPE, BROWSER } = process.env;
 
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
-    
+
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
@@ -48,16 +49,38 @@ try {
     });
 
     // Run integration tests
-    ci.dir('it.tests', () => {
-        ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
-    });
+    if (TYPE === 'integration') {
+        ci.dir('it.tests', () => {
+            ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
+        });
+    }
+    if (TYPE === 'selenium') {
+        // Get version of ChromeDriver
+        let chromedriver = ci.sh('chromedriver --version', true); // Returns something like ChromeDriver 80.0.3987.16 (320f6526c1632ad4f205ebce69b99a062ed78647-refs/branch-heads/3987@{#185})
+        chromedriver = chromedriver.split(' ');
+        chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
+
+        ci.dir('ui.tests', () => {
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER}`);
+        });
+    }
     
     ci.dir(qpPath, () => {
         // Stop CQ
         ci.sh('./qp.sh -v stop --id author');
     });
 
-} finally { // Always download logs from AEM container
+} finally { 
+    // Copy tests results
+    ci.sh('mkdir test-reports');
+    if (TYPE === 'integration') {
+        ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
+    }
+    if (TYPE === 'selenium') {
+        ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
+    }
+    
+    // Always download logs from AEM container
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
         // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
