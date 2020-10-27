@@ -24,7 +24,6 @@ import org.jsoup.select.Elements;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 
@@ -37,7 +36,8 @@ public class ProductPageIT extends CommerceTestBase {
 
     @Test
     public void testProductPageWithSampleData() throws ClientException, IOException {
-        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".chaz-kangeroo-hoodie.html", 200);
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".chaz-kangeroo-hoodie.html";
+        SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify product name
@@ -54,6 +54,19 @@ public class ProductPageIT extends CommerceTestBase {
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
         Assert.assertEquals(7, elements.size());
+
+        // Check the meta data
+        elements = doc.select("title");
+        Assert.assertEquals("Meta title for Chaz Kangeroo Hoodie", elements.first().html());
+
+        elements = doc.select("meta[name=keywords]");
+        Assert.assertEquals("Meta keywords for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+
+        elements = doc.select("meta[name=description]");
+        Assert.assertEquals("Meta description for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+
+        elements = doc.select("link[rel=canonical]");
+        Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);

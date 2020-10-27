@@ -91,6 +91,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
       - store_test_results:
           path: core/target/surefire-reports
       - store_artifacts:
@@ -131,6 +132,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
   integration-test-655:
     docker:
