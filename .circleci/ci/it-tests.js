@@ -24,6 +24,7 @@ try {
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
+    let graphqlClientVersion = ci.sh('mvn help:evaluate -Dexpression=graphql.client.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
 
     ci.dir(qpPath, () => {
@@ -31,7 +32,7 @@ try {
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
         
         // We install the graphql-client by default except with the CIF Add-On
-        let extras = '--bundle com.adobe.commerce.cif:graphql-client:1.6.1:jar';
+        let extras = `--bundle com.adobe.commerce.cif:graphql-client:${graphqlClientVersion}:jar`;
         if (classifier == 'classic') {
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
