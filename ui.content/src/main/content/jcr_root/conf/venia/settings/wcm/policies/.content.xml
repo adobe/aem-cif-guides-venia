@@ -34,9 +34,9 @@
                     jcr:title="Content Image"
                     sling:resourceType="wcm/core/components/policy/policy"
                     allowedRenditionWidths="[320,480,600,800,1024,1200,1600]"
+                    disableLazyLoading="false"
                     allowUpload="false"
                     altValueFromDAM="true"
-                    disableLazyLoading="false"
                     displayPopupTitle="true"
                     isDecorative="false"
                     jpegQuality="{Long}85"
@@ -305,7 +305,8 @@
                                 assetMimetype="[text/html,application/vnd.adobe.contentfragment]"
                                 droptarget="contentfragment"
                                 resourceType="venia/components/contentfragment"/>
-                            <mapping_1575030271082 jcr:primaryType="nt:unstructured" 
+                            <mapping_1590416532200
+                                jcr:primaryType="nt:unstructured" 
                                 assetGroup="product" 
                                 droptarget="product-data-reference" 
                                 resourceType="venia/components/commerce/productteaser" />
@@ -416,6 +417,18 @@
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </featuredcategorylist>
+                <categorycarousel jcr:primaryType="nt:unstructured">
+                    <default
+                            jcr:lastModified="{Date}2020-10-05T13:12:01.134+02:00"
+                            jcr:lastModifiedBy="admin"
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="AEM CIF Core Components Category Carousel"
+                            sling:resourceType="wcm/core/components/policy/policy"
+                            allowedTypes="[h2,h3,h4,h5,h6]"
+                            type="h2">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </categorycarousel>
                 <teaser jcr:primaryType="nt:unstructured">
                     <default
                         jcr:lastModified="{Date}2020-08-31T17:45:15.554+10:00"
