@@ -429,6 +429,38 @@
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </categorycarousel>
+                <teaser jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-08-31T17:45:15.554+10:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Commerce Teaser"
+                        sling:resourceType="wcm/core/components/policy/policy">
+                        <jcr:content jcr:primaryType="nt:unstructured" />
+                        <cq:styleGroups jcr:primaryType="nt:unstructured">
+                            <item0 jcr:primaryType="nt:unstructured">
+                                <cq:styles jcr:primaryType="nt:unstructured">
+                                    <item0 cq:styleClasses="cmp-teaser-banner-light"
+                                        cq:styleId="1598234697359"
+                                        cq:styleLabel="Banner - Light"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item1 cq:styleClasses="cmp-teaser-banner-dark"
+                                        cq:styleId="1598234697563"
+                                        cq:styleLabel="Banner - Dark"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item2 cq:styleClasses="cmp-teaser-feature-left"
+                                        cq:styleId="1598234698241"
+                                        cq:styleLabel="Feature - Left"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item3 cq:styleClasses="cmp-teaser-feature-right"
+                                        cq:styleId="1598234699118"
+                                        cq:styleLabel="Feature - Right"
+                                        jcr:primaryType="nt:unstructured" />
+                                </cq:styles>
+                            </item0>
+                        </cq:styleGroups>
+                    </default>
+                </teaser>
             </commerce>
         </components>
     </venia>
