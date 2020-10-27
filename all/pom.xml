@@ -79,6 +79,7 @@
                         <embedded>
                             <groupId>com.venia</groupId>
                             <artifactId>venia.ui.config</artifactId>
+                            <classifier>${project.classifier}</classifier>
                             <type>zip</type>
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>

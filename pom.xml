@@ -517,7 +517,7 @@ Bundle-DocURL:
         </profile>
 
         <profile>
-            <id>autoInstallPackage</id>
+            <id>autoInstallSinglePackage</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -569,7 +569,7 @@ Bundle-DocURL:
         </profile>
 
         <profile>
-            <id>autoInstallPackagePublish</id>
+            <id>autoInstallSinglePackagePublish</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
