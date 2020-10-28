@@ -1,0 +1,135 @@
+.carousel__cardsroot {
+    overflow: hidden;
+
+    .price {
+        font-size: 0.875rem;
+        line-height: 1rem;
+        margin: 0.5rem 0;
+        min-height: 1rem;
+
+        .regularPrice {
+            text-decoration: line-through;
+            font-size: 0.8rem;
+        }
+
+        .discountedPrice {
+            font-weight: bold;
+            color: $venia-teal;
+            font-size: 1.2rem;
+        }
+    }
+
+    :before,
+    :after {
+        content: "";
+        display: table;
+    }
+
+    :after {
+        clear: both;
+    }
+}
+
+.carousel__title {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.product__image {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+.carousel__container {
+    position: relative;
+    margin: 25px auto;
+    width: 240px;
+}
+
+@media screen and (min-width: 790px) {
+    .carousel__container {
+        width: 720px;
+    }
+}
+
+@media screen and (min-width: 1090px) {
+    .carousel__container {
+        width: 960px;
+    }
+}
+
+@media screen and (min-width: 1380px) {
+    .carousel__container {
+        width: 1200px;
+    }
+}
+
+@media screen and (min-width: 1650px) {
+    .carousel__container {
+        width: 1440px;
+    }
+}
+
+.card {
+    border: 10px solid #fff;
+    float: left;
+    font-size: 20px;
+    text-align: center;
+    width: 240px;
+}
+
+.carousel__cardscontainer {
+    margin: auto;
+
+    :before,
+    :after {
+        content: "";
+        display: table;
+    }
+
+    :after {
+        clear: both;
+    }
+}
+
+.carousel__btn {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    height: 20px;
+    margin-top: -25px;
+    position: absolute;
+    top: 50%;
+    width: 20px;
+}
+
+.carousel__btn--next {
+    border-bottom: 8px solid #aaa;
+    border-right: 8px solid #aaa;
+    right: 0;
+    -moz-transform: rotate(315deg);
+    -webkit-transform: rotate(315deg);
+    transform: rotate(315deg);
+}
+
+.carousel__btn--prev {
+    border-bottom: 8px solid #aaa;
+    border-left: 8px solid #aaa;
+    left: 0;
+    -moz-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+@media screen and (max-width: 769px) {
+    .carousel__btn--next {
+        right: 8%;
+    }
+
+    .carousel__btn--prev {
+        left: 8%;
+    }
+}

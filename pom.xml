@@ -14,14 +14,12 @@
  |  See the License for the specific language governing permissions and
  |  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>2020.10.3-SNAPSHOT</version>
+    <version>2020.10.28-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
@@ -39,6 +37,7 @@
         <module>ui.config</module>
         <module>ui.content</module>
         <module>it.tests</module>
+        <module>ui.tests</module>
     </modules>
 
     <properties>
@@ -51,7 +50,7 @@
         <vault.user>admin</vault.user>
         <vault.password>admin</vault.password>
         <core.wcm.components.version>2.10.0</core.wcm.components.version>
-        <core.cif.components.version>1.4.1-SNAPSHOT</core.cif.components.version>
+        <core.cif.components.version>1.5.0</core.cif.components.version>
         <graphql.client.version>1.7.0</graphql.client.version>
         <magento.graphql.version>6.0.0-magento235</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
