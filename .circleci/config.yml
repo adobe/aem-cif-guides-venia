@@ -26,10 +26,10 @@ common:
             - ~/.m2
           key: maven-repo-v2-<< parameters.classifier >>-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save test results as artifacts
       - store_artifacts:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save AEM logs as artifacts
       - store_artifacts:
           path: logs
@@ -91,6 +91,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
       - store_test_results:
           path: core/target/surefire-reports
       - store_artifacts:
@@ -131,6 +132,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
   integration-test-655:
     docker:
@@ -140,6 +142,7 @@ jobs:
         <<: *docker_auth
     environment:
       AEM: classic
+      TYPE: integration
     parameters:
       classifier:
         default: "classic"
@@ -156,9 +159,46 @@ jobs:
         <<: *docker_auth
     environment:
       AEM: cloud
+      TYPE: integration
     parameters:
       classifier:
         default: "cloud"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+  selenium-chrome-cloudready-with-addon:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4271
+        <<: *docker_auth
+    environment:
+      AEM: cloud
+      TYPE: selenium
+      BROWSER: chrome
+    parameters:
+      classifier:
+        default: "cloud"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+  selenium-chrome-655:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.5
+        <<: *docker_auth
+    environment:
+      AEM: classic
+      TYPE: selenium
+      BROWSER: chrome
+    parameters:
+      classifier:
+        default: "classic"
         type: string
     resource_class: large
     working_directory: /home/circleci/build
@@ -208,6 +248,18 @@ workflows:
               only: /.*/
           requires:
             - build
+      - selenium-chrome-cloudready-with-addon:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - selenium-chrome-655:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build-classic
       - deploy-sample:
           requires:
             - build

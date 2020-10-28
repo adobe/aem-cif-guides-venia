@@ -1,0 +1,25 @@
+.cmp-teaser-feature-right {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    .cmp-teaser {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+    }
+    .cmp-teaser__image {
+        object-fit: contain;
+    }
+    .cmp-teaser__content {
+        padding: 5rem 2rem !important;
+    }
+    .cmp-teaser__title {
+        text-align: left;
+        color: $venia-text;
+    }
+    .cmp-teaser__action-link {
+        border: 2px solid #00f;
+        background-color: white;
+        color: #00f;
+    }
+}
