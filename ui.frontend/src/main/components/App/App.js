@@ -41,6 +41,8 @@ const App = () => {
         ...partialConfig,
         storeView,
         graphqlEndpoint,
+        // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
+        // will always be executed as POST requests.
         graphqlMethod
     };
 
