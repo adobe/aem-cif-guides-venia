@@ -26,7 +26,8 @@ import {
     AddressBook,
     BundleProductOptions,
     AccountDetails,
-    ResetPassword
+    ResetPassword,
+    SignOutLink
 } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
@@ -57,11 +58,13 @@ const App = () => {
                     <Portal selector={mountingPoints.authBarContainer}>
                         <AuthBar>
                             <WishlistAccountLink />
+                            <SignOutLink />
                         </AuthBar>
                     </Portal>
                     <Portal selector={mountingPoints.accountContainer}>
                         <AccountContainer>
                             <WishlistAccountLink />
+                            <SignOutLink />
                         </AccountContainer>
                     </Portal>
                     <Route path={pagePaths.addressBook}>
