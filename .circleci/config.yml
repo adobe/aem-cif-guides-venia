@@ -26,10 +26,10 @@ common:
             - ~/.m2
           key: maven-repo-v2-<< parameters.classifier >>-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save test results as artifacts
       - store_artifacts:
-          path: it.tests/target/failsafe-reports
+          path: test-reports
       # Save AEM logs as artifacts
       - store_artifacts:
           path: logs
@@ -38,6 +38,24 @@ common:
     auth:
       username: $DOCKER_USER
       password: $DOCKER_PASS
+
+  install_components: &install_components
+    run:
+      name: Install CIF Components
+      command: |
+        if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+          git clone https://github.com/adobe/aem-core-cif-components.git
+          cd aem-core-cif-components
+          components_branch=$(git ls-remote --heads origin ${CIRCLE_BRANCH})
+          if [[ ! -z ${components_branch} ]]; then
+            git fetch
+            git checkout $CIRCLE_BRANCH
+          fi
+          mvn -B clean install
+          cd react-components
+          npm link
+        fi
+      working_directory: ./dependencies
 
 jobs:
   build:
@@ -54,12 +72,17 @@ jobs:
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
+      - *install_components
       - run:
           name: Build
           command: |
             java -version
             mvn -v
-            mvn -B clean install
+            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+              mvn -B clean install -Pcloud,fedDev
+            else
+              mvn -B clean install
+            fi
       - save_cache:
           paths:
             - ~/.m2
@@ -68,6 +91,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
       - store_test_results:
           path: core/target/surefire-reports
       - store_artifacts:
@@ -89,12 +113,17 @@ jobs:
       - run:
           name: Update permissions
           command: sudo chown -R circleci /usr/local/lib/node_modules
+      - *install_components
       - run:
           name: Build
           command: |
             java -version
             mvn -v
-            mvn -B clean install -Pclassic
+            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+              mvn -B clean install -Pclassic,fedDev
+            else
+              mvn -B clean install -Pclassic
+            fi
       - save_cache:
           paths:
             - ~/.m2
@@ -103,6 +132,7 @@ jobs:
           root: /home/circleci/build
           paths:
             - all/target/*.zip
+            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
   integration-test-655:
     docker:
@@ -112,6 +142,7 @@ jobs:
         <<: *docker_auth
     environment:
       AEM: classic
+      TYPE: integration
     parameters:
       classifier:
         default: "classic"
@@ -124,13 +155,50 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:3919
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4271
         <<: *docker_auth
     environment:
       AEM: cloud
+      TYPE: integration
     parameters:
       classifier:
         default: "cloud"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+  selenium-chrome-cloudready-with-addon:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4271
+        <<: *docker_auth
+    environment:
+      AEM: cloud
+      TYPE: selenium
+      BROWSER: chrome
+    parameters:
+      classifier:
+        default: "cloud"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+  selenium-chrome-655:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.5
+        <<: *docker_auth
+    environment:
+      AEM: classic
+      TYPE: selenium
+      BROWSER: chrome
+    parameters:
+      classifier:
+        default: "classic"
         type: string
     resource_class: large
     working_directory: /home/circleci/build
@@ -180,6 +248,18 @@ workflows:
               only: /.*/
           requires:
             - build
+      - selenium-chrome-cloudready-with-addon:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - selenium-chrome-655:
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build-classic
       - deploy-sample:
           requires:
             - build

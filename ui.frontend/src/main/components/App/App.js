@@ -24,7 +24,9 @@ import {
     AuthBar,
     AccountContainer,
     AddressBook,
-    BundleProductOptions
+    BundleProductOptions,
+    AccountDetails,
+    ResetPassword
 } from '@adobe/aem-core-cif-react-components';
 
 import i18n from './i18n';
@@ -33,12 +35,15 @@ import partialConfig from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths, baseUrl } = partialConfig;
+    const { storeView, graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
+    const { mountingPoints, pagePaths } = partialConfig;
     const config = {
         ...partialConfig,
         storeView,
-        graphqlEndpoint
+        graphqlEndpoint,
+        // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
+        // will always be executed as POST requests.
+        graphqlMethod
     };
 
     return (
@@ -62,9 +67,19 @@ const App = () => {
                             <AddressBook />
                         </Portal>
                     </Route>
+                    <Route path={pagePaths.resetPassword}>
+                        <Portal selector={mountingPoints.resetPasswordPage}>
+                            <ResetPassword />
+                        </Portal>
+                    </Route>
                     <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                         <BundleProductOptions />
                     </Portal>
+                    <Route path={pagePaths.accountDetails}>
+                        <Portal selector={mountingPoints.accountDetails}>
+                            <AccountDetails />
+                        </Portal>
+                    </Route>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>

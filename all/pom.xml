@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  |  Copyright 2019 Adobe Systems Incorporated
  |
@@ -22,7 +23,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>2020.9.3-SNAPSHOT</version>
+        <version>2020.10.28-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -49,6 +50,10 @@
                 <configuration>
                     <group>com.venia</group>
                     <classifier>${project.classifier}</classifier>
+                    <packageType>container</packageType>
+                    <properties>
+                        <cloudManagerTarget>all</cloudManagerTarget>
+                    </properties>
                     <embeddeds>
                         <embedded>
                             <groupId>com.venia</groupId>
@@ -59,10 +64,22 @@
                         </embedded>
                         <embedded>
                             <groupId>com.venia</groupId>
+                            <artifactId>venia.core</artifactId>
+                            <target>/apps/venia-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.venia</groupId>
                             <artifactId>venia.ui.content</artifactId>
                             <classifier>${project.classifier}</classifier>
                             <type>zip</type>
                             <target>/apps/venia-packages/content/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.venia</groupId>
+                            <artifactId>venia.ui.config</artifactId>
+                            <classifier>${project.classifier}</classifier>
+                            <type>zip</type>
+                            <target>/apps/venia-packages/application/install</target>
                         </embedded>
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
@@ -70,9 +87,23 @@
                             <type>zip</type>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-config</artifactId>
+                            <type>zip</type>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-core</artifactId>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>magento-graphql</artifactId>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
                     </embeddeds>
-                    <subPackages>
-                    </subPackages>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,7 +122,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
                 <executions>
                     <execution>
                         <id>auto-clean</id>
@@ -131,6 +161,16 @@
                                     <groupId>com.adobe.cq</groupId>
                                     <artifactId>core.wcm.components.config</artifactId>
                                     <type>zip</type>
+                                    <target>/apps/venia-vendor-packages/application/install</target>
+                                </embedded>
+                                <embedded>
+                                    <groupId>com.adobe.cq</groupId>
+                                    <artifactId>core.wcm.components.core</artifactId>
+                                    <target>/apps/venia-vendor-packages/application/install</target>
+                                </embedded>
+                                <embedded>
+                                    <groupId>com.adobe.commerce.cif</groupId>
+                                    <artifactId>graphql-client</artifactId>
                                     <target>/apps/venia-vendor-packages/application/install</target>
                                 </embedded>
                             </embeddeds>
@@ -223,11 +263,23 @@
             <classifier>${project.classifier}</classifier>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>com.venia</groupId>
+            <artifactId>venia.ui.config</artifactId>
+            <version>${project.version}</version>
+            <classifier>${project.classifier}</classifier>
+            <type>zip</type>
+        </dependency>
 
         <!-- Adobe CIF Dependencies -->
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-apps</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-config</artifactId>
             <type>zip</type>
         </dependency>
     </dependencies>

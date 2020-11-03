@@ -34,9 +34,9 @@
                     jcr:title="Content Image"
                     sling:resourceType="wcm/core/components/policy/policy"
                     allowedRenditionWidths="[320,480,600,800,1024,1200,1600]"
+                    disableLazyLoading="false"
                     allowUpload="false"
                     altValueFromDAM="true"
-                    disableLazyLoading="false"
                     displayPopupTitle="true"
                     isDecorative="false"
                     jpegQuality="{Long}85"
@@ -305,7 +305,8 @@
                                 assetMimetype="[text/html,application/vnd.adobe.contentfragment]"
                                 droptarget="contentfragment"
                                 resourceType="venia/components/contentfragment"/>
-                            <mapping_1575030271082 jcr:primaryType="nt:unstructured" 
+                            <mapping_1590416532200
+                                jcr:primaryType="nt:unstructured" 
                                 assetGroup="product" 
                                 droptarget="product-data-reference" 
                                 resourceType="venia/components/commerce/productteaser" />
@@ -380,6 +381,86 @@
                         </cq:styleGroups>
                     </default>
                 </productlist>
+                <productcarousel jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Product Carousel"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedTypes="[h2,h3,h4,h5,h6]"
+                        type="h2">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </productcarousel>
+                <relatedproducts jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Related Products"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedTypes="[h2,h3,h4,h5,h6]"
+                        type="h2">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </relatedproducts>
+                <featuredcategorylist jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Featured Category List"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedTypes="[h2,h3,h4,h5,h6]"
+                        type="h2">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </featuredcategorylist>
+                <categorycarousel jcr:primaryType="nt:unstructured">
+                    <default
+                            jcr:lastModified="{Date}2020-10-05T13:12:01.134+02:00"
+                            jcr:lastModifiedBy="admin"
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="AEM CIF Core Components Category Carousel"
+                            sling:resourceType="wcm/core/components/policy/policy"
+                            allowedTypes="[h2,h3,h4,h5,h6]"
+                            type="h2">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </categorycarousel>
+                <teaser jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-08-31T17:45:15.554+10:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Commerce Teaser"
+                        sling:resourceType="wcm/core/components/policy/policy">
+                        <jcr:content jcr:primaryType="nt:unstructured" />
+                        <cq:styleGroups jcr:primaryType="nt:unstructured">
+                            <item0 jcr:primaryType="nt:unstructured">
+                                <cq:styles jcr:primaryType="nt:unstructured">
+                                    <item0 cq:styleClasses="cmp-teaser-banner-light"
+                                        cq:styleId="1598234697359"
+                                        cq:styleLabel="Banner - Light"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item1 cq:styleClasses="cmp-teaser-banner-dark"
+                                        cq:styleId="1598234697563"
+                                        cq:styleLabel="Banner - Dark"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item2 cq:styleClasses="cmp-teaser-feature-left"
+                                        cq:styleId="1598234698241"
+                                        cq:styleLabel="Feature - Left"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item3 cq:styleClasses="cmp-teaser-feature-right"
+                                        cq:styleId="1598234699118"
+                                        cq:styleLabel="Feature - Right"
+                                        jcr:primaryType="nt:unstructured" />
+                                </cq:styles>
+                            </item0>
+                        </cq:styleGroups>
+                    </default>
+                </teaser>
             </commerce>
         </components>
     </venia>
