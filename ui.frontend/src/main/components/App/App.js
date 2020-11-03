@@ -33,6 +33,7 @@ import i18n from './i18n';
 import partialConfig from './config';
 
 import '../../site/main.scss';
+import { WishlistAccountLink } from '../WishlistAccountLink';
 
 const App = () => {
     const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
@@ -54,10 +55,14 @@ const App = () => {
                         <Cart />
                     </Portal>
                     <Portal selector={mountingPoints.authBarContainer}>
-                        <AuthBar />
+                        <AuthBar>
+                            <WishlistAccountLink />
+                        </AuthBar>
                     </Portal>
                     <Portal selector={mountingPoints.accountContainer}>
-                        <AccountContainer />
+                        <AccountContainer>
+                            <WishlistAccountLink />
+                        </AccountContainer>
                     </Portal>
                     <Route path={pagePaths.addressBook}>
                         <Portal selector={mountingPoints.addressBookContainer}>

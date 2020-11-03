@@ -68,6 +68,7 @@
     "i18next-xhr-backend": "^3.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-feather": "^2.0.8",
     "react-i18next": "^11.7.0",
     "react-router-dom": "^5.2.0"
   },
