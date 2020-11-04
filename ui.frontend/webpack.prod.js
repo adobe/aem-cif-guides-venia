@@ -11,10 +11,10 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-const merge = require('webpack-merge');
+const merge                   = require('webpack-merge');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const common = require('./webpack.common.js');
+const TerserPlugin            = require('terser-webpack-plugin');
+const common                  = require('./webpack.common.js');
 
 module.exports = merge(common, {
     mode: 'production',
@@ -51,11 +51,11 @@ module.exports = merge(common, {
                     chunks: 'all',
                     name: 'site',
                     test: 'main',
-                    enforce: true,
-                },
-            },
-        },
+                    enforce: true
+                }
+            }
+        }
     },
     devtool: 'none',
-    performance: {hints: false},
+    performance: { hints: false }
 });

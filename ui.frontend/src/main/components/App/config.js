@@ -19,10 +19,14 @@ export default {
         cartTrigger: '.header__cartTrigger',
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
-        minicart: '#minicart'
+        minicart: '#minicart',
+        accountDetails: '#accountdetails',
+        resetPasswordPage: '#reset-password-page'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
         baseUrl: document.querySelector('.header__logo').parentElement.pathname
+        accountDetails: '/content/venia/us/en/my-account/account-details.html',
+        resetPassword: '/content/venia/us/en/reset-password.html'
     }
 };

@@ -13,17 +13,29 @@
  ******************************************************************************/
 package com.venia.core.models.commerce;
 
+import com.adobe.cq.commerce.core.components.datalayer.ProductData;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.scripting.WCMBindingsConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import junit.framework.Assert;
+
+import org.apache.commons.math.stat.descriptive.summary.Product;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +69,8 @@ class MyProductTeaserImplTest {
     private MyProductTeaser underTest;
 
     private ProductTeaser productTeaser;
+
+    private ConfigurationBuilder mockConfigBuilder;
 
     @Mock
     private AbstractProductRetriever productRetriever;
@@ -145,8 +159,10 @@ class MyProductTeaserImplTest {
     void testGetPriceRange() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Price priceRange = Mockito.mock(Price.class);
+        Mockito.doReturn("USD 15.2").when(priceRange).getFormattedFinalPrice();
         Mockito.doReturn(priceRange).when(productTeaser).getPriceRange();
         Assert.assertEquals(priceRange, underTest.getPriceRange());
+        Assert.assertEquals("USD 15.2", underTest.getFormattedPrice());
     }
 
     @Test
@@ -185,5 +201,32 @@ class MyProductTeaserImplTest {
 
         Mockito.doReturn(false).when(productTeaser).isVirtualProduct();
         Assert.assertFalse(underTest.isVirtualProduct());
+    }
+
+    @Test
+    void testGetId() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn("test-id").when(productTeaser).getId();
+        Assert.assertEquals("test-id", underTest.getId());
+    }
+
+    @Test
+    public void testDataLayerFeature() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        String dataLayerJson = "{ "
+            + " \"test-id\": {"
+            + " \"xdm:SKU\": \"test-sku\","
+            + " \"xdm:listPrice\": 10.2,"
+            + " \"xdm:currencyCode\": \"USD\","
+            + " \"dc:title\": \"Test Product Teaser\","
+            + " \"repo:modifyDate\": \"2020-10-12T10:20:34Z\","
+            + " \"@type\": \"venia/components/commerce/productteaser\""
+            + " }"
+            + " }";
+        ProductData mockProductData = Mockito.mock(ProductData.class);
+        Mockito.doReturn(dataLayerJson).when(mockProductData).getJson();
+        Mockito.doReturn(mockProductData).when(productTeaser).getData();
+
+        Assert.assertEquals(dataLayerJson, underTest.getData().getJson());
     }
 }
