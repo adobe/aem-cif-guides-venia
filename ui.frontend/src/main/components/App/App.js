@@ -35,18 +35,15 @@ import partialConfig from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    const { storeView, graphqlEndpoint } = document.querySelector('body').dataset;
+    const { graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
     const { mountingPoints, pagePaths, baseUrl } = partialConfig;
     const config = {
         ...partialConfig,
-        storeView,
         graphqlEndpoint,
         // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
         // will always be executed as POST requests.
         graphqlMethod
     };
-
-    console.log('baseUrl :', baseUrl);
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
