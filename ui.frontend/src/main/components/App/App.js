@@ -35,9 +35,10 @@ import partialConfig from './config';
 import '../../site/main.scss';
 
 const App = () => {
-    const { graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths, baseUrl } = partialConfig;
+    const { storeView, graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
+    const { mountingPoints, pagePaths } = partialConfig;
     const config = {
+        storeView,
         ...partialConfig,
         graphqlEndpoint,
         // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
