@@ -25,6 +25,7 @@ export default {
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
+        baseUrl: document.querySelector('body').dataset.storeRootUrl,
         accountDetails: '/content/venia/us/en/my-account/account-details.html',
         resetPassword: '/content/venia/us/en/reset-password.html'
     }
