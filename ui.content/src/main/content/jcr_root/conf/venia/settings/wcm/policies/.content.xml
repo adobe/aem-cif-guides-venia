@@ -37,6 +37,7 @@
                     disableLazyLoading="false"
                     allowUpload="false"
                     altValueFromDAM="true"
+                    directLoadFromDAM="true"
                     displayPopupTitle="true"
                     isDecorative="false"
                     jpegQuality="{Long}85"

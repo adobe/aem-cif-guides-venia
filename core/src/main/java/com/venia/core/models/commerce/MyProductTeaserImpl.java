@@ -25,6 +25,7 @@ import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.Via;
@@ -85,7 +86,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
-    public Price getPriceRange() { return productTeaser.getPriceRange(); }
+    public Price getPriceRange() {
+        return productTeaser.getPriceRange();
+    }
 
     @Override
     public String getImage() {
@@ -113,7 +116,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
-    public Boolean isVirtualProduct() { return productTeaser.isVirtualProduct(); }
+    public Boolean isVirtualProduct() {
+        return productTeaser.isVirtualProduct();
+    }
 
     @Override
     public AbstractProductRetriever getProductRetriever() {
@@ -122,11 +127,16 @@ public class MyProductTeaserImpl implements MyProductTeaser {
 
     @Override
     public ProductData getData() {
-        return (ProductData)productTeaser.getData();
+        return (ProductData) productTeaser.getData();
     }
 
     @Override
     public String getId() {
         return productTeaser.getId();
+    }
+
+    @Override
+    public Resource getImageResource() {
+        return productTeaser.getImageResource();
     }
 }

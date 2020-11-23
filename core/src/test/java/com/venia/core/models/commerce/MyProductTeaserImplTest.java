@@ -18,24 +18,16 @@ import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
-import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.components.Component;
 import com.day.cq.wcm.scripting.WCMBindingsConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import junit.framework.Assert;
 
-import org.apache.commons.math.stat.descriptive.summary.Product;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
-import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,8 +61,6 @@ class MyProductTeaserImplTest {
     private MyProductTeaser underTest;
 
     private ProductTeaser productTeaser;
-
-    private ConfigurationBuilder mockConfigBuilder;
 
     @Mock
     private AbstractProductRetriever productRetriever;
@@ -111,10 +101,19 @@ class MyProductTeaserImplTest {
         context.currentResource(PAGE + "/jcr:content/" +resourceName);
         Resource teaserResource = context.resourceResolver().getResource(PAGE + "/jcr:content/" +resourceName);
 
+        Component component = Mockito.mock(Component.class);
+        Mockito.when(component.getProperties()).thenReturn(new ValueMapDecorator(new HashMap<String, Object>() {
+            {
+                put("imageDelegate", "venia/components/image");
+            }
+        }));
+        Mockito.when(component.getResourceType()).thenReturn(teaserResource.getResourceType());
+
         // This sets the page attribute injected in the models with @Inject or @ScriptVariable
         SlingBindings slingBindings = (SlingBindings) context.request().getAttribute(SlingBindings.class.getName());
         slingBindings.setResource(teaserResource);
         slingBindings.put(WCMBindingsConstants.NAME_CURRENT_PAGE, page);
+        slingBindings.put(WCMBindingsConstants.NAME_COMPONENT, component);
         slingBindings.put(WCMBindingsConstants.NAME_PROPERTIES, teaserResource.getValueMap());
         try {
             slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.UrlProvider" )));
