@@ -52,12 +52,9 @@
                 jcr:createdBy="admin" 
                 jcr:lastModified="{Date}2019-03-05T11:43:17.308+02:00" 
                 jcr:lastModifiedBy="admin" 
-                jcr:primaryType="nt:unstructured" 
-                sling:resourceType="venia/components/footer" />
-
-            <!-- <experiencefragment-footer jcr:primaryType="nt:unstructured" 
-                sling:resourceType="venia/components/experiencefragment" 
-                fragmentVariationPath="/content/experience-fragments/venia/us/en/site/footer/master" /> -->
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/experiencefragment"
+                fragmentVariationPath="/content/experience-fragments/venia/us/en/site/footer/master"/>
         </root>
         <cq:responsive jcr:primaryType="nt:unstructured">
             <breakpoints jcr:primaryType="nt:unstructured">
