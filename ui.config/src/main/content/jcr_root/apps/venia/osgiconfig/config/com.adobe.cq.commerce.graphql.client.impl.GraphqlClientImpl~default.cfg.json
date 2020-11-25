@@ -6,5 +6,10 @@
   "socketTimeout": 5000,
   "maxHttpConnections": 20,
   "requestPoolTimeout": 2000,
-  "acceptSelfSignedCertificates": false
+  "acceptSelfSignedCertificates": false,
+  "cacheConfigurations": [
+    "venia/components/commerce/navigation:true:1:300",
+    "com.adobe.cq.commerce.core.search.services.SearchFilterService:true:10:300",
+    "venia/components/commerce/breadcrumb:true:1000:300"
+  ]
 }
