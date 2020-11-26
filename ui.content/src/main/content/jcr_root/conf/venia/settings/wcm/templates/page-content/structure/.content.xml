@@ -5,7 +5,7 @@
     xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
     jcr:primaryType="cq:Page">
     <jcr:content cq:deviceGroups="[/etc/mobile/groups/responsive]" 
-        cq:template="/conf/venia/settings/wcm/templates/landing-page" 
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent" 
         sling:resourceType="venia/components/page">
         <root jcr:primaryType="nt:unstructured" 
@@ -20,7 +20,7 @@
                 <logo.svg />
                 <navigation collectAllPages="false" 
                     jcr:primaryType="nt:unstructured" 
-                    navigationRoot="/content/venia/us/en" 
+                    navigationRoot="/content/venia/us/en"
                     skipNavigationRoot="true" 
                     sling:resourceType="venia/components/commerce/navigation" 
                     structureDepth="2">
