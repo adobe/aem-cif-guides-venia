@@ -88,6 +88,12 @@
                             <artifactId>core-cif-components-config</artifactId>
                         </dependency>
                     </dependencies>
+                    <excludes>
+                        <!-- Depending on the profile, one of these two files is copied to .content.xml -->
+                        <!-- but they are both excluded from the content package -->
+                        <exclude>**/.content-cloud.xml</exclude>
+                        <exclude>**/.content-classic.xml</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
