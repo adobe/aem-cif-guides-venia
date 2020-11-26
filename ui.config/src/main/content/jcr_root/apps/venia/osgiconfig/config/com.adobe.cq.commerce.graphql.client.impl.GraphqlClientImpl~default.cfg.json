@@ -8,7 +8,7 @@
   "requestPoolTimeout": 2000,
   "acceptSelfSignedCertificates": false,
   "cacheConfigurations": [
-    "venia/components/commerce/navigation:true:1:300",
+    "venia/components/commerce/navigation:true:5:300",
     "com.adobe.cq.commerce.core.search.services.SearchFilterService:true:10:300",
     "venia/components/commerce/breadcrumb:true:1000:300"
   ]
