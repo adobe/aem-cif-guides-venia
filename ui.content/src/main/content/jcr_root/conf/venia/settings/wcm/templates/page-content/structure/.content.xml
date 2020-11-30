@@ -5,7 +5,7 @@
     xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
     jcr:primaryType="cq:Page">
     <jcr:content cq:deviceGroups="[/etc/mobile/groups/responsive]" 
-        cq:template="/conf/venia/settings/wcm/templates/landing-page" 
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent" 
         sling:resourceType="venia/components/page">
         <root jcr:primaryType="nt:unstructured" 
@@ -20,7 +20,7 @@
                 <logo.svg />
                 <navigation collectAllPages="false" 
                     jcr:primaryType="nt:unstructured" 
-                    navigationRoot="/content/venia/us/en" 
+                    navigationRoot="/content/venia/us/en"
                     skipNavigationRoot="true" 
                     sling:resourceType="venia/components/commerce/navigation" 
                     structureDepth="2">
@@ -56,10 +56,9 @@
                 jcr:createdBy="admin" 
                 jcr:lastModified="{Date}2019-03-05T11:43:17.308+02:00" 
                 jcr:lastModifiedBy="admin" 
-                jcr:primaryType="nt:unstructured" 
-                sling:resourceType="venia/components/footer" />
-
-            <!-- <experiencefragment-footer jcr:primaryType="nt:unstructured" sling:resourceType="venia/components/experiencefragment" fragmentVariationPath="/content/experience-fragments/venia/us/en/site/footer/master" /> -->
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/experiencefragment"
+                fragmentVariationPath="/content/experience-fragments/venia/us/en/site/footer/master"/>
         </root>
         <cq:responsive jcr:primaryType="nt:unstructured">
             <breakpoints jcr:primaryType="nt:unstructured">
