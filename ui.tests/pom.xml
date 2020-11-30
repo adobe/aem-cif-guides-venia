@@ -131,16 +131,6 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>npm install required modules</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>install request --save</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>test chrome</id>
                                 <phase>test</phase>
                                 <goals>
