@@ -1,4 +1,4 @@
-.footer__root {
+.cmp-experiencefragment--footer {
     background-color: $venia-grey;
     border-top: 1px solid $venia-border;
     color: $color-foreground;
@@ -6,26 +6,11 @@
     padding: 0 1rem;
 }
 
-.footer__tile {
-    border-bottom: 1px solid $venia-border;
-    padding: 1rem 2rem;
-}
-
-.footer__tileTitle {
-    font-size: 1.25rem;
-    margin: 1rem 0;
-}
-
-.footer__tileBody {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    margin: 1rem 0;
-}
-
-.footer__copyright {
+#footerCopyright {
     display: block;
     color: $venia-text-alt;
     font-size: 0.75rem;
-    padding: 1.5rem 2rem;
+    padding: 0.5rem 2rem 1rem 2rem;
+    line-height: normal;
     text-align: center;
 }
