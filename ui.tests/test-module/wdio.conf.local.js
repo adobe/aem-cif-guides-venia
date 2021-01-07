@@ -22,10 +22,9 @@ let config = require('./lib/config');
 
 wdio_config.hostname = 'localhost';
 
-const { CIRCLECI, CHROMEDRIVER } = process.env;
+const { CHROMEDRIVER } = process.env;
 
-if (CIRCLECI && CHROMEDRIVER) {
-    // Set ChromeDriver version to match the one on CircleCI.
+if (CHROMEDRIVER) {
     const drivers = {
         chrome: { version: CHROMEDRIVER }
     };

@@ -30,6 +30,18 @@ mvn verify -Pui-tests-local-execution
 
 #### Remarks
 * After execution, reports and logs are available in `test-module/reports` folder
+* If you receive an error message like:
+    ```
+    This version of ChromeDriver only supports Chrome version XX.
+    ```
+
+    Try setting the `CHROMEDRIVER` environment variable to a version that matches your currently installed Chrome version. You can find matching versions at https://chromedriver.chromium.org/downloads.
+
+    Example:
+
+    ```bash
+    CHROMEDRIVER=87.0.4280.20 mvn verify -Pui-tests-local-execution
+    ```
 
 ### Parameters
 
