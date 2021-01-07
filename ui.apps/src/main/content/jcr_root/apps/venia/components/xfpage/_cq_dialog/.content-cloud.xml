@@ -94,6 +94,19 @@
                                                 targetProperty="jcr:content/cq:products"/>
                                         </items>
                                     </productsPickerSection>
+                                    <fragmentLocationSection
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="Fragment Location"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <fragmentLocation
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                fieldDescription="This must match the location defined on pages with the commerce experience fragment component."
+                                                fieldLabel="The location of the experience fragment (can be empty)."
+                                                name="./fragmentLocation"/>
+                                        </items>
+                                    </fragmentLocationSection>
                                 </items>
                             </column>
                         </items>
