@@ -31,6 +31,7 @@ import {
 
 import i18n from './i18n';
 import partialConfig from './config';
+import { Accordion, Section } from '../Accordion';
 
 import '../../site/main.scss';
 
@@ -80,6 +81,11 @@ const App = () => {
                             <AccountDetails />
                         </Portal>
                     </Route>
+                    <Accordion>
+                        <Section id="a">This is section A.</Section>
+                        <Section id="b">This is section B.</Section>
+                        <Section id="c">This is section C.</Section>
+                    </Accordion>
                 </CommerceApp>
             </ConfigContextProvider>
         </I18nextProvider>
