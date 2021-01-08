@@ -18,18 +18,13 @@ import { useCartPage } from '@magento/peregrine/lib/talons/CartPage/useCartPage'
 import { GET_CART_DETAILS } from './cartPage.gql';
 
 const Cart = props => {
-    const {
-        cartItems,
-        hasItems,
-        isCartUpdating,
-        setIsCartUpdating,
-        shouldShowLoadingIndicator } = useCartPage({
-            queries: {
-                getCartDetails: GET_CART_DETAILS
-            }
-        });
+    const { cartItems, hasItems, isCartUpdating, setIsCartUpdating, shouldShowLoadingIndicator } = useCartPage({
+        queries: {
+            getCartDetails: GET_CART_DETAILS
+        }
+    });
 
-    console.log("cartItems", cartItems);
+    console.log('cartItems', cartItems);
 
     return <div>Cart</div>;
 };

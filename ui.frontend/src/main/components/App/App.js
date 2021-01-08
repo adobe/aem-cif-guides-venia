@@ -38,6 +38,7 @@ import store from './store';
 import { default as PeregrinCart } from '../Cart/Cart';
 
 import '../../site/main.scss';
+import DummyAddToCart from '../Cart/DummyAddToCart';
 
 const App = () => {
     const { storeView, graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;
@@ -102,6 +103,7 @@ const App = () => {
                     <ReduxProvider store={store}>
                         <PeregrineContextProvider>
                             <PeregrinCart />
+                            <DummyAddToCart urlKey="honora-wide-leg-pants" />
                         </PeregrineContextProvider>
                     </ReduxProvider>
                 </ApolloProvider>
