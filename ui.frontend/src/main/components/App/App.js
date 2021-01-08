@@ -28,10 +28,14 @@ import {
     AccountDetails,
     ResetPassword
 } from '@adobe/aem-core-cif-react-components';
+import { PeregrineContextProvider } from '@magento/peregrine';
+import { ApolloClient, ApolloProvider, from, HttpLink, InMemoryCache, ApolloLink } from '@apollo/client';
+import { Provider as ReduxProvider } from 'react-redux';
 
 import i18n from './i18n';
 import partialConfig from './config';
-import { Accordion, Section } from '../Accordion';
+import store from './store';
+import { default as PeregrinCart } from '../Cart/Cart';
 
 import '../../site/main.scss';
 
@@ -46,11 +50,22 @@ const App = () => {
         // will always be executed as POST requests.
         graphqlMethod
     };
+    const clientConfig = {
+        link: from([
+            new HttpLink({
+                uri: graphqlEndpoint,
+                headers: { Store: storeView },
+                useGETForQueries: graphqlMethod === 'GET'
+            })
+        ]),
+        cache: new InMemoryCache()
+    };
+    const client = new ApolloClient(clientConfig);
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
             <ConfigContextProvider config={config}>
-                <CommerceApp>
+                {/* <CommerceApp>
                     <Portal selector={mountingPoints.cartTrigger}>
                         <CartTrigger />
                     </Portal>
@@ -81,12 +96,15 @@ const App = () => {
                             <AccountDetails />
                         </Portal>
                     </Route>
-                    <Accordion>
-                        <Section id="a">This is section A.</Section>
-                        <Section id="b">This is section B.</Section>
-                        <Section id="c">This is section C.</Section>
-                    </Accordion>
-                </CommerceApp>
+                    
+                </CommerceApp> */}
+                <ApolloProvider client={client}>
+                    <ReduxProvider store={store}>
+                        <PeregrineContextProvider>
+                            <PeregrinCart />
+                        </PeregrineContextProvider>
+                    </ReduxProvider>
+                </ApolloProvider>
             </ConfigContextProvider>
         </I18nextProvider>
     );

@@ -58,8 +58,21 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                include: /src/,
-                loader: ['babel-loader', 'eslint-loader']
+                include: /src|node_modules\/@magento\/peregrine\/lib/,
+                exclude: /dist/,
+                use: [
+                    { 
+                        loader: 'babel-loader',
+                        options: {
+                            "presets": ["@babel/typescript", "@babel/preset-react"],
+                            "plugins": [
+                                "@babel/plugin-proposal-class-properties",
+                                "@babel/plugin-proposal-object-rest-spread"
+                            ]
+                        },     
+                    },               
+                    { loader: 'eslint-loader' }
+                ]
             },
             {
                 test: /\.scss$/,

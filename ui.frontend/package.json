@@ -63,14 +63,22 @@
   },
   "dependencies": {
     "@adobe/aem-core-cif-react-components": "^1.5.0",
+    "@apollo/client": "^3.3.6",
     "@magento/peregrine": "^8.0.0",
+    "graphql": "^15.4.0",
     "i18next": "^19.5.3",
     "i18next-browser-languagedetector": "^5.0.0",
     "i18next-xhr-backend": "^3.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.0",
-    "react-router-dom": "^5.2.0"
+    "react-intl": "^5.10.14",
+    "react-redux": "^7.2.2",
+    "react-router-dom": "^5.2.0",
+    "react-test-renderer": "^17.0.1",
+    "redux": "^4.0.5",
+    "redux-actions": "^2.6.5",
+    "redux-thunk": "^2.3.0"
   },
   "browserslist": [
     "last 2 version",
