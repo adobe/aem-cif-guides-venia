@@ -11,17 +11,31 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, compose, applyMiddleware } from 'redux';
 import { enhancer, reducers } from '@magento/peregrine';
 
-// This is the connective layer between the Peregrine store and the
-// venia-concept UI. You can add your own reducers/enhancers here and combine
-// them with the Peregrine exports.
-//
-// example:
-// const rootReducer = combineReducers({ ...reducers, ...myReducers });
-// const rootEnhancer = composeEnhancers(enhancer, myEnhancer);
-// export default createStore(rootReducer, rootEnhancer);
-const rootReducer = combineReducers(reducers);
+const sessionStorageReduxKey = 'venia-store-redux';
 
-export default createStore(rootReducer, enhancer);
+// Add custom enhancer to store every state change in sessionStorage
+const sessionEnhancer = store => next => action => {
+    const state = store.getState();
+    sessionStorage.setItem(sessionStorageReduxKey, JSON.stringify({ ...store.getState().computedStates[state.currentStateIndex].state }));
+    return next(action);
+};
+
+// Retrieve the initial state from sessionStorage
+let initialState = {};
+try {
+    const value = sessionStorage.getItem(sessionStorageReduxKey);
+    if (value) {
+        initialState = JSON.parse(value);
+    }
+} catch(err) {
+    console.error(err);
+    initialState = {};
+}
+
+const rootReducer = combineReducers(reducers);
+const rootEnhancer = compose(enhancer, applyMiddleware(sessionEnhancer));
+
+export default createStore(rootReducer, initialState, rootEnhancer);
