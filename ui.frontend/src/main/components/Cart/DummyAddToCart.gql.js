@@ -13,6 +13,8 @@
  ******************************************************************************/
 import { gql } from '@apollo/client';
 
+import { MiniCartFragment } from './cartPage.gql';
+
 export const ADD_CONFIGURABLE_MUTATION = gql`
     mutation addConfigurableProductToCart($cartId: String!, $quantity: Float!, $sku: String!, $parentSku: String!) {
         addConfigurableProductsToCart(
@@ -23,9 +25,11 @@ export const ADD_CONFIGURABLE_MUTATION = gql`
         ) @connection(key: "addConfigurableProductsToCart") {
             cart {
                 id
+                ...MiniCartFragment
             }
         }
     }
+    ${MiniCartFragment}
 `;
 
 export const ADD_SIMPLE_MUTATION = gql`
@@ -35,7 +39,9 @@ export const ADD_SIMPLE_MUTATION = gql`
         ) @connection(key: "addSimpleProductsToCart") {
             cart {
                 id
+                ...MiniCartFragment
             }
         }
     }
+    ${MiniCartFragment}
 `;

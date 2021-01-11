@@ -36,9 +36,9 @@ import i18n from './i18n';
 import partialConfig from './config';
 import store from './store';
 import { default as PeregrinCart } from '../Cart/Cart';
+import DummyAddToCart from '../Cart/DummyAddToCart';
 
 import '../../site/main.scss';
-import DummyAddToCart from '../Cart/DummyAddToCart';
 
 const App = () => {
     const { storeView, graphqlEndpoint, graphqlMethod } = document.querySelector('body').dataset;

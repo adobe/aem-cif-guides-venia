@@ -15,32 +15,73 @@
 import { gql } from '@apollo/client';
 //import { CartPageFragment } from './cartPageFragments.gql';
 
+export const MiniCartFragment = gql`
+    fragment MiniCartFragment on Cart {
+        prices {
+            discounts {
+                amount {
+                    currency
+                    value
+                }
+                label
+            }
+            subtotal_with_discount_excluding_tax {
+                currency
+                value
+            }
+            subtotal_excluding_tax {
+                currency
+                value
+            }
+            grand_total {
+                currency
+                value
+            }
+        }
+        total_quantity
+        items {
+            __typename
+            id
+            quantity
+            prices {
+                price {
+                    currency
+                    value
+                }
+                row_total {
+                    currency
+                    value
+                }
+            }
+            product {
+                name
+                sku
+                thumbnail {
+                    url
+                }
+            }
+            ... on BundleCartItem {
+                bundle_options {
+                    id
+                    label
+                    type
+                    values {
+                        id
+                        label
+                        price
+                        quantity
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export const GET_CART_DETAILS = gql`
     query GetCartDetails($cartId: String!) {
         cart(cart_id: $cartId) {
             id
             is_virtual
-            prices {
-                discounts {
-                    amount {
-                        currency
-                        value
-                    }
-                    label
-                }
-                subtotal_with_discount_excluding_tax {
-                    currency
-                    value
-                }
-                subtotal_excluding_tax {
-                    currency
-                    value
-                }
-                grand_total {
-                    currency
-                    value
-                }
-            }
             email
             shipping_addresses {
                 city
@@ -94,42 +135,8 @@ export const GET_CART_DETAILS = gql`
             applied_coupon {
                 code
             }
-            total_quantity
-            items {
-                __typename
-                id
-                quantity
-                prices {
-                    price {
-                        currency
-                        value
-                    }
-                    row_total {
-                        currency
-                        value
-                    }
-                }
-                product {
-                    name
-                    sku
-                    thumbnail {
-                        url
-                    }
-                }
-                ... on BundleCartItem {
-                    bundle_options {
-                        id
-                        label
-                        type
-                        values {
-                            id
-                            label
-                            price
-                            quantity
-                        }
-                    }
-                }
-            }
+            ...MiniCartFragment
         }
     }
+    ${MiniCartFragment}
 `;

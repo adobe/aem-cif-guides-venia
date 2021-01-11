@@ -21,6 +21,18 @@ import { GET_PRODUCT_DETAIL_QUERY } from './product.gql';
 
 import { ADD_CONFIGURABLE_MUTATION, ADD_SIMPLE_MUTATION } from './DummyAddToCart.gql';
 
+const DummyAddToCartButton = props => {
+    const { product } = props;
+
+    const { handleAddToCart } = useProductFullDetail({
+        addConfigurableProductToCartMutation: ADD_CONFIGURABLE_MUTATION,
+        addSimpleProductToCartMutation: ADD_SIMPLE_MUTATION,
+        product
+    });
+
+    return <button onClick={handleAddToCart}>Add to cart</button>;
+};
+
 const DummyAddToCart = props => {
     const { error, loading, product } = useProduct({
         mapProduct: i => i,
@@ -29,11 +41,6 @@ const DummyAddToCart = props => {
         },
         urlKey: props.urlKey
     });
-    /* const { handleAddToCart } = useProductFullDetail({
-        addConfigurableProductToCartMutation: ADD_CONFIGURABLE_MUTATION,
-        addSimpleProductToCartMutation: ADD_SIMPLE_MUTATION,
-        product
-    }); */
 
     if (loading) {
         return <div>Loading</div>;
@@ -45,7 +52,7 @@ const DummyAddToCart = props => {
     return (
         <div>
             <h1>{product.name}</h1>
-            <button>Add to cart</button>
+            <DummyAddToCartButton product={product} />
         </div>
     );
 };

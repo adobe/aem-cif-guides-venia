@@ -24,9 +24,21 @@ const Cart = props => {
         }
     });
 
-    console.log('cartItems', cartItems);
-
-    return <div>Cart</div>;
+    return (
+        <div>
+            <h1>Cart ({cartItems.length || 0})</h1>
+            {hasItems && (
+                <ul>
+                    {cartItems.map(item => (
+                        <li key={item.product.sku}>
+                            {item.product.name},{item.quantity},{item.prices.row_total.value}
+                        </li>
+                    ))}
+                </ul>
+            )}
+            {!hasItems && <span>Cart is empty.</span>}
+        </div>
+    );
 };
 
 export default Cart;
