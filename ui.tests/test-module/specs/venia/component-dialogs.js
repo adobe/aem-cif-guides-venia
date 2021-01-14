@@ -69,9 +69,10 @@ describe('Component Dialogs', function() {
         $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
 
         // Filter for Commerce components
-        $('#components-filter coral-select').waitAndClick();
+        $('#components-filter coral-select button').waitAndClick();
+        browser.pause(200);
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
-        expect($('#components-filter coral-select coral-button-label')).toHaveText(group);
+        expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
