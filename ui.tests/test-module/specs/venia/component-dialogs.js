@@ -71,6 +71,7 @@ describe('Component Dialogs', function() {
         // Filter for Commerce components
         $('#components-filter coral-select').waitAndClick();
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
+        expect($('#components-filter coral-select coral-button-label')).toHaveText(group);
 
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
