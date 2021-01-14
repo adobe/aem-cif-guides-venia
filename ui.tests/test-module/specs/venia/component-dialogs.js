@@ -94,36 +94,53 @@ describe('Category Carousel', () => {
     it('opens the category carousel dialog', () => {
         addComponentToPage('Category Carousel');
         openComponentDialog('categorycarousel', 'aem:sites:components:dialogs:cif-core-components:categorycarousel:v1');
+
+        $('coral-multifield button').click();
+        expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
     });
 
     it('opens the commerce experience fragment dialog', () => {
         addComponentToPage('Commerce Experience Fragment');
         openComponentDialog('experiencefragment', 'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1');
+
+        expect($('label=Experience fragment location name.')).toBeDisplayed();
     });
 
     it('opens the commerce teaser dialog', () => {
         addComponentToPage('Commerce Teaser');
         openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v1');
+
+        $('coral-tab-label=Link & Actions').click();
+        expect($('label=Link')).toBeDisplayed();
     });
 
     it('opens the featured categories dialog', () => {
         addComponentToPage('Featured Categories');
         openComponentDialog('featuredcategorylist', 'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1');
+
+        $('coral-multifield button').click();
+        expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
     });
 
     it('opens the product carousel dialog', () => {
         addComponentToPage('Product Carousel');
         openComponentDialog('productcarousel', 'aem:sites:components:dialogs:cif-core-components:productcarousel:v1');
+
+        expect($('label=Carousel content')).toBeDisplayed();
     });
 
     it('opens the product teaser dialog', () => {
         addComponentToPage('Product Teaser');
         openComponentDialog('productteaser', 'aem:sites:components:dialogs:cif-core-components:productteaser:v1');
+
+        expect($('label=Select Product')).toBeDisplayed();
     });
 
-    it('opens the product teaser dialog', () => {
+    it('opens the releated products dialog', () => {
         addComponentToPage('Related Products');
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
+
+        expect($('label=Base product - Leave empty to use the current product of the generic product page.')).toBeDisplayed();
     });
 
 });
