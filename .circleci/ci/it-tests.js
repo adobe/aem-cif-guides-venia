@@ -36,7 +36,7 @@ try {
         let extras = `--bundle com.adobe.commerce.cif:graphql-client:${graphqlClientVersion}:jar`;
         if (classifier == 'classic') {
             // Install CIF connector
-            extras += ` --bunlde com.adobe.commerce.cif:cif-connector-all:${connectorVersion}:zip`;
+            extras += ` --bundle com.adobe.commerce.cif:cif-connector-all:${connectorVersion}:zip`;
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
