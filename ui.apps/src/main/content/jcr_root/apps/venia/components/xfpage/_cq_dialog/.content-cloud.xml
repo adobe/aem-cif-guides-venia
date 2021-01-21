@@ -106,7 +106,6 @@
                                                     fieldLabel="Category IDs."
                                                     multiple="{Boolean}true"
                                                     name="./cq:categories"
-                                                    rootPath="/var/commerce/products"
                                                     selectionId="id">
                                                 <granite:data
                                                         jcr:primaryType="nt:unstructured"
