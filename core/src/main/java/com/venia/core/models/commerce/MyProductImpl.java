@@ -28,7 +28,7 @@ public class MyProductImpl implements MyProduct {
 
     @PostConstruct
     public void initModel() {
-        productRetriever = getProductRetriever();
+        productRetriever = product.getProductRetriever();
 
         if (productRetriever != null) {
             productRetriever.extendProductQueryWith(p -> p.countryOfManufacture());
