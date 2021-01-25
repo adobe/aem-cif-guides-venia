@@ -28,10 +28,9 @@ browser.addCommand('AEMLogin', function (username, password) {
     if ($('[class*="Accordion"] form').isExisting()) {
         try {
             $('#username').setValue(username);
-        }
-        // Form field not interactable, not visible
-        // Need to open the Accordion
-        catch (e) {
+        } catch (e) {
+            // Form field not interactable, not visible
+            // Need to open the Accordion
             $('[class*="Accordion"] button').click();
             browser.pause(500);
         }
@@ -84,6 +83,24 @@ browser.addCommand('configureGraphqlClient', async function (factoryPid, propert
     });
 });
 
+/**
+ * Close all additional windows which might have been opened by a test.
+ */
+browser.addCommand('CloseOtherWindows', function () {
+    const handles = browser.getWindowHandles();
+
+    if (handles.length <= 1) return;
+
+    // Close all windows except for the first
+    for (let i = 1; i < handles.length; i++) {
+        browser.switchToWindow(handles[i]);
+        browser.closeWindow();
+    }
+
+    // Switch back to the first window
+    browser.switchToWindow(handles[0]);
+});
+
 // Returns file handle to use for file upload component,
 // depending on test context (local, Docker or Cloud)
 browser.addCommand('getFileHandleForUpload', function (filePath) {
@@ -110,14 +127,38 @@ browser.addCommand('AEMPathExists', function (baseUrl, path) {
         });
 });
 
-browser.addCommand('AEMDeleteAsset', function (assetPath) {
+browser.addCommand('AEMEditorLoaded', function () {
+    // Check for two conditions in the browse JavaScript context.
+    // Taken from https://git.corp.adobe.com/CQ/selenium-it-base/blob/45815ecf4c509aefcc9872ad1be4d978875ee81d/src/main/java/com/adobe/qe/selenium/pageobject/EditorPage.java#L191-L197
+    browser.waitUntil(() => {
+        // eslint-disable-next-line
+        return browser.execute(() => window && window.Granite && window.Granite.author && true);
+    });
+
+    browser.waitUntil(() => {
+        return browser.execute(() => {
+            // eslint-disable-next-line
+            if (window && window.Granite && window.Granite.author && true) {
+                // eslint-disable-next-line
+                var ns = window.Granite.author;
+                return ns.pageInfo && ns.pageInfo !== null;
+            }
+            return false;
+        });
+    });
+});
+
+/**
+ * Delete a page at the given path.
+ */
+browser.addCommand('AEMDeletePage', function (path) {
     let options = commons.getAuthenticatedRequestOptions(browser);
     Object.assign(options, {
         formData: {
             cmd: 'deletePage',
-            path: assetPath,
+            path,
             force: 'true',
-            '_charset_': 'utf-8'
+            _charset_: 'utf-8'
         }
     });
 
@@ -139,13 +180,37 @@ browser.addCommand('AEMSitesSetView', function (type) {
     browser.refresh();
 });
 
+/**
+ * Create a new page.
+ */
+browser.addCommand('AEMCreatePage', function (pageOptions) {
+    let options = commons.getAuthenticatedRequestOptions(browser);
+    const { title, name, parent, template } = pageOptions;
+    Object.assign(options, {
+        formData: {
+            './jcr:title': title,
+            pageName: name,
+            parentPath: parent,
+            template,
+            _charset_: 'utf-8'
+        }
+    });
+
+    return request.post(
+        url.resolve(config.aem.author.base_url, '/libs/wcm/core/content/sites/createpagewizard/_jcr_content'),
+        options
+    );
+});
+
 browser.addCommand('AEMSitesSetPageTitle', function (parentPath, name, title) {
     let originalTitle = '';
 
     // Navigate to page parent path
     browser.url(path.posix.join(AEM_SITES_PATH, parentPath));
     // Select sample page in the list
-    $(`[data-foundation-collection-item-id="${path.posix.join(parentPath, name)}"] [type="checkbox"]`).waitForClickable();
+    $(
+        `[data-foundation-collection-item-id="${path.posix.join(parentPath, name)}"] [type="checkbox"]`
+    ).waitForClickable();
     browser.pause(1000); // Avoid action bar not appearing after clicking checkbox
     $(`[data-foundation-collection-item-id="${path.posix.join(parentPath, name)}"] [type="checkbox"]`).click();
     // Access page properties form
@@ -160,6 +225,27 @@ browser.addCommand('AEMSitesSetPageTitle', function (parentPath, name, title) {
     $(`[data-foundation-collection-item-id="${path.posix.join(parentPath, name)}"] [type="checkbox"]`).waitForExist();
 
     return originalTitle;
+});
+
+browser.addCommand(
+    'waitAndClick',
+    function (args) {
+        this.waitForDisplayed();
+        this.click(args);
+    },
+    true
+);
+
+/**
+ * Opens the side panel in the AEM Sites editor if closed.
+ */
+browser.addCommand('EditorOpenSidePanel', function () {
+    const toggleButton = $('button[title="Toggle Side Panel"]');
+    toggleButton.waitForDisplayed();
+    const sidePanel = $('#SidePanel.sidepanel-opened');
+    if (!sidePanel.isDisplayed()) {
+        toggleButton.click();
+    }
 });
 
 async function getOsgiConfigurations(auth, factoryPid) {
@@ -212,7 +298,7 @@ function fileHandleByUploadUrl(uploadUrl, filePath) {
                 options: {
                     filename: path.basename(filePath)
                 }
-            },
-        },
+            }
+        }
     });
 }
