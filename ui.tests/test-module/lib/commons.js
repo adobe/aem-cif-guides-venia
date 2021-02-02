@@ -13,13 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-const conf   = require('./config');
+const conf = require('./config');
 const moment = require('moment');
-const path   = require('path');
+const path = require('path');
 const request = require('request-promise');
 const tough = require('tough-cookie');
+const { randomBytes } = require('crypto');
 
-const AEMSitesViewTypes = Object.freeze({'CARD': 'card', 'COLUMN': 'column', 'LIST': 'list'});
+const AEMSitesViewTypes = Object.freeze({ CARD: 'card', COLUMN: 'column', LIST: 'list' });
+
+const KEYS = {
+    enter: '\uE007'
+};
 
 function takeScreenshot(browser, prefix) {
     prefix = prefix == null ? '' : prefix + '-';
@@ -59,6 +64,10 @@ function _getLoginTokenCookie(browser) {
     });
 }
 
+function randomString() {
+    return randomBytes(10).toString('hex');
+}
+
 class OnboardingDialogHandler {
     constructor(browser) {
         this.browser = browser;
@@ -68,12 +77,12 @@ class OnboardingDialogHandler {
     enable() {
         this.beforeCmdBkp = this.browser.config.beforeCommand || [];
 
-        this.browser.config.beforeCommand.push(function() {
-            if($('coral-overlay[class*="onboarding"]').isDisplayedInViewport()) {
+        this.browser.config.beforeCommand.push(function () {
+            if ($('coral-overlay[class*="onboarding"]').isDisplayedInViewport()) {
                 console.log('User Onboarding Dialog is present, closing it.');
                 // console.log(arguments);
                 browser.keys('Escape');
-                $('coral-overlay[class*="onboarding"]').waitForDisplayed({reverse: true});
+                $('coral-overlay[class*="onboarding"]').waitForDisplayed({ reverse: true });
             }
         });
     }
@@ -84,8 +93,10 @@ class OnboardingDialogHandler {
 }
 
 module.exports = {
-    AEMSitesViewTypes: AEMSitesViewTypes,
-    getAuthenticatedRequestOptions: getAuthenticatedRequestOptions,
-    takeScreenshot: takeScreenshot,
-    OnboardingDialogHandler: OnboardingDialogHandler
+    AEMSitesViewTypes,
+    getAuthenticatedRequestOptions,
+    takeScreenshot,
+    OnboardingDialogHandler,
+    KEYS,
+    randomString
 };
