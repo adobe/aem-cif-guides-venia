@@ -104,7 +104,7 @@ describe('Component Dialogs', function() {
     });
 
     it('opens the commerce experience fragment dialog', () => {
-        addComponentToPage("Commerce Experience Fragment Placeholder");
+        addComponentToPage('Commerce Experience Fragment Placeholder');
         openComponentDialog('experiencefragment', 'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1');
 
         expect($('label=Experience fragment location name.')).toBeDisplayed();
