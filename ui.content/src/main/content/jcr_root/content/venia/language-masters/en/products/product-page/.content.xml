@@ -19,6 +19,15 @@
                     layout="responsiveGrid">
                     <product jcr:primaryType="nt:unstructured" 
                         sling:resourceType="venia/components/commerce/product" />
+                    <experiencefragment jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/commerce/experiencefragment"
+                        fragmentLocation="bottom">
+                        <cq:responsive jcr:primaryType="nt:unstructured">
+                            <default jcr:primaryType="nt:unstructured"
+                                offset="3"
+                                width="6" />
+                        </cq:responsive>
+                    </experiencefragment>
                 </container>
             </container>
         </root>
