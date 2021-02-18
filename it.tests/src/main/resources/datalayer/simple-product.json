@@ -1,18 +1,42 @@
 {
   "product-500741b9f1": {
-    "xdm:currencyCode": "USD",
     "xdm:listPrice": 52.0,
-    "xdm:SKU": "MH01",
-    "dc:description": "<p>Ideal for cold-weather training or work outdoors, the Chaz Hoodie promises superior warmth with every wear. Thick material blocks out the wind as ribbed cuffs and bottom band seal in body heat.</p>\n<p>• Two-tone gray heather hoodie.<br />• Drawstring-adjustable hood. <br />• Machine wash/dry.</p>",
-    "@type": "venia/components/commerce/product",
-    "dc:title": "Chaz Kangeroo Hoodie",
-    "xdm:assets": [],
     "xdm:categories": [
       {
-        "repo:id": 10,
+        "repo:id": "category-4a44dc1536",
         "xdm:name": "category-1",
-        "xdm:asset": "/url/to/image"
+        "xdm:asset": {
+          "repo:path": "/url/to/image",
+          "xdm:tags": [],
+          "@type": "image",
+          "repo:id": "image-5e4329fc2c"
+        }
       }
-    ]
+    ],
+    "xdm:SKU": "MH01",
+    "xdm:assets": [
+      {
+        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_main_2.jpg",
+        "xdm:tags": [],
+        "@type": "image",
+        "repo:id": "image-1b75bd4564"
+      },
+      {
+        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_alt1_2.jpg",
+        "xdm:tags": [],
+        "@type": "image",
+        "repo:id": "image-72c282d214"
+      },
+      {
+        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_back_2.jpg",
+        "xdm:tags": [],
+        "@type": "image",
+        "repo:id": "image-b01e75ba46"
+      }
+    ],
+    "xdm:currencyCode": "USD",
+    "dc:title": "Chaz Kangeroo Hoodie",
+    "@type": "venia/components/commerce/product",
+    "dc:description": "<p>Ideal for cold-weather training or work outdoors, the Chaz Hoodie promises superior warmth with every wear. Thick material blocks out the wind as ribbed cuffs and bottom band seal in body heat.</p>\n<p>• Two-tone gray heather hoodie.<br />• Drawstring-adjustable hood. <br />• Machine wash/dry.</p>"
   }
 }

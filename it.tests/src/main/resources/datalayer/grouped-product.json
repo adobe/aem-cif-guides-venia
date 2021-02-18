@@ -1,18 +1,30 @@
 {
   "product-ed0cbc4aea": {
-    "xdm:currencyCode": "USD",
     "xdm:listPrice": 14.0,
-    "xdm:SKU": "24-WG085_Group",
-    "dc:description": "<p>Great set of Sprite Yoga Straps for every stretch and hold you need. There are three straps in this set: 6', 8' and 10'.</p>\n<ul>\n<li> 100% soft and durable cotton.\n</li><li> Plastic cinch buckle is easy to use.\n</li><li> Choice of three natural colors made from phthalate and heavy metal free dyes.\n</li></ul>",
-    "@type": "venia/components/commerce/product",
-    "dc:title": "Set of Sprite Yoga Straps",
-    "xdm:assets": [],
     "xdm:categories": [
       {
-        "repo:id": 10,
+        "repo:id": "category-4a44dc1536",
         "xdm:name": "category-1",
-        "xdm:asset": "/url/to/image"
+        "xdm:asset": {
+          "repo:path": "/url/to/image",
+          "xdm:tags": [],
+          "@type": "image",
+          "repo:id": "image-5e4329fc2c"
+        }
       }
-    ]
+    ],
+    "xdm:SKU": "24-WG085_Group",
+    "xdm:assets": [
+      {
+        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/yoga-strap/luma-yoga-strap-set.jpg",
+        "xdm:tags": [],
+        "@type": "image",
+        "repo:id": "image-73eab8f082"
+      }
+    ],
+    "xdm:currencyCode": "USD",
+    "dc:title": "Set of Sprite Yoga Straps",
+    "@type": "venia/components/commerce/product",
+    "dc:description": "<p>Great set of Sprite Yoga Straps for every stretch and hold you need. There are three straps in this set: 6', 8' and 10'.</p>\n<ul>\n<li> 100% soft and durable cotton.\n</li><li> Plastic cinch buckle is easy to use.\n</li><li> Choice of three natural colors made from phthalate and heavy metal free dyes.\n</li></ul>"
   }
 }
