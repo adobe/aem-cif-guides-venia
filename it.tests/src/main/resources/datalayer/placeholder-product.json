@@ -5,6 +5,14 @@
     "xdm:SKU": "product-sku",
     "dc:description": "<p>Product description, can include <strong>html</strong> tags.</p>",
     "@type": "venia/components/commerce/product",
-    "dc:title": "Product name"
+    "dc:title": "Product name",
+    "xdm:assets": [],
+    "xdm:categories": [
+      {
+        "repo:id": 10,
+        "xdm:name": "category-1",
+        "xdm:asset": "/url/to/image"
+      }
+    ]
   }
 }
