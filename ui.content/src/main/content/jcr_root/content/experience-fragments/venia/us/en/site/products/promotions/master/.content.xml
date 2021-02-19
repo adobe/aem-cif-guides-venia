@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content cq:products="[VD09,VD03,VD08]"
+        cq:template="/conf/venia/settings/wcm/templates/xf-web-variation"
+        cq:xfMasterVariation="{Boolean}true"
+        cq:xfVariantType="web"
+        jcr:description="Venia Catalog Promotions"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Summer"
+        sling:resourceType="venia/components/xfpage"
+        fragmentLocation="bottom">
+        <root jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container"
+            layout="responsiveGrid">
+            <title jcr:primaryType="nt:unstructured"
+                jcr:title="Cool Summer Sale Low Price"
+                sling:resourceType="venia/components/title"
+                type="h2">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="4" />
+                </cq:responsive>
+            </title>
+            <productteaser jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/commerce/productteaser"
+                age="{Long}10"
+                badge="false"
+                selection="VA11-GO-NA"
+                text="New">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        behavior="newline"
+                        offset="0"
+                        width="4" />
+                </cq:responsive>
+            </productteaser>
+        </root>
+        <cq:metadata jcr:primaryType="nt:unstructured" />
+    </jcr:content>
+</jcr:root>
