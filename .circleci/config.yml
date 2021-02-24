@@ -138,7 +138,7 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.5
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7
         <<: *docker_auth
     environment:
       AEM: classic
@@ -155,7 +155,7 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4271
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4830
         <<: *docker_auth
     environment:
       AEM: cloud
@@ -172,7 +172,7 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4271
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4830
         <<: *docker_auth
     environment:
       AEM: cloud
@@ -190,7 +190,7 @@ jobs:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.5
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7
         <<: *docker_auth
     environment:
       AEM: classic
