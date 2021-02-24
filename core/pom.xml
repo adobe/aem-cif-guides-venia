@@ -35,6 +35,9 @@
             <plugin>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>sling-maven-plugin</artifactId>
+                <configuration>
+                    <bundleFileName>${project.build.directory}/${project.build.finalName}-${project.classifier}.jar</bundleFileName>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>

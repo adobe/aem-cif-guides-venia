@@ -119,7 +119,7 @@
                                     </categoriesPickerSection>
                                     <fragmentLocationSection
                                         jcr:primaryType="nt:unstructured"
-                                        jcr:title="Fragment Location"
+                                        jcr:title="Catalog placeholder location"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
                                         <items jcr:primaryType="nt:unstructured">
                                             <fragmentLocation
