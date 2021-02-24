@@ -2,6 +2,8 @@
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="cq:Page">
     <jcr:content
+        cq:lastModified="{Date}2021-02-24T15:59:33.287+02:00"
+        cq:lastModifiedBy="admin"
         cq:tags="[]"
         cq:template="/conf/venia/settings/wcm/templates/xf-web-variation"
         cq:xfMasterVariation="{Boolean}true"
@@ -35,9 +37,11 @@
                     </cq:responsive>
                 </text_197302128_copy>
                 <text_197302128_copy_631702609
+                    jcr:lastModified="{Date}2021-02-24T15:59:33.206+02:00"
+                    jcr:lastModifiedBy="admin"
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="venia/components/text"
-                    text="&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>&lt;b>About Us&lt;/b>&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>Our Story&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>Email Signup&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>Give Back&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;"
+                    text="&lt;p> &lt;/p>&#xd;&#xa;&lt;p>&lt;b>About Us&lt;/b>&lt;/p>&#xd;&#xa;&lt;p> &lt;/p>&#xd;&#xa;&lt;p>Our Story&lt;/p>&#xd;&#xa;&lt;p> &lt;/p>&#xd;&#xa;&lt;p>Email Signup&lt;/p>&#xd;&#xa;&lt;p> &lt;/p>&#xd;&#xa;&lt;p>Give Back&lt;/p>&#xd;&#xa;&lt;p> &lt;/p>&#xd;&#xa;&lt;p> &lt;/p>&#xd;&#xa;"
                     textIsRich="true">
                     <cq:responsive jcr:primaryType="nt:unstructured">
                         <default
@@ -86,9 +90,9 @@
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="venia/components/separator"/>
                 <text
-                    id="footerCopyright"
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="venia/components/text"
+                    id="footerCopyright"
                     text="&lt;p>Copyright 2020, Venia.&amp;nbsp;All rights reserved.&lt;/p>&#xd;&#xa;&lt;p>345 Park Avenue,&amp;nbsp;San Jose, CA 95110-2704, USA&lt;/p>&#xd;&#xa;"
                     textIsRich="true"/>
             </container>
