@@ -1,10 +1,19 @@
 {
   "product-6603d4b5bd": {
-    "xdm:currencyCode": "USD",
     "xdm:listPrice": 9.99,
+    "xdm:categories": [],
     "xdm:SKU": "product-sku",
-    "dc:description": "<p>Product description, can include <strong>html</strong> tags.</p>",
+    "xdm:assets": [
+      {
+        "repo:path": "/apps/core/cif/components/commerce/product/v1/product/clientlib/resources/images/catalog/product/thumbnail.png",
+        "xdm:tags": [],
+        "@type": "image",
+        "repo:id": "image-1bd9b563f8"
+      }
+    ],
+    "xdm:currencyCode": "USD",
+    "dc:title": "Product name",
     "@type": "venia/components/commerce/product",
-    "dc:title": "Product name"
+    "dc:description": "<p>Product description, can include <strong>html</strong> tags.</p>"
   }
 }
