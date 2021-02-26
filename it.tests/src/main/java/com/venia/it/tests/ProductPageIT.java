@@ -53,7 +53,7 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(7, elements.size());
+        Assert.assertEquals(8, elements.size());
 
         // Check the meta data
         elements = doc.select("title");
