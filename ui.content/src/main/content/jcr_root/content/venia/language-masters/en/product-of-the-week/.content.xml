@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2021-02-26T14:51:59.402+01:00"
+        cq:lastModifiedBy="admin"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Product of the Week"
+        sling:resourceType="venia/components/page">
+        <root
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid">
+                    <title
+                        jcr:created="{Date}2021-02-26T14:46:40.611+01:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2021-02-26T14:46:40.611+01:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/title"/>
+                    <product
+                        jcr:created="{Date}2021-02-26T14:41:32.899+01:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2021-02-26T14:41:57.569+01:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/commerce/product"
+                        selection="VT04"/>
+                    <image
+                        jcr:created="{Date}2021-02-26T14:51:25.631+01:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2021-02-26T14:51:25.631+01:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/image"
+                        fileReference="/content/dam/venia/shop_the_latest_image1.jpg">
+                        <cq:responsive jcr:primaryType="nt:unstructured">
+                            <default
+                                jcr:primaryType="nt:unstructured"
+                                offset="0"
+                                width="3"/>
+                        </cq:responsive>
+                    </image>
+                    <text
+                        jcr:created="{Date}2021-02-26T14:49:51.276+01:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2021-02-26T14:50:57.701+01:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/text"
+                        text="&lt;p>Venia is the industry leader of short-term subscriber communities. The metrics for platforms are more well-understood if they are not impactful. We believe we know that it is better to reintermediate strategically than to repurpose extensibly. The capacity to enhance perfectly leads to the power to exploit intuitively. &lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>Our technology takes the best aspects of PGP and IIS. Quick: do you have a efficient, client-focused game plan for regulating emerging user interfaces? Quick: do you have a scalable scheme for handling emerging markets? We think we know that it is better to engineer extensibly than to disintermediate seamlessly. &lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>We will transform the ability of niches to deliver. Your budget for exploiting should be at least one-half of your budget for engineering. Quick: do you have a client-focused scheme for dealing with new user communities? Think plug-and-play. Think user-defined. Think resource-constrained. But don't think all three at the same time.&lt;/p>&#xd;&#xa;"
+                        textIsRich="true">
+                        <cq:responsive jcr:primaryType="nt:unstructured">
+                            <default
+                                jcr:primaryType="nt:unstructured"
+                                offset="0"
+                                width="9"/>
+                        </cq:responsive>
+                    </text>
+                </container>
+            </container>
+        </root>
+    </jcr:content>
+</jcr:root>
