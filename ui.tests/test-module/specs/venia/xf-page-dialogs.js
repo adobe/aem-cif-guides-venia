@@ -53,6 +53,8 @@ describe('XF Page Component Dialog', function() {
         expect(commerceTab).toBeDisplayed();
         commerceTab.click();
 
+        expect($('h3=Commerce Pages')).toBeDisplayed();
+
         if (config.aem.type === 'cloud') {
             expect($('h3=Product selection')).toBeDisplayed();
             expect($('h3=Category selection')).toBeDisplayed();
