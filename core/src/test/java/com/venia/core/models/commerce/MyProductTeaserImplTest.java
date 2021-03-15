@@ -14,27 +14,20 @@
 package com.venia.core.models.commerce;
 
 import com.adobe.cq.commerce.core.components.datalayer.ProductData;
+import com.adobe.cq.commerce.core.components.internal.models.v1.common.CommerceIdentifierImpl;
+import com.adobe.cq.commerce.core.components.models.common.CommerceIdentifier;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
-import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.scripting.WCMBindingsConstants;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import junit.framework.Assert;
 
-import org.apache.commons.math.stat.descriptive.summary.Product;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.jupiter.api.BeforeEach;
@@ -201,6 +194,31 @@ class MyProductTeaserImplTest {
 
         Mockito.doReturn(false).when(productTeaser).isVirtualProduct();
         Assert.assertFalse(underTest.isVirtualProduct());
+    }
+
+
+    @Test
+    void testGetCommerceIdentifier() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn(new CommerceIdentifier() {
+            @Override public String getValue() {
+                return "test-sku";
+            }
+
+            @Override public IdentifierType getType() {
+                return IdentifierType.SKU;
+            }
+
+            @Override public EntityType getEntityType() {
+                return EntityType.PRODUCT;
+            }
+        }).when(productTeaser).getCommerceIdentifier();
+
+        Assert.assertNotNull(underTest);
+        CommerceIdentifier commerceIdentifier = underTest.getCommerceIdentifier();
+        Assert.assertEquals("test-sku", commerceIdentifier.getValue());
+        Assert.assertEquals(CommerceIdentifier.EntityType.PRODUCT, commerceIdentifier.getEntityType());
+        Assert.assertEquals(CommerceIdentifier.IdentifierType.SKU, commerceIdentifier.getType());
     }
 
     @Test
