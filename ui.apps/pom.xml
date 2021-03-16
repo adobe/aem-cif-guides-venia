@@ -41,25 +41,6 @@
     <build>
         <sourceDirectory>src/main/content/jcr_root</sourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-xf-cq-dialog</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Copies the right .content.xml file depending on the profile -->
-                            <sourceFile>${basedir}/src/main/content/jcr_root/apps/venia/components/xfpage/_cq_dialog/.content-${project.classifier}.xml</sourceFile>
-                            <destinationFile>${basedir}/src/main/content/jcr_root/apps/venia/components/xfpage/_cq_dialog/.content.xml</destinationFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- ====================================================================== -->
             <!-- V A U L T   P A C K A G E   P L U G I N S                              -->
             <!-- ====================================================================== -->
@@ -88,12 +69,6 @@
                             <artifactId>core-cif-components-config</artifactId>
                         </dependency>
                     </dependencies>
-                    <excludes>
-                        <!-- Depending on the profile, one of these two files is copied to .content.xml -->
-                        <!-- but they are both excluded from the content package -->
-                        <exclude>**/.content-cloud.xml</exclude>
-                        <exclude>**/.content-classic.xml</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
