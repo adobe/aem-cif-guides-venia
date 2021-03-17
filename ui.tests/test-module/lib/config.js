@@ -42,6 +42,8 @@ let aem_publish_basel_url = process.env.AEM_PUBLISH_URL || 'http://localhost:450
 let aem_publish_username  = process.env.AEM_PUBLISH_USERNAME || 'admin';
 let aem_publish_password  = process.env.AEM_PUBLISH_PASSWORD || 'admin';
 
+let type = process.env.AEM || 'cloud'; // If testing against AEM cloud or classic
+
 module.exports = {
     selenium: {
         base_url: selenium_base_url,
@@ -51,6 +53,7 @@ module.exports = {
         headless: headless
     },
     aem: {
+        type,
         author: {
             base_url: aem_author_basel_url,
             username: aem_author_username,
