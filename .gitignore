@@ -104,7 +104,6 @@ coverage/
 # Generated files for the 'cloud' and 'classic' profiles
 ui.content/src/main/content/jcr_root/conf/venia/settings/cloudconfigs/commerce/.content.xml
 ui.content/src/main/content/META-INF/vault/filter.xml
-ui.apps/src/main/content/jcr_root/apps/venia/components/xfpage/_cq_dialog/.content.xml
 
 # UI Tests
 ui.tests/test-module/reports
