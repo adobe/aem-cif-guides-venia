@@ -114,6 +114,11 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
+    public String getCallToActionText() {
+        return productTeaser.getCallToActionText();
+    }
+
+    @Override
     public Boolean isVirtualProduct() { return productTeaser.isVirtualProduct(); }
 
     @Override
