@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import javax.annotation.PostConstruct;
 
 import com.adobe.cq.commerce.core.components.datalayer.ProductData;
+import com.adobe.cq.commerce.core.components.models.common.CommerceIdentifier;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
@@ -113,7 +114,17 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
+    public String getCallToActionText() {
+        return productTeaser.getCallToActionText();
+    }
+
+    @Override
     public Boolean isVirtualProduct() { return productTeaser.isVirtualProduct(); }
+
+    @Override
+    public CommerceIdentifier getCommerceIdentifier() {
+        return productTeaser.getCommerceIdentifier();
+    }
 
     @Override
     public AbstractProductRetriever getProductRetriever() {
