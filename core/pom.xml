@@ -19,7 +19,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>2021.02.25-SNAPSHOT</version>
+        <version>2021.03.25</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>venia.core</artifactId>
