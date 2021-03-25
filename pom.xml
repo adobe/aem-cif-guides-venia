@@ -19,7 +19,7 @@
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.05.25-SNAPSHOT</version>
+    <version>2021.03.26-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
@@ -50,9 +50,9 @@
         <vault.user>admin</vault.user>
         <vault.password>admin</vault.password>
         <core.wcm.components.version>2.15.0</core.wcm.components.version>
-        <core.cif.components.version>1.11.0</core.cif.components.version>
+        <core.cif.components.version>1.12.1-SNAPSHOT</core.cif.components.version>
         <graphql.client.version>1.7.1</graphql.client.version>
-        <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
+        <magento.graphql.version>6.0.0-magento235</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -72,7 +72,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <scmCommentPrefix>[maven-scm] :</scmCommentPrefix>
-                    <preparationGoals>-Pcommit-changed-npm-files clean install scm:add scm:checkin</preparationGoals>
+                    <preparationGoals>clean install</preparationGoals>
                     <goals>install</goals>
                     <releaseProfiles>release</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -596,27 +596,6 @@ Bundle-DocURL:
                                     </configuration>
                                 </execution>
                             </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>commit-changed-npm-files</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-scm-plugin</artifactId>
-                            <configuration>
-                                <includes>ui.frontend/package.json,ui.frontend/package-lock.json</includes>
-                                <message>[maven-release-plugin] :update react-components version to ${core.cif.components.version}</message>
-                                <pushChanges>false</pushChanges>
-                            </configuration>
                         </plugin>
                     </plugins>
                 </pluginManagement>
