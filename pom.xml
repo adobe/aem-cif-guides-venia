@@ -52,7 +52,7 @@
         <core.wcm.components.version>2.10.0</core.wcm.components.version>
         <core.cif.components.version>1.9.1-SNAPSHOT</core.cif.components.version>
         <graphql.client.version>1.7.1</graphql.client.version>
-        <magento.graphql.version>6.0.0-magento235</magento.graphql.version>
+        <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
