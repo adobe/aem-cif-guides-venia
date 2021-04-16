@@ -57,7 +57,6 @@ describe('Catalog Page Component Dialog', function() {
         expect($('coral-checkbox-label=Show catalog page')).toBeDisplayed();
         expect($('h3=Magento Store Configuration')).toBeDisplayed();
         expect($('label=Root category ID')).toBeDisplayed();
-        expect($('category-field[placeholder="Category ID"]')).toBeDisplayed();
     });
 
 });
