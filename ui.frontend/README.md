@@ -104,7 +104,7 @@ This will generate a development build and link it to you global NPM library
 2. Install the Venia demo using the following command (in the root folder):
 
 ```bash
-mvn clean install -P autoInstallPackage,fedDev
+mvn clean install -PautoInstallSinglePackage,cloud,fedDev 
 ```
 
 If you want to install it on a regular AEM quickstart instance (i.e. not AEM SDK) don't forget to add the `classic` profile to the command above.
