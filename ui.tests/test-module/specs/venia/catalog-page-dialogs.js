@@ -56,7 +56,7 @@ describe('Catalog Page Component Dialog', function() {
         expect($('h3=Catalog Page')).toBeDisplayed();
         expect($('coral-checkbox-label=Show catalog page')).toBeDisplayed();
         expect($('h3=Magento Store Configuration')).toBeDisplayed();
-        expect($('label=Root category ID')).toBeDisplayed();
+        expect($('label=Root Category Identifier')).toBeDisplayed();
     });
 
 });
