@@ -72,28 +72,6 @@ describe('Venia React Components', () => {
         expect(signInForm).toBeDisplayed();
     });
 
-    it('should render the sign in component in the navigation', () => {
-        // Set window size to mobile
-        browser.setWindowSize(375, 812);
-
-        // Go to the Venia homepage
-        browser.url(venia_homepage);
-
-        // Open navigation
-        const navTrigger = $('.navTrigger__root');
-        expect(navTrigger).toBeDisplayed();
-        navTrigger.click();
-
-        // Check sign in button
-        const signInButton = $('.cmp-AuthBar__authBar__root > button');
-        expect(signInButton).toBeDisplayed();
-
-        // Check sign in form
-        signInButton.click();
-        const signInForm = $('.cmp-SignIn__signIn__form');
-        expect(signInForm).toBeDisplayed();
-    });
-
     it('should render the address book component', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
