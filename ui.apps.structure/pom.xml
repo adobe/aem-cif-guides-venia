@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.venia</groupId>
         <artifactId>venia</artifactId>
-        <version>2021.04.22</version>
+        <version>2021.04.23-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
