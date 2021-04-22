@@ -71,6 +71,10 @@
     padding: 0 1rem;
 }
 
+.header__toolbar > a {
+    justify-self: start;
+}
+
 .header__navTrigger,
 .header__accountTrigger,
 .header__cartTrigger {
@@ -83,19 +87,8 @@
     display: inline-block;
 }
 
-@media (max-width: 1023px) {
-    .header__accountTrigger {
-        display: none;
-    }
-}
-
 .header__logo {
     grid-area: title;
-}
-
-.header__primaryActions {
-    grid-area: primary;
-    justify-self: start;
 }
 
 .header__secondaryActions {
