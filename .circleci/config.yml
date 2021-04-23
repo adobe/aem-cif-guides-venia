@@ -3,11 +3,6 @@ version: 2.1
 orbs:
   codecov: codecov/codecov@1.1.1
 
-executors:
-  cif_executor:
-    docker:
-      - image: circleci/openjdk:11-jdk-node
-
 common:
   integration_test_steps: &integration_test_steps
     steps:
@@ -56,6 +51,24 @@ common:
           npm link
         fi
       working_directory: ./dependencies
+
+executors:
+  cif_executor:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-openjdk-azul:11-stretch-node-browsers
+        <<: *docker_auth
+  test_executor_cloudready:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5104-azul
+        <<: *docker_auth
+  test_executor_655:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7-azul
+        <<: *docker_auth
 
 jobs:
   build:
@@ -135,11 +148,7 @@ jobs:
             - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
   integration-test-655:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7
-        <<: *docker_auth
+    executor: test_executor_655
     environment:
       AEM: classic
       TYPE: integration
@@ -152,11 +161,7 @@ jobs:
     <<: *integration_test_steps
     
   integration-test-cloudready-with-addon:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4830
-        <<: *docker_auth
+    executor: test_executor_cloudready
     environment:
       AEM: cloud
       TYPE: integration
@@ -169,11 +174,7 @@ jobs:
     <<: *integration_test_steps
 
   selenium-chrome-cloudready-with-addon:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:4830
-        <<: *docker_auth
+    executor: test_executor_cloudready
     environment:
       AEM: cloud
       TYPE: selenium
@@ -187,11 +188,7 @@ jobs:
     <<: *integration_test_steps
 
   selenium-chrome-655:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-jdk11
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7
-        <<: *docker_auth
+    executor: test_executor_655
     environment:
       AEM: classic
       TYPE: selenium
@@ -206,12 +203,9 @@ jobs:
 
   deploy-sample:
     executor: cif_executor
-
     working_directory: ~/repo
-
     environment:
       MAVEN_OPTS: -Xmx3200m
-
     steps:
       - checkout
       - restore_cache:
