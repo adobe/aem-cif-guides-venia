@@ -17,6 +17,7 @@
 const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
+const buildPath = '/home/circleci/build';
 const { TYPE, BROWSER } = process.env;
 
 try {
@@ -42,16 +43,15 @@ try {
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
 
         } else if (classifier == 'cloud') {
-            // Get CIF add-on for cloud SDK. Use the following version keywords:
-            // LATEST: latest snapshot version
-            // LATEST-RELEASE: latest release version
-            extras = '--bundle com.adobe.cq.cif:cif-cloud-ready-feature-pkg:LATEST-RELEASE:far:cq-commerce-addon-authorfar'
+            // Download latest add-on release from artifactory
+            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=cif-cloud-ready-feature-pkg -Dversion=LATEST -Dtype=far -Dclassifier=cq-commerce-addon-authorfar -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon.far`);
+            extras = ` --install-file ${buildPath}/dependencies/addon.far`;
         }
 
         // Install SNAPSHOT or current version of CIF examples bundle
         if (cifVersion.endsWith('-SNAPSHOT')) {
             let jar = `core-cif-components-examples-bundle-${cifVersion}.jar`;
-            extras += ` --install-file /home/circleci/build/dependencies/aem-core-cif-components/examples/bundle/target/${jar}`;
+            extras += ` --install-file ${buildPath}/dependencies/aem-core-cif-components/examples/bundle/target/${jar}`;
         } else {
             extras += ` --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:${cifVersion}:jar`;
         }
@@ -60,8 +60,8 @@ try {
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
-            --install-file /home/circleci/build/all/target/venia.all-${veniaVersion}-${classifier}.zip \
-            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -Dorg.apache.maven.user-settings=/home/circleci/build/.circleci/settings.xml -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
+            --install-file ${buildPath}/all/target/venia.all-${veniaVersion}-${classifier}.zip \
+            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
     // Run integration tests
