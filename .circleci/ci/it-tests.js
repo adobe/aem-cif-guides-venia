@@ -25,19 +25,17 @@ try {
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
-    let connectorVersion = '1.8.0-magento242ee';
-    let graphqlClientVersion = ci.sh('mvn help:evaluate -Dexpression=graphql.client.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
 
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
         
-        // We install the graphql-client by default except with the CIF Add-On
-        let extras = `--bundle com.adobe.commerce.cif:graphql-client:${graphqlClientVersion}:jar`;
+        let extras;
         if (classifier == 'classic') {
-            // Install CIF connector
-            extras += ` --bundle com.adobe.commerce.cif:cif-connector-all:${connectorVersion}:zip`;
+            // Download latest add-on for AEM 6.5 release from artifactory
+            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=LATEST -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
+            extras = ` --install-file ${buildPath}/dependencies/addon-650.zip`;
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
