@@ -61,7 +61,7 @@ try {
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
             --install-file /home/circleci/build/all/target/venia.all-${veniaVersion}-${classifier}.zip \
-            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -Dorg.apache.maven.user-settings=.circleci/settings.xml -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
+            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -Dorg.apache.maven.user-settings=/home/circleci/build/.circleci/settings.xml -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
     // Run integration tests
