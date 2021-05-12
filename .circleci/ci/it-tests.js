@@ -40,10 +40,12 @@ try {
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
+
         } else if (classifier == 'cloud') {
-            // Download the CIF Add-On
-            ci.sh(`curl -s "${process.env.CIF_ADDON_URL}" -o cif-addon.far`);
-            extras = '--install-file cif-addon.far';
+            // Get CIF add-on for cloud SDK. Use the following version keywords:
+            // LATEST: latest snapshot version
+            // LATEST-RELEASE: latest release version
+            extras = '--bundle com.adobe.cq.cif:cif-cloud-ready-feature-pkg:LATEST-RELEASE:far:cq-commerce-addon-authorfar'
         }
 
         // Install SNAPSHOT or current version of CIF examples bundle
@@ -59,7 +61,7 @@ try {
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
             --install-file /home/circleci/build/all/target/venia.all-${veniaVersion}-${classifier}.zip \
-            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
+            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -Dorg.apache.maven.user-settings=.circleci/settings.xml -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
     // Run integration tests
