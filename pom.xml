@@ -72,7 +72,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <scmCommentPrefix>[maven-scm] :</scmCommentPrefix>
-                    <preparationGoals>clean install</preparationGoals>
+                    <preparationGoals>-Pcommit-changed-manifests clean install scm:add scm:checkin</preparationGoals>
                     <goals>install</goals>
                     <releaseProfiles>release</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -596,6 +596,27 @@ Bundle-DocURL:
                                     </configuration>
                                 </execution>
                             </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>commit-changed-npm-files</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-scm-plugin</artifactId>
+                            <configuration>
+                                <includes>ui.frontend/package.json,ui.frontend/package-lock.json</includes>
+                                <message>[maven-release-plugin] :increment Bundle-Version for ${project.version}</message>
+                                <pushChanges>false</pushChanges>
+                            </configuration>
                         </plugin>
                     </plugins>
                 </pluginManagement>

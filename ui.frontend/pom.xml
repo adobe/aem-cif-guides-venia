@@ -195,21 +195,6 @@
                                     </arguments>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>stage-package-files</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>git</executable>
-                                    <arguments>
-                                        <argument>add</argument>
-                                        <argument>package.json</argument>
-                                        <argument>package-lock.json</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
