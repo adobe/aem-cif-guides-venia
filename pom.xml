@@ -72,7 +72,7 @@
                 <version>2.5.3</version>
                 <configuration>
                     <scmCommentPrefix>[maven-scm] :</scmCommentPrefix>
-                    <preparationGoals>-Pcommit-changed-manifests clean install scm:add scm:checkin</preparationGoals>
+                    <preparationGoals>-Pcommit-changed-npm-files clean install scm:add scm:checkin</preparationGoals>
                     <goals>install</goals>
                     <releaseProfiles>release</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -614,7 +614,7 @@ Bundle-DocURL:
                             <artifactId>maven-scm-plugin</artifactId>
                             <configuration>
                                 <includes>ui.frontend/package.json,ui.frontend/package-lock.json</includes>
-                                <message>[maven-release-plugin] :increment Bundle-Version for ${project.version}</message>
+                                <message>[maven-release-plugin] :update react-components version to ${core.cif.components.version}</message>
                                 <pushChanges>false</pushChanges>
                             </configuration>
                         </plugin>
