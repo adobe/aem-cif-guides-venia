@@ -54,16 +54,9 @@ describe('XF Page Component Dialog', function() {
         commerceTab.click();
 
         expect($('h3=Commerce Pages')).toBeDisplayed();
-
-        if (config.aem.type === 'cloud') {
-            expect($('h3=Product selection')).toBeDisplayed();
-            expect($('h3=Category selection')).toBeDisplayed();
-            expect($('h3=Catalog placeholder location')).toBeDisplayed();
-        } else {
-            expect($$('h3=Product selection').length).toBe(0);
-            expect($$('h3=Category selection').length).toBe(0);
-            expect($$('h3=Catalog placeholder location').length).toBe(0);
-        }
+        expect($('h3=Product selection')).toBeDisplayed();
+        expect($('h3=Category selection')).toBeDisplayed();
+        expect($('h3=Catalog placeholder location')).toBeDisplayed();
     });
 
 });
