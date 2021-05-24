@@ -19,14 +19,14 @@
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.05.24</version>
+    <version>2021.05.25-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
         <connection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</connection>
         <developerConnection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</developerConnection>
         <url>https://github.com/adobe/aem-cif-guides-venia/tree/main/</url>
-        <tag>venia-2021.05.24</tag>
+        <tag>HEAD</tag>
     </scm>
     <modules>
         <module>all</module>
