@@ -75,7 +75,7 @@
                     </execution>
                 </executions>
             </plugin>
-                
+
         </plugins>
     </build>
 
@@ -160,6 +160,38 @@
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>dev</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release-prepare</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>react-components-install</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <arguments>
+                                        <argument>install</argument>
+                                        <argument>-S</argument>
+                                        <argument>@adobe/aem-core-cif-react-components@${core.cif.components.version}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
