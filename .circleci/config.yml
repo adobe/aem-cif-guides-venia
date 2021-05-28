@@ -61,13 +61,13 @@ executors:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5104-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5181-azul
         <<: *docker_auth
   test_executor_655:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.7-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.8-azul
         <<: *docker_auth
 
 jobs:
@@ -80,7 +80,7 @@ jobs:
           keys:
             - maven-repo-v2-cloud-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-v2-cloud
-            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }} 
+            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-v2-
       - run:
           name: Update permissions
@@ -159,7 +159,7 @@ jobs:
     resource_class: large
     working_directory: /home/circleci/build
     <<: *integration_test_steps
-    
+
   integration-test-cloudready-with-addon:
     executor: test_executor_cloudready
     environment:
