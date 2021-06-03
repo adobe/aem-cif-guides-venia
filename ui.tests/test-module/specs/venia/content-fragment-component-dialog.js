@@ -96,7 +96,7 @@ describe('Commerce Content Fragment Component Dialog', function() {
         if (config.aem.type === 'classic') {
             this.skip();
         }
-        
+
         // Set window size to desktop
         browser.setWindowSize(1280, 960);
 
