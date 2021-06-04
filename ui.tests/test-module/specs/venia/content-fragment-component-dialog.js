@@ -241,9 +241,11 @@ describe('Commerce Content Fragment Component Dialog', function () {
         tabs[0].click();
         dialog.$('coral-radio[value="multi"]').click();
 
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
+        browser.waitUntil(function () {
+            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
+            return fields.length === 6;
+        });
 
-        expect(fields.length).toEqual(6);
         expect(fields[4].$('label')).toHaveText('Elements');
         expect(tabs[1]).toHaveAttr('hidden');
 
