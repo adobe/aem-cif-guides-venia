@@ -92,6 +92,11 @@ describe('Commerce Content Fragment Component Dialog', function () {
     let onboardingHdler;
 
     before(() => {
+        // Only run this test suite for AEM cloud
+        if (config.aem.type === 'classic') {
+            this.skip();
+        }
+
         // Set window size to desktop
         browser.setWindowSize(1280, 960);
 
