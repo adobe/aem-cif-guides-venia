@@ -265,8 +265,10 @@ describe('Commerce Content Fragment Component Dialog', function () {
         expect(model).toBeClickable();
         model.click();
 
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-        expect(fields.length).toBe(6);
+        browser.waitUntil(function () {
+            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
+            return fields.length === 6;
+        });
 
         // try saving with empty mandatory field
         expect(fields[1].$('coral-select')).toBeEnabled();
