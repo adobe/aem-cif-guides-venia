@@ -19,7 +19,7 @@ const { OnboardingDialogHandler, randomString, getAuthenticatedRequestOptions } 
 const request = require('request-promise');
 const url = require('url');
 
-describe('Commerce Content Fragment Component Dialog', function() {
+describe('Commerce Content Fragment Component Dialog', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
 
     const conteFragmentModelJson = `{
@@ -116,7 +116,6 @@ describe('Commerce Content Fragment Component Dialog', function() {
                 ':contentType': 'json',
                 ':name': modelName,
                 ':content': conteFragmentModelJson
-
             }
         });
         request.post(url.resolve(config.aem.author.base_url, modelsPath), options);
@@ -131,7 +130,6 @@ describe('Commerce Content Fragment Component Dialog', function() {
                 ':contentType': 'json',
                 ':name': modelName,
                 ':content': conteFragmentModelJson
-
             }
         });
         request.post(url.resolve(config.aem.author.base_url, modelsPath), options);
@@ -178,11 +176,12 @@ describe('Commerce Content Fragment Component Dialog', function() {
         carouselCmp.dragAndDrop(dropTarget, 1000);
     };
 
-    const openComponentDialog = (node = 'contentfragment', trackingId = 'aem:sites:components:dialogs:cif-core-components:contentfragment:v1') => {
+    const openComponentDialog = (
+        node = 'contentfragment',
+        trackingId = 'aem:sites:components:dialogs:cif-core-components:contentfragment:v1'
+    ) => {
         // Open component dialog
-        const cmpPlaceholder = $(
-            `div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`
-        );
+        const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
         cmpPlaceholder.click();
         const configureButton = $('button[title="Configure"]');
@@ -283,13 +282,14 @@ describe('Commerce Content Fragment Component Dialog', function() {
         pickerButton.click();
         let pickerDialog = $('coral-dialog.foundation-picker-collection[open]');
         expect(pickerDialog).toBeDisplayed();
-        pickerDialog.$('coral-columnview-item[data-foundation-collection-item-id="/content/dam/venia"] coral-checkbox').waitAndClick();
+        pickerDialog
+            .$('coral-columnview-item[data-foundation-collection-item-id="/content/dam/venia"] coral-checkbox')
+            .waitAndClick();
         let selectButton = pickerDialog.$('button.granite-pickerdialog-submit');
         expect(selectButton).toBeEnabled();
         selectButton.waitAndClick();
         expect(pickerDialog.isExisting()).toBe(false);
         expect(fields[2].$('input[name="./parentPath"]')).toHaveValue('/content/dam/venia');
-
 
         // select elements to be displayed
         let addButton = fields[4].$('button[coral-multifield-add]');
@@ -335,8 +335,12 @@ describe('Commerce Content Fragment Component Dialog', function() {
         expect(fields[1].$('input[name="./linkElement"]')).toHaveValue('productSku');
         expect(fields[2].$('input[name="./parentPath"]')).toHaveValue('/content/dam/venia');
         expect(fields[4].$$('coral-multifield-item').length).toEqual(2);
-        expect(fields[4].$('coral-multifield-item[aria-posinset="1"] input[name="./elementNames"]')).toHaveValue('productSku');
-        expect(fields[4].$('coral-multifield-item[aria-posinset="2"] input[name="./elementNames"]')).toHaveValue('productSpecs');
+        expect(fields[4].$('coral-multifield-item[aria-posinset="1"] input[name="./elementNames"]')).toHaveValue(
+            'productSku'
+        );
+        expect(fields[4].$('coral-multifield-item[aria-posinset="2"] input[name="./elementNames"]')).toHaveValue(
+            'productSpecs'
+        );
         expect(fields[5].$('input[name="./id"]')).toHaveValue('anId');
 
         // close the dialog

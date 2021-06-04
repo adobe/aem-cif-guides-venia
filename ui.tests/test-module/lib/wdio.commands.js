@@ -249,7 +249,12 @@ browser.addCommand('EditorOpenSidePanel', function () {
 });
 
 async function getOsgiConfigurations(auth, factoryPid) {
-    const options = { ...auth, method: 'GET', uri: url.resolve(config.aem.author.base_url, '/system/console/configMgr/*.json'), json: true };
+    const options = {
+        ...auth,
+        method: 'GET',
+        uri: url.resolve(config.aem.author.base_url, '/system/console/configMgr/*.json'),
+        json: true
+    };
 
     const configurations = await request(options);
     const configuration = configurations.filter(c => c.factoryPid === factoryPid);
@@ -269,7 +274,15 @@ async function editOsgiConfiguration(auth, pid, factoryPid, properties) {
         form.factoryPid = factoryPid;
     }
 
-    const options = { ...auth, method: 'POST', uri: url.resolve(config.aem.author.base_url, `/system/console/configMgr/${pid}`), form, simple: false, resolveWithFullResponse: true, useQuerystring: true };
+    const options = {
+        ...auth,
+        method: 'POST',
+        uri: url.resolve(config.aem.author.base_url, `/system/console/configMgr/${pid}`),
+        form,
+        simple: false,
+        resolveWithFullResponse: true,
+        useQuerystring: true
+    };
     const { statusCode } = await request(options);
     expect(statusCode).toEqual(302);
 }
