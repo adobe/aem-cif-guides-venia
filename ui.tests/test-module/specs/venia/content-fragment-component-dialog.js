@@ -91,7 +91,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
     let testing_model2;
     let onboardingHdler;
 
-    before(() => {
+    before(function () {
         // Only run this test suite for AEM cloud
         if (config.aem.type === 'classic') {
             this.skip();
@@ -152,12 +152,14 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
     after(function () {
         // Disable helper to handle onboarding dialog popup
-        onboardingHdler.disable();
+        if (onboardingHdler) {
+            onboardingHdler.disable();
 
-        // Clean up models and page
-        browser.AEMDeletePage(testing_model1);
-        browser.AEMDeletePage(testing_model2);
-        browser.AEMDeletePage(testing_page);
+            // Clean up models and page
+            browser.AEMDeletePage(testing_model1);
+            browser.AEMDeletePage(testing_model2);
+            browser.AEMDeletePage(testing_page);
+        }
     });
 
     const addComponentToPage = (name = 'Commerce Content Fragment', group = 'Venia - Commerce') => {
