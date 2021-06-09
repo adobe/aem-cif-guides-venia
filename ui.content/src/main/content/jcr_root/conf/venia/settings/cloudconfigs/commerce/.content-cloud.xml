@@ -6,5 +6,9 @@
         jcr:title="Commerce"
         sling:configPropertyInherit="true"
         cq:template="/libs/cif/shell/components/configuration/page/template"
-        sling:resourceType="cif/shell/components/configuration/page"/>
+        sling:resourceType="cif/shell/components/configuration/page"
+        cq:graphqlClient="default"
+        magentoRootCategoryId="Mg=="
+        magentoStore="default"
+        enableUIDSupport="true"/>
 </jcr:root>
