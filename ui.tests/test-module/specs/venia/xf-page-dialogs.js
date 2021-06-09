@@ -17,7 +17,7 @@
 const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
 
-describe('XF Page Component Dialog', function() {
+describe('XF Page Component Dialog', function () {
     const xf_properties = `${config.aem.author.base_url}/mnt/overlay/wcm/core/content/sites/properties.html`;
     const sample_xf = '/content/experience-fragments/venia/us/en/site/products/promotions/master';
 
@@ -58,5 +58,4 @@ describe('XF Page Component Dialog', function() {
         expect($('h3=Category selection')).toBeDisplayed();
         expect($('h3=Catalog placeholder location')).toBeDisplayed();
     });
-
 });

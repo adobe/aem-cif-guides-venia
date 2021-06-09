@@ -1,8 +1,5 @@
 module.exports = {
-    extends: [
-        'eslint:recommended',
-        'plugin:wdio/recommended'
-    ],
+    extends: ['eslint:recommended', 'plugin:wdio/recommended'],
     env: {
         commonjs: true,
         es2017: true,
@@ -13,14 +10,11 @@ module.exports = {
         ecmaVersion: 9
     },
     rules: {
-        'semi': ['error'],
+        semi: ['error'],
         'semi-spacing': ['error', { before: false, after: true }],
         'semi-style': ['error', 'last'],
-        'quotes': ['error', 'single'],
-        'indent': ['error', 4],
+        quotes: ['error', 'single'],
         'no-trailing-spaces': ['error']
     },
-    'plugins': [
-        'wdio'
-    ],
+    plugins: ['wdio']
 };

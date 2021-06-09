@@ -27,9 +27,7 @@ exports.config = {
     runner: 'local',
 
     // Tests
-    specs: [
-        './specs/**/*.js'
-    ],
+    specs: ['./specs/**/*.js'],
 
     logLevel: 'debug',
 
@@ -51,21 +49,27 @@ exports.config = {
     // Reporters
     reporters: [
         'spec',
-        ['junit', {
-            outputDir: path.join(conf.reports_path, 'junit'),
-            outputFileFormat: function(options) {
-                return `results-${options.cid}.${options.capabilities.browserName}.xml`;
+        [
+            'junit',
+            {
+                outputDir: path.join(conf.reports_path, 'junit'),
+                outputFileFormat: function (options) {
+                    return `results-${options.cid}.${options.capabilities.browserName}.xml`;
+                }
             }
-        }],
-        [HtmlReporter, {
-            debug: true,
-            outputDir: path.join(path.relative(process.cwd(), conf.reports_path), 'html/'),
-            filename: 'report.html',
-            reportTitle: 'UI Testing Basic Tests',
-            showInBrowser: false,
-            useOnAfterCommandForScreenshot: true,
-            LOG: log4js.getLogger('default')
-        }],
+        ],
+        [
+            HtmlReporter,
+            {
+                debug: true,
+                outputDir: path.join(path.relative(process.cwd(), conf.reports_path), 'html/'),
+                filename: 'report.html',
+                reportTitle: 'UI Testing Basic Tests',
+                showInBrowser: false,
+                useOnAfterCommandForScreenshot: true,
+                LOG: log4js.getLogger('default')
+            }
+        ]
     ],
 
     // Mocha parameters
@@ -75,13 +79,13 @@ exports.config = {
     },
 
     // Gets executed before test execution begins
-    before: function() {
+    before: function () {
         // Init custom WDIO commands (ex. AEMLogin)
         require('./lib/wdio.commands');
     },
 
     // WDIO Hook executed after each test
-    afterTest: function() {
+    afterTest: function () {
         // Take a screenshot that will be attached in the HTML report
         commons.takeScreenshot(browser);
     },
@@ -91,7 +95,7 @@ exports.config = {
         // For WDIO commands which can lead into page navigation
         if (['url', 'refresh', 'click', 'call'].includes(commandName)) {
             // Handle AEM Survey dialog
-            if($('#omg_surveyContainer').isExisting()) {
+            if ($('#omg_surveyContainer').isExisting()) {
                 console.log('Detected presence of the AEM Survey Dialog! Refreshing the page to get rid of it.');
                 browser.refresh();
             }
