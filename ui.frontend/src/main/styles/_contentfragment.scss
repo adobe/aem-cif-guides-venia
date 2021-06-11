@@ -3,6 +3,77 @@
 .cmp-contentfragment__description {}
 .cmp-contentfragment__elements {}
 .cmp-contentfragment__element {}
-//.cmp-contentfragment__element--myElementName {}
-.cmp-contentfragment__element-title {}
-.cmp-contentfragment__element-value {}
+.cmp-contentfragment__element-title {
+    font-weight: bold;
+}
+.cmp-contentfragment__element-value {
+    p {
+        margin-top: 2px;
+    }
+    
+    ul, ol {
+        margin: 5px 0 0 20px;
+    }
+
+    ul {
+        list-style: disc;
+    }
+
+    ol {
+        list-style: decimal;
+    }
+}
+
+// extra Venia styles used by style system policies
+.cf-style-hide-title {
+    .cmp-contentfragment__title {
+        display:none;
+    }
+}
+
+.cf-style-hide-fieldnames {
+    .cmp-contentfragment__element-title {
+        display:none;
+    }
+}
+
+.cf-style-1 {
+    .cmp-contentfragment__elements {
+        display: grid;
+        grid-auto-columns: 1fr;
+        grid-auto-flow: row;
+    }
+
+    .cmp-contentfragment__element-title {
+        grid-row: 1;
+        background-color: $venia-grey;
+    }
+
+    .cmp-contentfragment__element-title, .cmp-contentfragment__element-value {
+        border: solid 1px $venia-grey-dark;
+        margin: 0;
+        padding: 10px;
+    }
+}
+
+.cf-style-2 {
+    .cmp-contentfragment__elements {
+        border: 1px solid $venia-grey-dark;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .cmp-contentfragment__element-title {
+        background-color: $venia-grey;
+    }
+    .cmp-contentfragment__element-title, .cmp-contentfragment__element-value {
+        border: solid 1px $venia-grey-dark;
+        margin: 0;
+        padding: 10px;
+    }
+    .cmp-contentfragment__element-title:last-of-type,
+    .cmp-contentfragment__element-value:last-of-type {
+        border-top: none;
+        border-left: none;
+    }
+}
