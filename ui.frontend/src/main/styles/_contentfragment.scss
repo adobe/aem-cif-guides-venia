@@ -66,14 +66,10 @@
     .cmp-contentfragment__element-title {
         background-color: $venia-grey;
     }
+
     .cmp-contentfragment__element-title, .cmp-contentfragment__element-value {
         border: solid 1px $venia-grey-dark;
         margin: 0;
         padding: 10px;
-    }
-    .cmp-contentfragment__element-title:last-of-type,
-    .cmp-contentfragment__element-value:last-of-type {
-        border-top: none;
-        border-left: none;
     }
 }
