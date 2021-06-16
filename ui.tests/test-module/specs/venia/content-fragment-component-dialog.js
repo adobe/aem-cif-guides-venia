@@ -335,7 +335,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         // save the setting and close the dialog
         doneButton.click();
-        expect(dialog.isExisting()).toBe(false);
+        browser.waitUntil(function () {
+            return !dialog.isExisting();
+        });
 
         // re-open dialog
         dialog = openComponentDialog();
@@ -442,7 +444,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         // save
         doneButton.click();
-        expect(dialog.isExisting()).toBe(false);
+        browser.waitUntil(function () {
+            return !dialog.isExisting();
+        });
 
         // re-open dialog
         dialog = openComponentDialog();
