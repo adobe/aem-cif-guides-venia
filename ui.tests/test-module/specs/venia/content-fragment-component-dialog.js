@@ -224,9 +224,11 @@ describe('Commerce Content Fragment Component Dialog', function () {
         // select singleText display mode
         dialog.$('coral-radio[value="singleText"]').click();
 
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
+        browser.waitUntil(function () {
+            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
+            return fields.length === 6;
+        });
 
-        expect(fields.length).toEqual(6);
         expect(fields[4].$('label')).toHaveText('Element *');
         expect(tabs[1]).toBeDisplayed();
         expect(tabs[1]).toHaveText('Paragraph Control');
@@ -333,7 +335,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         // save the setting and close the dialog
         doneButton.click();
-        expect(dialog.isExisting()).toBe(false);
+        browser.waitUntil(function () {
+            return !dialog.isExisting();
+        });
 
         // re-open dialog
         dialog = openComponentDialog();
@@ -440,7 +444,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         // save
         doneButton.click();
-        expect(dialog.isExisting()).toBe(false);
+        browser.waitUntil(function () {
+            return !dialog.isExisting();
+        });
 
         // re-open dialog
         dialog = openComponentDialog();
