@@ -65,6 +65,9 @@
                                 <teaser cq:policy="venia/components/commerce/teaser/default"
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="wcm/core/components/policies/mapping" />
+                                <contentfragment cq:policy="venia/components/commerce/contentfragment/default"
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="wcm/core/components/policies/mapping" />
                             </commerce>
                         </components>
                     </venia>
