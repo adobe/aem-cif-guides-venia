@@ -41,22 +41,6 @@
         <sourceDirectory>src/main/content/jcr_root</sourceDirectory>
         <plugins>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>npm run prod</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run prod</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.1</version>
@@ -146,6 +130,7 @@
                                     <arguments>
                                         <argument>link</argument>
                                         <argument>@adobe/aem-core-cif-react-components</argument>
+                                        <argument>@adobe/aem-core-cif-ext-product-recs-react-components</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -192,6 +177,7 @@
                                         <argument>install</argument>
                                         <argument>-S</argument>
                                         <argument>@adobe/aem-core-cif-react-components@${core.cif.components.version}</argument>
+                                        <argument>@adobe/aem-core-cif-ext-product-recs-react-components@${core.cif.components.version}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

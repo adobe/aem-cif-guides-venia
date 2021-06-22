@@ -28,6 +28,9 @@ import {
     AccountDetails,
     ResetPassword
 } from '@adobe/aem-core-cif-react-components';
+import {
+    ProductRecsGallery
+} from '@adobe/aem-core-cif-ext-product-recs-react-components';
 
 import i18n from './i18n';
 import partialConfig from './config';
@@ -52,6 +55,7 @@ const App = () => {
         <I18nextProvider i18n={i18n} defaultNS="common">
             <ConfigContextProvider config={config}>
                 <CommerceApp>
+                    <ProductRecsGallery />
                     <Portal selector={mountingPoints.cartTrigger}>
                         <CartTrigger />
                     </Portal>
