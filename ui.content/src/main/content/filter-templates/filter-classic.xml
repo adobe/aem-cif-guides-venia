@@ -3,6 +3,7 @@
     <filter root="/conf/venia" mode="update"/>
     <filter root="/content/venia" mode="merge"/>
     <filter root="/content/dam/venia" mode="merge"/>
+    <filter root="/content/dam/collections/public" mode="merge"/>
     <filter root="/content/experience-fragments/venia" mode="merge"/>
     <filter root="/etc/map.publish" mode="merge"/>
     <filter root="/var/commerce/products/venia-default" mode="merge"/>
