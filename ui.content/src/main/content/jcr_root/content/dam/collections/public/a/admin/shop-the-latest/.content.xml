@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:mixinTypes="{Name}[mix:referenceable]"
     jcr:primaryType="nt:unstructured"
     jcr:title="Shop the Latest"
     jcr:uuid="347229e9-2777-41a0-969a-3cc2236b9f01"
+    cq:conf="/conf/venia"
     sling:resourceSuperType="sling/collection"
     sling:resourceType="dam/collection">
     <sling:members
