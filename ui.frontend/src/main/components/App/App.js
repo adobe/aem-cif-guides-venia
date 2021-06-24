@@ -28,9 +28,7 @@ import {
     AccountDetails,
     ResetPassword
 } from '@adobe/aem-core-cif-react-components';
-import {
-    ProductRecsGallery
-} from '@adobe/aem-core-cif-ext-product-recs-react-components';
+import { ProductRecsGallery } from '@adobe/aem-core-cif-ext-product-recs-react-components';
 
 import i18n from './i18n';
 import partialConfig from './config';
