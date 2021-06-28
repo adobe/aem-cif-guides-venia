@@ -461,6 +461,45 @@
                         </cq:styleGroups>
                     </default>
                 </teaser>
+                <contentfragment jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2021-06-11T11:26:16.004+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Content Fragments"
+                        sling:resourceType="wcm/core/components/policy/policy">
+                        <jcr:content jcr:primaryType="nt:unstructured" />
+                        <cq:styleGroups jcr:primaryType="nt:unstructured">
+                            <item0 cq:styleGroupLabel="Content"
+                                jcr:primaryType="nt:unstructured">
+                                <cq:styles jcr:primaryType="nt:unstructured">
+                                    <item0 cq:styleClasses="cf-style-1"
+                                        cq:styleId="1623400699511"
+                                        cq:styleLabel="Table - 1 Column"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item1 cq:styleClasses="cf-style-2"
+                                        cq:styleId="1623400707844"
+                                        cq:styleLabel="Table - 2 Columns"
+                                        jcr:primaryType="nt:unstructured" />
+                                </cq:styles>
+                            </item0>
+                            <item1 cq:styleGroupLabel="Header"
+                                cq:styleGroupMultiple="true"
+                                jcr:primaryType="nt:unstructured">
+                                <cq:styles jcr:primaryType="nt:unstructured">
+                                    <item0 cq:styleClasses="cf-style-hide-title"
+                                        cq:styleId="1623400982190"
+                                        cq:styleLabel="Hide Title"
+                                        jcr:primaryType="nt:unstructured" />
+                                    <item1 cq:styleClasses="cf-style-hide-fieldnames"
+                                        cq:styleId="1623401047939"
+                                        cq:styleLabel="Hide Field Names"
+                                        jcr:primaryType="nt:unstructured" />
+                                </cq:styles>
+                            </item1>
+                        </cq:styleGroups>
+                    </default>
+                </contentfragment>
             </commerce>
         </components>
     </venia>
