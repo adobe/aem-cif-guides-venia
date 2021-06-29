@@ -17,7 +17,7 @@
 const config = require('../../lib/config');
 const { OnboardingDialogHandler, randomString } = require('../../lib/commons');
 
-describe('Component Dialogs', function() {
+describe('Component Dialogs', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
 
     let testing_page;
@@ -83,9 +83,7 @@ describe('Component Dialogs', function() {
 
     const openComponentDialog = (node, trackingId) => {
         // Open component dialog
-        const cmpPlaceholder = $(
-            `div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`
-        );
+        const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
         cmpPlaceholder.click();
         const configureButton = $('button[title="Configure"]');
@@ -104,8 +102,11 @@ describe('Component Dialogs', function() {
     });
 
     it('opens the commerce experience fragment dialog', () => {
-        addComponentToPage('Commerce Experience Fragment Placeholder');
-        openComponentDialog('experiencefragment', 'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1');
+        addComponentToPage('Commerce Experience Fragment');
+        openComponentDialog(
+            'experiencefragment',
+            'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1'
+        );
 
         expect($('label=Experience fragment location name.')).toBeDisplayed();
     });
@@ -120,7 +121,10 @@ describe('Component Dialogs', function() {
 
     it('opens the featured categories dialog', () => {
         addComponentToPage('Featured Categories');
-        openComponentDialog('featuredcategorylist', 'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1');
+        openComponentDialog(
+            'featuredcategorylist',
+            'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1'
+        );
 
         $('coral-multifield button').click();
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
@@ -144,7 +148,8 @@ describe('Component Dialogs', function() {
         addComponentToPage('Related Products');
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
-        expect($('label=Base product - Leave empty to use the current product of the generic product page.')).toBeDisplayed();
+        expect(
+            $('label=Base product - Leave empty to use the current product of the generic product page.')
+        ).toBeDisplayed();
     });
-
 });

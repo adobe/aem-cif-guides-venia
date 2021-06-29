@@ -17,7 +17,7 @@
 const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
 
-describe('Catalog Page Component Dialog', function() {
+describe('Catalog Page Component Dialog', function () {
     const page_properties = `${config.aem.author.base_url}/mnt/overlay/wcm/core/content/sites/properties.html`;
     const catalog_page = '/content/venia/us/en/products';
 
@@ -58,5 +58,4 @@ describe('Catalog Page Component Dialog', function() {
         expect($('h3=Magento Store Configuration')).toBeDisplayed();
         expect($('label=Root Category Identifier')).toBeDisplayed();
     });
-
 });
