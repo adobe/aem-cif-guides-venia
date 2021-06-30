@@ -11,6 +11,7 @@
         cq:catalogIdentifier="default"
         cq:catalogPath="/var/commerce/products/venia-default"
         cq:graphqlClient="default"
-        magentoRootCategoryId="2"
-        magentoStore="default"/>
+        magentoRootCategoryId="Mg=="
+        magentoStore="default"
+        enableUIDSupport="true"/>
 </jcr:root>
