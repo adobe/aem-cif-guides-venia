@@ -68,6 +68,10 @@
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-config</artifactId>
                         </dependency>
+                        <dependency>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+                        </dependency>
                     </dependencies>
                 </configuration>
             </plugin>
