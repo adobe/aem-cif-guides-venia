@@ -5,4 +5,4 @@
     cssProcessor="[default:none,min:none]"
     jsProcessor="[default:none,min:none]"
     categories="[venia.cif]" 
-    embed="[core.cif.components.product.v1,core.cif.components.productcarousel.v1,core.cif.components.productcollection.v1,core.cif.components.productteaser.v1,core.cif.components.searchbar.v1,core.cif.components.header.v1,core.cif.components.navigation.v1,core.cif.components.carousel.v1,core.cif.components.categorycarousel.v1,core.cif.components.featuredcategorylist.v1,core.cif.components.storefront-events.v1]" />
+    embed="[core.cif.components.product.v1,core.cif.components.productcarousel.v1,core.cif.components.productcollection.v1,core.cif.components.productteaser.v1,core.cif.components.searchbar.v1,core.cif.components.header.v1,core.cif.components.navigation.v1,core.cif.components.carousel.v1,core.cif.components.categorycarousel.v1,core.cif.components.featuredcategorylist.v1,core.cif.components.storefront-events.v1,core.cif.components.extensions.product-recs.storefront-events-collector.v1]" />
