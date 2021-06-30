@@ -155,7 +155,7 @@ class MyProductTeaserImplTest {
         Mockito.doReturn("USD 15.2").when(priceRange).getFormattedFinalPrice();
         Mockito.doReturn(priceRange).when(productTeaser).getPriceRange();
         Assert.assertEquals(priceRange, underTest.getPriceRange());
-        Assert.assertEquals("USD 15.2", underTest.getFormattedPrice());
+        Assert.assertEquals("USD 15.2", underTest.getPriceRange().getFormattedFinalPrice());
     }
 
     @Test
