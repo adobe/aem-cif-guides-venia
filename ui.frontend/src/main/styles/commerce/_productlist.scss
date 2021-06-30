@@ -113,6 +113,14 @@
     padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
+.category__staged, .item__staged {
+    background-color: $venia-staged;
+    padding: 5px 5px;
+    margin: 0 auto 5px;
+    text-align: center;
+    width: 150px;
+}
+
 .category__pagination {
     position: -webkit-sticky;
     position: sticky;
