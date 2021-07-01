@@ -89,6 +89,12 @@
                         </embedded>
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+                            <type>zip</type>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-config</artifactId>
                             <type>zip</type>
                             <target>/apps/venia-vendor-packages/application/install</target>
@@ -96,6 +102,11 @@
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-core</artifactId>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-extensions-product-recs-bundle</artifactId>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
                         <embedded>
@@ -174,7 +185,7 @@
                                     <target>/apps/venia-vendor-packages/application/install</target>
                                 </embedded>
                             </embeddeds>
-                    </configuration>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -275,6 +286,11 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-apps</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
