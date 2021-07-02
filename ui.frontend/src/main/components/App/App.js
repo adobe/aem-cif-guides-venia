@@ -60,10 +60,7 @@ const App = () => {
             <ConfigContextProvider config={config}>
                 <CommerceApp>
                     <StorefrontInstanceContextProvider>
-                        <PortalPlacer
-                            selector={'[data-is-product-recs]'}
-                            component={ProductRecsGallery}
-                        />
+                        <PortalPlacer selector={'[data-is-product-recs]'} component={ProductRecsGallery} />
                     </StorefrontInstanceContextProvider>
                     <Portal selector={mountingPoints.cartTrigger}>
                         <CartTrigger />
