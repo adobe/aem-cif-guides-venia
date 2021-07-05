@@ -4,5 +4,5 @@
   "productIdentifierType":"URL_KEY",
   "categoryUrlTemplate":"{{page}}.html/{{url_path}}.html",
   "categoryIdentifierLocation": "SUFFIX",
-  "identifierQueryParamater":"identifier"
+  "identifierQueryParameter":"identifier"
 }
