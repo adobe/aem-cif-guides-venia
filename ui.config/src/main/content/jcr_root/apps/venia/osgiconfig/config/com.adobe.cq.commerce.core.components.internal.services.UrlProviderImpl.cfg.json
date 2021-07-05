@@ -1,8 +1,8 @@
 {
-  "productUrlTemplate":"{{page}}.html/{{url_key}}#{{variant_sku}}",
+  "productUrlTemplate":"{{page}}.html/{{url_key}}.html#{{variant_sku}}",
   "productIdentifierLocation":"SUFFIX",
   "productIdentifierType":"URL_KEY",
-  "categoryUrlTemplate":"{{page}}.html/{{url_path}}",
+  "categoryUrlTemplate":"{{page}}.html/{{url_path}}.html",
   "categoryIdentifierLocation": "SUFFIX",
   "identifierQueryParamater":"identifier"
 }
