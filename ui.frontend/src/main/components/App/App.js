@@ -34,7 +34,7 @@ import {
 import {
     ProductRecsGallery,
     StorefrontInstanceContextProvider
-} from '@adobe/aem-core-cif-ext-product-recs-react-components';
+} from '@adobe/cif-product-recs-extension';
 
 import i18n from './i18n';
 import partialConfig from './config';
