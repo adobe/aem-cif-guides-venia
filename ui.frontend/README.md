@@ -92,7 +92,7 @@ Since Venia is acting like a consumer for `aem-core-cif-react-components` you ma
 
 As a prerequisite, you need to have `node` and `npm` installed before you perform any of the steps below:
 
-1. Go to the `aem-core-cif-react-components/react-components` and use the following commands:
+1. In the CIF Core Components project, go to `react-components/react-components` and `extensions/product-recs/react-components` and use the following commands:
 
 ```bash
 npm run webpack:dev

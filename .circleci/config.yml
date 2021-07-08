@@ -49,6 +49,8 @@ common:
           mvn -B clean install
           cd react-components
           npm link
+          cd ../extensions/product-recs/react-components
+          npm link
         fi
       working_directory: ./dependencies
 

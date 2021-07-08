@@ -28,7 +28,7 @@ i18n.use(Backend)
 
         load: 'currentOnly',
         defaultNS: 'common',
-        ns: [],
+        ns: ['account', 'cart', 'checkout', 'common', 'product', 'productrecs'],
 
         interpolation: {
             escapeValue: false,
