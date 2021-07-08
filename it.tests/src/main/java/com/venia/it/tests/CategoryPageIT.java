@@ -37,7 +37,7 @@ public class CategoryPageIT extends CommerceTestBase {
     @Test
     public void testProductListPageWithSampleData() throws ClientException, IOException {
 
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/outdoor";
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/outdoor.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
