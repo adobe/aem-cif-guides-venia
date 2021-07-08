@@ -36,7 +36,7 @@ public class ProductPageIT extends CommerceTestBase {
 
     @Test
     public void testProductPageWithSampleData() throws ClientException, IOException {
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".chaz-kangeroo-hoodie.html";
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/chaz-kangeroo-hoodie.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
@@ -77,7 +77,7 @@ public class ProductPageIT extends CommerceTestBase {
 
     @Test
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
-        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".set-of-sprite-yoga-straps.html", 200);
+        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/set-of-sprite-yoga-straps.html", 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify product name
