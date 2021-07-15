@@ -152,4 +152,20 @@ describe('Component Dialogs', function () {
             $('label=Base product - Leave empty to use the current product of the generic product page.')
         ).toBeDisplayed();
     });
+
+    it('opens the product recommendations dialog', () => {
+        addComponentToPage('Product Recommendations');
+        openComponentDialog(
+            'productrecommendatio',
+            'aem:sites:components:dialogs:cif-core-components:productrecommendations:v1'
+        );
+
+        expect($('coral-checkbox-label=Use preconfigured recommendation')).toBeDisplayed();
+
+        // Verify that corresponding React component is rendered on the page. If no Commerce endpoint is provided or the
+        // endpoint does not have the product recommendations extension installed, the component will not render any
+        // products. So the test just checks for the existence of the div element rendered by the React component.
+        browser.url(`${config.aem.author.base_url}${testing_page}.html`);
+        expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
+    });
 });
