@@ -14,18 +14,8 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe Systems Incorporated.
  ******************************************************************************/
-
-.cmp-navigation__group {
-    display: flex;
-}
-
 .cmp-navigation__item {
-    list-style:none;
     padding: 1.5em 1em;
-}
-
-.cmp-navigation__item--level-0 .cmp-navigation__group {
-    display: none;
 }
 
 .cmp-navigation__item--level-0:hover > .cmp-navigation__group {
@@ -33,8 +23,8 @@
     box-shadow: 0 1px $venia-border;
     margin-top: 1.3em;
     margin-bottom: 1.5em;
-    display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
     justify-content: space-evenly;
     position: absolute;
     left: 0;
