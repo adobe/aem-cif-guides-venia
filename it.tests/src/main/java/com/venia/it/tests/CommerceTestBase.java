@@ -54,8 +54,8 @@ public class CommerceTestBase {
     protected static final String VENIA_CONTENT_US_EN_SEARCH_PAGE = VENIA_CONTENT_US_EN + "/search";
 
     protected static final String BREADCRUMB_ITEMS_SELECTOR = ".breadcrumb .cmp-breadcrumb__item";
-    protected static final String SEARCH_FILTERS_SELECTOR = ".search__filters";
-    protected static final String PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR = ".gallery__items > .item__root";
+    protected static final String SEARCH_FILTERS_SELECTOR = ".productcollection__filters";
+    protected static final String PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR = ".productcollection__item";
     protected static final String NAVIGATION_ITEM_SELECTOR = ".cmp-navigation > .cmp-navigation__group > .cmp-navigation__item";
 
     private static final String CONFIGURATION_CONSOLE_URL = "/system/console/configMgr";
