@@ -35,7 +35,7 @@ import com.venia.it.utils.Utils;
 public class SearchPageIT extends CommerceTestBase {
 
     private static final String SEARCHRESULTS_SELECTOR = ".searchresults ";
-    private static final String SEARCHRESULTS_SEARCH_ROOT_SELECTOR = SEARCHRESULTS_SELECTOR + ".search__root";
+    private static final String SEARCHRESULTS_SEARCH_ROOT_SELECTOR = SEARCHRESULTS_SELECTOR + ".productcollection__root";
 
     @Test
     public void testSearchResultsWithSampleData() throws ClientException, IOException {
@@ -81,7 +81,7 @@ public class SearchPageIT extends CommerceTestBase {
         Document doc = Jsoup.parse(response.getContent());
 
         // Check that the search doesn't display any product
-        Elements elements = doc.select(SEARCHRESULTS_SELECTOR + ".category__root p");
+        Elements elements = doc.select(SEARCHRESULTS_SELECTOR + ".searchresults_root p");
         Assert.assertEquals("No products to display.", elements.first().html());
     }
 }
