@@ -106,7 +106,7 @@ module.exports = {
                 to: './clientlib-site/i18n'
             },
             {
-                from: path.resolve(__dirname, 'node_modules/@adobe/cif-product-recs-extension/i18n'),
+                from: path.resolve(__dirname, 'node_modules/@adobe/aem-core-cif-product-recs-extension/i18n'),
                 to: './clientlib-site/i18n'
             }
         ])
