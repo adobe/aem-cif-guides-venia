@@ -168,7 +168,7 @@ class MyProductTeaserImplTest {
     @Test
     void testGetImageAlt() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
-        Mockito.doReturn("TestImageAltText").when(productTeaser).getImageAlt()
+        Mockito.doReturn("TestImageAltText").when(productTeaser).getImageAlt();
         Assert.assertEquals("TestImageAltText", underTest.getImageAlt());
     }
 
