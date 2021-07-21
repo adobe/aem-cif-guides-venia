@@ -113,7 +113,7 @@ describe('Component Dialogs', function () {
 
     it('opens the commerce teaser dialog', () => {
         addComponentToPage('Commerce Teaser');
-        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v1');
+        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v2');
 
         $('coral-tab-label=Link & Actions').click();
         expect($('label=Link')).toBeDisplayed();
