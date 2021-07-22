@@ -5,6 +5,10 @@
         jcr:primaryType="nt:unstructured"
         enabled="{Boolean}true"
     />
+    <com.adobe.cq.commerce.core.components.internal.storefrontcontext.CommerceStorefrontContextConfig
+        jcr:primaryType="nt:unstructured"
+        enabled="{Boolean}true"
+    />
     <com.adobe.cq.wcm.core.components.internal.services.pdfviewer.PdfViewerCaConfig
         jcr:primaryType="nt:unstructured"
         clientId="28b07c6be4d544f188dc2f36e33b196b"
