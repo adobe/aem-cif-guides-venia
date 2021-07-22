@@ -110,7 +110,7 @@ class MyProductTeaserImplTest {
         slingBindings.put(WCMBindingsConstants.NAME_CURRENT_PAGE, page);
         slingBindings.put(WCMBindingsConstants.NAME_PROPERTIES, teaserResource.getValueMap());
         try {
-            slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.UrlProvider" )));
+            slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.urls.UrlProvider" )));
         } catch( ClassNotFoundException e ) {
             //probably core-cif-components-core version < 0.10.2
         }
