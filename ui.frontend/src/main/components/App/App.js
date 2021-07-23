@@ -30,7 +30,6 @@ import {
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
 
-// TODO: Add dependency to package.json after component release
 import {
     ProductRecsGallery,
     StorefrontInstanceContextProvider
