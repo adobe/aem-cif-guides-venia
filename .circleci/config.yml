@@ -92,7 +92,7 @@ jobs:
             java -version
             mvn -v
             if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-              mvn -B clean install -Pcloud,fedDev
+              mvn -B clean install -PfedDev
             else
               mvn -B clean install
             fi

@@ -31,12 +31,13 @@ ci.sh("chmod +x ghr");
 
 ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
 
-let profiles = ['cloud', 'classic'];
-profiles.forEach(profile => {
-    ci.stage(`Build and install Venia '${profile}'`);
-    ci.sh(`mvn clean install -P${profile}`);
-    ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}-${profile}.zip artifacts`);
-})
+ci.stage(`Build and install Venia (cloud)`);
+ci.sh(`mvn -B clean install`);
+ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}.zip`);
+
+ci.stage(`Build and install Venia (classic)`);
+ci.sh(`mvn -B clean install -Pclassic`);
+ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 
 ci.stage("Deploy Venia Sample Project to GitHub");
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \

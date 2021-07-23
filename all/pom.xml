@@ -21,8 +21,8 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
         <version>2021.05.25-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -30,7 +30,7 @@
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>venia.all</artifactId>
+    <artifactId>aem-cif-guides-venia.all</artifactId>
     <packaging>content-package</packaging>
     <name>Venia - All</name>
     <description>All content package for Venia</description>
@@ -48,36 +48,33 @@
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <group>com.venia</group>
-                    <classifier>${project.classifier}</classifier>
+                    <group>com.adobe.aem.guides</group>
+                    <name>aem-cif-guides-venia.all</name>
                     <packageType>container</packageType>
                     <properties>
                         <cloudManagerTarget>all</cloudManagerTarget>
                     </properties>
                     <embeddeds>
                         <embedded>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.apps</artifactId>
-                            <classifier>${project.classifier}</classifier>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
                             <type>zip</type>
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.core</artifactId>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.core</artifactId>
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.content</artifactId>
-                            <classifier>${project.classifier}</classifier>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.content</artifactId>
                             <type>zip</type>
                             <target>/apps/venia-packages/content/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.config</artifactId>
-                            <classifier>${project.classifier}</classifier>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.config</artifactId>
                             <type>zip</type>
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>
@@ -118,18 +115,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.3</version>
-            </plugin>
-            <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
-                    <verbose>true</verbose>
-                    <failOnError>true</failOnError>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -180,6 +168,18 @@
                                     <target>/apps/venia-vendor-packages/application/install</target>
                                 </embedded>
                                 <embedded>
+                                    <groupId>com.adobe.aem.guides</groupId>
+                                    <artifactId>aem-cif-guides-venia.ui.content-onprem</artifactId>
+                                    <type>zip</type>
+                                    <target>/apps/venia-packages/content/install</target>
+                                </embedded>
+                                <embedded>
+                                    <groupId>com.adobe.aem.guides</groupId>
+                                    <artifactId>aem-cif-guides-venia.ui.config-onprem</artifactId>
+                                    <type>zip</type>
+                                    <target>/apps/venia-packages/application/install</target>
+                                </embedded>
+                                <embedded>
                                     <groupId>com.adobe.commerce.cif</groupId>
                                     <artifactId>graphql-client</artifactId>
                                     <target>/apps/venia-vendor-packages/application/install</target>
@@ -198,6 +198,18 @@
                 <dependency>
                     <groupId>com.adobe.cq</groupId>
                     <artifactId>core.wcm.components.config</artifactId>
+                    <type>zip</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.aem.guides</groupId>
+                    <artifactId>aem-cif-guides-venia.ui.content-onprem</artifactId>
+                    <version>${project.version}</version>
+                    <type>zip</type>
+                </dependency>
+                <dependency>
+                    <groupId>com.adobe.aem.guides</groupId>
+                    <artifactId>aem-cif-guides-venia.ui.config-onprem</artifactId>
+                    <version>${project.version}</version>
                     <type>zip</type>
                 </dependency>
             </dependencies>
@@ -261,24 +273,21 @@
     <!-- ====================================================================== -->
     <dependencies>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.apps</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.content</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.content</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.config</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.config</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
             <type>zip</type>
         </dependency>
 
