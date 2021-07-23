@@ -58,7 +58,7 @@ try {
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
-            --install-file ${buildPath}/all/target/venia.all-${veniaVersion}-${classifier}.zip \
+            --install-file ${buildPath}/all/target/venia.all-${veniaVersion}.zip \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
