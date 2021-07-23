@@ -99,9 +99,8 @@
     <profiles>
         <profile>
             <!-- we cannot remove the cloud specific profile here as the 2 dependencies aem-cloud-testing-clients and cq-testing-clients-65
-            conflict with each other. Renaming the profile to 'default' in order to express that this profile should not be activated other
-            then as default -->
-            <id>default</id>
+            conflict with each other. -->
+            <id>cloud</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
