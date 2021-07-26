@@ -177,7 +177,7 @@
                                         <argument>install</argument>
                                         <argument>-S</argument>
                                         <argument>@adobe/aem-core-cif-react-components@${core.cif.components.version}</argument>
-                                        <argument>@adobe/aem-core-cif-product-recs-extension@${core.cif.components.version}</argument>
+                                        <argument>@adobe/aem-core-cif-product-recs-extension@2.0.1</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
