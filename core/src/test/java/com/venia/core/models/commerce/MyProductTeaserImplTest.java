@@ -110,7 +110,7 @@ class MyProductTeaserImplTest {
         slingBindings.put(WCMBindingsConstants.NAME_CURRENT_PAGE, page);
         slingBindings.put(WCMBindingsConstants.NAME_PROPERTIES, teaserResource.getValueMap());
         try {
-            slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.UrlProvider" )));
+            slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.urls.UrlProvider" )));
         } catch( ClassNotFoundException e ) {
             //probably core-cif-components-core version < 0.10.2
         }
@@ -163,6 +163,13 @@ class MyProductTeaserImplTest {
         setup(PRODUCTTEASER_NO_BADGE);
         Mockito.doReturn("TestImage").when(productTeaser).getImage();
         Assert.assertEquals("TestImage", underTest.getImage());
+    }
+
+    @Test
+    void testGetImageAlt() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn("TestImageAltText").when(productTeaser).getImageAlt();
+        Assert.assertEquals("TestImageAltText", underTest.getImageAlt());
     }
 
     @Test

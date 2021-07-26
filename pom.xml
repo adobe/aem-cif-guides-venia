@@ -19,7 +19,7 @@
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.05.25-SNAPSHOT</version>
+    <version>2021.06.18-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
@@ -49,9 +49,9 @@
         <sling.password>admin</sling.password>
         <vault.user>admin</vault.user>
         <vault.password>admin</vault.password>
-        <core.wcm.components.version>2.15.0</core.wcm.components.version>
-        <core.cif.components.version>1.12.1-SNAPSHOT</core.cif.components.version>
-        <graphql.client.version>1.7.1</graphql.client.version>
+        <core.wcm.components.version>2.17.2</core.wcm.components.version>
+        <core.cif.components.version>2.0.0</core.cif.components.version>
+        <graphql.client.version>1.7.2</graphql.client.version>
         <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
