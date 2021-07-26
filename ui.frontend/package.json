@@ -14,7 +14,9 @@
     "prod": "webpack -p --config ./webpack.prod.js && clientlib --verbose",
     "start": "webpack-dev-server --open --config ./webpack.dev.js",
     "prettier:check": "prettier --check '{src,test}/**/*.{js,css}' --config ./.prettierrc",
-    "prettier:fix": "prettier --write '{src,test}/**/*.{js,css}' --config ./.prettierrc"
+    "prettier:fix": "prettier --write '{src,test}/**/*.{js,css}' --config ./.prettierrc",
+    "eslint:check": "eslint 'src/**/*.js'",
+    "eslint:fix": "eslint --fix 'src/**/*.js'"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
@@ -36,7 +38,6 @@
     "css-loader": "^3.0.0",
     "cssnano": "^4.1.10",
     "eslint": "^6.8.0",
-    "eslint-loader": "^3.0.3",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-jest": "^23.18.0",
     "eslint-plugin-react": "^7.20.3",
@@ -62,7 +63,9 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@adobe/aem-core-cif-react-components": "^1.12.0",
+    "@adobe/aem-core-cif-product-recs-extension": "^2.0.1",
+    "@adobe/aem-core-cif-react-components": "^2.0.0",
+    "@apollo/client": "^3.2.4",
     "i18next": "^19.5.3",
     "i18next-browser-languagedetector": "^5.0.0",
     "i18next-xhr-backend": "^3.2.2",

@@ -36,7 +36,8 @@ module.exports = merge(common, {
         alias: {
             react: path.resolve('./node_modules/react'),
             'react-dom': path.resolve('./node_modules/react-dom'),
-            'react-i18next': path.resolve('./node_modules/react-i18next')
+            'react-i18next': path.resolve('./node_modules/react-i18next'),
+            '@apollo/client': path.resolve('./node_modules/@apollo/client')
         }
     },
     devServer: {
