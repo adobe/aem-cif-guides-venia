@@ -254,6 +254,10 @@ Import-Package: javax.annotation;version=0.0.0,*
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-extensions-product-recs-bundle</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>graphql-client</artifactId>
         </dependency>
         <dependency>

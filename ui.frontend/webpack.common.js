@@ -40,12 +40,6 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     {
-                        options: {
-                            eslintPath: require.resolve('eslint')
-                        },
-                        loader: require.resolve('eslint-loader')
-                    },
-                    {
                         loader: 'ts-loader'
                     },
                     {
@@ -59,7 +53,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 include: /src/,
-                loader: ['babel-loader', 'eslint-loader']
+                loader: ['babel-loader']
             },
             {
                 test: /\.scss$/,
@@ -109,6 +103,10 @@ module.exports = {
             },
             {
                 from: path.resolve(__dirname, 'node_modules/@adobe/aem-core-cif-react-components/i18n'),
+                to: './clientlib-site/i18n'
+            },
+            {
+                from: path.resolve(__dirname, 'node_modules/@adobe/aem-core-cif-product-recs-extension/i18n'),
                 to: './clientlib-site/i18n'
             }
         ])

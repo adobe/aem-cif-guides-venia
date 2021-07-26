@@ -31,8 +31,8 @@ common:
 
   docker_auth: &docker_auth
     auth:
-      username: $DOCKER_USER
-      password: $DOCKER_PASS
+      username: $ARTIFACTORY_CLOUD_USER
+      password: $ARTIFACTORY_CLOUD_PASS
 
   install_components: &install_components
     run:
@@ -49,6 +49,8 @@ common:
           mvn -B clean install
           cd react-components
           npm link
+          cd ../extensions/product-recs/react-components
+          npm link
         fi
       working_directory: ./dependencies
 
@@ -61,7 +63,7 @@ executors:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5343-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5607-azul
         <<: *docker_auth
   test_executor_655:
     docker:
@@ -223,38 +225,53 @@ workflows:
   build-and-release:
     jobs:
       - build:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
       - build-classic:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
       - integration-test-655:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
           requires:
             - build-classic
       - integration-test-cloudready-with-addon:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
           requires:
             - build
       - selenium-chrome-cloudready-with-addon:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
           requires:
             - build
       - selenium-chrome-655:
+          context:
+            - CIF Artifactory Cloud
           filters:
             tags:
               only: /.*/
           requires:
             - build-classic
       - deploy-sample:
+          context:
+            - CIF Artifactory Cloud
+            - CIF GitHub
           requires:
             - build
             - build-classic

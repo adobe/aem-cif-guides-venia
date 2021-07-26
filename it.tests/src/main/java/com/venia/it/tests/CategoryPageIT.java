@@ -31,12 +31,13 @@ import com.venia.it.utils.Utils;
 public class CategoryPageIT extends CommerceTestBase {
 
     private static final String PRODUCTLIST_SELECTOR = ".productlist ";
-    private static final String PRODUCTLIST_TITLE_SELECTOR = PRODUCTLIST_SELECTOR + ".category__categoryTitle";
-    private static final String PRODUCTLIST_GALLERY_SELECTOR = PRODUCTLIST_SELECTOR + ".gallery__root";
+    private static final String PRODUCTLIST_TITLE_SELECTOR = PRODUCTLIST_SELECTOR + ".category__title";
+    private static final String PRODUCTLIST_GALLERY_SELECTOR = PRODUCTLIST_SELECTOR + ".productcollection__root";
 
     @Test
     public void testProductListPageWithSampleData() throws ClientException, IOException {
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".1.html";
+
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/outdoor.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
