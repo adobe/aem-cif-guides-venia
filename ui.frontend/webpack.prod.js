@@ -23,7 +23,7 @@ module.exports = merge(common, {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    mangle: true
+                    mangle: false
                 },
             }),
             new OptimizeCSSAssetsPlugin({
