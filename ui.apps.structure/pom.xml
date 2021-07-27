@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
         <artifactId>aem-cif-guides-venia</artifactId>
-        <version>2021.05.25-SNAPSHOT</version>
+        <version>2021.07.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
