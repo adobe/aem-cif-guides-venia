@@ -11,11 +11,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <!-- ====================================================================== -->
+    <!-- P R O J E C T  D E S C R I P T I O N                                   -->
+    <!-- ====================================================================== -->
     <artifactId>aem-cif-guides-venia.dispatcher.cloud</artifactId>
     <packaging>pom</packaging>
     <name>Venia - Dispatcher</name>
     <description>HTTP &amp; Dispatcher configurations for Venia</description>
 
+    <!-- ====================================================================== -->
+    <!-- B U I L D   D E F I N I T I O N                                        -->
+    <!-- ====================================================================== -->
     <build>
         <plugins>
             <plugin>

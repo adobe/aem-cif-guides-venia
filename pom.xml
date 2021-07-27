@@ -657,6 +657,7 @@ Bundle-DocURL:
                         <executions>
                             <execution>
                                 <id>update-package-json</id>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>add</goal>
                                     <goal>checkin</goal>
