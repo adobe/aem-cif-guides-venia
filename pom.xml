@@ -19,7 +19,7 @@
     <groupId>com.venia</groupId>
     <artifactId>venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.06.18-SNAPSHOT</version>
+    <version>2021.07.27-SNAPSHOT</version>
     <description>Venia</description>
 
     <scm>
