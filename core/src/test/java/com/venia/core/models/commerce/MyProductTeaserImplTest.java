@@ -19,17 +19,21 @@ import com.adobe.cq.commerce.core.components.models.common.CommerceIdentifier;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
+import com.adobe.cq.commerce.core.components.services.urls.UrlProvider;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.wcm.core.components.models.Component;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.scripting.WCMBindingsConstants;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
 import junit.framework.Assert;
 
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -109,19 +113,17 @@ class MyProductTeaserImplTest {
         slingBindings.setResource(teaserResource);
         slingBindings.put(WCMBindingsConstants.NAME_CURRENT_PAGE, page);
         slingBindings.put(WCMBindingsConstants.NAME_PROPERTIES, teaserResource.getValueMap());
-        try {
-            slingBindings.put("urlProvider", Mockito.mock(Class.forName( "com.adobe.cq.commerce.core.components.services.urls.UrlProvider" )));
-        } catch( ClassNotFoundException e ) {
-            //probably core-cif-components-core version < 0.10.2
-        }
+
+        context.registerService(UrlProvider.class, Mockito.mock(UrlProvider.class));
+        context.registerAdapter(SlingHttpServletRequest.class, Component.class, new Component() {});
 
         underTest = context.request().adaptTo(MyProductTeaser.class);
-        if (underTest != null) {
-            Class<? extends MyProductTeaser> clazz = underTest.getClass();
-            productTeaser = Mockito.spy((ProductTeaser)(new FieldReader(underTest, clazz.getDeclaredField("productTeaser")).read()));
-            FieldSetter.setField(underTest, clazz.getDeclaredField("productTeaser"), productTeaser);
-            FieldSetter.setField(underTest, clazz.getDeclaredField("productRetriever"), productRetriever);
-        }
+        Assertions.assertNotNull(underTest);
+
+        Class<? extends MyProductTeaser> clazz = underTest.getClass();
+        productTeaser = Mockito.spy((ProductTeaser)(new FieldReader(underTest, clazz.getDeclaredField("productTeaser")).read()));
+        FieldSetter.setField(underTest, clazz.getDeclaredField("productTeaser"), productTeaser);
+        FieldSetter.setField(underTest, clazz.getDeclaredField("productRetriever"), productRetriever);
     }
 
     @ParameterizedTest
