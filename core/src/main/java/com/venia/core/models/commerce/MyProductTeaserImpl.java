@@ -109,11 +109,6 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
-    public String getMasterProductSku() {
-        return productTeaser.getMasterProductSku();
-    }
-
-    @Override
     public String getCallToAction() {
         return productTeaser.getCallToAction();
     }
