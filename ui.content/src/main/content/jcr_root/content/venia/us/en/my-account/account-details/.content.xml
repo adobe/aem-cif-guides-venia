@@ -6,6 +6,7 @@
         cq:lastModifiedBy="admin"
         cq:lastRolledout="{Date}2020-09-16T18:19:01.175+03:00"
         cq:lastRolledoutBy="admin"
+        cq:robotsTags="[noindex]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:mixinTypes="[cq:LiveRelationship]"
         jcr:primaryType="cq:PageContent"
