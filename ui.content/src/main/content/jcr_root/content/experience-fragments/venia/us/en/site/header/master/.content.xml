@@ -46,8 +46,7 @@
             </searchbar>
             <miniaccount
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="venia/components/commerce/miniaccount"
-                searchRoot="/content/venia/us">
+                sling:resourceType="venia/components/commerce/miniaccount">
                 <cq:responsive jcr:primaryType="nt:unstructured">
                     <default jcr:primaryType="nt:unstructured"
                     offset="0"
@@ -56,8 +55,7 @@
             </miniaccount>
             <minicart
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="venia/components/commerce/minicart"
-                searchRoot="/content/venia/us">
+                sling:resourceType="venia/components/commerce/minicart">
                 <cq:responsive jcr:primaryType="nt:unstructured">
                     <default jcr:primaryType="nt:unstructured"
                         offset="0"
