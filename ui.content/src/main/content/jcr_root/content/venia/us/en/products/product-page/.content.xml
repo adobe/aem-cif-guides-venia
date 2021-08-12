@@ -8,7 +8,8 @@
         jcr:mixinTypes="[cq:LiveRelationship]" 
         jcr:primaryType="cq:PageContent" 
         jcr:title="Venia Demo Store - Product page"
-        sling:resourceType="venia/components/page">
+        sling:resourceType="venia/components/page"
+        sling:sitemapRoot="{Boolean}true">
         <root jcr:primaryType="nt:unstructured"
             jcr:mixinTypes="[cq:LiveRelationship]"  
             sling:resourceType="venia/components/container" 
