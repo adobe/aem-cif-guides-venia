@@ -29,7 +29,7 @@
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>aem-cif-guides-venia.dispatcher.ams</artifactId>
+    <artifactId>aem-cif-guides-venia.dispatcher.classic</artifactId>
     <name>Venia - Dispatcher (AMS)</name>
     <packaging>pom</packaging>
     <description>HTTP &amp; Dispatcher configurations for Venia</description>

@@ -31,14 +31,10 @@ ci.sh("chmod +x ghr");
 
 ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
 
-ci.stage(`Build and install Venia (classic)`);
-ci.sh(`mvn -B clean install -Pclassic`);
-ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
-
-ci.stage(`Build and install Venia (cloud)`);
-// only rebuild all for cloud, all the dependencies are built and installed already in the classic build
-ci.sh(`mvn -B -pl all clean install`)
+ci.stage(`Build and install Venia`);
+ci.sh(`mvn -B clean install -PwithClassic`);
 ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}.zip`);
+ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 
 ci.stage("Deploy Venia Sample Project to GitHub");
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \

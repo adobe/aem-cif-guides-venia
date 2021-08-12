@@ -98,34 +98,6 @@
 
     <profiles>
         <profile>
-            <!-- we cannot remove the cloud specific profile here as the 2 dependencies aem-cloud-testing-clients and cq-testing-clients-65
-            conflict with each other. -->
-            <id>cloud</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.cq</groupId>
-                    <artifactId>aem-cloud-testing-clients</artifactId>
-                    <version>0.2.4</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>classic</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.cq</groupId>
-                    <artifactId>cq-testing-clients-65</artifactId>
-                    <version>1.1.1</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>local</id>
             <properties>
                 <!-- Cloud author service (LB) -->
@@ -205,6 +177,11 @@
     </profiles>
 
     <dependencies>
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>aem-cloud-testing-clients</artifactId>
+            <version>0.2.4</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
