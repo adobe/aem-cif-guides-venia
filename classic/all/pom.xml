@@ -79,14 +79,21 @@
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.adobe.commerce.cif</groupId>
-                            <artifactId>core-cif-components-apps</artifactId>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.content-classic</artifactId>
                             <type>zip</type>
-                            <target>/apps/venia-vendor-packages/application/install</target>
+                            <target>/apps/venia-packages/content/install</target>
                         </embedded>
                         <embedded>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.config-classic</artifactId>
+                            <type>zip</type>
+                            <target>/apps/venia-packages/application/install</target>
+                        </embedded>
+
+                        <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
-                            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+                            <artifactId>core-cif-components-apps</artifactId>
                             <type>zip</type>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
@@ -103,12 +110,23 @@
                         </embedded>
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+                            <type>zip</type>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-extensions-product-recs-bundle</artifactId>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
                         <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>magento-graphql</artifactId>
+                            <target>/apps/venia-vendor-packages/application/install</target>
+                        </embedded>
+                        <embedded>
+                            <groupId>com.adobe.commerce.cif</groupId>
+                            <artifactId>graphql-client</artifactId>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
                         <embedded>
@@ -126,23 +144,6 @@
                         <embedded>
                             <groupId>com.adobe.cq</groupId>
                             <artifactId>core.wcm.components.core</artifactId>
-                            <target>/apps/venia-vendor-packages/application/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>com.adobe.aem.guides</groupId>
-                            <artifactId>aem-cif-guides-venia.ui.content-classic</artifactId>
-                            <type>zip</type>
-                            <target>/apps/venia-packages/content/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>com.adobe.aem.guides</groupId>
-                            <artifactId>aem-cif-guides-venia.ui.config-classic</artifactId>
-                            <type>zip</type>
-                            <target>/apps/venia-packages/application/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>com.adobe.commerce.cif</groupId>
-                            <artifactId>graphql-client</artifactId>
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
                     </embeddeds>
@@ -252,6 +253,11 @@
     <dependencies>
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -268,23 +274,6 @@
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
-
-        <!-- Adobe CIF Dependencies -->
-        <dependency>
-            <groupId>com.adobe.commerce.cif</groupId>
-            <artifactId>core-cif-components-apps</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.commerce.cif</groupId>
-            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.commerce.cif</groupId>
-            <artifactId>core-cif-components-config</artifactId>
-            <type>zip</type>
-        </dependency>
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.content-classic</artifactId>
@@ -296,6 +285,31 @@
             <artifactId>aem-cif-guides-venia.ui.config-classic</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
+        </dependency>
+
+        <!-- Adobe CIF Dependencies -->
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-apps</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-config</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.commerce.cif</groupId>
+            <artifactId>core-cif-components-extensions-product-recs-bundle</artifactId>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
@@ -316,6 +330,10 @@
             <groupId>com.adobe.cq</groupId>
             <artifactId>core.wcm.components.config</artifactId>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.core</artifactId>
         </dependency>
     </dependencies>
 </project>
