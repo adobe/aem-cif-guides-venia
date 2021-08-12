@@ -409,10 +409,10 @@ Bundle-DocURL:
         <profile>
             <id>withClassic</id>
             <modules>
-                <module>classic/ui.config-classic</module>
-                <module>classic/ui.content-classic</module>
-                <module>classic/dispatcher-classic</module>
-                <module>classic/all-classic</module>
+                <module>classic/ui.config</module>
+                <module>classic/ui.content</module>
+                <module>classic/dispatcher</module>
+                <module>classic/all</module>
             </modules>
         </profile>
 
