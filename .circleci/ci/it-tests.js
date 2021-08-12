@@ -39,13 +39,13 @@ try {
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
-            extras = ` --install-file ${buildPath}/classic/all/target/aem-cif-guides-venia.all-classic-${veniaVersion}.zip`
+            extras += ` --install-file ${buildPath}/classic/all/target/aem-cif-guides-venia.all-classic-${veniaVersion}.zip`
 
         } else if (classifier == 'cloud') {
             // Download latest add-on release from artifactory
             ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=cif-cloud-ready-feature-pkg -Dversion=LATEST -Dtype=far -Dclassifier=cq-commerce-addon-authorfar -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon.far`);
             extras = ` --install-file ${buildPath}/dependencies/addon.far`;
-            extras = ` --install-file ${buildPath}/all/target/aem-cif-guides-venia.all-${veniaVersion}.zip`
+            extras += ` --install-file ${buildPath}/all/target/aem-cif-guides-venia.all-${veniaVersion}.zip`
         }
 
         // Install SNAPSHOT or current version of CIF examples bundle

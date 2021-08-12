@@ -46,8 +46,8 @@
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <configuration>
-                    <group>com.venia</group>
-                    <name>venia.ui.config</name>
+                    <group>com.adobe.aem.guides</group>
+                    <name>aem-cif-guides-venia.ui.config</name>
                     <packageType>container</packageType>
                     <showImportPackageReport>false</showImportPackageReport>
                     <repositoryStructurePackages>
