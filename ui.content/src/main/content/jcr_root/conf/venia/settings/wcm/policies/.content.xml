@@ -283,7 +283,7 @@
                     jcr:primaryType="nt:unstructured"
                     jcr:title="XF Root"
                     sling:resourceType="wcm/core/components/policy/policy"
-                    components="[group:Venia - Content,group:Venia - Commerce,/apps/venia/components/form/container]">
+                    components="[group:Venia - Content,group:Venia - Commerce,/apps/venia/components/form/container,group:Venia - Header]">
                     <jcr:content jcr:primaryType="nt:unstructured"/>
                     <cq:authoring jcr:primaryType="nt:unstructured">
                         <assetToComponentMapping jcr:primaryType="nt:unstructured">

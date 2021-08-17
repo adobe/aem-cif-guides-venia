@@ -13,15 +13,15 @@
  ******************************************************************************/
 export default {
     mountingPoints: {
-        accountContainer: '.header__accountTrigger #miniaccount',
-        addressBookContainer: '#addressbook',
+        accountContainer: '.miniaccount__body',
+        addressBookContainer: '.addressbook__body',
         authBarContainer: 'aside.navigation__root #miniaccount',
-        cartTrigger: '.header__cartTrigger',
+        cartTrigger: '.minicart__trigger',
+        minicart: '.minicart__body',
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
-        minicart: '#minicart',
-        accountDetails: '#accountdetails',
-        resetPasswordPage: '#reset-password-page'
+        accountDetails: '.accountdetails__body',
+        resetPasswordPage: '.resetpassword__body'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
