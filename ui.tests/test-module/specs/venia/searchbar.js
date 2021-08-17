@@ -47,7 +47,7 @@ describe('Venia Searchbar Component', () => {
         // Go to the Venia homepage
         browser.url(venia_homepage);
 
-        // Check that cart trigger button is displayed
+        // Check that searchbar trigger button is displayed
         const searchBarTrigger = $('.searchbar__trigger');
         expect(searchBarTrigger).toBeDisplayed();
         // and the searchbar is hidden
@@ -59,5 +59,76 @@ describe('Venia Searchbar Component', () => {
         expect(searchBar).toBeDisplayed();
         const input = searchBar.$('.searchbar__input');
         expect(input).toHaveAttr('placeholder', 'Search');
+    });
+
+    it('should display the reset button', () => {
+        // Go to the Venia homepage
+        browser.url(venia_homepage);
+
+        // Check that search trigger button is displayed
+        const searchBarTrigger = $('.searchbar__trigger');
+        expect(searchBarTrigger).toBeDisplayed();
+        searchBarTrigger.click();
+        const searchBar = $('.searchbar__body');
+        expect(searchBar).toBeDisplayed();
+        const input = searchBar.$('.searchbar__input');
+        input.setValue('dress');
+        const reset = searchBar.$('.searchbar__reset-button');
+        expect(reset).toBeDisplayed();
+        expect(reset).toBeClickable();
+        reset.click();
+        expect(input).toHaveText('');
+    });
+
+    it('honors the placeholder property', () => {
+        // Open Venia header in the XF editor
+        let xfPath = `${config.aem.author.base_url}/editor.html/content/experience-fragments/venia/us/en/site/header/master.html`;
+        browser.url(xfPath);
+        let searchBar = $(
+            'div[data-path="/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/searchbar"]'
+        );
+        // open the searchbar edit dialog
+        expect(searchBar).toBeDisplayed();
+        searchBar.click();
+        let configureButton = $('button[title="Configure"]');
+        expect(configureButton).toBeDisplayed();
+        configureButton.click();
+        let dialog = $('coral-dialog[trackingfeature="aem:sites:components:dialogs:cif-core-components:searchbar:v2"]');
+        expect(dialog).toBeDisplayed();
+
+        // update the placeholder field
+        let placeholderInput = dialog.$('input[name="./placeholder"]');
+        expect(placeholderInput).toBeDisplayed();
+        let searchProductsText = 'Search products';
+        placeholderInput.setValue(searchProductsText);
+        let doneButton = dialog.$('button[variant="primary"]');
+        expect(doneButton).toBeDisplayed();
+        doneButton.click();
+
+        // Go to the Venia homepage
+        browser.url(venia_homepage);
+
+        // check the new placeholder in the trigger title and in the input field
+        const searchBarTrigger = $('.searchbar__trigger');
+        expect(searchBarTrigger).toBeDisplayed();
+        expect(searchBarTrigger).toHaveAttr('title', searchProductsText);
+
+        searchBarTrigger.click();
+        searchBar = $('.searchbar__body');
+        expect(searchBar).toBeDisplayed();
+        const input = searchBar.$('.searchbar__input');
+        expect(input).toHaveAttr('placeholder', searchProductsText);
+
+        // clear the placeholder
+        browser.url(xfPath);
+        searchBar = $(
+            'div[data-path="/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/searchbar"]'
+        );
+        expect(searchBar).toBeDisplayed();
+        searchBar.click();
+        $('button[title="Configure"]').click();
+        dialog = $('coral-dialog[trackingfeature="aem:sites:components:dialogs:cif-core-components:searchbar:v2"]');
+        dialog.$('input[name="./placeholder"]').setValue('');
+        dialog.$('button[variant="primary"]').click();
     });
 });
