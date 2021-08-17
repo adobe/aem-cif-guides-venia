@@ -101,7 +101,7 @@ describe('Venia Searchbar Component', () => {
         expect(placeholderInput).toBeDisplayed();
         let searchProductsText = 'Search products';
         placeholderInput.setValue(searchProductsText);
-        let doneButton = dialog.$('button[variant="primary"]');
+        let doneButton = dialog.$('.cq-dialog-submit');
         expect(doneButton).toBeDisplayed();
         doneButton.click();
 
@@ -129,6 +129,6 @@ describe('Venia Searchbar Component', () => {
         $('button[title="Configure"]').click();
         dialog = $('coral-dialog[trackingfeature="aem:sites:components:dialogs:cif-core-components:searchbar:v2"]');
         dialog.$('input[name="./placeholder"]').setValue('');
-        dialog.$('button[variant="primary"]').click();
+        dialog.$('.cq-dialog-submit').click();
     });
 });
