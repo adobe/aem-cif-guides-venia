@@ -20,12 +20,12 @@
     data-sly-use.imageTpl="image.html"
     data-sly-test.isConfigured="${properties.selection}"
     data-sly-test.hasProduct="${product.url}">
-
-    <div 
-         data-sly-test="${isConfigured && hasProduct}" 
+    <div
+         data-sly-test="${isConfigured && hasProduct}"
+         data-product-sku="${product.sku}"
          id="${product.id}"
-         class="item__root" 
-         data-cmp-is="productteaser" 
+         class="item__root"
+         data-cmp-is="productteaser"
          data-cmp-data-layer="${product.data.json}"
          data-virtual="${product.virtualProduct}">
         <div data-sly-test="${product.showBadge}" class="item__badge">
