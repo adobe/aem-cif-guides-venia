@@ -14,8 +14,13 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Adobe Systems Incorporated.
  ******************************************************************************/
+
+.cmp-navigation__group {
+    justify-content: center;
+}
+
 .cmp-navigation__item {
-    padding: 1.5em 1em;
+    padding: 1.26em 1em;
 }
 
 .cmp-navigation__item--level-0:hover > .cmp-navigation__group {
