@@ -114,14 +114,12 @@
             <artifactId>aem-cif-guides-venia.core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.frontend</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
-
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
@@ -148,15 +146,19 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>graphql-client</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
+            <scope>provided</scope>
         </dependency>
+
         <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -168,6 +170,13 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.sightly.runtime</artifactId>
             <version>1.2.0-1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Other dependencies -->
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.core</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
