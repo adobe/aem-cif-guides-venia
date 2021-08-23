@@ -36,28 +36,26 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                exclude: /node_modules/,
-                use: [
+                test: /\.js$/,
+                loader: ['babel-loader']
+            },
+            {
+                test: /\.css$/,
+                loader: [
+                    MiniCssExtractPlugin.loader,
                     {
-                        loader: 'ts-loader'
-                    },
-                    {
-                        loader: 'webpack-import-glob-loader',
+                        loader: 'css-loader',
                         options: {
-                            url: false
+                            modules: {
+                                localIdentName: 'cmp-[folder]__[name]__[local]'
+                            }
                         }
                     }
                 ]
             },
             {
-                test: /\.js$/,
-                include: /src/,
-                loader: ['babel-loader']
-            },
-            {
                 test: /\.scss$/,
-                use: [
+                loader: [
                     MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
@@ -114,10 +112,10 @@ module.exports = {
     stats: {
         assetsSort: 'chunks',
         builtAt: true,
-        children: false,
+        children: true,
         chunkGroups: true,
         chunkOrigins: true,
-        colors: false,
+        colors: true,
         errors: true,
         errorDetails: true,
         env: true,
