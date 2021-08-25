@@ -29,6 +29,18 @@ describe('Product Collection Component', function () {
         browser.url(config.aem.author.base_url);
         browser.AEMLogin(config.aem.author.username, config.aem.author.password);
 
+        // Setup GraphQL client if running on CircleCI
+        if (process.env.CIRCLECI) {
+            browser.configureGraphqlClient('com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl', {
+                identifier: 'default',
+                url: `${config.aem.author.base_url}/apps/cif-components-examples/graphql`,
+                httpMethod: 'GET',
+                acceptSelfSignedCertificates: 'true',
+                allowHttpProtocol: 'true'
+            });
+            browser.pause(10000);
+        }
+
         // Enable helper to handle onboarding dialog popup
         onboardingHdler = new OnboardingDialogHandler(browser);
         onboardingHdler.enable();
