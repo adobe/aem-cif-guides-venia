@@ -18,8 +18,12 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const pkg = require('./package.json');
 
 const SOURCE_ROOT = __dirname + '/src/main';
+const alias = Object.keys(pkg.dependencies)
+    .reduce((obj, key) => ({ ...obj, [key]: path.resolve(__dirname, 'node_modules', key) }), {});
+
 
 module.exports = {
     entry: {
@@ -90,6 +94,7 @@ module.exports = {
             }
         ]
     },
+    resolve: { alias },
     plugins: [
         new CleanWebpackPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
