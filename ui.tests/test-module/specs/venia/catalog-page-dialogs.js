@@ -53,9 +53,9 @@ describe('Catalog Page Component Dialog', function () {
         expect(commerceTab).toBeDisplayed();
         commerceTab.click();
 
-        expect($('h2=Catalog Page')).toBeDisplayed();
+        expect($('=Catalog Page')).toBeDisplayed();
         expect($('coral-checkbox-label=Show catalog page')).toBeDisplayed();
-        expect($('h2=Magento Store Configuration')).toBeDisplayed();
+        expect($('=Magento Store Configuration')).toBeDisplayed();
         expect($('label=Root Category Identifier')).toBeDisplayed();
     });
 });
