@@ -53,9 +53,9 @@ describe('XF Page Component Dialog', function () {
         expect(commerceTab).toBeDisplayed();
         commerceTab.click();
 
-        expect($('h3=Commerce Pages')).toBeDisplayed();
-        expect($('h3=Product selection')).toBeDisplayed();
-        expect($('h3=Category selection')).toBeDisplayed();
-        expect($('h3=Catalog placeholder location')).toBeDisplayed();
+        expect($('h2=Commerce Pages')).toBeDisplayed();
+        expect($('h2=Product selection')).toBeDisplayed();
+        expect($('h2=Category selection')).toBeDisplayed();
+        expect($('h2=Catalog placeholder location')).toBeDisplayed();
     });
 });
