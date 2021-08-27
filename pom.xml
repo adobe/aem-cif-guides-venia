@@ -91,9 +91,9 @@
                 <version>2.5.3</version>
                 <configuration>
                     <scmCommentPrefix>[maven-scm] :</scmCommentPrefix>
-                    <preparationGoals>clean verify -Pprepare-release</preparationGoals>
+                    <preparationGoals>clean verify -Pprepare-release -Pclassic</preparationGoals>
                     <goals>install</goals>
-                    <releaseProfiles>release</releaseProfiles>
+                    <releaseProfiles>release,classic</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
                 </configuration>

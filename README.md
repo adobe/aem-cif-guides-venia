@@ -169,7 +169,7 @@ The project comes with the auto-public repository configured. To set up the repo
 
 The Venia demo is only released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
 
-`mvn release:prepare release:clean`
+`mvn release:prepare release:clean -Pclassic`
 
 Releases must be done on the `main` branch.
 
