@@ -53,9 +53,9 @@ describe('XF Page Component Dialog', function () {
         expect(commerceTab).toBeDisplayed();
         commerceTab.click();
 
-        expect($('=Commerce Pages')).toBeDisplayed();
-        expect($('=Product selection')).toBeDisplayed();
-        expect($('=Category selection')).toBeDisplayed();
-        expect($('=Catalog placeholder location')).toBeDisplayed();
+        expect($('.coral-Form-fieldset-legend=Commerce Pages')).toBeDisplayed();
+        expect($('.coral-Form-fieldset-legend=Product selection')).toBeDisplayed();
+        expect($('.coral-Form-fieldset-legend=Category selection')).toBeDisplayed();
+        expect($('.coral-Form-fieldset-legend=Catalog placeholder location')).toBeDisplayed();
     });
 });
