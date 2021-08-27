@@ -5,17 +5,23 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
         <version>2021.07.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>venia.dispatcher.cloud</artifactId>
+    <!-- ====================================================================== -->
+    <!-- P R O J E C T  D E S C R I P T I O N                                   -->
+    <!-- ====================================================================== -->
+    <artifactId>aem-cif-guides-venia.dispatcher.cloud</artifactId>
     <packaging>pom</packaging>
     <name>Venia - Dispatcher</name>
     <description>HTTP &amp; Dispatcher configurations for Venia</description>
 
+    <!-- ====================================================================== -->
+    <!-- B U I L D   D E F I N I T I O N                                        -->
+    <!-- ====================================================================== -->
     <build>
         <plugins>
             <plugin>
