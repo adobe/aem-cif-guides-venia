@@ -14,13 +14,12 @@
  |  See the License for the specific language governing permissions and
  |  limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.adobe.aem.guides</groupId>
     <artifactId>aem-cif-guides-venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.07.27-SNAPSHOT</version>
+    <version>2021.08.28-SNAPSHOT</version>
     <name>Venia CIF Project - Reactor Project</name>
     <description>Venia CIF Project</description>
     <url>https://github.com/adobe/aem-cif-guides-venia</url>
@@ -70,7 +69,7 @@
         <vault.user>admin</vault.user>
         <vault.password>admin</vault.password>
         <core.wcm.components.version>2.17.2</core.wcm.components.version>
-        <core.cif.components.version>2.1.0</core.cif.components.version>
+        <core.cif.components.version>2.1.1-SNAPSHOT</core.cif.components.version>
         <graphql.client.version>1.7.4</graphql.client.version>
         <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
@@ -91,9 +90,9 @@
                 <version>2.5.3</version>
                 <configuration>
                     <scmCommentPrefix>[maven-scm] :</scmCommentPrefix>
-                    <preparationGoals>clean verify -Pprepare-release</preparationGoals>
+                    <preparationGoals>clean verify -Pprepare-release -Pclassic</preparationGoals>
                     <goals>install</goals>
-                    <releaseProfiles>release</releaseProfiles>
+                    <releaseProfiles>release,classic</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
                 </configuration>
@@ -367,7 +366,7 @@ Bundle-DocURL:
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -381,7 +380,7 @@ Bundle-DocURL:
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -394,7 +393,7 @@ Bundle-DocURL:
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
