@@ -92,9 +92,9 @@ jobs:
             java -version
             mvn -v
             if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-              mvn -B clean install -PfedDev,withClassic
+              mvn -B clean install -PfedDev,classic
             else
-              mvn -B clean install -PwithClassic
+              mvn -B clean install -Pclassic
             fi
       - save_cache:
           paths:

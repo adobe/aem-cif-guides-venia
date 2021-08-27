@@ -32,7 +32,7 @@ ci.sh("chmod +x ghr");
 ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
 
 ci.stage(`Build and install Venia`);
-ci.sh(`mvn -B clean install -PwithClassic`);
+ci.sh(`mvn -B clean install -Pclassic`);
 ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}.zip`);
 ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 

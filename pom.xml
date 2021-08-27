@@ -407,7 +407,7 @@ Bundle-DocURL:
 
     <profiles>
         <profile>
-            <id>withClassic</id>
+            <id>classic</id>
             <modules>
                 <module>classic/ui.config</module>
                 <module>classic/ui.content</module>
