@@ -22,13 +22,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
         <version>2021.07.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>venia.ui.tests</artifactId>
+    <artifactId>aem-cif-guides-venia.ui.tests</artifactId>
     <name>Venia - UI Tests</name>
     <description>UI Tests for Venia</description>
 
