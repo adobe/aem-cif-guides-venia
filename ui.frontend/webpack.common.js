@@ -22,8 +22,7 @@ const pkg = require('./package.json');
 
 const SOURCE_ROOT = __dirname + '/src/main';
 const alias = Object.keys(pkg.dependencies)
-    .reduce((obj, key) => ({ ...obj, [key]: path.resolve(__dirname, 'node_modules', key) }), {});
-
+    .reduce((obj, key) => ({ ...obj, [key]: path.resolve('node_modules', key) }), {});
 
 module.exports = {
     entry: {
