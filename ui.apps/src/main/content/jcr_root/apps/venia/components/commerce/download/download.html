@@ -1,0 +1,24 @@
+<div data-sly-use.download="com.venia.core.models.commerce.CommerceDownload"
+     data-sly-use.component="com.adobe.cq.wcm.core.components.models.Component"
+     data-sly-use.template="core/wcm/components/commons/v1/templates.html"
+     id="${component.id}"
+     class="cmp-commerce-download"
+     data-sly-test.hasDownloads="${download.downloads.size}">
+    <h2>Downloads</h2>
+	<table>
+        <thead>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Download</th>
+        </thead>
+        <tbody>
+            <tr data-sly-repeat.item="${download.downloads}">
+                <td>${item.name}</td>
+                <td>${item.size}</td>
+                <td><a href="${item.downloadLink}">Download</a></td>
+            </tr>
+        </tbody>
+	</table>
+</div>
+
+<sly data-sly-call="${template.placeholder @ isEmpty = !download.downloads.size}" />

@@ -112,7 +112,7 @@ Import-Package: javax.annotation;version=0.0.0,*
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.50</minimum>
+                                            <minimum>0.10</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -203,6 +203,11 @@ Import-Package: javax.annotation;version=0.0.0,*
             <groupId>io.wcm</groupId>
             <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>aem-sdk-api</artifactId>
+            <version>2020.9.4277.20200929T030741Z-200924</version>
         </dependency>
     </dependencies>
 </project>
