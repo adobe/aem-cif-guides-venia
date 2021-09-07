@@ -144,7 +144,7 @@
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
-                                        <argument>dev</argument>
+                                        <argument>prod</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
