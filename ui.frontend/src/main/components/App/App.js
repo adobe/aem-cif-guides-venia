@@ -13,7 +13,7 @@
  ******************************************************************************/
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { I18nextProvider } from 'react-i18next';
+import { IntlProvider } from 'react-intl';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import {
     CommerceApp,
@@ -35,14 +35,15 @@ import {
     StorefrontInstanceContextProvider
 } from '@adobe/aem-core-cif-product-recs-extension';
 
-import i18n from './i18n';
+import loadLocaleData from './i18n';
 import partialConfig from './config';
 
 import '../../site/main.scss';
 
-const App = () => {
+const App = props => {
     const { storeView, graphqlEndpoint, graphqlMethod, httpHeaders } = document.querySelector('body').dataset;
     const { mountingPoints, pagePaths } = partialConfig;
+    const { locale, messages } = props;
 
     const config = {
         ...partialConfig,
@@ -55,7 +56,7 @@ const App = () => {
     };
 
     return (
-        <I18nextProvider i18n={i18n} defaultNS="common">
+        <IntlProvider locale={locale} messages={messages}>
             <ConfigContextProvider config={config}>
                 <CommerceApp>
                     <StorefrontInstanceContextProvider>
@@ -93,16 +94,19 @@ const App = () => {
                     </Route>
                 </CommerceApp>
             </ConfigContextProvider>
-        </I18nextProvider>
+        </IntlProvider>
     );
 };
 
-window.onload = () => {
+window.onload = async () => {
+    const { locale, messages } = await loadLocaleData();
     const root = document.createElement('div');
+    
     document.body.appendChild(root);
+
     ReactDOM.render(
         <Router>
-            <App />
+            <App locale={locale} messages={messages} />
         </Router>,
         root
     );
