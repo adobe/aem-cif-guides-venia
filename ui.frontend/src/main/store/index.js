@@ -12,9 +12,4 @@
  *
  ******************************************************************************/
 
-import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json'
-import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json'
-import enMessagesVenia from '@magento/venia-ui/i18n/en_US.json';
-
-export const messages = { ...enMessagesVenia, ...enMessagesCoreComponents, ...enMessagesProductRecs };
-export const locale = 'en';
+export { default } from './store';

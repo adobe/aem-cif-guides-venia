@@ -19,8 +19,6 @@ import {
     CommerceApp,
     Portal,
     ConfigContextProvider,
-    Cart,
-    CartTrigger,
     AuthBar,
     AccountContainer,
     AddressBook,
@@ -29,6 +27,7 @@ import {
     ResetPassword,
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
+import MiniCart from '../MiniCart';
 
 import {
     ProductRecsGallery,
@@ -63,10 +62,7 @@ const App = props => {
                         <PortalPlacer selector={'[data-is-product-recs]'} component={ProductRecsGallery} />
                     </StorefrontInstanceContextProvider>
                     <Portal selector={mountingPoints.cartTrigger}>
-                        <CartTrigger />
-                    </Portal>
-                    <Portal selector={mountingPoints.minicart}>
-                        <Cart />
+                        <MiniCart />
                     </Portal>
                     <Portal selector={mountingPoints.authBarContainer}>
                         <AuthBar />

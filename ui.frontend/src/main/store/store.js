@@ -12,9 +12,17 @@
  *
  ******************************************************************************/
 
-import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json'
-import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json'
-import enMessagesVenia from '@magento/venia-ui/i18n/en_US.json';
+import { combineReducers, createStore } from 'redux';
+import { enhancer, reducers } from '@magento/peregrine';
 
-export const messages = { ...enMessagesVenia, ...enMessagesCoreComponents, ...enMessagesProductRecs };
-export const locale = 'en';
+// This is the connective layer between the Peregrine store and the
+// venia-concept UI. You can add your own reducers/enhancers here and combine
+// them with the Peregrine exports.
+//
+// example:
+// const rootReducer = combineReducers({ ...reducers, ...myReducers });
+// const rootEnhancer = composeEnhancers(enhancer, myEnhancer);
+// export default createStore(rootReducer, rootEnhancer);
+const rootReducer = combineReducers(reducers);
+
+export default createStore(rootReducer, enhancer);

@@ -55,9 +55,36 @@ module.exports = {
                 ]
             },
             {
-                test: /\.js$/,
-                include: /src/,
-                loader: ['babel-loader']
+                test: /\.jsx?$/,
+                exclude: /node_modules\/(?!@magento\/)/,
+                loader: 'babel-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: false,
+                            import: true
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            plugins() {
+                                return [require('autoprefixer')];
+                            }
+                        }
+                    },
+                    {
+                        loader: 'webpack-import-glob-loader',
+                        options: {
+                            url: false
+                        }
+                    }
+                ]
             },
             {
                 test: /\.scss$/,
@@ -96,10 +123,9 @@ module.exports = {
     },
     resolve: { 
         alias: {
-            ...alias,
-            // messages are all in ast already, so we can save some bytes like that
-            '@formatjs/icu-messageformat-parser': '@formatjs/icu-messageformat-parser/no-parser'
-        }
+            ...alias
+        },
+        extensions: [ '.ee.js', '.js', '.json', '.wasm']
     },
     plugins: [
         new CleanWebpackPlugin(),
