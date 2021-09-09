@@ -13,19 +13,29 @@
  ******************************************************************************/
 
 const storeConfigEl = document.querySelector('meta[name="store-config"]');
-let baseUrl;
-let basePath;
+let storeConfig;
+let headers;
 
 if (storeConfigEl) {
-    baseUrl = JSON.parse(storeConfigEl.content).storeRootUrl;
+    storeConfig = JSON.parse(storeConfigEl.content);
+    headers = storeConfig.headers;
 } else {
     // TODO: deprecated - the store configuration on the <body> has been deprecated and will be removed
-    baseUrl = document.body.dataset.storeRootUrl;
+    storeConfig = document.body.dataset;
+    headers = JSON.parse(storeConfig.httpHeaders);
 }
 
-basePath = baseUrl.substr(0, baseUrl.indexOf('.'));
+const baseUrl = storeConfig.storeRootUrl;
+const basePath = baseUrl.substr(0, baseUrl.indexOf('.'));
 
 export default {
+    storeView: storeConfig.storeView,
+    graphqlEndpoint: storeConfig.graphqlEndpoint,
+    // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
+    // will always be executed as POST requests.
+    graphqlMethod: storeConfig.graphqlMethod,
+    headers,
+    
     mountingPoints: {
         accountContainer: '.miniaccount__body',
         addressBookContainer: '.addressbook__body',

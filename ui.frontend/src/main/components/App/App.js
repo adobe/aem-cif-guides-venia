@@ -36,23 +36,12 @@ import {
 } from '@adobe/aem-core-cif-product-recs-extension';
 
 import i18n from './i18n';
-import partialConfig from './config';
+import config from './config';
 
 import '../../site/main.scss';
 
 const App = () => {
-    const { storeView, graphqlEndpoint, graphqlMethod, httpHeaders } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths } = partialConfig;
-
-    const config = {
-        ...partialConfig,
-        storeView,
-        graphqlEndpoint,
-        // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
-        // will always be executed as POST requests.
-        graphqlMethod,
-        headers: JSON.parse(httpHeaders)
-    };
+    const { mountingPoints, pagePaths } = config;
 
     return (
         <I18nextProvider i18n={i18n} defaultNS="common">
