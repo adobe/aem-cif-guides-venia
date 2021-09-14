@@ -24,16 +24,13 @@ const SOURCE_ROOT = __dirname + '/src/main';
 const alias = Object.keys(pkg.dependencies)
     .reduce((obj, key) => ({ ...obj, [key]: path.resolve('node_modules', key) }), {});
 
-module.exports = {
+module.exports = (env) => ({
+    mode: env,
     entry: {
         site: SOURCE_ROOT + '/site/main.js'
     },
     output: {
-        filename: chunkData => {
-            return chunkData.chunk.name === 'dependencies'
-                ? 'clientlib-dependencies/[name].js'
-                : 'clientlib-site/[name].js';
-        },
+        filename: 'clientlib-site/[name].js',
         chunkFilename: 'clientlib-site/[name].js',
         path: path.resolve(__dirname, 'dist')
     },
@@ -57,31 +54,22 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 exclude: /node_modules\/(?!@magento\/)/,
-                loader: 'babel-loader'
+                loader: 'babel-loader',
+                options: {
+                    envName: env,
+                }
             },
             {
                 test: /\.css$/,
+                include: /node_modules\/@magento/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
-                            url: false,
-                            import: true
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            plugins() {
-                                return [require('autoprefixer')];
+                            modules: {
+                                localIdentName: 'cmp-Venia[folder]__[name]__[local]'
                             }
-                        }
-                    },
-                    {
-                        loader: 'webpack-import-glob-loader',
-                        options: {
-                            url: false
                         }
                     }
                 ]
@@ -131,7 +119,7 @@ module.exports = {
         new CleanWebpackPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'clientlib-[name]/[name].css'
+            filename: 'clientlib-site/[name].css'
         }),
         new CopyWebpackPlugin([
             {
@@ -156,4 +144,4 @@ module.exports = {
         source: false,
         warnings: true
     }
-};
+});

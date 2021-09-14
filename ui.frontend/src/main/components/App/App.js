@@ -11,6 +11,9 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
+// import config first due to its side effects
+import partialConfig from './config'; 
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { IntlProvider } from 'react-intl';
@@ -27,7 +30,7 @@ import {
     ResetPassword,
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
-import MiniCart from '../MiniCart';
+import { CartTrigger } from '../Cart';
 
 import {
     ProductRecsGallery,
@@ -35,7 +38,6 @@ import {
 } from '@adobe/aem-core-cif-product-recs-extension';
 
 import loadLocaleData from './i18n';
-import partialConfig from './config';
 
 import '../../site/main.scss';
 
@@ -62,7 +64,7 @@ const App = props => {
                         <PortalPlacer selector={'[data-is-product-recs]'} component={ProductRecsGallery} />
                     </StorefrontInstanceContextProvider>
                     <Portal selector={mountingPoints.cartTrigger}>
-                        <MiniCart />
+                        <CartTrigger />
                     </Portal>
                     <Portal selector={mountingPoints.authBarContainer}>
                         <AuthBar />

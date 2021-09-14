@@ -11,6 +11,21 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
+
+const config = document.querySelector('body').dataset;
+
+// necessary to be set for venia-ui components
+window.STORE_VIEW_CODE = config.storeView || '';
+window.AVAILABLE_STORE_VIEWS = [{
+    code: window.STORE_VIEW_CODE,
+    base_currency_code: 'USD',
+    default_display_currency_code: 'USD',
+    id: 1,
+    locale: 'en',
+    secure_base_media_url: '',
+    store_name: 'Venia'
+}];
+
 export default {
     mountingPoints: {
         accountContainer: '.miniaccount__body',
@@ -25,7 +40,7 @@ export default {
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
-        baseUrl: document.querySelector('body').dataset.storeRootUrl,
+        baseUrl: config.storeRootUrl,
         accountDetails: '/content/venia/us/en/my-account/account-details.html',
         resetPassword: '/content/venia/us/en/reset-password.html'
     }

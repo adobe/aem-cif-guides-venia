@@ -16,15 +16,14 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin            = require('terser-webpack-plugin');
 const common                  = require('./webpack.common.js');
 
-module.exports = merge(common, {
-    mode: 'production',
+module.exports = merge(common('production'), {
     optimization: {
-        minimize: true,
-        usedExports: true,
+        minimize: false,
+        //usedExports: true,
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    mangle: true
+                    mangle: false,
                 },
             }),
             new OptimizeCSSAssetsPlugin({
@@ -57,7 +56,14 @@ module.exports = merge(common, {
                     name: 'site',
                     test: 'main',
                     enforce: true
-                }
+                },
+                // Merge all the CSS into one file
+                styles: {
+                    name: 'styles',
+                    test: /\.s?css$/,
+                    chunks: 'all',
+                    enforce: true,  
+                },
             }
         }
     },

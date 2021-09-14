@@ -1,12 +1,9 @@
 module.exports = {
-    "presets": [
-        "@babel/preset-env",
-        "@babel/preset-react",
-        "@babel/typescript", 
-        "@magento/babel-preset-peregrine"
+    presets: [
+        [ '@magento/babel-preset-peregrine' ]
     ],
-    "plugins": [
-        "@babel/plugin-proposal-class-properties",
-        "@babel/plugin-proposal-object-rest-spread"
-    ]
+    // important as some in combiation with babel-runtime and umd/esm mixed 
+    // module the default value will cause the imports from the umd libraries
+    // (@adobe/) to be not recognized anymore
+    sourceType: 'unambiguous'
 }

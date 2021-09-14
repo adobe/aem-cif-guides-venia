@@ -18,8 +18,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const SOURCE_ROOT = __dirname + '/src/main';
 
-module.exports = merge(common, {
-    mode: 'development',
+module.exports = merge(common('development'), {
     devtool: 'inline-source-map',
     performance: { hints: 'warning' },
     plugins: [
