@@ -18,12 +18,12 @@ const common                  = require('./webpack.common.js');
 
 module.exports = merge(common('production'), {
     optimization: {
-        minimize: false,
-        //usedExports: true,
+        minimize: true,
+        usedExports: true,
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    mangle: false,
+                    mangle: true
                 },
             }),
             new OptimizeCSSAssetsPlugin({
@@ -62,7 +62,7 @@ module.exports = merge(common('production'), {
                     name: 'styles',
                     test: /\.s?css$/,
                     chunks: 'all',
-                    enforce: true,  
+                    enforce: true,
                 },
             }
         }

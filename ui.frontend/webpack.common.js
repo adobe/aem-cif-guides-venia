@@ -109,7 +109,7 @@ module.exports = (env) => ({
             }
         ]
     },
-    resolve: { 
+    resolve: {
         alias: {
             ...alias
         },

@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 // import config first due to its side effects
-import partialConfig from './config'; 
+import partialConfig from './config';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -99,7 +99,7 @@ const App = props => {
 window.onload = async () => {
     const { locale, messages } = await loadLocaleData();
     const root = document.createElement('div');
-    
+
     document.body.appendChild(root);
 
     ReactDOM.render(
