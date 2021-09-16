@@ -48,24 +48,7 @@ module.exports = merge(common('production'), {
                 },
                 canPrint: false,
             }),
-        ],
-        splitChunks: {
-            cacheGroups: {
-                main: {
-                    chunks: 'all',
-                    name: 'site',
-                    test: 'main',
-                    enforce: true
-                },
-                // Merge all the CSS into one file
-                styles: {
-                    name: 'styles',
-                    test: /\.s?css$/,
-                    chunks: 'all',
-                    enforce: true,
-                },
-            }
-        }
+        ]
     },
     devtool: 'none',
     performance: { hints: false }
