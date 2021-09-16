@@ -44,16 +44,6 @@ const App = props => {
     const { mountingPoints, pagePaths } = config;
     const { locale, messages } = props;
 
-    const config = {
-        ...partialConfig,
-        storeView,
-        graphqlEndpoint,
-        // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
-        // will always be executed as POST requests.
-        graphqlMethod,
-        headers: JSON.parse(httpHeaders)
-    };
-
     return (
         <IntlProvider locale={locale} messages={messages}>
             <ConfigContextProvider config={config}>
