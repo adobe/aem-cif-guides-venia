@@ -65,47 +65,45 @@ const App = props => {
                 <CommerceApp>
                     <PeregrineContextProvider>
                         <PortalPlacer selector={mountingPoints.addToCart} component={AddToCart} />
-                    </PeregrineContextProvider>
-
-                    <StorefrontInstanceContextProvider>
-                        <PortalPlacer selector={mountingPoints.productRecs} component={ProductRecsGallery} />
-                    </StorefrontInstanceContextProvider>
                     
-                    <Portal selector={mountingPoints.cartTrigger}>
-                        <PeregrineContextProvider>
+                        <StorefrontInstanceContextProvider>
+                            <PortalPlacer selector={mountingPoints.productRecs} component={ProductRecsGallery} />
+                        </StorefrontInstanceContextProvider>
+                        
+                        <Portal selector={mountingPoints.cartTrigger}>
                             <CartTrigger />
-                        </PeregrineContextProvider>
-                    </Portal>
-                    
-                    <Portal selector={mountingPoints.authBarContainer}>
-                        <AuthBar />
-                    </Portal>
-                    
-                    <Portal selector={mountingPoints.accountContainer}>
-                        <AccountContainer />
-                    </Portal>
-                    
-                    <Route path={pagePaths.addressBook}>
-                        <Portal selector={mountingPoints.addressBookContainer}>
-                            <AddressBook />
                         </Portal>
-                    </Route>
-                    
-                    <Route path={pagePaths.resetPassword}>
-                        <Portal selector={mountingPoints.resetPasswordPage}>
-                            <ResetPassword />
+                        
+                        <Portal selector={mountingPoints.authBarContainer}>
+                            <AuthBar />
                         </Portal>
-                    </Route>
-                    
-                    <Portal selector={mountingPoints.bundleProductOptionsContainer}>
-                        <BundleProductOptions />
-                    </Portal>
-                    
-                    <Route path={pagePaths.accountDetails}>
-                        <Portal selector={mountingPoints.accountDetails}>
-                            <AccountDetails />
+                        
+                        <Portal selector={mountingPoints.accountContainer}>
+                            <AccountContainer />
                         </Portal>
-                    </Route>
+                        
+                        <Route path={pagePaths.addressBook}>
+                            <Portal selector={mountingPoints.addressBookContainer}>
+                                <AddressBook />
+                            </Portal>
+                        </Route>
+                        
+                        <Route path={pagePaths.resetPassword}>
+                            <Portal selector={mountingPoints.resetPasswordPage}>
+                                <ResetPassword />
+                            </Portal>
+                        </Route>
+                        
+                        <Portal selector={mountingPoints.bundleProductOptionsContainer}>
+                            <BundleProductOptions />
+                        </Portal>
+                        
+                        <Route path={pagePaths.accountDetails}>
+                            <Portal selector={mountingPoints.accountDetails}>
+                                <AccountDetails />
+                            </Portal>
+                        </Route>
+                    </PeregrineContextProvider>
                 </CommerceApp>
             </ConfigContextProvider>
         </IntlProvider>
