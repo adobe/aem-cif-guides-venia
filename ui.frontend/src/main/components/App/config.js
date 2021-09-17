@@ -36,7 +36,9 @@ export default {
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
         accountDetails: '.accountdetails__body',
-        resetPasswordPage: '.resetpassword__body'
+        resetPasswordPage: '.resetpassword__body',
+        productRecs: '[data-is-product-recs]',
+        addToCart: '.productFullDetail__cartActions'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
