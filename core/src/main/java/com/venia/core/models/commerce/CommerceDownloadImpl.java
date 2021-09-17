@@ -139,7 +139,9 @@ public class CommerceDownloadImpl implements CommerceDownload {
                     downloadLink = externalizer.publishLink(resourceResolver, asset.getPath());
                 }
 
-                assets.add(new CommerceDownloadItemImpl(asset.getName(), sizeString, downloadLink));
+                String title = asset.getMetadataValue("dc:title");
+
+                assets.add(new CommerceDownloadItemImpl(title, sizeString, downloadLink));
             }
         } catch(Exception e) {
             LOGGER.warn("Error while querying assets", e);
