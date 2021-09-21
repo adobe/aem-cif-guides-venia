@@ -21,6 +21,9 @@ const SOURCE_ROOT = __dirname + '/src/main';
 module.exports = merge(common('development'), {
     devtool: 'inline-source-map',
     performance: { hints: 'warning' },
+    module: {
+        strictExportPresence: true 
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, SOURCE_ROOT + '/static/index.html')

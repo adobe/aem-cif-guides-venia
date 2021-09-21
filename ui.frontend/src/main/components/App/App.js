@@ -28,14 +28,18 @@ import {
     BundleProductOptions,
     AccountDetails,
     ResetPassword,
-    PortalPlacer
+    PortalPlacer,
+    AddToCart
 } from '@adobe/aem-core-cif-react-components';
-import { CartTrigger } from '../Cart';
 
 import {
     ProductRecsGallery,
     StorefrontInstanceContextProvider
 } from '@adobe/aem-core-cif-product-recs-extension';
+
+import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
+import CartTrigger from '@magento/venia-ui/lib/components/Header/cartTrigger';
+import Redirect from '../Redirect';
 
 import loadLocaleData from './i18n';
 
@@ -60,36 +64,51 @@ const App = props => {
         <IntlProvider locale={locale} messages={messages}>
             <ConfigContextProvider config={config}>
                 <CommerceApp>
-                    <StorefrontInstanceContextProvider>
-                        <PortalPlacer selector={'[data-is-product-recs]'} component={ProductRecsGallery} />
-                    </StorefrontInstanceContextProvider>
-                    <Portal selector={mountingPoints.cartTrigger}>
-                        <CartTrigger />
-                    </Portal>
-                    <Portal selector={mountingPoints.authBarContainer}>
-                        <AuthBar />
-                    </Portal>
-                    <Portal selector={mountingPoints.accountContainer}>
-                        <AccountContainer />
-                    </Portal>
-                    <Route path={pagePaths.addressBook}>
-                        <Portal selector={mountingPoints.addressBookContainer}>
-                            <AddressBook />
+                    <PeregrineContextProvider>
+                        <PortalPlacer selector={mountingPoints.addToCart} component={AddToCart} />
+
+                        <StorefrontInstanceContextProvider>
+                            <PortalPlacer selector={mountingPoints.productRecs} component={ProductRecsGallery} />
+                        </StorefrontInstanceContextProvider>
+
+                        <Portal selector={mountingPoints.cartTrigger}>
+                            <CartTrigger />
                         </Portal>
-                    </Route>
-                    <Route path={pagePaths.resetPassword}>
-                        <Portal selector={mountingPoints.resetPasswordPage}>
-                            <ResetPassword />
+
+                        <Portal selector={mountingPoints.authBarContainer}>
+                            <AuthBar />
                         </Portal>
-                    </Route>
-                    <Portal selector={mountingPoints.bundleProductOptionsContainer}>
-                        <BundleProductOptions />
-                    </Portal>
-                    <Route path={pagePaths.accountDetails}>
-                        <Portal selector={mountingPoints.accountDetails}>
-                            <AccountDetails />
+
+                        <Portal selector={mountingPoints.accountContainer}>
+                            <AccountContainer />
                         </Portal>
-                    </Route>
+
+                        <Route path={pagePaths.addressBook}>
+                            <Portal selector={mountingPoints.addressBookContainer}>
+                                <AddressBook />
+                            </Portal>
+                        </Route>
+
+                        <Route exact path="/cart">
+                            <Redirect to={pagePaths.cartDetails} />
+                        </Route>
+
+                        <Route path={pagePaths.resetPassword}>
+                            <Portal selector={mountingPoints.resetPasswordPage}>
+                                <ResetPassword />
+                            </Portal>
+                        </Route>
+
+                        <Portal selector={mountingPoints.bundleProductOptionsContainer}>
+                            <BundleProductOptions />
+                        </Portal>
+
+                        <Route path={pagePaths.accountDetails}>
+                            <Portal selector={mountingPoints.accountDetails}>
+                                <AccountDetails />
+                            </Portal>
+                        </Route>
+                    </PeregrineContextProvider>
                 </CommerceApp>
             </ConfigContextProvider>
         </IntlProvider>
