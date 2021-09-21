@@ -38,12 +38,14 @@ export default {
         accountDetails: '.accountdetails__body',
         resetPasswordPage: '.resetpassword__body',
         productRecs: '[data-is-product-recs]',
-        addToCart: '.productFullDetail__cartActions'
+        addToCart: '.productFullDetail__cartActions',
+        cartDetailsContainer: '.cartcontainer__body'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
         baseUrl: config.storeRootUrl,
         accountDetails: '/content/venia/us/en/my-account/account-details.html',
+        cartDetails: '/content/venia/us/en/cart-details.html',
         resetPassword: '/content/venia/us/en/reset-password.html'
     }
 };
