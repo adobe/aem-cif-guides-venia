@@ -39,6 +39,8 @@ import {
 
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
 import CartTrigger from '@magento/venia-ui/lib/components/Header/cartTrigger';
+import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
+import CartPage from '../CartPage';
 import Redirect from '../Redirect';
 
 import loadLocaleData from './i18n';
@@ -59,6 +61,9 @@ const App = props => {
         graphqlMethod,
         headers: JSON.parse(httpHeaders)
     };
+
+    window.STORE_NAME = storeView;
+    window.DEFAULT_COUNTRY_CODE = locale;
 
     return (
         <IntlProvider locale={locale} messages={messages}>
@@ -91,6 +96,14 @@ const App = props => {
 
                         <Route exact path="/cart">
                             <Redirect to={pagePaths.cartDetails} />
+                        </Route>
+
+                        <Route path={pagePaths.cartDetails}>
+                            <Portal selector={mountingPoints.cartDetailsContainer}>
+                                <HeadProvider>
+                                    <CartPage />
+                                </HeadProvider>
+                            </Portal>
                         </Route>
 
                         <Route path={pagePaths.resetPassword}>

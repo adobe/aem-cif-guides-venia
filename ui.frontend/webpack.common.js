@@ -75,6 +75,19 @@ module.exports = (env) => ({
                 ]
             },
             {
+                test: /\.css$/,
+                exclude: /node_modules\/@magento/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.scss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
@@ -113,7 +126,7 @@ module.exports = (env) => ({
         alias: {
             ...alias
         },
-        extensions: [ '.ee.js', '.js', '.json', '.wasm']
+        extensions: ['.ee.js', '.js', '.json', '.wasm']
     },
     plugins: [
         new CleanWebpackPlugin(),
