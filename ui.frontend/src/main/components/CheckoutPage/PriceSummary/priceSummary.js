@@ -13,6 +13,7 @@
  ******************************************************************************/
 
 import React from 'react';
+import { shape, string, bool } from 'prop-types';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { gql } from '@apollo/client';
 import Price from '@magento/venia-ui/lib/components/Price';

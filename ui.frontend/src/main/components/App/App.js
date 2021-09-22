@@ -120,6 +120,10 @@ const App = props => {
                             </Portal>
                         </Route>
 
+                        <Route exact path="/checkout">
+                            <Redirect to={pagePaths.checkoutPage} />
+                        </Route>
+
                         <Route path={pagePaths.checkoutPage}>
                             <Portal selector={mountingPoints.checkoutPageContainer}>
                                 <HeadProvider>
