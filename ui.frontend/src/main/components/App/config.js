@@ -39,13 +39,15 @@ export default {
         resetPasswordPage: '.resetpassword__body',
         productRecs: '[data-is-product-recs]',
         addToCart: '.productFullDetail__cartActions',
-        cartDetailsContainer: '.cartcontainer__body'
+        cartDetailsContainer: '.cartcontainer__body',
+        checkoutPageContainer: '.checkoutpage__body'
     },
     pagePaths: {
         addressBook: '/content/venia/us/en/my-account/address-book.html',
         baseUrl: config.storeRootUrl,
         accountDetails: '/content/venia/us/en/my-account/account-details.html',
         cartDetails: '/content/venia/us/en/cart-details.html',
-        resetPassword: '/content/venia/us/en/reset-password.html'
+        resetPassword: '/content/venia/us/en/reset-password.html',
+        checkoutPage: '/content/venia/us/en/checkout.html'
     }
 };

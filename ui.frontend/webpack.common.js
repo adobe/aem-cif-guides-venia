@@ -19,6 +19,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { DefinePlugin } = webpack;
 
 const SOURCE_ROOT = __dirname + '/src/main';
 const alias = Object.keys(pkg.dependencies)
@@ -139,7 +140,10 @@ module.exports = (env) => ({
                 from: path.resolve(__dirname, SOURCE_ROOT + '/resources'),
                 to: './clientlib-site/'
             }
-        ])
+        ]),
+        new DefinePlugin({
+            DEFAULT_COUNTRY_CODE: JSON.stringify('US')
+        })
     ],
     optimization: {
         splitChunks: {
