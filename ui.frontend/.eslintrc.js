@@ -34,6 +34,7 @@ module.exports = {
         curly: 1,
         '@typescript-eslint/explicit-function-return-type': [0],
         '@typescript-eslint/no-explicit-any': [0],
+        '@typescript-eslint/camelcase': [0],
         'ordered-imports': [0],
         'object-literal-sort-keys': [0],
         'max-len': [1, 120],

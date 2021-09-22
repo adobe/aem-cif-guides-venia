@@ -26,10 +26,8 @@ import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/Paymen
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
 
 const PaymentMethods = React.lazy(() => import('./paymentMethods'));
-const EditModal = React.lazy(() =>
-    import('@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/editModal')
-);
-const Summary = React.lazy(() => import('@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/summary'));
+const EditModal = React.lazy(() => import('./editModal'));
+const Summary = React.lazy(() => import('./summary'));
 
 const PaymentInformation = props => {
     const { classes: propClasses, onSave, resetShouldSubmit, setCheckoutStep, shouldSubmit, checkoutError } = props;
@@ -106,5 +104,6 @@ PaymentInformation.propTypes = {
     onSave: func.isRequired,
     checkoutError: instanceOf(CheckoutError),
     resetShouldSubmit: func.isRequired,
-    shouldSubmit: bool
+    shouldSubmit: bool,
+    setCheckoutStep: func
 };

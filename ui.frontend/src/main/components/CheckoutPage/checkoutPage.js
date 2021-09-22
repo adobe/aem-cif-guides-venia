@@ -29,17 +29,19 @@ import StockStatusMessage from '@magento/venia-ui/lib/components/StockStatusMess
 import FormError from '@magento/venia-ui/lib/components/FormError';
 import AddressBook from '@magento/venia-ui/lib/components/CheckoutPage/AddressBook';
 import GuestSignIn from '@magento/venia-ui/lib/components/CheckoutPage/GuestSignIn';
-import OrderSummary from '@magento/venia-ui/lib/components/CheckoutPage/OrderSummary';
-import PaymentInformation from './paymentInformation';
-import payments from './paymentMethodCollection';
 import PriceAdjustments from '@magento/venia-ui/lib/components/CheckoutPage/PriceAdjustments';
 import ShippingMethod from '@magento/venia-ui/lib/components/CheckoutPage/ShippingMethod';
 import ShippingInformation from '@magento/venia-ui/lib/components/CheckoutPage/ShippingInformation';
-import OrderConfirmationPage from '@magento/venia-ui/lib/components/CheckoutPage/OrderConfirmationPage';
 import ItemsReview from '@magento/venia-ui/lib/components/CheckoutPage/ItemsReview';
-
-import defaultClasses from './checkoutPage.css';
 import ScrollAnchor from '@magento/venia-ui/lib/components/ScrollAnchor/scrollAnchor';
+
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/checkoutPage.css';
+
+// Overrides
+import OrderSummary from './OrderSummary';
+import PaymentInformation from './PaymentInformation/paymentInformation';
+import payments from './PaymentInformation/paymentMethodCollection';
+import OrderConfirmationPage from './OrderConfirmationPage';
 
 const errorIcon = <Icon src={AlertCircleIcon} size={20} />;
 
