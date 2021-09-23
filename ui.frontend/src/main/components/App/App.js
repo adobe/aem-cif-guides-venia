@@ -35,11 +35,10 @@ import {
 import { ProductRecsGallery, StorefrontInstanceContextProvider } from '@adobe/aem-core-cif-product-recs-extension';
 
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
-import CartTrigger from '@magento/venia-ui/lib/components/Header/cartTrigger';
+import CartTrigger from '../Header/cartTrigger';
 import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
 import CartPage from '../CartPage';
 import CheckoutPage from '../CheckoutPage';
-import Redirect from '../Redirect';
 
 import loadLocaleData from './i18n';
 
@@ -92,10 +91,6 @@ const App = props => {
                             </Portal>
                         </Route>
 
-                        <Route exact path="/cart">
-                            <Redirect to={pagePaths.cartDetails} />
-                        </Route>
-
                         <Route path={pagePaths.cartDetails}>
                             <Portal selector={mountingPoints.cartDetailsContainer}>
                                 <HeadProvider>
@@ -118,10 +113,6 @@ const App = props => {
                             <Portal selector={mountingPoints.accountDetails}>
                                 <AccountDetails />
                             </Portal>
-                        </Route>
-
-                        <Route exact path="/checkout">
-                            <Redirect to={pagePaths.checkoutPage} />
                         </Route>
 
                         <Route path={pagePaths.checkoutPage}>

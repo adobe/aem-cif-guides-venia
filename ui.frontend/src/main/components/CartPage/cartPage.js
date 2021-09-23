@@ -10,7 +10,7 @@ import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/Loadi
 import StockStatusMessage from '@magento/venia-ui/lib/components/StockStatusMessage';
 import PriceAdjustments from '@magento/venia-ui/lib/components/CartPage/PriceAdjustments';
 import ProductListing from './ProductListing';
-import PriceSummary from '@magento/venia-ui/lib/components/CartPage/PriceSummary';
+import PriceSummary from './PriceSummary';
 import defaultClasses from '@magento/venia-ui/lib/components/CartPage/cartPage.css';
 import { GET_CART_DETAILS } from '@magento/venia-ui/lib/components/CartPage/cartPage.gql';
 
