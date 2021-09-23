@@ -14,12 +14,15 @@
 'use strict';
 
 const path = require('path');
+const pkg = require('./package.json');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const SOURCE_ROOT = __dirname + '/src/main';
+const alias = Object.keys(pkg.dependencies)
+    .reduce((obj, key) => ({ ...obj, [key]: path.resolve('node_modules', key) }), {});
 
 module.exports = {
     entry: {
@@ -31,6 +34,7 @@ module.exports = {
                 ? 'clientlib-dependencies/[name].js'
                 : 'clientlib-site/[name].js';
         },
+        chunkFilename: 'clientlib-site/[name].js',
         path: path.resolve(__dirname, 'dist')
     },
     module: {
@@ -90,6 +94,13 @@ module.exports = {
             }
         ]
     },
+    resolve: { 
+        alias: {
+            ...alias,
+            // messages are all in ast already, so we can save some bytes like that
+            '@formatjs/icu-messageformat-parser': '@formatjs/icu-messageformat-parser/no-parser'
+        }
+    },
     plugins: [
         new CleanWebpackPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
@@ -100,14 +111,6 @@ module.exports = {
             {
                 from: path.resolve(__dirname, SOURCE_ROOT + '/resources'),
                 to: './clientlib-site/'
-            },
-            {
-                from: path.resolve(__dirname, 'node_modules/@adobe/aem-core-cif-react-components/i18n'),
-                to: './clientlib-site/i18n'
-            },
-            {
-                from: path.resolve(__dirname, 'node_modules/@adobe/aem-core-cif-product-recs-extension/i18n'),
-                to: './clientlib-site/i18n'
             }
         ])
     ],

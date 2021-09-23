@@ -107,6 +107,7 @@ describe('Venia Searchbar Component', () => {
 
         // Go to the Venia homepage
         browser.url(venia_homepage);
+        browser.refresh();
 
         // check the new placeholder in the trigger title and in the input field
         const searchBarTrigger = $('.searchbar__trigger');
