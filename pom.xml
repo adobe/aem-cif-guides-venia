@@ -19,7 +19,7 @@
     <groupId>com.adobe.aem.guides</groupId>
     <artifactId>aem-cif-guides-venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.08.28-SNAPSHOT</version>
+    <version>2021.09.24-SNAPSHOT</version>
     <name>Venia CIF Project - Reactor Project</name>
     <description>Venia CIF Project</description>
     <url>https://github.com/adobe/aem-cif-guides-venia</url>
