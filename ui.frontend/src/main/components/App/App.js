@@ -38,10 +38,9 @@ import {
 } from '@adobe/aem-core-cif-product-recs-extension';
 
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
-import CartTrigger from '@magento/venia-ui/lib/components/Header/cartTrigger';
+import CartTrigger from '../Header/cartTrigger';
 import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
 import CartPage from '../CartPage';
-import Redirect from '../Redirect';
 
 import loadLocaleData from './i18n';
 
@@ -92,10 +91,6 @@ const App = props => {
                             <Portal selector={mountingPoints.addressBookContainer}>
                                 <AddressBook />
                             </Portal>
-                        </Route>
-
-                        <Route exact path="/cart">
-                            <Redirect to={pagePaths.cartDetails} />
                         </Route>
 
                         <Route path={pagePaths.cartDetails}>
