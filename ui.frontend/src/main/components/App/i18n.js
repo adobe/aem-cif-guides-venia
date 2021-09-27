@@ -11,7 +11,7 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-const supportedLanguages = [ 'en' ];
+const supportedLanguages = ['en'];
 
 // detect locale
 let language;
@@ -44,6 +44,6 @@ if (supportedLanguages.indexOf(language) < 0) {
     language = 'en';
 }
 
-export default async function() {
-    return import( /* webpackChunkName: "i18n/[request]" */ `../../i18n/${language}`);
+export default async function () {
+    return import(/* webpackChunkName: "i18n/[request]" */ `../../i18n/${language}`);
 }

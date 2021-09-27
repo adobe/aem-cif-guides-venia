@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
 import React, { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Check } from 'react-feather';
@@ -72,29 +85,19 @@ const CartPage = props => {
         />
     ) : (
         <h3>
-            <FormattedMessage
-                id={'cartPage.emptyCart'}
-                defaultMessage={'There are no items in your cart.'}
-            />
+            <FormattedMessage id={'cartPage.emptyCart'} defaultMessage={'There are no items in your cart.'} />
         </h3>
     );
 
-    const priceAdjustments = hasItems ? (
-        <PriceAdjustments setIsCartUpdating={setIsCartUpdating} />
-    ) : null;
+    const priceAdjustments = hasItems ? <PriceAdjustments setIsCartUpdating={setIsCartUpdating} /> : null;
 
-    const priceSummary = hasItems ? (
-        <PriceSummary isUpdating={isCartUpdating} />
-    ) : null;
+    const priceSummary = hasItems ? <PriceSummary isUpdating={isCartUpdating} /> : null;
 
     return (
         <div className={classes.root}>
             <div className={classes.heading_container}>
                 <h1 className={classes.heading}>
-                    <FormattedMessage
-                        id={'cartPage.heading'}
-                        defaultMessage={'Cart'}
-                    />
+                    <FormattedMessage id={'cartPage.heading'} defaultMessage={'Cart'} />
                 </h1>
                 <div className={classes.stockStatusMessageContainer}>
                     <StockStatusMessage cartItems={cartItems} />
@@ -102,13 +105,9 @@ const CartPage = props => {
             </div>
             <div className={classes.body}>
                 <div className={classes.items_container}>{productListing}</div>
-                <div className={classes.price_adjustments_container}>
-                    {priceAdjustments}
-                </div>
+                <div className={classes.price_adjustments_container}>{priceAdjustments}</div>
                 <div className={classes.summary_container}>
-                    <div className={classes.summary_contents}>
-                        {priceSummary}
-                    </div>
+                    <div className={classes.summary_contents}>{priceSummary}</div>
                 </div>
             </div>
         </div>

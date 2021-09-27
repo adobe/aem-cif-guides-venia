@@ -1,12 +1,19 @@
-import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
-
-import Product from '../product';
-import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct';
-
-jest.mock('../../../Image', () => 'Image');
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+jest.mock('@magento/venia-ui/lib/components/Image', () => 'Image');
 jest.mock('@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct');
-jest.mock('../../../../classify');
+jest.mock('@magento/peregrine/lib/util/shallowMerge');
 jest.mock('@apollo/client', () => {
     const executeMutation = jest.fn(() => ({ error: null }));
     const useMutation = jest.fn(() => [executeMutation]);
@@ -17,8 +24,6 @@ jest.mock('@apollo/client', () => {
     };
 });
 
-jest.mock('../../../Wishlist/AddToListButton', () => 'AddToListButton');
-
 jest.mock('@magento/peregrine/lib/context/cart', () => {
     const state = { cartId: 'cart123' };
     const api = {};
@@ -28,9 +33,15 @@ jest.mock('@magento/peregrine/lib/context/cart', () => {
 });
 
 jest.mock('react-router-dom', () => ({
-    Link: ({ children, ...rest }) => <div {...rest}>{children}</div>
+    Link: ({ children, ...rest }) => <div {...rest}>{children}</div> // eslint-disable-line react/display-name
 }));
 jest.mock('@magento/peregrine/lib/util/makeUrl');
+
+import React from 'react';
+import { createTestInstance } from '@magento/peregrine';
+
+import Product from '../product';
+import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct';
 
 const props = {
     item: {

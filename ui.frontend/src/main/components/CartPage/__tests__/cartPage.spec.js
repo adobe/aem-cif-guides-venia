@@ -1,24 +1,31 @@
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createTestInstance, useToasts } from '@magento/peregrine';
+import { createTestInstance } from '@magento/peregrine';
 import { useCartPage } from '@magento/peregrine/lib/talons/CartPage/useCartPage';
 
 import CartPage from '../cartPage';
 
-jest.mock('../../../components/Head', () => ({
-    StoreTitle: () => 'Title'
-}));
-
-jest.mock('../../../classify');
-jest.mock('../../StockStatusMessage', () => 'StockStatusMessage');
-jest.mock('../PriceAdjustments', () => 'PriceAdjustments');
+jest.mock('@magento/peregrine/lib/util/shallowMerge');
+jest.mock('@magento/venia-ui/lib/components/StockStatusMessage', () => 'StockStatusMessage');
+jest.mock('@magento/venia-ui/lib/components/CartPage/PriceAdjustments', () => 'PriceAdjustments');
 jest.mock('../PriceSummary', () => 'PriceSummary');
 jest.mock('../ProductListing', () => 'ProductListing');
 
 jest.mock('@magento/peregrine/lib/talons/CartPage/useCartPage', () => {
-    const useCartPageTalon = jest.requireActual(
-        '@magento/peregrine/lib/talons/CartPage/useCartPage'
-    );
+    const useCartPageTalon = jest.requireActual('@magento/peregrine/lib/talons/CartPage/useCartPage');
     const spy = jest.spyOn(useCartPageTalon, 'useCartPage');
 
     return Object.assign(useCartPageTalon, { useCartPage: spy });
@@ -100,29 +107,4 @@ test('renders components if cart has items', () => {
 
     // Assert.
     expect(instance.toJSON()).toMatchSnapshot();
-});
-
-test('renders toast if wishlistSuccessProps is not falsy', () => {
-    const addToast = jest.fn();
-    useToasts.mockReturnValueOnce([{}, { addToast }]);
-
-    const myTalonProps = {
-        ...talonProps,
-        wishlistSuccessProps: { message: 'Successfully added to wishlist' }
-    };
-    useCartPage.mockReturnValueOnce(myTalonProps);
-
-    createTestInstance(<CartPage />);
-
-    expect(addToast.mock.calls[0]).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "icon": <Icon
-              size={20}
-              src={[Function]}
-            />,
-            "message": "Successfully added to wishlist",
-          },
-        ]
-    `);
 });

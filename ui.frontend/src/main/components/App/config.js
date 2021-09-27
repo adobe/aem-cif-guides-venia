@@ -16,15 +16,17 @@ const config = document.querySelector('body').dataset;
 
 // necessary to be set for venia-ui components
 window.STORE_VIEW_CODE = config.storeView || '';
-window.AVAILABLE_STORE_VIEWS = [{
-    code: window.STORE_VIEW_CODE,
-    base_currency_code: 'USD',
-    default_display_currency_code: 'USD',
-    id: 1,
-    locale: 'en',
-    secure_base_media_url: '',
-    store_name: 'Venia'
-}];
+window.AVAILABLE_STORE_VIEWS = [
+    {
+        code: window.STORE_VIEW_CODE,
+        base_currency_code: 'USD',
+        default_display_currency_code: 'USD',
+        id: 1,
+        locale: 'en',
+        secure_base_media_url: '',
+        store_name: 'Venia'
+    }
+];
 
 export default {
     mountingPoints: {

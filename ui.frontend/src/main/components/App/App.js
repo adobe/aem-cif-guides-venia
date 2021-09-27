@@ -15,6 +15,7 @@
 import partialConfig from './config';
 
 import React from 'react';
+import { object, string } from 'prop-types';
 import ReactDOM from 'react-dom';
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -32,10 +33,7 @@ import {
     AddToCart
 } from '@adobe/aem-core-cif-react-components';
 
-import {
-    ProductRecsGallery,
-    StorefrontInstanceContextProvider
-} from '@adobe/aem-core-cif-product-recs-extension';
+import { ProductRecsGallery, StorefrontInstanceContextProvider } from '@adobe/aem-core-cif-product-recs-extension';
 
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
 import CartTrigger from '../Header/cartTrigger';
@@ -135,6 +133,11 @@ window.onload = async () => {
         </Router>,
         root
     );
+};
+
+App.propTypes = {
+    locale: string,
+    messages: object
 };
 
 export default App;

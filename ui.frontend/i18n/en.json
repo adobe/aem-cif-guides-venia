@@ -1,0 +1,118 @@
+{
+  "cartPage.emptyCart": [
+    {
+      "type": 0,
+      "value": "There are no items in your cart."
+    }
+  ],
+  "cartPage.heading": [
+    {
+      "type": 0,
+      "value": "Cart"
+    }
+  ],
+  "cartTrigger.ariaLabel": [
+    {
+      "type": 0,
+      "value": "Toggle mini cart. You have "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " items in your cart."
+    }
+  ],
+  "miniCart.checkout": [
+    {
+      "type": 0,
+      "value": "CHECKOUT"
+    }
+  ],
+  "miniCart.editCartButton": [
+    {
+      "type": 0,
+      "value": "Edit Shopping Bag"
+    }
+  ],
+  "miniCart.emptyMessage": [
+    {
+      "type": 0,
+      "value": "There are no items in your cart."
+    }
+  ],
+  "miniCart.subtotal": [
+    {
+      "type": 0,
+      "value": "Subtotal:"
+    }
+  ],
+  "miniCart.totalQuantity": [
+    {
+      "type": 0,
+      "value": "Items"
+    }
+  ],
+  "priceSummary.checkoutButton": [
+    {
+      "type": 0,
+      "value": "Proceed to Checkout"
+    }
+  ],
+  "priceSummary.errorText": [
+    {
+      "type": 0,
+      "value": "Something went wrong. Please refresh and try again."
+    }
+  ],
+  "priceSummary.estimatedTotal": [
+    {
+      "type": 0,
+      "value": "Estimated Total"
+    }
+  ],
+  "priceSummary.lineItemLabel": [
+    {
+      "type": 0,
+      "value": "Subtotal"
+    }
+  ],
+  "priceSummary.total": [
+    {
+      "type": 0,
+      "value": "Total"
+    }
+  ],
+  "product.editItem": [
+    {
+      "type": 0,
+      "value": "Edit item"
+    }
+  ],
+  "product.outOfStock": [
+    {
+      "type": 0,
+      "value": "Out-of-stock"
+    }
+  ],
+  "product.price": [
+    {
+      "type": 0,
+      "value": "ea."
+    }
+  ],
+  "product.removeFromCart": [
+    {
+      "type": 0,
+      "value": "Remove from cart"
+    }
+  ],
+  "productListing.loading": [
+    {
+      "type": 0,
+      "value": "Fetching Cart..."
+    }
+  ]
+}
