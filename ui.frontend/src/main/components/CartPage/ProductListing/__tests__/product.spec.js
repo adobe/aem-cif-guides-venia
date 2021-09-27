@@ -13,7 +13,6 @@
  ******************************************************************************/
 jest.mock('@magento/venia-ui/lib/components/Image', () => 'Image');
 jest.mock('@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct');
-jest.mock('@magento/peregrine/lib/util/shallowMerge');
 jest.mock('@apollo/client', () => {
     const executeMutation = jest.fn(() => ({ error: null }));
     const useMutation = jest.fn(() => [executeMutation]);
@@ -38,10 +37,10 @@ jest.mock('react-router-dom', () => ({
 jest.mock('@magento/peregrine/lib/util/makeUrl');
 
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
+import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct';
 
 import Product from '../product';
-import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct';
+import render from '../../../utils/test-utils';
 
 const props = {
     item: {
@@ -73,96 +72,98 @@ const props = {
     }
 };
 
-test('renders simple product correctly', () => {
-    useProduct.mockReturnValueOnce({
-        addToWishlistProps: {
-            atwProp1: 'value1'
-        },
-        errorMessage: undefined,
-        handleEditItem: jest.fn(),
-        handleRemoveFromCart: jest.fn(),
-        handleUpdateItemQuantity: jest.fn(),
-        isEditable: false,
-        product: {
-            currency: 'USD',
-            image: {},
-            name: '',
-            options: [],
-            quantity: 1,
-            unitPrice: 1,
-            urlKey: 'unittest',
-            urlSuffix: '.html'
-        },
-        isProductUpdating: false
-    });
-    const tree = createTestInstance(<Product {...props} />);
+describe('product', () => {
+    test('renders simple product correctly', () => {
+        useProduct.mockReturnValueOnce({
+            addToWishlistProps: {
+                atwProp1: 'value1'
+            },
+            errorMessage: undefined,
+            handleEditItem: jest.fn(),
+            handleRemoveFromCart: jest.fn(),
+            handleUpdateItemQuantity: jest.fn(),
+            isEditable: false,
+            product: {
+                currency: 'USD',
+                image: {},
+                name: '',
+                options: [],
+                quantity: 1,
+                unitPrice: 1,
+                urlKey: 'unittest',
+                urlSuffix: '.html'
+            },
+            isProductUpdating: false
+        });
+        const tree = render(<Product {...props} />);
 
-    expect(tree.toJSON()).toMatchSnapshot();
-});
-
-test('renders out of stock product', () => {
-    useProduct.mockReturnValueOnce({
-        addToWishlistProps: {
-            atwProp1: 'value1'
-        },
-        errorMessage: undefined,
-        handleEditItem: jest.fn(),
-        handleRemoveFromCart: jest.fn(),
-        handleUpdateItemQuantity: jest.fn(),
-        isEditable: false,
-        product: {
-            currency: 'USD',
-            image: {},
-            name: '',
-            options: [],
-            quantity: 2,
-            stockStatus: 'OUT_OF_STOCK',
-            unitPrice: 55,
-            urlKey: 'popular-product',
-            urlSuffix: ''
-        },
-        loginToastProps: null,
-        isProductUpdating: false
-    });
-    const tree = createTestInstance(<Product {...props} />);
-
-    expect(tree.toJSON()).toMatchSnapshot();
-});
-
-test('renders configurable product with options', () => {
-    useProduct.mockReturnValueOnce({
-        addToWishlistProps: {
-            atwProp1: 'value1'
-        },
-        errorMessage: undefined,
-        handleEditItem: jest.fn(),
-        handleRemoveFromCart: jest.fn(),
-        handleUpdateItemQuantity: jest.fn(),
-        isEditable: true,
-        product: {
-            currency: 'USD',
-            image: {},
-            name: '',
-            urlKey: 'unittest',
-            urlSuffix: '.html',
-            options: [
-                {
-                    option_label: 'Option 1',
-                    value_label: 'Value 1'
-                },
-                {
-                    option_label: 'Option 2',
-                    value_label: 'Value 2'
-                }
-            ],
-            quantity: 1,
-            unitPrice: 1
-        },
-        loginToastProps: null,
-        isProductUpdating: false
+        expect(tree.toJSON()).toMatchSnapshot();
     });
 
-    const tree = createTestInstance(<Product {...props} />);
+    test('renders out of stock product', () => {
+        useProduct.mockReturnValueOnce({
+            addToWishlistProps: {
+                atwProp1: 'value1'
+            },
+            errorMessage: undefined,
+            handleEditItem: jest.fn(),
+            handleRemoveFromCart: jest.fn(),
+            handleUpdateItemQuantity: jest.fn(),
+            isEditable: false,
+            product: {
+                currency: 'USD',
+                image: {},
+                name: '',
+                options: [],
+                quantity: 2,
+                stockStatus: 'OUT_OF_STOCK',
+                unitPrice: 55,
+                urlKey: 'popular-product',
+                urlSuffix: ''
+            },
+            loginToastProps: null,
+            isProductUpdating: false
+        });
+        const tree = render(<Product {...props} />);
 
-    expect(tree.toJSON()).toMatchSnapshot();
+        expect(tree.toJSON()).toMatchSnapshot();
+    });
+
+    test('renders configurable product with options', () => {
+        useProduct.mockReturnValueOnce({
+            addToWishlistProps: {
+                atwProp1: 'value1'
+            },
+            errorMessage: undefined,
+            handleEditItem: jest.fn(),
+            handleRemoveFromCart: jest.fn(),
+            handleUpdateItemQuantity: jest.fn(),
+            isEditable: true,
+            product: {
+                currency: 'USD',
+                image: {},
+                name: '',
+                urlKey: 'unittest',
+                urlSuffix: '.html',
+                options: [
+                    {
+                        option_label: 'Option 1',
+                        value_label: 'Value 1'
+                    },
+                    {
+                        option_label: 'Option 2',
+                        value_label: 'Value 2'
+                    }
+                ],
+                quantity: 1,
+                unitPrice: 1
+            },
+            loginToastProps: null,
+            isProductUpdating: false
+        });
+
+        const tree = render(<Product {...props} />);
+
+        expect(tree.toJSON()).toMatchSnapshot();
+    });
 });

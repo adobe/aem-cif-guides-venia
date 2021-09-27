@@ -12,14 +12,13 @@
  *
  ******************************************************************************/
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
-
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
-import ProductListing from '../productListing';
 import { useProductListing } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProductListing';
 
+import ProductListing from '../productListing';
+import render from '../../../utils/test-utils';
+
 jest.mock('@magento/peregrine/lib/talons/CartPage/ProductListing/useProductListing');
-jest.mock('@magento/peregrine/lib/util/shallowMerge');
 jest.mock('@apollo/client', () => {
     return {
         gql: jest.fn(),
@@ -41,42 +40,44 @@ jest.mock('@magento/peregrine/lib/util/makeUrl');
 jest.mock('../product', () => 'Product');
 jest.mock('@magento/venia-ui/lib/components/CartPage/ProductListing/EditModal', () => 'EditModal');
 
-test('renders null with no items in cart', () => {
-    useProductListing.mockReturnValueOnce({
-        isLoading: false,
-        isUpdating: false,
-        items: []
+describe('productListing', () => {
+    test('renders null with no items in cart', () => {
+        useProductListing.mockReturnValueOnce({
+            isLoading: false,
+            isUpdating: false,
+            items: []
+        });
+
+        const tree = render(<ProductListing />);
+
+        expect(tree.toJSON()).toMatchSnapshot();
     });
 
-    const tree = createTestInstance(<ProductListing />);
+    test('renders list of products with items in cart', () => {
+        useProductListing.mockReturnValueOnce({
+            isLoading: false,
+            isUpdating: false,
+            items: ['1', '2', '3']
+        });
 
-    expect(tree.toJSON()).toMatchSnapshot();
-});
+        const tree = render(<ProductListing />);
 
-test('renders list of products with items in cart', () => {
-    useProductListing.mockReturnValueOnce({
-        isLoading: false,
-        isUpdating: false,
-        items: ['1', '2', '3']
+        expect(tree.toJSON()).toMatchSnapshot();
     });
 
-    const tree = createTestInstance(<ProductListing />);
+    test('renders loading indicator if isLoading', () => {
+        useProductListing.mockReturnValueOnce({
+            isLoading: true
+        });
 
-    expect(tree.toJSON()).toMatchSnapshot();
-});
+        const propsWithClass = {
+            classes: {
+                root: 'root'
+            }
+        };
 
-test('renders loading indicator if isLoading', () => {
-    useProductListing.mockReturnValueOnce({
-        isLoading: true
+        const tree = render(<ProductListing {...propsWithClass} />);
+
+        expect(tree.root.findByType(LoadingIndicator)).toBeTruthy();
     });
-
-    const propsWithClass = {
-        classes: {
-            root: 'root'
-        }
-    };
-
-    const tree = createTestInstance(<ProductListing {...propsWithClass} />);
-
-    expect(tree.root.findByType(LoadingIndicator)).toBeTruthy();
 });

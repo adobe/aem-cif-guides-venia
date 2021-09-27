@@ -13,12 +13,11 @@
  ******************************************************************************/
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createTestInstance } from '@magento/peregrine';
 import { useCartPage } from '@magento/peregrine/lib/talons/CartPage/useCartPage';
 
+import render from '../../utils/test-utils';
 import CartPage from '../cartPage';
 
-jest.mock('@magento/peregrine/lib/util/shallowMerge');
 jest.mock('@magento/venia-ui/lib/components/StockStatusMessage', () => 'StockStatusMessage');
 jest.mock('@magento/venia-ui/lib/components/CartPage/PriceAdjustments', () => 'PriceAdjustments');
 jest.mock('../PriceSummary', () => 'PriceSummary');
@@ -31,14 +30,8 @@ jest.mock('@magento/peregrine/lib/talons/CartPage/useCartPage', () => {
     return Object.assign(useCartPageTalon, { useCartPage: spy });
 });
 
-jest.mock('@magento/peregrine', () => ({
-    ...jest.requireActual('@magento/peregrine'),
-    useToasts: jest.fn().mockReturnValue([
-        {},
-        {
-            addToast: jest.fn()
-        }
-    ])
+jest.mock('@magento/peregrine/lib/Toasts/useToasts', () => ({
+    useToasts: () => [{}, { addToast: jest.fn() }]
 }));
 
 const talonProps = {
@@ -52,59 +45,61 @@ const talonProps = {
     wishlistSuccessProps: null
 };
 
-beforeAll(() => {
-    /**
-     * Mocking ReactDOM.createPortal because of incompatabilities
-     * between ReactDOM and react-test-renderer.
-     *
-     * More info: https://github.com/facebook/react/issues/11565
-     */
-    ReactDOM.createPortal = jest.fn(element => {
-        return element;
+describe('cartPage', () => {
+    beforeAll(() => {
+        /**
+         * Mocking ReactDOM.createPortal because of incompatabilities
+         * between ReactDOM and react-test-renderer.
+         *
+         * More info: https://github.com/facebook/react/issues/11565
+         */
+        ReactDOM.createPortal = jest.fn(element => {
+            return element;
+        });
     });
-});
 
-afterAll(() => {
-    ReactDOM.createPortal.mockClear();
-});
+    afterAll(() => {
+        ReactDOM.createPortal.mockClear();
+    });
 
-test('renders a loading indicator when talon indicates', () => {
-    // Arrange.
-    const myTalonProps = {
-        ...talonProps,
-        shouldShowLoadingIndicator: true
-    };
-    useCartPage.mockReturnValueOnce(myTalonProps);
+    test('renders a loading indicator when talon indicates', () => {
+        // Arrange.
+        const myTalonProps = {
+            ...talonProps,
+            shouldShowLoadingIndicator: true
+        };
+        useCartPage.mockReturnValueOnce(myTalonProps);
 
-    // Act.
-    const instance = createTestInstance(<CartPage />);
+        // Act.
+        const instance = render(<CartPage />);
 
-    // Assert.
-    expect(instance.toJSON()).toMatchSnapshot();
-});
+        // Assert.
+        expect(instance.toJSON()).toMatchSnapshot();
+    });
 
-test('renders empty cart text (no adjustments, list or summary) if cart is empty', () => {
-    // Arrange.
-    useCartPage.mockReturnValueOnce(talonProps);
+    test('renders empty cart text (no adjustments, list or summary) if cart is empty', () => {
+        // Arrange.
+        useCartPage.mockReturnValueOnce(talonProps);
 
-    // Act.
-    const instance = createTestInstance(<CartPage />);
+        // Act.
+        const instance = render(<CartPage />);
 
-    // Assert.
-    expect(instance.toJSON()).toMatchSnapshot();
-});
+        // Assert.
+        expect(instance.toJSON()).toMatchSnapshot();
+    });
 
-test('renders components if cart has items', () => {
-    // Arrange.
-    const myTalonProps = {
-        ...talonProps,
-        hasItems: true
-    };
-    useCartPage.mockReturnValueOnce(myTalonProps);
+    test('renders components if cart has items', () => {
+        // Arrange.
+        const myTalonProps = {
+            ...talonProps,
+            hasItems: true
+        };
+        useCartPage.mockReturnValueOnce(myTalonProps);
 
-    // Act.
-    const instance = createTestInstance(<CartPage />);
+        // Act.
+        const instance = render(<CartPage />);
 
-    // Assert.
-    expect(instance.toJSON()).toMatchSnapshot();
+        // Assert.
+        expect(instance.toJSON()).toMatchSnapshot();
+    });
 });

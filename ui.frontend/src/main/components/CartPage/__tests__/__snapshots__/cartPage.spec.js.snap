@@ -1,14 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders a loading indicator when talon indicates 1`] = `
-<div
-  className="global"
->
-  <span
-    className="root"
-  >
+exports[`cartPage renders a loading indicator when talon indicates 1`] = `
+<div>
+  <span>
     <svg
-      className="icon"
       fill="none"
       height={64}
       stroke="currentColor"
@@ -69,63 +64,36 @@ exports[`renders a loading indicator when talon indicates 1`] = `
       />
     </svg>
   </span>
-  <span
-    className="message"
-  >
-    <mock-FormattedMessage
-      defaultMessage="Fetching Data..."
-      id="loadingIndicator.message"
-    />
+  <span>
+    Fetching Data...
   </span>
 </div>
 `;
 
-exports[`renders components if cart has items 1`] = `
-<div
-  className="root"
->
-  Title
-  <div
-    className="heading_container"
-  >
-    <h1
-      className="heading"
-    >
-      <mock-FormattedMessage
-        defaultMessage="Cart"
-        id="cartPage.heading"
-      />
+exports[`cartPage renders components if cart has items 1`] = `
+<div>
+  <div>
+    <h1>
+      Cart
     </h1>
-    <div
-      className="stockStatusMessageContainer"
-    >
+    <div>
       <StockStatusMessage />
     </div>
   </div>
-  <div
-    className="body"
-  >
-    <div
-      className="items_container"
-    >
+  <div>
+    <div>
       <ProductListing
         onAddToWishlistSuccess={[MockFunction onAddToWishlistSuccess]}
         setIsCartUpdating={[MockFunction setIsCartUpdating]}
       />
     </div>
-    <div
-      className="price_adjustments_container"
-    >
+    <div>
       <PriceAdjustments
         setIsCartUpdating={[MockFunction setIsCartUpdating]}
       />
     </div>
-    <div
-      className="summary_container"
-    >
-      <div
-        className="summary_contents"
-      >
+    <div>
+      <div>
         <PriceSummary
           isUpdating={false}
         />
@@ -135,50 +103,25 @@ exports[`renders components if cart has items 1`] = `
 </div>
 `;
 
-exports[`renders empty cart text (no adjustments, list or summary) if cart is empty 1`] = `
-<div
-  className="root"
->
-  Title
-  <div
-    className="heading_container"
-  >
-    <h1
-      className="heading"
-    >
-      <mock-FormattedMessage
-        defaultMessage="Cart"
-        id="cartPage.heading"
-      />
+exports[`cartPage renders empty cart text (no adjustments, list or summary) if cart is empty 1`] = `
+<div>
+  <div>
+    <h1>
+      Cart
     </h1>
-    <div
-      className="stockStatusMessageContainer"
-    >
+    <div>
       <StockStatusMessage />
     </div>
   </div>
-  <div
-    className="body"
-  >
-    <div
-      className="items_container"
-    >
+  <div>
+    <div>
       <h3>
-        <mock-FormattedMessage
-          defaultMessage="There are no items in your cart."
-          id="cartPage.emptyCart"
-        />
+        There are no items in your cart.
       </h3>
     </div>
-    <div
-      className="price_adjustments_container"
-    />
-    <div
-      className="summary_container"
-    >
-      <div
-        className="summary_contents"
-      />
+    <div />
+    <div>
+      <div />
     </div>
   </div>
 </div>

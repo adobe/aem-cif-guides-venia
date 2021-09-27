@@ -16,7 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import { Check } from 'react-feather';
 import { useCartPage } from '@magento/peregrine/lib/talons/CartPage/useCartPage';
 import useStyle from '@magento/peregrine/lib/util/shallowMerge';
-import { useToasts } from '@magento/peregrine';
+import { useToasts } from '@magento/peregrine/lib/Toasts/useToasts';
 
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';

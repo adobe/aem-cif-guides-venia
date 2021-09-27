@@ -27,9 +27,13 @@ module.exports = (api, opts = {}) => {
     // node_modules from babel which we cannot do because of peregrine.
     // We should fix this in peregrine (make it configureable)
     config.plugins = config.plugins.filter(plugin => plugin !== 'react-refresh/babel');
-    config.plugins.push(
-        ['formatjs', { ast: true }]
-    )
+    
+    if (api.env() !== 'test') {
+        // don't add formatjs to test transformations due to missing static analysis
+        config.plugins.push(
+            ['formatjs', { ast: true }]
+        )
+    }
 
     return config;
 }
