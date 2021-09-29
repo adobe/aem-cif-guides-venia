@@ -6,7 +6,6 @@
     "xdm:assets": [
       {
         "repo:path": "/apps/core/cif/components/commerce/product/v1/product/clientlib/resources/images/catalog/product/thumbnail.png",
-        "xdm:tags": [],
         "@type": "image",
         "repo:id": "image-1bd9b563f8"
       }
