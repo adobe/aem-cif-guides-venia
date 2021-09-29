@@ -55,7 +55,7 @@ const CartTrigger = props => {
 
     const maybeItemCounter = itemCount ? <span className={classes.counter}>{itemCountDisplay}</span> : null;
 
-    const cartTrigger = hideCartTrigger ? null : (
+    return hideCartTrigger ? null : (
         // Because this button behaves differently on desktop and mobile
         // we render two buttons that differ only in their click handler
         // and control which one displays via CSS.
@@ -75,8 +75,6 @@ const CartTrigger = props => {
             </Suspense>
         </Fragment>
     );
-
-    return cartTrigger;
 };
 
 export default CartTrigger;
