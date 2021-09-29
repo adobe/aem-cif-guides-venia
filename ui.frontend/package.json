@@ -10,9 +10,9 @@
   "main": "src/main/site/main.js",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "dev": "webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
-    "prod": "webpack -p --config ./webpack.prod.js && clientlib --verbose",
-    "start": "webpack-dev-server --open --config ./webpack.dev.js",
+    "dev": "npm run i18n:extract-compile && webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
+    "prod": "npm run i18n:extract-compile && webpack -p --config ./webpack.prod.js && clientlib --verbose",
+    "start": "npm run i18n:extract-compile && webpack-dev-server --open --config ./webpack.dev.js",
     "lint": "eslint 'src/**/*.js'",
     "lint:fix": "eslint --fix 'src/**/*.js'",
     "test": "npm run i18n:extract-compile && npm run lint && npm run prettier:check && jest --coverage",
