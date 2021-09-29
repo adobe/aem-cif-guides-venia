@@ -23,7 +23,7 @@ import Icon from '@magento/venia-ui/lib/components/Icon';
 import defaultClasses from '@magento/venia-ui/lib/components/Header/cartTrigger.css';
 import { GET_ITEM_COUNT_QUERY } from '@magento/venia-ui/lib/components/Header/cartTrigger.gql';
 
-const MiniCart = React.lazy(() => import('../MiniCart'));
+const MiniCart = React.lazy(() => import('../MiniCart/miniCart'));
 
 const CartTrigger = props => {
     const {
