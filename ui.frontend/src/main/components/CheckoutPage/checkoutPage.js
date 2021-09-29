@@ -130,7 +130,6 @@ const CheckoutPage = props => {
           });
 
     if (orderNumber && orderDetailsData) {
-        // TODO: Order confirmation page
         return <OrderConfirmationPage data={orderDetailsData} orderNumber={orderNumber} />;
     } else if (isLoading) {
         return fullPageLoadingIndicator;
@@ -183,7 +182,6 @@ const CheckoutPage = props => {
 
         const formErrors = [];
 
-        // TODO: Hardcode payment methods for now
         const paymentMethods = Object.keys(payments);
 
         // If we have an implementation, or if this is a "zero" checkout,
@@ -262,7 +260,6 @@ const CheckoutPage = props => {
         // If we're on mobile we should only render price summary in/after review.
         const shouldRenderPriceSummary = !(isMobile && checkoutStep < CHECKOUT_STEP.REVIEW);
 
-        // TODO: Remove Go to checkout button
         const orderSummary = shouldRenderPriceSummary ? (
             <div className={classes.summaryContainer}>
                 <OrderSummary isUpdating={isUpdating} />
