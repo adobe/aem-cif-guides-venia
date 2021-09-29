@@ -26,6 +26,7 @@ try {
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
+    let commerceEndpoint = process.env.COMMERCE_ENDPOINT;
 
     ci.dir(qpPath, () => {
         // Connect to QP
@@ -62,6 +63,19 @@ try {
             ${extras} \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
+
+    // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
+    if (classifier == 'classic') {
+        ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/%5BTemporary%20PID%20replaced%20by%20real%20PID%20upon%20save%5D" \
+            -u "admin:admin" \
+            -d "apply=true" \
+            -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
+            -d "propertylist=identifier,url,httpMethod,httpHeaders" \
+            -d "identifier=default" \
+            -d "url=${commerceEndpoint}" \
+            -d "httpMethod=GET"
+        `)
+    }
 
     // Run integration tests
     if (TYPE === 'integration') {
