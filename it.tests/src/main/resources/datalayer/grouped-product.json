@@ -4,6 +4,7 @@
         "xdm:SKU": "VA23",
         "xdm:assets": [
             {
+                "xdm:tags": [],
                 "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/a/va23_main.jpg",
                 "repo:id": "image-3d3553c5dc",
                 "@type": "image"
@@ -14,6 +15,7 @@
                 "repo:id": "category-8c01c593b9",
                 "xdm:name": "Accessories",
                 "xdm:asset": {
+                    "xdm:tags": [],
                     "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/carefree.jpg",
                     "repo:id": "image-6310f9e8a5",
                     "@type": "image"

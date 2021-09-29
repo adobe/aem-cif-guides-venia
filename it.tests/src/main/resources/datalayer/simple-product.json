@@ -4,21 +4,25 @@
         "xdm:SKU": "VP05",
         "xdm:assets": [
             {
+                "xdm:tags": [],
                 "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_main_4.jpg",
                 "repo:id": "image-73439b9cf3",
                 "@type": "image"
             },
             {
+                "xdm:tags": [],
                 "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_alt_2.jpg",
                 "repo:id": "image-2e75bb2439",
                 "@type": "image"
             },
             {
+                "xdm:tags": [],
                 "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_back_2.jpg",
                 "repo:id": "image-40bcf141f9",
                 "@type": "image"
             },
             {
+                "xdm:tags": [],
                 "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05_look_2.jpg",
                 "repo:id": "image-e049cce860",
                 "@type": "image"
@@ -29,6 +33,7 @@
                 "repo:id": "category-cf9d757f29",
                 "xdm:name": "Bottoms",
                 "xdm:asset": {
+                    "xdm:tags": [],
                     "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/minimalist.jpg",
                     "repo:id": "image-74c855fbf3",
                     "@type": "image"
@@ -43,6 +48,7 @@
                 "repo:id": "category-b8a3caa888",
                 "xdm:name": "Shop The Look",
                 "xdm:asset": {
+                    "xdm:tags": [],
                     "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/beachy.jpg",
                     "repo:id": "image-8a0806aaab",
                     "@type": "image"
