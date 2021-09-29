@@ -15,6 +15,7 @@
 import partialConfig from './config';
 
 import React from 'react';
+import { object, string } from 'prop-types';
 import ReactDOM from 'react-dom';
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -141,6 +142,11 @@ window.onload = async () => {
         </Router>,
         root
     );
+};
+
+App.propTypes = {
+    locale: string,
+    messages: object
 };
 
 export default App;

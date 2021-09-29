@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
 import React, { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { gql } from '@apollo/client';
@@ -42,23 +55,11 @@ const Product = props => {
         isProductUpdating
     } = talonProps;
 
-    const {
-        currency,
-        image,
-        name,
-        options,
-        quantity,
-        stockStatus,
-        unitPrice,
-        urlKey,
-        urlSuffix
-    } = product;
+    const { currency, image, name, options, quantity, stockStatus, unitPrice, urlKey, urlSuffix } = product;
 
     const classes = useStyle(defaultClasses, props.classes);
 
-    const itemClassName = isProductUpdating
-        ? classes.item_disabled
-        : classes.item;
+    const itemClassName = isProductUpdating ? classes.item_disabled : classes.item;
 
     const editItemSection = isEditable ? (
         <Section
@@ -74,17 +75,14 @@ const Product = props => {
         />
     ) : null;
 
-    const itemLink = useMemo(
-        () => resourceUrl(`/${urlKey}${urlSuffix || ''}`),
-        [urlKey, urlSuffix]
-    );
+    const itemLink = useMemo(() => resourceUrl(`/${urlKey}${urlSuffix || ''}`), [urlKey, urlSuffix]);
 
     const stockStatusMessage =
         stockStatus === 'OUT_OF_STOCK'
             ? formatMessage({
-                id: 'product.outOfStock',
-                defaultMessage: 'Out-of-stock'
-            })
+                  id: 'product.outOfStock',
+                  defaultMessage: 'Out-of-stock'
+              })
             : '';
 
     return (
@@ -115,20 +113,11 @@ const Product = props => {
                     />
                     <span className={classes.price}>
                         <Price currencyCode={currency} value={unitPrice} />
-                        <FormattedMessage
-                            id={'product.price'}
-                            defaultMessage={' ea.'}
-                        />
+                        <FormattedMessage id={'product.price'} defaultMessage={' ea.'} />
                     </span>
-                    <span className={classes.stockStatusMessage}>
-                        {stockStatusMessage}
-                    </span>
+                    <span className={classes.stockStatusMessage}>{stockStatusMessage}</span>
                     <div className={classes.quantity}>
-                        <Quantity
-                            itemId={item.id}
-                            initialValue={quantity}
-                            onChange={handleUpdateItemQuantity}
-                        />
+                        <Quantity itemId={item.id} initialValue={quantity} onChange={handleUpdateItemQuantity} />
                     </div>
                 </div>
                 <Kebab
@@ -159,8 +148,7 @@ export default Product;
 
 export const REMOVE_ITEM_MUTATION = gql`
     mutation removeItem($cartId: String!, $itemId: Int!) {
-        removeItemFromCart(input: { cart_id: $cartId, cart_item_id: $itemId })
-            @connection(key: "removeItemFromCart") {
+        removeItemFromCart(input: { cart_id: $cartId, cart_item_id: $itemId }) @connection(key: "removeItemFromCart") {
             cart {
                 id
                 ...CartPageFragment
@@ -173,17 +161,9 @@ export const REMOVE_ITEM_MUTATION = gql`
 `;
 
 export const UPDATE_QUANTITY_MUTATION = gql`
-    mutation updateItemQuantity(
-        $cartId: String!
-        $itemId: Int!
-        $quantity: Float!
-    ) {
-        updateCartItems(
-            input: {
-                cart_id: $cartId
-                cart_items: [{ cart_item_id: $itemId, quantity: $quantity }]
-            }
-        ) @connection(key: "updateCartItems") {
+    mutation updateItemQuantity($cartId: String!, $itemId: Int!, $quantity: Float!) {
+        updateCartItems(input: { cart_id: $cartId, cart_items: [{ cart_item_id: $itemId, quantity: $quantity }] })
+            @connection(key: "updateCartItems") {
             cart {
                 id
                 ...CartPageFragment

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="9" failures="0" time="8.814">
+  <testsuite name="productListing" errors="0" failures="0" skipped="0" timestamp="2021-09-27T14:50:01" time="2.827" tests="3">
+    <testcase classname="productListing renders null with no items in cart" name="productListing renders null with no items in cart" time="0.012">
+    </testcase>
+    <testcase classname="productListing renders list of products with items in cart" name="productListing renders list of products with items in cart" time="0.069">
+    </testcase>
+    <testcase classname="productListing renders loading indicator if isLoading" name="productListing renders loading indicator if isLoading" time="0.028">
+    </testcase>
+  </testsuite>
+  <testsuite name="product" errors="0" failures="0" skipped="0" timestamp="2021-09-27T14:50:01" time="2.907" tests="3">
+    <testcase classname="product renders simple product correctly" name="product renders simple product correctly" time="0.112">
+    </testcase>
+    <testcase classname="product renders out of stock product" name="product renders out of stock product" time="0.008">
+    </testcase>
+    <testcase classname="product renders configurable product with options" name="product renders configurable product with options" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="cartPage" errors="0" failures="0" skipped="0" timestamp="2021-09-27T14:50:01" time="7.736" tests="3">
+    <testcase classname="cartPage renders a loading indicator when talon indicates" name="cartPage renders a loading indicator when talon indicates" time="0.016">
+    </testcase>
+    <testcase classname="cartPage renders empty cart text (no adjustments, list or summary) if cart is empty" name="cartPage renders empty cart text (no adjustments, list or summary) if cart is empty" time="0.002">
+    </testcase>
+    <testcase classname="cartPage renders components if cart has items" name="cartPage renders components if cart has items" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

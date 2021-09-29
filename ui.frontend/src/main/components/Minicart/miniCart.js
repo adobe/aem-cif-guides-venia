@@ -1,9 +1,19 @@
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
 import React, { Fragment, useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-    Lock as LockIcon,
-    AlertCircle as AlertCircleIcon
-} from 'react-feather';
+import { Lock as LockIcon, AlertCircle as AlertCircleIcon } from 'react-feather';
 import { bool, shape, string } from 'prop-types';
 
 import { useScrollLock, Price, useToasts } from '@magento/peregrine';
@@ -53,18 +63,16 @@ const MiniCart = React.forwardRef((props, ref) => {
 
     const handleEditCart = () => {
         window.location.href = pagePaths.cartDetails;
-    }
+    };
 
     const handleProceedToCheckout = () => {
         window.location.href = pagePaths.checkoutPage;
-    }
+    };
 
     const classes = useStyle(defaultClasses, props.classes);
     const rootClass = isOpen ? classes.root_open : classes.root;
     const contentsClass = isOpen ? classes.contents_open : classes.contents;
-    const quantityClassName = loading
-        ? classes.quantity_loading
-        : classes.quantity;
+    const quantityClassName = loading ? classes.quantity_loading : classes.quantity;
     const priceClassName = loading ? classes.price_loading : classes.price;
 
     const isCartEmpty = !(productList && productList.length);
@@ -89,23 +97,13 @@ const MiniCart = React.forwardRef((props, ref) => {
                 <StockStatusMessage cartItems={productList} />
             </div>
             <span className={quantityClassName}>
-                <FormattedMessage
-                    id={'miniCart.totalQuantity'}
-                    defaultMessage={'Items'}
-                    values={{ totalQuantity }}
-                />
+                <FormattedMessage id={'miniCart.totalQuantity'} defaultMessage={'Items'} values={{ totalQuantity }} />
             </span>
             <span className={priceClassName}>
                 <span>
-                    <FormattedMessage
-                        id={'miniCart.subtotal'}
-                        defaultMessage={'Subtotal: '}
-                    />
+                    <FormattedMessage id={'miniCart.subtotal'} defaultMessage={'Subtotal: '} />
                 </span>
-                <Price
-                    currencyCode={subTotal.currency}
-                    value={subTotal.value}
-                />
+                <Price currencyCode={subTotal.currency} value={subTotal.value} />
             </span>
         </Fragment>
     ) : null;
@@ -113,10 +111,7 @@ const MiniCart = React.forwardRef((props, ref) => {
     const contents = isCartEmpty ? (
         <div className={classes.emptyCart}>
             <div className={classes.emptyMessage}>
-                <FormattedMessage
-                    id={'miniCart.emptyMessage'}
-                    defaultMessage={'There are no items in your cart.'}
-                />
+                <FormattedMessage id={'miniCart.emptyMessage'} defaultMessage={'There are no items in your cart.'} />
             </div>
         </div>
     ) : (
@@ -145,10 +140,7 @@ const MiniCart = React.forwardRef((props, ref) => {
                             icon: classes.checkoutIcon
                         }}
                     />
-                    <FormattedMessage
-                        id={'miniCart.checkout'}
-                        defaultMessage={'CHECKOUT'}
-                    />
+                    <FormattedMessage id={'miniCart.checkout'} defaultMessage={'CHECKOUT'} />
                 </Button>
                 <Button
                     onClick={handleEditCart}
@@ -156,10 +148,7 @@ const MiniCart = React.forwardRef((props, ref) => {
                     className={classes.editCartButton}
                     disabled={loading || isCartEmpty}
                 >
-                    <FormattedMessage
-                        id={'miniCart.editCartButton'}
-                        defaultMessage={'Edit Shopping Bag'}
-                    />
+                    <FormattedMessage id={'miniCart.editCartButton'} defaultMessage={'Edit Shopping Bag'} />
                 </Button>
             </div>
         </Fragment>

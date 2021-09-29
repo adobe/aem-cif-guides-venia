@@ -11,5 +11,11 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-export { default as store } from './store';
-export { default as AppContextProvider } from './contextProviders';
+
+import React from 'react';
+import { createTestInstance } from '@magento/peregrine';
+import { IntlProvider } from 'react-intl';
+
+export default function render(component) {
+    return createTestInstance(<IntlProvider locale="en">{component}</IntlProvider>);
+}
