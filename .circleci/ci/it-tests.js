@@ -18,7 +18,26 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT } = process.env;
+
+const updateGraphqlClientConfiguration = (pid) => {
+    if (!pid) {
+        // create new configuration
+        pid = encodeURIComponent('[Temporary PID replaced by real PID upon save]');
+    } else {
+        pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
+    }
+
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders" \
+                -d "identifier=default" \
+                -d "url=${COMMERCE_ENDPOINT}" \
+                -d "httpMethod=GET"
+    `)
+}
 
 try {
     ci.stage("Integration Tests");
@@ -26,7 +45,6 @@ try {
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
-    let commerceEndpoint = process.env.COMMERCE_ENDPOINT;
 
     ci.dir(qpPath, () => {
         // Connect to QP
@@ -66,15 +84,10 @@ try {
 
     // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
     if (classifier == 'classic') {
-        ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/%5BTemporary%20PID%20replaced%20by%20real%20PID%20upon%20save%5D" \
-            -u "admin:admin" \
-            -d "apply=true" \
-            -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-            -d "propertylist=identifier,url,httpMethod,httpHeaders" \
-            -d "identifier=default" \
-            -d "url=${commerceEndpoint}" \
-            -d "httpMethod=GET"
-        `)
+        updateGraphqlClientConfiguration();
+    } else {
+        // update the existing default endpoint
+        updateGraphqlClientConfiguration('default');
     }
 
     // Run integration tests
