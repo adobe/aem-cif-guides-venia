@@ -36,34 +36,36 @@ public class ProductPageIT extends CommerceTestBase {
 
     @Test
     public void testProductPageWithSampleData() throws ClientException, IOException {
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/chaz-kangeroo-hoodie.html";
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        Assert.assertEquals("Chaz Kangeroo Hoodie", elements.first().html());
+        Assert.assertEquals("Honora Wide Leg Pants", elements.first().html());
 
         // Verify that the section for GroupedProduct is NOT displayed
         Assert.assertEquals(0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
-        // Verify breadcrumb: Home > Outdoor > Collection > Chaz Kangeroo Hoodie
+        // Verify breadcrumb: Home > Bottoms > Pants & Shorts > Honora Wide Leg Pants
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
         Assert.assertEquals(4, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(7, elements.size());
+        Assert.assertEquals(6, elements.size());
 
         // Check the meta data
         elements = doc.select("title");
-        Assert.assertEquals("Meta title for Chaz Kangeroo Hoodie", elements.first().html());
+        Assert.assertEquals("Honora Wide Leg Pants", elements.first().html());
 
-        elements = doc.select("meta[name=keywords]");
-        Assert.assertEquals("Meta keywords for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=keywords]");
+        //Assert.assertEquals("Meta keywords for Chaz Kangeroo Hoodie", elements.first().attr("content"));
 
-        elements = doc.select("meta[name=description]");
-        Assert.assertEquals("Meta description for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=description]");
+        //Assert.assertEquals("Meta description for Chaz Kangeroo Hoodie", elements.first().attr("content"));
 
         elements = doc.select("link[rel=canonical]");
         Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
@@ -77,12 +79,12 @@ public class ProductPageIT extends CommerceTestBase {
 
     @Test
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
-        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/set-of-sprite-yoga-straps.html", 200);
+        SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/augusta-trio.html", 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        Assert.assertEquals("Set of Sprite Yoga Straps", elements.first().html());
+        Assert.assertEquals("Augusta Trio", elements.first().html());
 
         // Verify that the section for GroupedProduct is displayed
         Assert.assertEquals(1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
