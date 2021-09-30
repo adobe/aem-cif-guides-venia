@@ -36,7 +36,7 @@ describe('Venia React Components', () => {
         browser.url(venia_homepage);
 
         // Check that cart trigger button is displayed
-        const cartTrigger = $('.cmp-CartTrigger__cartTrigger__root');
+        const cartTrigger = $('.cmp-VeniaHeader__cartTrigger__trigger');
         expect(cartTrigger).toBeDisplayed();
 
         // Open minicart
