@@ -41,7 +41,7 @@ describe('Venia React Components', () => {
 
         // Open minicart
         cartTrigger.click();
-        const minicart = $('.cmp-Minicart__header__root');
+        const minicart = $('.cmp-VeniaMiniCart__miniCart__contents');
         expect(minicart).toBeDisplayed();
     });
 
