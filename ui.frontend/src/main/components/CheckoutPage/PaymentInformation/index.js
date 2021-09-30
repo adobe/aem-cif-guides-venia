@@ -11,11 +11,4 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-
-import React from 'react';
-import createTestInstance from '@magento/peregrine/lib/util/createTestInstance';
-import { IntlProvider } from 'react-intl';
-
-export default function render(component) {
-    return createTestInstance(<IntlProvider locale="en">{component}</IntlProvider>);
-}
+export { default } from './paymentInformation';

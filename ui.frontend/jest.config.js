@@ -95,6 +95,7 @@ module.exports = {
     collectCoverage: true,
     moduleDirectories: ['<rootDir>/node_modules', 'node_modules'],
     moduleFileExtensions: ['ee.js', 'ce.js', 'js', 'json', 'jsx', 'node'],
+    collectCoverageFrom: ["src/main/components/**/*.js"],
     coverageDirectory: '<rootDir>/coverage',
     coverageReporters: ['json', 'lcov'],
     coveragePathIgnorePatterns: ['<rootDir>/src/queries', '\\.(gql|graphql)$'],

@@ -39,7 +39,7 @@ import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/checko
 
 // Overrides
 import OrderSummary from './OrderSummary';
-import PaymentInformation from './PaymentInformation/paymentInformation';
+import PaymentInformation from './PaymentInformation';
 import payments from './PaymentInformation/paymentMethodCollection';
 import OrderConfirmationPage from './OrderConfirmationPage';
 
@@ -153,16 +153,6 @@ const CheckoutPage = props => {
                 <span className={classes.signInLabel}>
                     <FormattedMessage id={'checkoutPage.signInLabel'} defaultMessage={'Sign in for Express Checkout'} />
                 </span>
-                {/* <Button
-                    className={classes.signInButton}
-                    onClick={toggleSignInContent}
-                    priority="normal"
-                >
-                    <FormattedMessage
-                        id={'checkoutPage.signInButton'}
-                        defaultMessage={'Sign In'}
-                    />
-                </Button> */}
             </div>
         ) : null;
 
