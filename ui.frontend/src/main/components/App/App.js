@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 // import config first due to its side effects
-import partialConfig from './config';
+import config from './config';
 
 import React from 'react';
 import { object, string } from 'prop-types';
@@ -45,19 +45,8 @@ import loadLocaleData from './i18n';
 import '../../site/main.scss';
 
 const App = props => {
-    const { storeView, graphqlEndpoint, graphqlMethod, httpHeaders } = document.querySelector('body').dataset;
-    const { mountingPoints, pagePaths } = partialConfig;
+    const { mountingPoints, pagePaths } = config;
     const { locale, messages } = props;
-
-    const config = {
-        ...partialConfig,
-        storeView,
-        graphqlEndpoint,
-        // Can be GET or POST. When selecting GET, this applies to cache-able GraphQL query requests only. Mutations
-        // will always be executed as POST requests.
-        graphqlMethod,
-        headers: JSON.parse(httpHeaders)
-    };
 
     window.STORE_NAME = storeView;
     window.DEFAULT_COUNTRY_CODE = locale;
