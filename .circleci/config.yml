@@ -97,21 +97,6 @@ jobs:
               mvn -B clean install -Pclassic
             fi
       - run:
-          name: Provision frontend project
-          command: |
-            node -v
-            npm -v
-            npm install
-          working_directory: ./ui.frontend
-      - run:
-          name: Link CIF components
-          command: |
-            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-              npm link @adobe/aem-core-cif-react-components
-              npm link @adobe/aem-core-cif-product-recs-extension
-            fi
-          working_directory: ./ui.frontend
-      - run:
           name: Run Unit Tests (Jest)
           command: npm run ci
           working_directory: ./ui.frontend
