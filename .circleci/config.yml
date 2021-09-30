@@ -96,6 +96,25 @@ jobs:
             else
               mvn -B clean install -Pclassic
             fi
+      - run:
+          name: Provision frontend project
+          command: |
+            node -v
+            npm -v
+            npm install
+          working_directory: ./ui.frontend
+      - run:
+          name: Link CIF components
+          command: |
+            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
+              npm link @adobe/aem-core-cif-react-components
+              npm link @adobe/aem-core-cif-product-recs-extension
+            fi
+          working_directory: ./ui.frontend
+      - run:
+          name: Run Unit Tests (Jest)
+          command: npm run ci
+          working_directory: ./ui.frontend
       - save_cache:
           paths:
             - ~/.m2
@@ -112,29 +131,10 @@ jobs:
           path: core/target/surefire-reports
       - codecov/upload:
           flags: unittests
-  jest:
-    docker:
-      - image: circleci/node:lts-browsers
-    steps:
-      - checkout
-      - run:
-          name: Update permissions
-          command: sudo chown -R circleci /usr/local/lib/node_modules
-      - run:
-          name: Provision
-          command: |
-            node -v
-            npm -v
-            npm install
-          working_directory: ./ui.frontend
-      - run:
-          name: Run Unit Tests (Jest)
-          command: npm run ci
-          working_directory: ./ui.frontend
       - store_test_results:
-          path: ./ui.frontend/test-results
+          path: ui.frontend/test-results
       - store_artifacts:
-          path: ./ui.frontend/test-results
+          path: ui.frontend/test-results
       - codecov/upload:
           flags: jest
 
@@ -212,12 +212,6 @@ workflows:
   build-and-release:
     jobs:
       - build:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-      - jest:
           context:
             - CIF Artifactory Cloud
           filters:
