@@ -11,19 +11,38 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-import React, { Fragment, Suspense } from 'react';
+import React, { Fragment, Suspense, useCallback } from 'react';
 import { shape, string } from 'prop-types';
 import { ShoppingBag as ShoppingCartIcon } from 'react-feather';
 import { useIntl } from 'react-intl';
-
+import { useMutation } from '@apollo/client';
 import { useCartTrigger } from '@magento/peregrine/lib/talons/Header/useCartTrigger';
-
+import { useCartContext } from '@magento/peregrine/lib/context/cart';
 import useStyle from '@magento/peregrine/lib/util/shallowMerge';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import defaultClasses from '@magento/venia-ui/lib/components/Header/cartTrigger.css';
 import { GET_ITEM_COUNT_QUERY } from '@magento/venia-ui/lib/components/Header/cartTrigger.gql';
 
+import MUTATION_ADD_TO_CART from '../../queries/mutation_add_to_cart.graphql';
+import MUTATION_ADD_BUNDLE_TO_CART from '../../queries/mutation_add_bundle_to_cart.graphql';
+import MUTATION_ADD_VIRTUAL_TO_CART from '../../queries/mutation_add_virtual_to_cart.graphql';
+import MUTATION_ADD_SIMPLE_AND_VIRTUAL_TO_CART from '../../queries/mutation_add_simple_and_virtual_to_cart.graphql';
+
+import { useEventListener } from '../../utils/hooks';
+
 const MiniCart = React.lazy(() => import('../MiniCart'));
+
+const productMapper = item => ({
+    data: {
+        sku: item.sku,
+        quantity: parseFloat(item.quantity)
+    }
+});
+
+const bundledProductMapper = item => ({
+    ...productMapper(item),
+    bundle_options: item.options
+});
 
 const CartTrigger = props => {
     const {
@@ -40,6 +59,53 @@ const CartTrigger = props => {
             getItemCountQuery: GET_ITEM_COUNT_QUERY
         }
     });
+
+    const [{ cartId }] = useCartContext();
+
+    const [addToCartMutation] = useMutation(MUTATION_ADD_TO_CART);
+    const [addBundleItemMutation] = useMutation(MUTATION_ADD_BUNDLE_TO_CART);
+    const [addVirtualItemMutation] = useMutation(MUTATION_ADD_VIRTUAL_TO_CART);
+    const [addSimpleAndVirtualItemMutation] = useMutation(MUTATION_ADD_SIMPLE_AND_VIRTUAL_TO_CART);
+
+    const handleAddToCart = useCallback(async (event) => {
+        const items = typeof event.detail === 'string' ? JSON.parse(event.detail) : event.detail;
+        const physicalCartItems = items.filter(item => !item.virtual).map(productMapper);
+        const virtualCartItems = items.filter(item => item.virtual).map(productMapper);
+        const bundleCartItems = items.filter(item => item.bundle).map(bundledProductMapper);
+
+        if (bundleCartItems.length > 0) {
+            await addBundleItemMutation({
+                variables: {
+                    cartId,
+                    cartItems: bundleCartItems
+                }
+            });
+        } else if (virtualCartItems.length > 0 && physicalCartItems.length > 0) {
+            await addSimpleAndVirtualItemMutation({
+                variables: {
+                    cartId,
+                    virtualCartItems: virtualCartItems,
+                    simpleCartItems: physicalCartItems
+                }
+            });
+        } else if (virtualCartItems.length > 0) {
+            await addVirtualItemMutation({
+                variables: {
+                    cartId,
+                    cartItems: virtualCartItems
+                }
+            });
+        } else if (physicalCartItems.length > 0) {
+            await addToCartMutation({
+                variables: {
+                    cartId,
+                    cartItems: physicalCartItems
+                }
+            });
+        }
+    }, [cartId]);
+
+    useEventListener(document, 'aem.cif.add-to-cart', handleAddToCart);
 
     const classes = useStyle(defaultClasses, props.classes);
     const { formatMessage } = useIntl();
