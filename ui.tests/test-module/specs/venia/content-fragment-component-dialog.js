@@ -413,7 +413,8 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         // change display mode
         fields[3].$('input[type="radio"][value="singleText"]').waitAndClick();
-        // try to save and with empty mandatory field for input vildation error
+        browser.pause(1000);
+        // try to save with empty mandatory field for input validation error
         let doneButton = dialog.$('button.cq-dialog-submit[variant="primary"]');
         doneButton.click();
         expect(fields[4].$('coral-select')).toHaveAttr('invalid');

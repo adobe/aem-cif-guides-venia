@@ -18,7 +18,26 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT } = process.env;
+
+const updateGraphqlClientConfiguration = (pid) => {
+    if (!pid) {
+        // create new configuration
+        pid = encodeURIComponent('[Temporary PID replaced by real PID upon save]');
+    } else {
+        pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
+    }
+
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders" \
+                -d "identifier=default" \
+                -d "url=${COMMERCE_ENDPOINT}" \
+                -d "httpMethod=GET"
+    `)
+}
 
 try {
     ci.stage("Integration Tests");
@@ -62,6 +81,14 @@ try {
             ${extras} \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
+
+    // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
+    if (classifier == 'classic') {
+        updateGraphqlClientConfiguration();
+    } else {
+        // update the existing default endpoint
+        updateGraphqlClientConfiguration('default');
+    }
 
     // Run integration tests
     if (TYPE === 'integration') {

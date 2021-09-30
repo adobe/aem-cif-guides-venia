@@ -24,18 +24,6 @@ describe('Venia Searchbar Component', () => {
         browser.AEMForceLogout();
         browser.url(config.aem.author.base_url);
         browser.AEMLogin(config.aem.author.username, config.aem.author.password);
-
-        // Setup GraphQL client if running on CircleCI
-        if (process.env.CIRCLECI) {
-            browser.configureGraphqlClient('com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl', {
-                identifier: 'default',
-                url: `${config.aem.author.base_url}/apps/cif-components-examples/graphql`,
-                httpMethod: 'GET',
-                acceptSelfSignedCertificates: 'true',
-                allowHttpProtocol: 'true'
-            });
-            browser.pause(10000);
-        }
     });
 
     beforeEach(() => {
@@ -107,6 +95,7 @@ describe('Venia Searchbar Component', () => {
 
         // Go to the Venia homepage
         browser.url(venia_homepage);
+        browser.refresh();
 
         // check the new placeholder in the trigger title and in the input field
         const searchBarTrigger = $('.searchbar__trigger');

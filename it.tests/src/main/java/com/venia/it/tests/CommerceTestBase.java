@@ -58,8 +58,6 @@ public class CommerceTestBase {
     protected static final String PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR = ".productcollection__item";
     protected static final String NAVIGATION_ITEM_SELECTOR = ".cmp-navigation > .cmp-navigation__group > .cmp-navigation__item";
 
-    private static final String CONFIGURATION_CONSOLE_URL = "/system/console/configMgr";
-
     @ClassRule
     public static final CQAuthorClassRule cqBaseClassRule = new CQAuthorClassRule();
 
@@ -69,104 +67,7 @@ public class CommerceTestBase {
     protected static CQClient adminAuthor;
 
     @BeforeClass
-    public static void init() throws ClientException, InterruptedException, TimeoutException {
+    public static void init() {
         adminAuthor = cqBaseClassRule.authorRule.getAdminClient(CommerceClient.class);
-
-        // This configures the GraphQL client for the CIF components library
-        GraphqlOSGiConfig graphqlOsgiConfig = new GraphqlOSGiConfig()
-            .withIdentifier("default")
-            .withUrl("http://localhost:4502/apps/cif-components-examples/graphql")
-            .withHttpMethod("GET")
-            .withAcceptSelfSignedCertificates(true)
-            .withAllowHttpProtocol(true);
-
-        updateOSGiConfiguration(adminAuthor, graphqlOsgiConfig.build(), GRAPHQL_CLIENT_BUNDLE, GRAPHQL_CLIENT_FACTORY_PID);
-        updateSlingAuthenticatorOSGiConfig(adminAuthor);
-    }
-
-    /**
-     * Fetches the PID of a service based on the factory PID.
-     * 
-     * @param osgiClient
-     * @return The PID of the first configuration found for factory PID.
-     * @throws ClientException
-     */
-    private static String getConfigurationPid(OsgiConsoleClient osgiClient, String factoryPID) throws ClientException {
-        SlingHttpResponse resp = osgiClient.doGet(CONFIGURATION_CONSOLE_URL + "/*.json");
-        JsonNode json = JsonUtils.getJsonNodeFromString(resp.getContent());
-        Iterator<JsonNode> it = json.getElements();
-        while (it.hasNext()) {
-            JsonNode config = it.next();
-            JsonNode factoryId = config.get("factoryPid");
-            if (factoryId != null && factoryPID.equals(factoryId.getTextValue())) {
-                return config.get("pid").getTextValue();
-            }
-        }
-        return null;
-    }
-
-    protected static void updateOSGiConfiguration(CQClient client, Map<String, Object> config, String bundle, String factoryPID)
-        throws ClientException,
-        TimeoutException, InterruptedException {
-        final OsgiConsoleClient osgiClient = client.adaptTo(OsgiConsoleClient.class);
-        Polling polling = new Polling(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    String state = osgiClient.getBundleState(bundle);
-                    LOG.info("Bundle {} state is now {}", bundle, state);
-                    Assert.assertEquals("Active", state);
-                    return true;
-                } catch (AssertionError e) {
-                    return false;
-                } catch (ClientException cex) {
-                    LOG.error(cex.getMessage(), cex);
-                    return false;
-                }
-            }
-        });
-
-        // Check that the bundle has started
-        polling.poll(30000, 1000);
-
-        LOG.info("Creating configuration. {}", config);
-        String configurationPid = getConfigurationPid(osgiClient, factoryPID);
-        osgiClient.waitEditConfiguration(30, configurationPid, null, config, SC_MOVED_TEMPORARILY);
-
-        // Wait for bundle to restart
-        polling.poll(30000, 1000);
-
-        // Wait a bit more so that other bundles can restart
-        Thread.sleep(2000);
-    }
-
-    protected static void updateSlingAuthenticatorOSGiConfig(CQClient client) throws InterruptedException, ClientException,
-        TimeoutException {
-
-        // We keep all the parameters from the default config, we only add the path for the GraphQL servlet
-
-        Map<String, Object> config = new HashMap<>();
-        config.put("auth.sudo.cookie", "sling.sudo");
-        config.put("auth.sudo.parameter", "sudo");
-        config.put("auth.annonymous", "false");
-        config.put("sling.auth.requirements", new String[] {
-            "+/",
-            "-/libs/granite/core/content/login",
-            "-/etc.clientlibs",
-            "-/etc/clientlibs/granite",
-            "-/libs/dam/remoteassets/content/loginerror",
-            "-/apps/cif-components-examples/graphql" // We have to add this path so that the GraphQL servlet is reachable
-        });
-        config.put("sling.auth.anonymous.user", "");
-        config.put("sling.auth.anonymous.password", "unmodified");
-        config.put("auth.http", "preemptive");
-        config.put("auth.http.realm", "Sling+(Development)");
-        config.put("auth.uri.suffix", "/j_security_check");
-
-        final OsgiConsoleClient osgiClient = client.adaptTo(OsgiConsoleClient.class);
-        osgiClient.waitEditConfiguration(30, "org.apache.sling.engine.impl.auth.SlingAuthenticator", null, config, SC_MOVED_TEMPORARILY);
-
-        // Wait a bit more so that other bundles can restart
-        Thread.sleep(2000);
     }
 }

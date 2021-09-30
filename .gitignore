@@ -99,7 +99,7 @@ node/
 
 # Tests
 coverage/
-junit.xml
+**/test-results/**
 
 # UI Tests
 ui.tests/test-module/reports
