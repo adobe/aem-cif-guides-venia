@@ -45,7 +45,7 @@ import loadLocaleData from './i18n';
 import '../../site/main.scss';
 
 const App = props => {
-    const { mountingPoints, pagePaths } = config;
+    const { mountingPoints, pagePaths, storeView } = config;
     const { locale, messages } = props;
 
     window.STORE_NAME = storeView;
