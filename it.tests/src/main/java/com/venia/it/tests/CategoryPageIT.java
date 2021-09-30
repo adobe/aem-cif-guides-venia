@@ -36,14 +36,13 @@ public class CategoryPageIT extends CommerceTestBase {
 
     @Test
     public void testProductListPageWithSampleData() throws ClientException, IOException {
-
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/outdoor.html";
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/venia-bottoms/venia-pants.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
         // Verify category name
         Elements elements = doc.select(PRODUCTLIST_TITLE_SELECTOR);
-        Assert.assertEquals("Outdoor Collection", elements.first().html());
+        Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
 
         // Check that search filters are displayed
         elements = doc.select(PRODUCTLIST_SELECTOR + SEARCH_FILTERS_SELECTOR);
@@ -59,17 +58,19 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(7, elements.size());
+        Assert.assertEquals(6, elements.size());
 
         // Check the meta data
         elements = doc.select("title");
-        Assert.assertEquals("Meta title for Outdoor Collection", elements.first().html());
+        Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
 
-        elements = doc.select("meta[name=keywords]");
-        Assert.assertEquals("Meta keywords for Outdoor Collection", elements.first().attr("content"));
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=keywords]");
+        //Assert.assertEquals("Meta keywords for Outdoor Collection", elements.first().attr("content"));
 
-        elements = doc.select("meta[name=description]");
-        Assert.assertEquals("Meta description for Outdoor Collection", elements.first().attr("content"));
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=description]");
+        //Assert.assertEquals("Meta description for Outdoor Collection", elements.first().attr("content"));
 
         elements = doc.select("link[rel=canonical]");
         Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
