@@ -29,8 +29,7 @@ import {
     BundleProductOptions,
     AccountDetails,
     ResetPassword,
-    PortalPlacer,
-    AddToCart
+    PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
 
 import { ProductRecsGallery, StorefrontInstanceContextProvider } from '@adobe/aem-core-cif-product-recs-extension';
@@ -57,8 +56,6 @@ const App = props => {
             <ConfigContextProvider config={config}>
                 <CommerceApp>
                     <PeregrineContextProvider>
-                        <PortalPlacer selector={mountingPoints.addToCart} component={AddToCart} />
-
                         <StorefrontInstanceContextProvider>
                             <PortalPlacer selector={mountingPoints.productRecs} component={ProductRecsGallery} />
                         </StorefrontInstanceContextProvider>
