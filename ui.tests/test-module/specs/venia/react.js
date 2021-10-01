@@ -79,4 +79,11 @@ describe('Venia React Components', () => {
 
         expect($('.cmp-ResetPassword__ResetPassword__root')).toBeDisplayed();
     });
+
+    it('should render the cart page', () => {
+        // Go to password cart page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/cart-details.html`);
+
+        expect($('.cmp-VeniaCartPage__cartPage__root')).toBeDisplayed();
+    });
 });
