@@ -67,43 +67,46 @@ const CartTrigger = props => {
     const [addVirtualItemMutation] = useMutation(MUTATION_ADD_VIRTUAL_TO_CART);
     const [addSimpleAndVirtualItemMutation] = useMutation(MUTATION_ADD_SIMPLE_AND_VIRTUAL_TO_CART);
 
-    const handleAddToCart = useCallback(async (event) => {
-        const items = typeof event.detail === 'string' ? JSON.parse(event.detail) : event.detail;
-        const physicalCartItems = items.filter(item => !item.virtual).map(productMapper);
-        const virtualCartItems = items.filter(item => item.virtual).map(productMapper);
-        const bundleCartItems = items.filter(item => item.bundle).map(bundledProductMapper);
+    const handleAddToCart = useCallback(
+        async event => {
+            const items = typeof event.detail === 'string' ? JSON.parse(event.detail) : event.detail;
+            const physicalCartItems = items.filter(item => !item.virtual).map(productMapper);
+            const virtualCartItems = items.filter(item => item.virtual).map(productMapper);
+            const bundleCartItems = items.filter(item => item.bundle).map(bundledProductMapper);
 
-        if (bundleCartItems.length > 0) {
-            await addBundleItemMutation({
-                variables: {
-                    cartId,
-                    cartItems: bundleCartItems
-                }
-            });
-        } else if (virtualCartItems.length > 0 && physicalCartItems.length > 0) {
-            await addSimpleAndVirtualItemMutation({
-                variables: {
-                    cartId,
-                    virtualCartItems: virtualCartItems,
-                    simpleCartItems: physicalCartItems
-                }
-            });
-        } else if (virtualCartItems.length > 0) {
-            await addVirtualItemMutation({
-                variables: {
-                    cartId,
-                    cartItems: virtualCartItems
-                }
-            });
-        } else if (physicalCartItems.length > 0) {
-            await addToCartMutation({
-                variables: {
-                    cartId,
-                    cartItems: physicalCartItems
-                }
-            });
-        }
-    }, [cartId]);
+            if (bundleCartItems.length > 0) {
+                await addBundleItemMutation({
+                    variables: {
+                        cartId,
+                        cartItems: bundleCartItems
+                    }
+                });
+            } else if (virtualCartItems.length > 0 && physicalCartItems.length > 0) {
+                await addSimpleAndVirtualItemMutation({
+                    variables: {
+                        cartId,
+                        virtualCartItems: virtualCartItems,
+                        simpleCartItems: physicalCartItems
+                    }
+                });
+            } else if (virtualCartItems.length > 0) {
+                await addVirtualItemMutation({
+                    variables: {
+                        cartId,
+                        cartItems: virtualCartItems
+                    }
+                });
+            } else if (physicalCartItems.length > 0) {
+                await addToCartMutation({
+                    variables: {
+                        cartId,
+                        cartItems: physicalCartItems
+                    }
+                });
+            }
+        },
+        [cartId]
+    );
 
     useEventListener(document, 'aem.cif.add-to-cart', handleAddToCart);
 
