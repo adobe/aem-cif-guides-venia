@@ -39,6 +39,15 @@ const updateGraphqlClientConfiguration = (pid) => {
     `)
 }
 
+const updateGraphqlProxyServlet = () => {
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "propertylist=graphQLOriginUrl" \
+                -d "graphQLOriginUrl=${COMMERCE_ENDPOINT}"
+    `)
+}
+
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
@@ -89,6 +98,9 @@ try {
         // update the existing default endpoint
         updateGraphqlClientConfiguration('default');
     }
+
+    // Configure GraphQL Proxy
+    updateGraphqlProxyServlet();
 
     // Run integration tests
     if (TYPE === 'integration') {
