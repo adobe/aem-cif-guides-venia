@@ -61,7 +61,6 @@ export default {
         accountDetails: '.accountdetails__body',
         resetPasswordPage: '.resetpassword__body',
         productRecs: '[data-is-product-recs]',
-        addToCart: '.productFullDetail__cartActions',
         cartDetailsContainer: '.cartcontainer__body',
         checkoutPageContainer: '.checkoutpage__body'
     },
