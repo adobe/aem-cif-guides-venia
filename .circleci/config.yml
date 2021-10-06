@@ -120,8 +120,6 @@ jobs:
           path: ui.frontend/test-results
       - store_artifacts:
           path: ui.frontend/test-results
-      - codecov/upload:
-          flags: jest
 
   integration-test-655:
     executor: test_executor_655

@@ -15,6 +15,7 @@
 package com.venia.it.tests;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,10 @@ public class SearchPageIT extends CommerceTestBase {
 
     @Test
     public void testSearchResultsWithSampleData() throws ClientException, IOException {
-        List<NameValuePair> parameters = Collections.singletonList(new BasicNameValuePair("search_query", "pants"));
+        List<NameValuePair> parameters = Arrays.asList(
+            new BasicNameValuePair("search_query", "pants"),
+            new BasicNameValuePair("sort_key", "name"),
+            new BasicNameValuePair("sort_order", "asc"));
         SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_SEARCH_PAGE + ".html", parameters, 200);
         Document doc = Jsoup.parse(response.getContent());
 
