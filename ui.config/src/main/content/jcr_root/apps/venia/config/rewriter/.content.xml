@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:Folder">
+    <ciflinks jcr:primaryType="nt:unstructured"
+        cotentTypes="[text/html]"
+        enabled="{Boolean}true"
+        generatorType="htmlparser"
+        order="1000"
+        serializerType="htmlwriter"
+        transformerTypes="[ciflinks,linkchecker]">
+    </ciflinks>
+</jcr:root>
