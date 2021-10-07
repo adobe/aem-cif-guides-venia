@@ -4,7 +4,6 @@
         "xdm:SKU": "product-sku",
         "xdm:assets": [
             {
-                "xdm:tags": [],
                 "repo:path": "/apps/core/cif/components/commerce/product/v1/product/clientlib/resources/images/catalog/product/thumbnail.png",
                 "repo:id": "image-1bd9b563f8",
                 "@type": "image"
