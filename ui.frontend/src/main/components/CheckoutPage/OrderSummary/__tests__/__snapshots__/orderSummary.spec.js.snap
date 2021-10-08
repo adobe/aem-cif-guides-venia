@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders order summary 1`] = `
+<div
+  className="root"
+>
+  <h1
+    className="title"
+  >
+    Order Summary
+  </h1>
+  <PriceSummary
+    isUpdating={[MockFunction isUpdating]}
+  />
+</div>
+`;

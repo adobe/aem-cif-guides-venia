@@ -28,6 +28,20 @@ if (storeConfigEl) {
 const baseUrl = storeConfig.storeRootUrl;
 const basePath = baseUrl.substr(0, baseUrl.indexOf('.'));
 
+// necessary to be set for venia-ui components
+window.STORE_VIEW_CODE = storeConfig.storeView || '';
+window.AVAILABLE_STORE_VIEWS = [
+    {
+        code: storeConfig.storeView,
+        base_currency_code: 'USD',
+        default_display_currency_code: 'USD',
+        id: 1,
+        locale: 'en',
+        secure_base_media_url: '',
+        store_name: 'Venia'
+    }
+];
+
 export default {
     storeView: storeConfig.storeView,
     graphqlEndpoint: storeConfig.graphqlEndpoint,
@@ -35,7 +49,7 @@ export default {
     // will always be executed as POST requests.
     graphqlMethod: storeConfig.graphqlMethod,
     headers,
-    
+
     mountingPoints: {
         accountContainer: '.miniaccount__body',
         addressBookContainer: '.addressbook__body',
@@ -45,12 +59,17 @@ export default {
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
         accountDetails: '.accountdetails__body',
-        resetPasswordPage: '.resetpassword__body'
+        resetPasswordPage: '.resetpassword__body',
+        productRecs: '[data-is-product-recs]',
+        cartDetailsContainer: '.cartcontainer__body',
+        checkoutPageContainer: '.checkoutpage__body'
     },
     pagePaths: {
         baseUrl,
         addressBook: `${basePath}/my-account/address-book.html`,
         accountDetails: `${basePath}/my-account/account-details.html`,
-        resetPassword: `${basePath}/reset-password.html`
+        cartDetails: `${basePath}/cart-details.html`,
+        resetPassword: `${basePath}/reset-password.html`,
+        checkoutPage: `${basePath}/checkout.html`
     }
 };

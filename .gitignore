@@ -99,6 +99,7 @@ node/
 
 # Tests
 coverage/
+**/test-results/**
 
 # UI Tests
 ui.tests/test-module/reports

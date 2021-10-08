@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Should return correct shape 1`] = `
+<mock-Dialog
+  confirmText="Update"
+  confirmTranslationId="global.updateButton"
+  onCancel={[MockFunction]}
+  onConfirm={[MockFunction]}
+  shouldDisableAllButtons={false}
+  shouldDisableConfirmButton={false}
+  title="Edit Payment Information"
+>
+  <mock-Braintree
+    id="BraintreeMockId"
+    onPaymentError={[MockFunction]}
+    onPaymentReady={[MockFunction]}
+    onPaymentSuccess={[MockFunction]}
+    resetShouldSubmit={[MockFunction]}
+    shouldSubmit={false}
+  />
+</mock-Dialog>
+`;
