@@ -24,16 +24,13 @@ const SOURCE_ROOT = __dirname + '/src/main';
 const alias = Object.keys(pkg.dependencies)
     .reduce((obj, key) => ({ ...obj, [key]: path.resolve('node_modules', key) }), {});
 
-module.exports = {
+module.exports = (env) => ({
+    mode: env,
     entry: {
         site: SOURCE_ROOT + '/site/main.js'
     },
     output: {
-        filename: chunkData => {
-            return chunkData.chunk.name === 'dependencies'
-                ? 'clientlib-dependencies/[name].js'
-                : 'clientlib-site/[name].js';
-        },
+        filename: 'clientlib-site/[name].js',
         chunkFilename: 'clientlib-site/[name].js',
         path: path.resolve(__dirname, 'dist')
     },
@@ -55,9 +52,40 @@ module.exports = {
                 ]
             },
             {
-                test: /\.js$/,
-                include: /src/,
-                loader: ['babel-loader']
+                test: /\.jsx?$/,
+                exclude: /node_modules\/(?!@magento\/)/,
+                loader: 'babel-loader',
+                options: {
+                    envName: env,
+                }
+            },
+            {
+                test: /\.css$/,
+                include: /node_modules\/@magento/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                localIdentName: 'cmp-Venia[folder]__[name]__[local]'
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                test: /\.css$/,
+                exclude: /node_modules\/@magento/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true
+                        }
+                    }
+                ]
             },
             {
                 test: /\.scss$/,
@@ -94,18 +122,17 @@ module.exports = {
             }
         ]
     },
-    resolve: { 
+    resolve: {
         alias: {
-            ...alias,
-            // messages are all in ast already, so we can save some bytes like that
-            '@formatjs/icu-messageformat-parser': '@formatjs/icu-messageformat-parser/no-parser'
-        }
+            ...alias
+        },
+        extensions: ['.ee.js', '.js', '.json', '.wasm']
     },
     plugins: [
         new CleanWebpackPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'clientlib-[name]/[name].css'
+            filename: 'clientlib-site/[name].css'
         }),
         new CopyWebpackPlugin([
             {
@@ -114,6 +141,25 @@ module.exports = {
             }
         ])
     ],
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                main: {
+                    chunks: 'all',
+                    name: 'site',
+                    test: 'main',
+                    enforce: true
+                },
+                // Merge all the CSS into one file
+                styles: {
+                    name: 'styles',
+                    test: /\.s?css$/,
+                    chunks: 'all',
+                    enforce: true,
+                },
+            }
+        }
+    },
     stats: {
         assetsSort: 'chunks',
         builtAt: true,
@@ -130,4 +176,4 @@ module.exports = {
         source: false,
         warnings: true
     }
-};
+});

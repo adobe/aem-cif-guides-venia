@@ -11,11 +11,22 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
+const peregrine = require('@magento/babel-preset-peregrine');
 
-import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json';
-import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json';
-import enMessagesVenia from '@magento/venia-ui/i18n/en_US.json';
-import enProject from '../../../i18n/en.json';
+module.exports = (api, opts = {}) => {
+    const config = {
+        ...peregrine(api, opts),
+        // important as some in combiation with babel-runtime and umd/esm mixed
+        // module the default value will cause the imports from the umd
+        // libraries (@adobe/) to be not recognized anymore
+        sourceType: 'unambiguous'
+    }
 
-export const messages = { ...enMessagesVenia, ...enMessagesCoreComponents, ...enMessagesProductRecs, ...enProject };
-export const locale = 'en';
+    // Remove react-refresh/babel as this causes issues with the modules
+    // extracted using the mini-css-extract-plugin. sources suggest to exclude
+    // node_modules from babel which we cannot do because of peregrine.
+    // We should fix this in peregrine (make it configureable)
+    config.plugins = config.plugins.filter(plugin => plugin !== 'react-refresh/babel');
+
+    return config;
+}

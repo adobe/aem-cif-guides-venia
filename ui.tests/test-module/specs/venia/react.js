@@ -36,12 +36,12 @@ describe('Venia React Components', () => {
         browser.url(venia_homepage);
 
         // Check that cart trigger button is displayed
-        const cartTrigger = $('.cmp-CartTrigger__cartTrigger__root');
+        const cartTrigger = $('.cmp-VeniaHeader__cartTrigger__trigger');
         expect(cartTrigger).toBeDisplayed();
 
         // Open minicart
         cartTrigger.click();
-        const minicart = $('.cmp-Minicart__header__root');
+        const minicart = $('.cmp-VeniaMiniCart__miniCart__contents');
         expect(minicart).toBeDisplayed();
     });
 
@@ -78,5 +78,12 @@ describe('Venia React Components', () => {
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/reset-password.html?token=abc`);
 
         expect($('.cmp-ResetPassword__ResetPassword__root')).toBeDisplayed();
+    });
+
+    it('should render the cart page', () => {
+        // Go to password cart page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/cart-details.html`);
+
+        expect($('.cmp-VeniaCartPage__cartPage__root')).toBeDisplayed();
     });
 });

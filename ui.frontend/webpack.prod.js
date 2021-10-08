@@ -16,8 +16,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin            = require('terser-webpack-plugin');
 const common                  = require('./webpack.common.js');
 
-module.exports = merge(common, {
-    mode: 'production',
+module.exports = merge(common('production'), {
     optimization: {
         minimize: true,
         usedExports: true,
@@ -49,17 +48,7 @@ module.exports = merge(common, {
                 },
                 canPrint: false,
             }),
-        ],
-        splitChunks: {
-            cacheGroups: {
-                main: {
-                    chunks: 'all',
-                    name: 'site',
-                    test: 'main',
-                    enforce: true
-                }
-            }
-        }
+        ]
     },
     devtool: 'none',
     performance: { hints: false }

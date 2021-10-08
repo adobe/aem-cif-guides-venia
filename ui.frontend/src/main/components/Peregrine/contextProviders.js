@@ -11,11 +11,31 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import {
+    PeregrineContextProvider as Peregrine,
+    ToastContextProvider,
+    WindowSizeContextProvider
+} from '@magento/peregrine';
 
-import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json';
-import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json';
-import enMessagesVenia from '@magento/venia-ui/i18n/en_US.json';
-import enProject from '../../../i18n/en.json';
+import store from './store';
 
-export const messages = { ...enMessagesVenia, ...enMessagesCoreComponents, ...enMessagesProductRecs, ...enProject };
-export const locale = 'en';
+/**
+ * List of context providers that are required to run Venia
+ *
+ * @property {React.Component[]} contextProviders
+ */
+const contextProviders = [Peregrine, WindowSizeContextProvider, ToastContextProvider];
+
+const ContextProvider = ({ children }) => {
+    return (
+        <ReduxProvider store={store}>
+            {contextProviders.reduceRight((memo, ContextProvider) => {
+                return <ContextProvider>{memo}</ContextProvider>;
+            }, children)}
+        </ReduxProvider>
+    );
+};
+
+export default ContextProvider;
