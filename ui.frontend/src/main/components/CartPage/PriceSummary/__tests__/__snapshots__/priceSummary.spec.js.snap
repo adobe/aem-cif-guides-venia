@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders PriceSummary correctly on cart page 1`] = `
+<div>
+  <div>
+    <span>
+      Subtotal
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        3
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+    <span>
+      Estimated Total
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        8
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+  </div>
+  <div>
+    <button
+      disabled={false}
+      onClick={[Function]}
+      type="button"
+    >
+      <span>
+        Proceed to Checkout
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`renders PriceSummary correctly on checkout page 1`] = `
+<div>
+  <div>
+    <span>
+      Subtotal
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        3
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+    <span>
+      Total
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        8
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`renders an error state if query fails 1`] = `
+<div>
+  <span>
+    Something went wrong. Please refresh and try again.
+  </span>
+</div>
+`;
+
+exports[`renders nothing if query returns no items 1`] = `null`;
+
+exports[`renders summary with loading state if query is loading 1`] = `
+<div>
+  <div>
+    <span>
+      Subtotal
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        3
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+    <span>
+      Estimated Total
+    </span>
+    <span>
+      <span>
+        $
+      </span>
+      <span>
+        8
+      </span>
+      <span>
+        .
+      </span>
+      <span>
+        50
+      </span>
+    </span>
+  </div>
+  <div>
+    <button
+      disabled={true}
+      onClick={[Function]}
+      type="button"
+    >
+      <span>
+        Proceed to Checkout
+      </span>
+    </button>
+  </div>
+</div>
+`;

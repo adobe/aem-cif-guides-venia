@@ -96,6 +96,10 @@ jobs:
             else
               mvn -B clean install -Pclassic
             fi
+      - run:
+          name: Run Unit Tests (Jest)
+          command: npm run ci
+          working_directory: ./ui.frontend
       - save_cache:
           paths:
             - ~/.m2
@@ -112,6 +116,10 @@ jobs:
           path: core/target/surefire-reports
       - codecov/upload:
           flags: unittests
+      - store_test_results:
+          path: ui.frontend/test-results
+      - store_artifacts:
+          path: ui.frontend/test-results
 
   integration-test-655:
     executor: test_executor_655

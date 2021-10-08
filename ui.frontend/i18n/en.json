@@ -1,0 +1,274 @@
+{
+  "cartPage.emptyCart": [
+    {
+      "type": 0,
+      "value": "There are no items in your cart."
+    }
+  ],
+  "cartPage.heading": [
+    {
+      "type": 0,
+      "value": "Cart"
+    }
+  ],
+  "cartTrigger.ariaLabel": [
+    {
+      "type": 0,
+      "value": "Toggle mini cart. You have "
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " items in your cart."
+    }
+  ],
+  "checkoutPage.additionalText": [
+    {
+      "type": 0,
+      "value": "You will also receive an email with the details and we will let you know when your order has shipped."
+    }
+  ],
+  "checkoutPage.checkout": [
+    {
+      "type": 0,
+      "value": "Checkout"
+    }
+  ],
+  "checkoutPage.editPaymentInformation": [
+    {
+      "type": 0,
+      "value": "Edit Payment Information"
+    }
+  ],
+  "checkoutPage.emptyMessage": [
+    {
+      "type": 0,
+      "value": "There are no items in your cart."
+    }
+  ],
+  "checkoutPage.errorSubmit": [
+    {
+      "type": 0,
+      "value": "Oops! An error occurred while submitting. Please try again."
+    }
+  ],
+  "checkoutPage.greeting": [
+    {
+      "type": 0,
+      "value": "Welcome"
+    }
+  ],
+  "checkoutPage.guestCheckout": [
+    {
+      "type": 0,
+      "value": "Guest Checkout"
+    }
+  ],
+  "checkoutPage.loadingPaymentInformation": [
+    {
+      "type": 0,
+      "value": "Fetching Payment Information"
+    }
+  ],
+  "checkoutPage.noPaymentAvailable": [
+    {
+      "type": 0,
+      "value": "Payment is currently unavailable."
+    }
+  ],
+  "checkoutPage.orderNumber": [
+    {
+      "type": 0,
+      "value": "Order Number"
+    }
+  ],
+  "checkoutPage.orderSummary": [
+    {
+      "type": 0,
+      "value": "Order Summary"
+    }
+  ],
+  "checkoutPage.paymentInformation": [
+    {
+      "type": 0,
+      "value": "Payment Information"
+    }
+  ],
+  "checkoutPage.paymentInformationStep": [
+    {
+      "type": 0,
+      "value": "3. Payment Information"
+    }
+  ],
+  "checkoutPage.paymentLoadingError": [
+    {
+      "type": 0,
+      "value": "There was an error loading payments."
+    }
+  ],
+  "checkoutPage.paymentMethodStatus": [
+    {
+      "type": 0,
+      "value": "The selected method is not supported for editing."
+    }
+  ],
+  "checkoutPage.placeOrder": [
+    {
+      "type": 0,
+      "value": "Place Order"
+    }
+  ],
+  "checkoutPage.refreshOrTryAgainLater": [
+    {
+      "type": 0,
+      "value": "Please refresh or try again later."
+    }
+  ],
+  "checkoutPage.returnToCart": [
+    {
+      "type": 0,
+      "value": "Return to Cart"
+    }
+  ],
+  "checkoutPage.reviewAndPlaceOrder": [
+    {
+      "type": 0,
+      "value": "Review and Place Order"
+    }
+  ],
+  "checkoutPage.reviewOrder": [
+    {
+      "type": 0,
+      "value": "Review Order"
+    }
+  ],
+  "checkoutPage.shippingMethodStep": [
+    {
+      "type": 0,
+      "value": "2. Shipping Method"
+    }
+  ],
+  "checkoutPage.signInLabel": [
+    {
+      "type": 0,
+      "value": "Sign in for Express Checkout"
+    }
+  ],
+  "checkoutPage.stockStatusMessage": [
+    {
+      "type": 0,
+      "value": "An item in your cart is currently out-of-stock and must be removed in order to Checkout. Please return to your cart to remove the item."
+    }
+  ],
+  "checkoutPage.thankYou": [
+    {
+      "type": 0,
+      "value": "Thank you for your order!"
+    }
+  ],
+  "global.shippingInformation": [
+    {
+      "type": 0,
+      "value": "Shipping Information"
+    }
+  ],
+  "global.shippingMethod": [
+    {
+      "type": 0,
+      "value": "Shipping Method"
+    }
+  ],
+  "miniCart.checkout": [
+    {
+      "type": 0,
+      "value": "CHECKOUT"
+    }
+  ],
+  "miniCart.editCartButton": [
+    {
+      "type": 0,
+      "value": "Edit Shopping Bag"
+    }
+  ],
+  "miniCart.emptyMessage": [
+    {
+      "type": 0,
+      "value": "There are no items in your cart."
+    }
+  ],
+  "miniCart.subtotal": [
+    {
+      "type": 0,
+      "value": "Subtotal:"
+    }
+  ],
+  "miniCart.totalQuantity": [
+    {
+      "type": 0,
+      "value": "Items"
+    }
+  ],
+  "priceSummary.checkoutButton": [
+    {
+      "type": 0,
+      "value": "Proceed to Checkout"
+    }
+  ],
+  "priceSummary.errorText": [
+    {
+      "type": 0,
+      "value": "Something went wrong. Please refresh and try again."
+    }
+  ],
+  "priceSummary.estimatedTotal": [
+    {
+      "type": 0,
+      "value": "Estimated Total"
+    }
+  ],
+  "priceSummary.lineItemLabel": [
+    {
+      "type": 0,
+      "value": "Subtotal"
+    }
+  ],
+  "priceSummary.total": [
+    {
+      "type": 0,
+      "value": "Total"
+    }
+  ],
+  "product.editItem": [
+    {
+      "type": 0,
+      "value": "Edit item"
+    }
+  ],
+  "product.outOfStock": [
+    {
+      "type": 0,
+      "value": "Out-of-stock"
+    }
+  ],
+  "product.price": [
+    {
+      "type": 0,
+      "value": "ea."
+    }
+  ],
+  "product.removeFromCart": [
+    {
+      "type": 0,
+      "value": "Remove from cart"
+    }
+  ],
+  "productListing.loading": [
+    {
+      "type": 0,
+      "value": "Fetching Cart..."
+    }
+  ]
+}
