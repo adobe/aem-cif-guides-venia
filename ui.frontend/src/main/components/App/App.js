@@ -38,6 +38,7 @@ import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
 import CartTrigger from '../Header/cartTrigger';
 import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
 import CartPage from '../CartPage';
+import CheckoutPage from '../CheckoutPage';
 
 import loadLocaleData from './i18n';
 
@@ -98,6 +99,14 @@ const App = props => {
                         <Route path={pagePaths.accountDetails}>
                             <Portal selector={mountingPoints.accountDetails}>
                                 <AccountDetails />
+                            </Portal>
+                        </Route>
+
+                        <Route path={pagePaths.checkoutPage}>
+                            <Portal selector={mountingPoints.checkoutPageContainer}>
+                                <HeadProvider>
+                                    <CheckoutPage />
+                                </HeadProvider>
                             </Portal>
                         </Route>
                     </PeregrineContextProvider>

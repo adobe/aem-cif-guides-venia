@@ -61,13 +61,15 @@ export default {
         accountDetails: '.accountdetails__body',
         resetPasswordPage: '.resetpassword__body',
         productRecs: '[data-is-product-recs]',
-        cartDetailsContainer: '.cartcontainer__body'
+        cartDetailsContainer: '.cartcontainer__body',
+        checkoutPageContainer: '.checkoutpage__body'
     },
     pagePaths: {
         baseUrl,
         addressBook: `${basePath}/my-account/address-book.html`,
         accountDetails: `${basePath}/my-account/account-details.html`,
         cartDetails: `${basePath}/cart-details.html`,
-        resetPassword: `${basePath}/reset-password.html`
+        resetPassword: `${basePath}/reset-password.html`,
+        checkoutPage: `${basePath}/checkout.html`
     }
 };

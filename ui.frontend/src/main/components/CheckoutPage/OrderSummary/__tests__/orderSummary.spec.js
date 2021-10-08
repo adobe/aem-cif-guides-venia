@@ -11,11 +11,17 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-
 import React from 'react';
-import createTestInstance from '@magento/peregrine/lib/util/createTestInstance';
-import { IntlProvider } from 'react-intl';
 
-export default function render(component) {
-    return createTestInstance(<IntlProvider locale="en">{component}</IntlProvider>);
-}
+import render from '../../../utils/test-utils';
+import OrderSummary from '../orderSummary';
+
+jest.mock('@magento/venia-ui/lib/classify');
+jest.mock('../../PriceSummary', () => 'PriceSummary');
+
+test('renders order summary', () => {
+    const mockIsUpdating = jest.fn().mockName('isUpdating');
+    const tree = render(<OrderSummary isUpdating={mockIsUpdating} />);
+
+    expect(tree.toJSON()).toMatchSnapshot();
+});

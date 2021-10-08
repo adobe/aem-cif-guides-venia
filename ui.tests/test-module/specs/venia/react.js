@@ -86,4 +86,11 @@ describe('Venia React Components', () => {
 
         expect($('.cmp-VeniaCartPage__cartPage__root')).toBeDisplayed();
     });
+
+    it('should render the checkout component', () => {
+        // Go to checkout page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/checkout.html`);
+
+        expect($('.cmp-VeniaCheckoutPage__checkoutPage__root')).toBeDisplayed();
+    });
 });

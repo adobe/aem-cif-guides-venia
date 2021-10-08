@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *    Copyright 2021 Adobe. All rights reserved.
+ *    Copyright 2020 Adobe. All rights reserved.
  *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License. You may obtain a copy
  *    of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,10 +12,8 @@
  *
  ******************************************************************************/
 
-import React from 'react';
-import createTestInstance from '@magento/peregrine/lib/util/createTestInstance';
-import { IntlProvider } from 'react-intl';
+import Checkmo from '@magento/venia-sample-payments-checkmo/src/components/summary.js';
 
-export default function render(component) {
-    return createTestInstance(<IntlProvider locale="en">{component}</IntlProvider>);
-}
+export default {
+    checkmo: Checkmo
+};
