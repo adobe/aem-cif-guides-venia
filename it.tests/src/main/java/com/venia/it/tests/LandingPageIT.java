@@ -39,6 +39,6 @@ public class LandingPageIT extends CommerceTestBase {
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(7, elements.size());
+        Assert.assertEquals(6, elements.size());
     }
 }

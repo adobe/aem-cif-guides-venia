@@ -12,8 +12,10 @@
  *
  ******************************************************************************/
 
-import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json'
-import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json'
+import enMessagesCoreComponents from '@adobe/aem-core-cif-react-components/i18n/en.json';
+import enMessagesProductRecs from '@adobe/aem-core-cif-product-recs-extension/i18n/en.json';
+import enMessagesVenia from '@magento/venia-ui/i18n/en_US.json';
+import enProject from '../../../i18n/en.json';
 
-export const messages = { ...enMessagesCoreComponents, ...enMessagesProductRecs };
+export const messages = { ...enMessagesVenia, ...enMessagesCoreComponents, ...enMessagesProductRecs, ...enProject };
 export const locale = 'en';

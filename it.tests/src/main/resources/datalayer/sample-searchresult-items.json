@@ -1,56 +1,56 @@
 [
-  {
-    "searchresults-5931a2d225-item-d8f7aa6253": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 59.0,
-      "xdm:SKU": "24-MB02",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Fusion Backpack"
+    {
+        "searchresults-5931a2d225-item-24b8a07ed4": {
+            "xdm:SKU": "VP06",
+            "xdm:listPrice": 98.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Calista Linen Pants"
+        }
+    },
+    {
+        "searchresults-5931a2d225-item-f60b28fa82": {
+            "xdm:SKU": "VP03",
+            "xdm:listPrice": 88.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Camilla Palazzo Pants"
+        }
+    },
+    {
+        "searchresults-5931a2d225-item-df6faa2c86": {
+            "xdm:SKU": "VD02",
+            "xdm:listPrice": 108.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Candace Dress"
+        }
+    },
+    {
+        "searchresults-5931a2d225-item-358f8d0758": {
+            "xdm:SKU": "VP04",
+            "xdm:listPrice": 98.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Clara Wide Leg Pants"
+        }
+    },
+    {
+        "searchresults-5931a2d225-item-3385ee1d32": {
+            "xdm:SKU": "VP07",
+            "xdm:listPrice": 88.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Fauna Palazzo Pants"
+        }
+    },
+    {
+        "searchresults-5931a2d225-item-089c85bf92": {
+            "xdm:SKU": "VP02",
+            "xdm:listPrice": 88.0,
+            "xdm:currencyCode": "USD",
+            "@type": "core/cif/components/commerce/productlistitem",
+            "dc:title": "Gloria Palazzo Pants"
+        }
     }
-  },
-  {
-    "searchresults-5931a2d225-item-746a9ae1b7": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 54.0,
-      "xdm:SKU": "24-MG03",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Summit Watch"
-    }
-  },
-  {
-    "searchresults-5931a2d225-item-e38fb02cec": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 49.0,
-      "xdm:SKU": "24-WG01",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Bolo Sport Watch"
-    }
-  },
-  {
-    "searchresults-5931a2d225-item-500741b9f1": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 52.0,
-      "xdm:SKU": "MH01",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Chaz Kangeroo Hoodie"
-    }
-  },
-  {
-    "searchresults-5931a2d225-item-9bd673acd2": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 63.0,
-      "xdm:SKU": "MH03",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Bruno Compete Hoodie"
-    }
-  },
-  {
-    "searchresults-5931a2d225-item-bb9507166d": {
-      "xdm:currencyCode": "USD",
-      "xdm:listPrice": 84.0,
-      "xdm:SKU": "WJ04",
-      "@type": "core/cif/components/commerce/productlistitem",
-      "dc:title": "Ingrid Running Jacket"
-    }
-  }
 ]

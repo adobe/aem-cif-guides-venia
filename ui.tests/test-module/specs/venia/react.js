@@ -24,18 +24,6 @@ describe('Venia React Components', () => {
         browser.AEMForceLogout();
         browser.url(config.aem.author.base_url);
         browser.AEMLogin(config.aem.author.username, config.aem.author.password);
-
-        // Setup GraphQL client if running on CircleCI
-        if (process.env.CIRCLECI) {
-            browser.configureGraphqlClient('com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl', {
-                identifier: 'default',
-                url: `${config.aem.author.base_url}/apps/cif-components-examples/graphql`,
-                httpMethod: 'GET',
-                acceptSelfSignedCertificates: 'true',
-                allowHttpProtocol: 'true'
-            });
-            browser.pause(10000);
-        }
     });
 
     beforeEach(() => {
@@ -48,12 +36,12 @@ describe('Venia React Components', () => {
         browser.url(venia_homepage);
 
         // Check that cart trigger button is displayed
-        const cartTrigger = $('.cmp-CartTrigger__cartTrigger__root');
+        const cartTrigger = $('.cmp-VeniaHeader__cartTrigger__trigger');
         expect(cartTrigger).toBeDisplayed();
 
         // Open minicart
         cartTrigger.click();
-        const minicart = $('.cmp-Minicart__header__root');
+        const minicart = $('.cmp-VeniaMiniCart__miniCart__contents');
         expect(minicart).toBeDisplayed();
     });
 
@@ -90,5 +78,19 @@ describe('Venia React Components', () => {
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/reset-password.html?token=abc`);
 
         expect($('.cmp-ResetPassword__ResetPassword__root')).toBeDisplayed();
+    });
+
+    it('should render the cart page', () => {
+        // Go to password cart page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/cart-details.html`);
+
+        expect($('.cmp-VeniaCartPage__cartPage__root')).toBeDisplayed();
+    });
+
+    it('should render the checkout component', () => {
+        // Go to checkout page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/checkout.html`);
+
+        expect($('.cmp-VeniaCheckoutPage__checkoutPage__root')).toBeDisplayed();
     });
 });
