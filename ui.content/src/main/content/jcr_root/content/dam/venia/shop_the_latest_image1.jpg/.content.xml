@@ -9,6 +9,8 @@
         jcr:lastModifiedBy="admin"
         jcr:primaryType="dam:AssetContent">
         <metadata
+            cq:products="VD09"
+            cq:productsType="combinedSku"
             dam:Bitsperpixel="{Long}24"
             dam:extracted="{Date}2019-06-20T13:48:46.488+02:00"
             dam:Fileformat="JPEG"
