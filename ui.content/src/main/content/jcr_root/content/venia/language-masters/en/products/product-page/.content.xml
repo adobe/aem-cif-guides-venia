@@ -9,22 +9,21 @@
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Product page"
         sling:resourceType="venia/components/page">
-        <root
-            jcr:primaryType="nt:unstructured"
-            sling:resourceType="venia/components/container"
+        <root jcr:primaryType="nt:unstructured"
+            jcr:mixinTypes="[cq:LiveRelationship]"  
+            sling:resourceType="venia/components/container" 
             layout="responsiveGrid">
-            <container
-                jcr:primaryType="nt:unstructured"
+            <container jcr:primaryType="nt:unstructured"
+                jcr:mixinTypes="[cq:LiveRelationship]" 
                 sling:resourceType="venia/components/container">
-                <container
-                    jcr:primaryType="nt:unstructured"
-                    sling:resourceType="venia/components/container"
+                <container jcr:primaryType="nt:unstructured"
+                    jcr:mixinTypes="[cq:LiveRelationship]" 
+                    sling:resourceType="venia/components/container" 
                     layout="responsiveGrid">
-                    <product
-                        jcr:primaryType="nt:unstructured"
-                        sling:resourceType="venia/components/commerce/product"/>
-                    <contentfragment_1530
-                        cq:styleIds="[1623400982190]"
+                    <product jcr:primaryType="nt:unstructured"
+                        jcr:mixinTypes="[cq:LiveRelationship]"
+                        sling:resourceType="venia/components/commerce/product" />
+                    <contentfragment_153020966 cq:styleIds="[1623400982190]"
                         jcr:created="{Date}2021-10-11T13:15:30.064+02:00"
                         jcr:createdBy="admin"
                         jcr:lastModified="{Date}2021-10-11T14:21:51.244+02:00"
@@ -36,16 +35,16 @@
                         linkElement="sku"
                         modelPath="/conf/venia/settings/dam/cfm/models/product-marketing-data-model"
                         paragraphScope="all"
-                        text=""/>
-                    <experiencefragment
+                        text="" />
+                    <experiencefragment cq:isCancelledForChildren="{Boolean}true"
+                        jcr:mixinTypes="[cq:LiveRelationship,cq:LiveSyncCancelled]"
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="venia/components/commerce/experiencefragment"
                         fragmentLocation="bottom">
                         <cq:responsive jcr:primaryType="nt:unstructured">
-                            <default
-                                jcr:primaryType="nt:unstructured"
+                            <default jcr:primaryType="nt:unstructured"
                                 offset="0"
-                                width="12"/>
+                                width="12" />
                         </cq:responsive>
                     </experiencefragment>
                 </container>
