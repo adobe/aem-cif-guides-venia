@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:contextHubPath="/etc/cloudsettings/default/contexthub"
+        cq:contextHubSegmentsPath="/etc/segmentation/contexthub"
+        cq:lastModified="{Date}2021-10-15T11:13:08.217+02:00"
+        cq:lastModifiedBy="admin"
+        cq:robotsTags="noindex"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:isCheckedOut="{Boolean}true"
+        jcr:mixinTypes="[mix:versionable]"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Not Found"
+        jcr:uuid="f287e181-10b5-40f8-9a2e-40c3918027d3"
+        sling:resourceType="venia/components/page"
+        pwaCachestrategy="staleWhileRevalidate"
+        pwaDisplay="standalone"
+        pwaOrientation="any">
+        <root
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid">
+                    <text
+                        jcr:created="{Date}2021-10-15T11:02:52.280+02:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2021-10-15T11:08:28.265+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/text"
+                        text="&lt;h1>&amp;nbsp;&lt;/h1>&#xd;&#xa;&lt;h1>Ruh-Roh! Page Not Found&lt;/h1>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>We're sorry, we are unable to fetch this page!&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;"
+                        textIsRich="true">
+                        <cq:responsive jcr:primaryType="nt:unstructured">
+                            <default
+                                jcr:primaryType="nt:unstructured"
+                                offset="3"
+                                width="6"/>
+                        </cq:responsive>
+                    </text>
+                </container>
+            </container>
+        </root>
+    </jcr:content>
+</jcr:root>
