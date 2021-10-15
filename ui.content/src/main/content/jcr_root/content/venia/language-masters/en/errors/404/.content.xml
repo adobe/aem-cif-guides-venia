@@ -37,7 +37,7 @@
                         jcr:lastModifiedBy="admin"
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="venia/components/text"
-                        text="&lt;h1>&amp;nbsp;&lt;/h1>&#xd;&#xa;&lt;h1>Ruh-Roh! Page Not Found&lt;/h1>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>We're sorry, we are unable to fetch this page!&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;"
+                        text="&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;h1>Ruh-Roh! Page Not Found&lt;/h1>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>We're sorry, we are unable to fetch this page!&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xd;&#xa;"
                         textIsRich="true">
                         <cq:responsive jcr:primaryType="nt:unstructured">
                             <default
