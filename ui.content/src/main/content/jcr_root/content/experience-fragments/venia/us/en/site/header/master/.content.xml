@@ -2,8 +2,6 @@
 <jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="cq:Page">
     <jcr:content
-        cq:lastModified="{Date}2021-02-24T12:51:00.455+02:00"
-        cq:lastModifiedBy="admin"
         cq:tags="[]"
         cq:template="/conf/venia/settings/wcm/templates/xf-web-variation"
         cq:xfMasterVariation="{Boolean}true"
@@ -14,25 +12,56 @@
         <root
             jcr:primaryType="nt:unstructured"
             sling:resourceType="venia/components/container"
-            layout="simple">
+            layout="responsiveGrid">
+            <logo jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/commerce/logo">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="1"/>
+                </cq:responsive>
+            </logo>
             <navigation
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="venia/components/navigation"
-                collectAllPages="false"
+                sling:resourceType="venia/components/commerce/navigation"
+                collectAllPages="true"
+                disableShadowing="false"
                 navigationRoot="/content/venia/us/en"
                 skipNavigationRoot="false"
-                structureDepth="1"/>
-            <languagenavigation
-                jcr:lastModified="{Date}2021-02-24T12:51:00.332+02:00"
-                jcr:lastModifiedBy="admin"
+                structureDepth="2"
+                structureStart="1">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="8"/>
+                </cq:responsive>
+            </navigation>
+            <searchbar jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/commerce/searchbar">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="1"/>
+                </cq:responsive>
+            </searchbar>
+            <miniaccount
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="venia/components/languagenavigation"
-                navigationRoot="/content/venia/us"
-                structureDepth="2"/>
-            <search
+                sling:resourceType="venia/components/commerce/miniaccount">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                    offset="0"
+                    width="1"/>
+                </cq:responsive>
+            </miniaccount>
+            <minicart
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="venia/components/search"
-                searchRoot="/content/venia/us"/>
+                sling:resourceType="venia/components/commerce/minicart">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="1"/>
+                </cq:responsive>
+            </minicart>
         </root>
     </jcr:content>
 </jcr:root>

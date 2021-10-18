@@ -27,18 +27,6 @@
     width: 3rem;
 }
 
-.searchTrigger__root {
-    transition-property: color;
-    transition-duration: 224ms;
-    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-    height: 3rem;
-    width: 3rem;
-}
-
-.searchTrigger__open {
-    color: $venia-teal;
-}
-
 .header__root {
     background-color: $venia-grey;
     box-shadow: 0 1px $venia-border;
@@ -51,12 +39,6 @@
     position: sticky;
     top: 0;
     z-index: 10;
-}
-
-.header__open {
-}
-
-.header__closed {
 }
 
 .header__toolbar {
@@ -209,39 +191,92 @@
     padding: 0.5rem 1.5rem;
 }
 
-.searchBar__root {
+.searchbar__trigger {
+    display: block;
+    transition-property: color;
+    transition-duration: 224ms;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    height: 3rem;
+    width: 3rem;
+    margin-top: 0.2rem;
+}
+
+.searchbar__body {
     align-items: center;
     display: none;
     justify-content: center;
     padding: 0 1rem;
+    height: 3.5rem;
 }
 
-.searchBar__root_open {
+.searchbar__body--open {
     display: flex;
 }
 
-.searchBar__form {
+.searchbar__form-container {
+    position: absolute;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.searchbar__form {
     align-items: center;
     display: grid;
     justify-items: stretch;
     margin-bottom: 0.5rem;
-    width: 100%;
+    width: 24rem;
 }
 
-.searchBar__searchInner {
-    position: relative;
+.searchbar__input {
+    background: white;
+    border: 1px solid $venia-text-alt;
+    border-radius: 2px;
+    color: $venia-text;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 24rem;
+    flex: 0 0 100%;
+    font-size: 1rem;
+    height: 2.25rem;
+    margin: 0;
     width: 100%;
+    -webkit-appearance: none;
+
+    :focus {
+        border-color: $venia-teal;
+        box-shadow: 0 0 0 2px $venia-teal-light, 0 0 0.5rem 2px rgba($venia-teal, 0.2);
+        outline: none;
+    }
 }
 
-.searchBar__SearchAutocompleteWrapper {
-    text-align: left;
-    margin: -0.5rem 0 0.5rem;
+header.experiencefragment {
+    background-color: $venia-grey;
+    box-shadow: 0 1px $venia-border;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    min-height: 3.5rem;
+    padding: 0 1rem;
+}
+
+.logo__link {
+    display: inline-flex;
+    position: relative;
+}
+
+.logo__image {
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    top: 50%;
+}
+
+.miniaccount__root {
+    height: 3rem;
+    width: 3rem;
+    position: relative;
+    display: inline-block;
 }

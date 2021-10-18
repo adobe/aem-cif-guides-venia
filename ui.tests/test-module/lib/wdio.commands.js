@@ -54,35 +54,6 @@ browser.addCommand('AEMForceLogout', function () {
     $('form[name="login"]').waitForExist();
 });
 
-browser.addCommand('configureGraphqlClient', async function (factoryPid, properties) {
-    const auth = commons.getAuthenticatedRequestOptions(browser);
-
-    // Update OSGi config of GraphQL client
-    const configurations = await getOsgiConfigurations(auth, factoryPid);
-    const pid = configurations.length > 0 ? configurations[0].pid : '';
-    await editOsgiConfiguration(auth, pid, factoryPid, properties);
-
-    // Update OSGi config of Sling Authenticator to make GraphQL servlet reachable
-    await editOsgiConfiguration(auth, 'org.apache.sling.engine.impl.auth.SlingAuthenticator', null, {
-        'auth.sudo.cookie': 'sling.sudo',
-        'auth.sudo.parameter': 'sudo',
-        'auth.annonymous': 'false',
-        'sling.auth.requirements': [
-            '+/',
-            '-/libs/granite/core/content/login',
-            '-/etc.clientlibs',
-            '-/etc/clientlibs/granite',
-            '-/libs/dam/remoteassets/content/loginerror',
-            '-/apps/cif-components-examples/graphql'
-        ],
-        'sling.auth.anonymous.user': '',
-        'sling.auth.anonymous.password': 'unmodified',
-        'auth.http': 'preemptive',
-        'auth.http.realm': 'Sling+(Development)',
-        'auth.uri.suffix': '/j_security_check'
-    });
-});
-
 /**
  * Close all additional windows which might have been opened by a test.
  */
@@ -247,45 +218,6 @@ browser.addCommand('EditorOpenSidePanel', function () {
         toggleButton.click();
     }
 });
-
-async function getOsgiConfigurations(auth, factoryPid) {
-    const options = {
-        ...auth,
-        method: 'GET',
-        uri: url.resolve(config.aem.author.base_url, '/system/console/configMgr/*.json'),
-        json: true
-    };
-
-    const configurations = await request(options);
-    const configuration = configurations.filter(c => c.factoryPid === factoryPid);
-
-    return configuration;
-}
-
-async function editOsgiConfiguration(auth, pid, factoryPid, properties) {
-    const form = {
-        apply: 'true',
-        action: 'ajaxConfigManager',
-        propertylist: Object.keys(properties).join(','),
-        _charset_: 'utf-8',
-        ...properties
-    };
-    if (factoryPid) {
-        form.factoryPid = factoryPid;
-    }
-
-    const options = {
-        ...auth,
-        method: 'POST',
-        uri: url.resolve(config.aem.author.base_url, `/system/console/configMgr/${pid}`),
-        form,
-        simple: false,
-        resolveWithFullResponse: true,
-        useQuerystring: true
-    };
-    const { statusCode } = await request(options);
-    expect(statusCode).toEqual(302);
-}
 
 async function fileHandle(filePath) {
     if (config.upload_url) {

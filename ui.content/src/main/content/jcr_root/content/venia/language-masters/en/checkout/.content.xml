@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2020-09-17T16:00:12.953+02:00"
+        cq:lastModifiedBy="admin"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Venia Demo Store - Checkout"
+        sling:resourceType="venia/components/page"
+        pageTitle="Checkout"
+        hideInNav="{Boolean}true">
+        <root
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid">
+                    <checkoutpage
+                        jcr:created="{Date}2020-09-22T16:06:43.023+02:00"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2020-09-22T16:06:43.023+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/commerce/checkoutpage"/>
+                </container>
+            </container>
+        </root>
+    </jcr:content>
+</jcr:root>

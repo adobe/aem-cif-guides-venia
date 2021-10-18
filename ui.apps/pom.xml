@@ -21,16 +21,16 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
-        <version>2021.05.25-SNAPSHOT</version>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
+        <version>2021.09.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>venia.ui.apps</artifactId>
+    <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
     <packaging>content-package</packaging>
     <name>Venia - UI apps</name>
     <description>UI apps package for Venia</description>
@@ -48,15 +48,13 @@
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <configuration>
-                    <group>com.venia</group>
-                    <name>venia.ui.apps</name>
-                    <classifier>${project.classifier}</classifier>
+                    <group>com.adobe.aem.guides</group>
+                    <name>aem-cif-guides-venia.ui.apps</name>
                     <packageType>application</packageType>
-                    <accessControlHandling>merge</accessControlHandling>
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.apps.structure</artifactId>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
                         </repositoryStructurePackage>
                     </repositoryStructurePackages>
                     <dependencies>
@@ -76,18 +74,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.3</version>
-            </plugin>
-            <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
-                    <verbose>true</verbose>
-                    <failOnError>true</failOnError>
-                </configuration>
             </plugin>
 
             <plugin>
@@ -116,89 +105,26 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>cloud</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.jackrabbit</groupId>
-                        <artifactId>filevault-package-maven-plugin</artifactId>
-                        <configuration>
-                            <!-- Exclude configs only needed for the 'classic' profile -->
-                            <excludes>
-                                <exclude>**/com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config</exclude>
-                                <exclude>**/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl-default.config</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.aem</groupId>
-                    <artifactId>aem-sdk-api</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>classic</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.aem</groupId>
-                    <artifactId>uber-jar</artifactId>
-                    <classifier>apis</classifier>
-                </dependency>
-                <dependency>
-                    <groupId>javax.jcr</groupId>
-                    <artifactId>jcr</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.day.cq.wcm</groupId>
-                    <artifactId>cq-wcm-taglib</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <!-- ====================================================================== -->
     <!-- D E P E N D E N C I E S                                                -->
     <!-- ====================================================================== -->
     <dependencies>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.core</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.core</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
         </dependency>
-
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.frontend</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.frontend</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
-
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.apps.structure</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-        </dependency>
-
-        <dependency>
-            <groupId>com.adobe.aem</groupId>
-            <artifactId>aem-sdk-api</artifactId>
         </dependency>
 
         <!-- Adobe CIF Dependencies -->
@@ -220,15 +146,19 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>graphql-client</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>magento-graphql</artifactId>
+            <scope>provided</scope>
         </dependency>
+
         <!-- HTL dependencies needed for the HTL Maven Plugin source code generation -->
         <dependency>
             <groupId>org.apache.sling</groupId>
@@ -240,6 +170,13 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.scripting.sightly.runtime</artifactId>
             <version>1.2.0-1.4.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Other dependencies -->
+        <dependency>
+            <groupId>com.adobe.cq</groupId>
+            <artifactId>core.wcm.components.core</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

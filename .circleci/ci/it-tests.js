@@ -18,7 +18,35 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT } = process.env;
+
+const updateGraphqlClientConfiguration = (pid) => {
+    if (!pid) {
+        // create new configuration
+        pid = encodeURIComponent('[Temporary PID replaced by real PID upon save]');
+    } else {
+        pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
+    }
+
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders" \
+                -d "identifier=default" \
+                -d "url=${COMMERCE_ENDPOINT}" \
+                -d "httpMethod=GET"
+    `)
+}
+
+const updateGraphqlProxyServlet = () => {
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "propertylist=graphQLOriginUrl" \
+                -d "graphQLOriginUrl=${COMMERCE_ENDPOINT}"
+    `)
+}
 
 try {
     ci.stage("Integration Tests");
@@ -39,11 +67,13 @@ try {
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
+            extras += ` --install-file ${buildPath}/classic/all/target/aem-cif-guides-venia.all-classic-${veniaVersion}.zip`
 
         } else if (classifier == 'cloud') {
             // Download latest add-on release from artifactory
             ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=cif-cloud-ready-feature-pkg -Dversion=LATEST -Dtype=far -Dclassifier=cq-commerce-addon-authorfar -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon.far`);
             extras = ` --install-file ${buildPath}/dependencies/addon.far`;
+            extras += ` --install-file ${buildPath}/all/target/aem-cif-guides-venia.all-${veniaVersion}.zip`
         }
 
         // Install SNAPSHOT or current version of CIF examples bundle
@@ -58,14 +88,24 @@ try {
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
-            --install-file ${buildPath}/all/target/venia.all-${veniaVersion}-${classifier}.zip \
             --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
+
+    // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
+    if (classifier == 'classic') {
+        updateGraphqlClientConfiguration();
+    } else {
+        // update the existing default endpoint
+        updateGraphqlClientConfiguration('default');
+    }
+
+    // Configure GraphQL Proxy
+    updateGraphqlProxyServlet();
 
     // Run integration tests
     if (TYPE === 'integration') {
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal,${classifier}`); // The -Plocal profile comes from the AEM archetype 
+            ci.sh(`mvn clean verify -U -B -Plocal`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {

@@ -1,42 +1,62 @@
 {
-  "product-500741b9f1": {
-    "xdm:listPrice": 52.0,
-    "xdm:categories": [
-      {
-        "repo:id": "category-4a49acf8a6",
-        "xdm:name": "category-1",
-        "xdm:asset": {
-          "repo:path": "/url/to/image",
-          "xdm:tags": [],
-          "@type": "image",
-          "repo:id": "image-5e4329fc2c"
-        }
-      }
-    ],
-    "xdm:SKU": "MH01",
-    "xdm:assets": [
-      {
-        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_main_2.jpg",
-        "xdm:tags": [],
-        "@type": "image",
-        "repo:id": "image-1b75bd4564"
-      },
-      {
-        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_alt1_2.jpg",
-        "xdm:tags": [],
-        "@type": "image",
-        "repo:id": "image-72c282d214"
-      },
-      {
-        "repo:path": "/content/dam/core-components-examples/library/cif-sample-assets/catalog/product/chaz-kangeroo-hoodie/mh01-gray_back_2.jpg",
-        "xdm:tags": [],
-        "@type": "image",
-        "repo:id": "image-b01e75ba46"
-      }
-    ],
-    "xdm:currencyCode": "USD",
-    "dc:title": "Chaz Kangeroo Hoodie",
-    "@type": "venia/components/commerce/product",
-    "dc:description": "<p>Ideal for cold-weather training or work outdoors, the Chaz Hoodie promises superior warmth with every wear. Thick material blocks out the wind as ribbed cuffs and bottom band seal in body heat.</p>\n<p>• Two-tone gray heather hoodie.<br />• Drawstring-adjustable hood. <br />• Machine wash/dry.</p>"
-  }
+    "product-dc59ad50df": {
+        "xdm:listPrice": 78.0,
+        "xdm:SKU": "VP05",
+        "xdm:assets": [
+            {
+                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_main_4.jpg",
+                "repo:id": "image-73439b9cf3",
+                "@type": "image"
+            },
+            {
+                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_alt_2.jpg",
+                "repo:id": "image-2e75bb2439",
+                "@type": "image"
+            },
+            {
+                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_back_2.jpg",
+                "repo:id": "image-40bcf141f9",
+                "@type": "image"
+            },
+            {
+                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05_look_2.jpg",
+                "repo:id": "image-e049cce860",
+                "@type": "image"
+            }
+        ],
+        "xdm:categories": [
+            {
+                "repo:id": "category-cf9d757f29",
+                "xdm:name": "Bottoms",
+                "xdm:asset": {
+                    "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/minimalist.jpg",
+                    "repo:id": "image-74c855fbf3",
+                    "@type": "image"
+                }
+            },
+            {
+                "repo:id": "category-6e60cf4797",
+                "xdm:name": "Pants & Shorts",
+                "xdm:asset": null
+            },
+            {
+                "repo:id": "category-b8a3caa888",
+                "xdm:name": "Shop The Look",
+                "xdm:asset": {
+                    "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/beachy.jpg",
+                    "repo:id": "image-8a0806aaab",
+                    "@type": "image"
+                }
+            },
+            {
+                "repo:id": "category-df146c27a3",
+                "xdm:name": "Minimalist Sensibility",
+                "xdm:asset": null
+            }
+        ],
+        "xdm:currencyCode": "USD",
+        "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&quot; inseam</li><li>Machine wash, line dry</li></ul>",
+        "dc:title": "Honora Wide Leg Pants",
+        "@type": "venia/components/commerce/product"
+    }
 }

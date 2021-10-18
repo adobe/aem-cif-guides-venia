@@ -66,33 +66,28 @@ For detailed configuration options see [Configuring and customizing product and 
 
 ## How to build
 
-**Important**: The Venia project has two build profiles depending on the target platform where you deploy the project:
-* `cloud` (default profile): this is the default profile and targets AEM as a Cloud Service (AEMaaCS). This is active by default if you don't specify a profile or if `-Pcloud` is defined.
-* `classic`: this profile is for Abobe Managed Services (AMS) or on-premise deployments. This is defined with the `-Pclassic` profile.
-
-_Note that while the 'cloud' profile is active by default, the default behavior of maven is to disable it when any other profile is specified on the command line. This means that, for example, one has to explicitly specify the 'cloud' profile when using one of the installation profiles shown below._
-
-To build all the modules with the default `cloud` profile, run in the project root directory the following command with Maven 3:
+To build all the modules, run in the project root directory the following command with Maven 3:
 
     mvn clean install
 
+This will build only the artefacts for an AEM as a Cloud Service target. To build the artefacts for AEM on-premise as target 
+use the `-Pclassic` profile:
+
+    mvn clean install -Pclassic
+
 If you have a running AEM instance you can build and package the whole project and deploy into AEM with
 
-    mvn clean install -PautoInstallSinglePackage,cloud
+    mvn clean install -PautoInstallSinglePackage
 
 Or to deploy it to a publish instance, run
 
-    mvn clean install -PautoInstallSinglePackagePublish,cloud
-
-Or alternatively
-
-    mvn clean install -PautoInstallSinglePackage,cloud -Daem.port=4503
+    mvn clean install -PautoInstallSinglePackagePublish
 
 Or to deploy only the bundle to the author, run
 
-    mvn clean install -PautoInstallBundle,cloud
+    mvn clean install -PautoInstallBundle
 
-If you are building the Venia demo for on-premise deployment, simply use `mvn clean install -Pclassic` for the top-level command that builds all the modules, and replace the `cloud` profile with `classic` in the other example commands like `mvn clean install -PautoInstallPackage,classic`.
+The `classic` profile can be combined with either of the examples mentioned above. 
 
 ## Client-side Components
 The client-side CIF core components access the Magento GraphQL endpoint directly, so all calls have to either be served from the same endpoint as AEM or served via a proxy that adds CORS headers.
@@ -174,7 +169,7 @@ The project comes with the auto-public repository configured. To set up the repo
 
 The Venia demo is only released on Github but not on Maven Central like other projects like the CIF components. To perform a release, we use a dedicated profile to make sure all modules versions are updated:
 
-`mvn release:prepare release:clean -Prelease-prepare`
+`mvn release:prepare release:clean -Pclassic`
 
 Releases must be done on the `main` branch.
 

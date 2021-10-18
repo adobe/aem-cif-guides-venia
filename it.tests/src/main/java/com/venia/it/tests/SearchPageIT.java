@@ -15,6 +15,7 @@
 package com.venia.it.tests;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,10 @@ public class SearchPageIT extends CommerceTestBase {
 
     @Test
     public void testSearchResultsWithSampleData() throws ClientException, IOException {
-        List<NameValuePair> parameters = Collections.singletonList(new BasicNameValuePair("search_query", "test"));
+        List<NameValuePair> parameters = Arrays.asList(
+            new BasicNameValuePair("search_query", "pants"),
+            new BasicNameValuePair("sort_key", "name"),
+            new BasicNameValuePair("sort_order", "asc"));
         SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_SEARCH_PAGE + ".html", parameters, 200);
         Document doc = Jsoup.parse(response.getContent());
 
@@ -57,7 +61,7 @@ public class SearchPageIT extends CommerceTestBase {
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(7, elements.size());
+        Assert.assertEquals(6, elements.size());
 
         // Verify search result gallery datalayer
         elements = doc.select(SEARCHRESULTS_SEARCH_ROOT_SELECTOR);

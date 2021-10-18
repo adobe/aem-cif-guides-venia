@@ -21,16 +21,16 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
-        <version>2021.05.25-SNAPSHOT</version>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
+        <version>2021.09.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>venia.ui.content</artifactId>
+    <artifactId>aem-cif-guides-venia.ui.content</artifactId>
     <packaging>content-package</packaging>
     <name>Venia - UI content</name>
     <description>UI content package for Venia</description>
@@ -39,38 +39,9 @@
     <!-- B U I L D   D E F I N I T I O N                                        -->
     <!-- ====================================================================== -->
     <build>
+        <sourceDirectory>src/main/content/jcr_root</sourceDirectory>
+
         <plugins>
-            <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-cq-conf-content</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Copies the right .content.xml file depending on the profile -->
-                            <sourceFile>${basedir}/src/main/content/jcr_root/conf/venia/settings/cloudconfigs/commerce/.content-${project.classifier}.xml</sourceFile>
-                            <destinationFile>${basedir}/src/main/content/jcr_root/conf/venia/settings/cloudconfigs/commerce/.content.xml</destinationFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-cq-var-content</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Copies the right filter.xml file depending on the profile -->
-                            <sourceFile>${basedir}/src/main/content/filter-templates/filter-${project.classifier}.xml</sourceFile>
-                            <destinationFile>${basedir}/src/main/content/META-INF/vault/filter.xml</destinationFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- ====================================================================== -->
             <!-- V A U L T   P A C K A G E   P L U G I N S                              -->
             <!-- ====================================================================== -->
@@ -78,98 +49,52 @@
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <configuration>
-                    <group>com.venia</group>
-                    <name>venia.ui.content</name>
-                    <classifier>${project.classifier}</classifier>
+                    <group>com.adobe.aem.guides</group>
+                    <name>aem-cif-guides-venia.ui.content</name>
                     <packageType>content</packageType>
                     <accessControlHandling>merge</accessControlHandling>
-                    <validatorsSettings>
-                        <!-- disable nodetype validation as workaround until JCRVLT-463 got fixed -->
-                        <jackrabbit-nodetypes>
-                            <isDisabled>true</isDisabled>
-                        </jackrabbit-nodetypes>
-                        <jackrabbit-filter>
-                            <options>
-                                <validRoots>/conf,/content,/content/experience-fragments,/content/dam</validRoots>
-                            </options>
-                        </jackrabbit-filter>
-                    </validatorsSettings>
+                    <showImportPackageReport>false</showImportPackageReport>
+                    <repositoryStructurePackages>
+                        <repositoryStructurePackage>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
+                        </repositoryStructurePackage>
+                    </repositoryStructurePackages>
                     <dependencies>
                         <dependency>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.apps</artifactId>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
                             <version>${project.version}</version>
-                            <classifier>${project.classifier}</classifier>
                         </dependency>
                     </dependencies>
-                    <excludes>
-                        <!-- Depending on the profile, one of these two files is copied to .content.xml -->
-                        <!-- but they are both excluded from the content package -->
-                        <exclude>**/.content-cloud.xml</exclude>
-                        <exclude>**/.content-classic.xml</exclude>
-                    </excludes>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.3</version>
             </plugin>
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
                 <artifactId>content-package-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <verbose>true</verbose>
-                    <failOnError>true</failOnError>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>cloud</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.aem</groupId>
-                    <artifactId>aem-sdk-api</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>classic</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.adobe.aem</groupId>
-                    <artifactId>uber-jar</artifactId>
-                    <classifier>apis</classifier>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
     <!-- ====================================================================== -->
     <!-- D E P E N D E N C I E S                                                -->
     <!-- ====================================================================== -->
     <dependencies>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.core</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
+            <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.apps</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.core</artifactId>
             <version>${project.version}</version>
-            <classifier>${project.classifier}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>

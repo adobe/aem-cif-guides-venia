@@ -21,16 +21,16 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
-        <version>2021.05.25-SNAPSHOT</version>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
+        <version>2021.09.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>venia.ui.config</artifactId>
+    <artifactId>aem-cif-guides-venia.ui.config</artifactId>
     <packaging>content-package</packaging>
     <name>Venia - UI config</name>
     <description>UI config package for Venia</description>
@@ -39,30 +39,24 @@
     <!-- B U I L D   D E F I N I T I O N                                        -->
     <!-- ====================================================================== -->
     <build>
-        <sourceDirectory>src/content/jcr_root</sourceDirectory>
+        <sourceDirectory>src/main/content/jcr_root</sourceDirectory>
 
         <plugins>
             <plugin>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <configuration>
-                    <group>com.venia</group>
-                    <name>venia.ui.config</name>
-                    <classifier>${project.classifier}</classifier>
+                    <group>com.adobe.aem.guides</group>
+                    <name>aem-cif-guides-venia.ui.config</name>
                     <packageType>container</packageType>
                     <showImportPackageReport>false</showImportPackageReport>
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
-                            <groupId>com.venia</groupId>
-                            <artifactId>venia.ui.apps.structure</artifactId>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
                         </repositoryStructurePackage>
                     </repositoryStructurePackages>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.3</version>
             </plugin>
             <plugin>
                 <groupId>com.day.jcr.vault</groupId>
@@ -71,40 +65,10 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>cloud</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.jackrabbit</groupId>
-                        <artifactId>filevault-package-maven-plugin</artifactId>
-                        <configuration>
-                            <!-- Exclude configs only needed for the 'classic' profile -->
-                            <excludes>
-                                <exclude>**/com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~default.cfg.json</exclude>
-                                <exclude>**/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default.cfg.json</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>classic</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
-            <groupId>com.venia</groupId>
-            <artifactId>venia.ui.apps.structure</artifactId>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>

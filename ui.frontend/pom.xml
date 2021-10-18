@@ -21,16 +21,16 @@
     <!-- P A R E N T  P R O J E C T  D E S C R I P T I O N                      -->
     <!-- ====================================================================== -->
     <parent>
-        <groupId>com.venia</groupId>
-        <artifactId>venia</artifactId>
-        <version>2021.05.25-SNAPSHOT</version>
+        <groupId>com.adobe.aem.guides</groupId>
+        <artifactId>aem-cif-guides-venia</artifactId>
+        <version>2021.09.24-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- ====================================================================== -->
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
-    <artifactId>venia.ui.frontend</artifactId>
+    <artifactId>aem-cif-guides-venia.ui.frontend</artifactId>
     <packaging>pom</packaging>
     <name>Venia - UI Frontend</name>
 
@@ -40,22 +40,6 @@
     <build>
         <sourceDirectory>src/main/content/jcr_root</sourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>npm run prod</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run prod</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -146,6 +130,7 @@
                                     <arguments>
                                         <argument>link</argument>
                                         <argument>@adobe/aem-core-cif-react-components</argument>
+                                        <argument>@adobe/aem-core-cif-product-recs-extension</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -159,7 +144,7 @@
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>run</argument>
-                                        <argument>dev</argument>
+                                        <argument>prod</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -192,6 +177,7 @@
                                         <argument>install</argument>
                                         <argument>-S</argument>
                                         <argument>@adobe/aem-core-cif-react-components@${core.cif.components.version}</argument>
+                                        <argument>@adobe/aem-core-cif-product-recs-extension@${core.cif.components.version}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

@@ -89,6 +89,11 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     }
 
     @Override
+    public String getImageAlt() {
+        return productTeaser.getImageAlt();
+    }
+
+    @Override
     public String getName() {
         return productTeaser.getName();
     }
