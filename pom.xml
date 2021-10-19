@@ -754,8 +754,9 @@ Bundle-DocURL:
 
             <dependency>
                 <groupId>com.adobe.acs</groupId>
-                <artifactId>acs-aem-commons</artifactId>
+                <artifactId>acs-aem-commons-content</artifactId>
                 <version>${acs.aem.commons.version}</version>
+                <type>zip</type>
             </dependency>
 
             <!-- Adobe CIF Dependencies -->

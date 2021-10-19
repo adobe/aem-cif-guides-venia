@@ -72,7 +72,7 @@
                         </dependency>
                         <dependency>
                             <groupId>com.adobe.acs</groupId>
-                            <artifactId>acs-aem-commons</artifactId>
+                            <artifactId>acs-aem-commons-content</artifactId>
                         </dependency>
                     </dependencies>
                 </configuration>
@@ -180,8 +180,9 @@
         <!-- Other dependencies -->
         <dependency>
             <groupId>com.adobe.acs</groupId>
-            <artifactId>acs-aem-commons</artifactId>
+            <artifactId>acs-aem-commons-content</artifactId>
             <scope>provided</scope>
+            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>com.adobe.cq</groupId>

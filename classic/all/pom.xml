@@ -296,7 +296,6 @@
         <dependency>
             <groupId>com.adobe.acs</groupId>
             <artifactId>acs-aem-commons-content</artifactId>
-            <version>5.0.12</version>
             <type>zip</type>
         </dependency>
 
