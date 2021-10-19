@@ -59,14 +59,6 @@ public class ProductPageIT extends CommerceTestBase {
         elements = doc.select("title");
         Assert.assertEquals("Honora Wide Leg Pants", elements.first().html());
 
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=keywords]");
-        //Assert.assertEquals("Meta keywords for Chaz Kangeroo Hoodie", elements.first().attr("content"));
-
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=description]");
-        //Assert.assertEquals("Meta description for Chaz Kangeroo Hoodie", elements.first().attr("content"));
-
         elements = doc.select("link[rel=canonical]");
         Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
 
