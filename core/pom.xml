@@ -143,6 +143,10 @@ Import-Package: javax.annotation;version=0.0.0,*
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.annotation.versioning</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>

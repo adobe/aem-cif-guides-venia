@@ -70,14 +70,6 @@ public class CategoryPageIT extends CommerceTestBase {
         elements = doc.select("title");
         assertEquals("Pants &amp; Shorts", elements.first().html());
 
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=keywords]");
-        //Assert.assertEquals("Meta keywords for Outdoor Collection", elements.first().attr("content"));
-
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=description]");
-        //Assert.assertEquals("Meta description for Outdoor Collection", elements.first().attr("content"));
-
         elements = doc.select("link[rel=canonical]");
         assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
 
