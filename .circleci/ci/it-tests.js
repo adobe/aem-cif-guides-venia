@@ -48,6 +48,15 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const refreshComponentCache = (path = '/apps/venia/components/page') => {
+    const now = new Date();
+    ci.sh(`curl -v "http://localhost:4502${path}" \
+                -u "admin:admin" \
+                -d 'jcr:lastModified=${now.toISOString()}' \
+                -d 'jcr:lastModified@TypeHint=Date'
+    `);
+}
+
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
@@ -101,6 +110,9 @@ try {
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
+
+    // refresh ComponentCacheImpl
+    refreshComponentCache();
 
     // Run integration tests
     if (TYPE === 'integration') {
