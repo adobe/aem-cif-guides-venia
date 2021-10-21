@@ -62,7 +62,6 @@ module.exports = (env) => ({
             },
             {
                 test: /\.css$/,
-                include: /node_modules\/@magento/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
@@ -71,19 +70,6 @@ module.exports = (env) => ({
                             modules: {
                                 localIdentName: 'cmp-Venia[folder]__[name]__[local]'
                             }
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.css$/,
-                exclude: /node_modules\/@magento/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: true
                         }
                     }
                 ]

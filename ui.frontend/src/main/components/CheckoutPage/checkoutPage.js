@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 import { useWindowSize, useToasts } from '@magento/peregrine';
 import { CHECKOUT_STEP, useCheckoutPage } from '@magento/peregrine/lib/talons/CheckoutPage/useCheckoutPage';
 
-import { useStyle } from '@magento/venia-ui/lib/classify';
+import useStyle from '@magento/peregrine/lib/util/shallowMerge';
 import Button from '@magento/venia-ui/lib/components/Button';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';

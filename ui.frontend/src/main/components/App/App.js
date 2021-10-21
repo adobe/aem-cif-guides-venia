@@ -23,11 +23,7 @@ import {
     CommerceApp,
     Portal,
     ConfigContextProvider,
-    AuthBar,
-    AccountContainer,
-    AddressBook,
     BundleProductOptions,
-    AccountDetails,
     ResetPassword,
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
@@ -37,13 +33,16 @@ import { ProductRecsGallery, StorefrontInstanceContextProvider } from '@adobe/ae
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
 import CartTrigger from '../Header/cartTrigger';
 import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
+import AddressBookPage from '../AddressBookPage';
 import CartPage from '../CartPage';
 import CheckoutPage from '../CheckoutPage';
+import AccountTrigger from '../Header/accountTrigger';
+import OrderHistoryPage from '../OrderHistoryPage';
+import AccountInformationPage from '../AccountInformationPage';
 
 import loadLocaleData from './i18n';
 
 import '../../site/main.scss';
-
 const App = props => {
     const { mountingPoints, pagePaths, storeView } = config;
     const { locale, messages } = props;
@@ -64,17 +63,13 @@ const App = props => {
                             <CartTrigger />
                         </Portal>
 
-                        <Portal selector={mountingPoints.authBarContainer}>
-                            <AuthBar />
-                        </Portal>
-
                         <Portal selector={mountingPoints.accountContainer}>
-                            <AccountContainer />
+                            <AccountTrigger />
                         </Portal>
 
                         <Route path={pagePaths.addressBook}>
                             <Portal selector={mountingPoints.addressBookContainer}>
-                                <AddressBook />
+                                <AddressBookPage />
                             </Portal>
                         </Route>
 
@@ -98,7 +93,13 @@ const App = props => {
 
                         <Route path={pagePaths.accountDetails}>
                             <Portal selector={mountingPoints.accountDetails}>
-                                <AccountDetails />
+                                <AccountInformationPage />
+                            </Portal>
+                        </Route>
+
+                        <Route path={pagePaths.orderHistory}>
+                            <Portal selector={mountingPoints.orderHistoryPageContainer}>
+                                <OrderHistoryPage />
                             </Portal>
                         </Route>
 
@@ -119,6 +120,7 @@ const App = props => {
 window.onload = async () => {
     const { locale, messages } = await loadLocaleData();
     const root = document.createElement('div');
+    root.id = 'root';
 
     document.body.appendChild(root);
 

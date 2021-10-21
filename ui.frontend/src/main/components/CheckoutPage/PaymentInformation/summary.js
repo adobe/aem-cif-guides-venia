@@ -17,7 +17,7 @@ import { FormattedMessage } from 'react-intl';
 import { shape, string, func } from 'prop-types';
 
 import { useSummary } from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/useSummary';
-import { useStyle } from '@magento/venia-ui/lib/classify';
+import useStyle from '@magento/peregrine/lib/util/shallowMerge';
 
 import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/summary.css';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';

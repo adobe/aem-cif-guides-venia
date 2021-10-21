@@ -67,10 +67,6 @@ const CartTrigger = props => {
                     {maybeItemCounter}
                 </button>
             </div>
-            <button aria-label={buttonAriaLabel} className={classes.link} onClick={handleLinkClick}>
-                <Icon src={ShoppingCartIcon} />
-                {maybeItemCounter}
-            </button>
             <Suspense fallback={null}>
                 <MiniCart isOpen={miniCartIsOpen} setIsOpen={setMiniCartIsOpen} ref={miniCartRef} />
             </Suspense>

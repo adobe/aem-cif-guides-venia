@@ -18,7 +18,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { gql } from '@apollo/client';
 import Price from '@magento/venia-ui/lib/components/Price';
 import { usePriceSummary } from '@magento/peregrine/lib/talons/CartPage/PriceSummary/usePriceSummary';
-import { useStyle } from '@magento/venia-ui/lib/classify';
+import useStyle from '@magento/peregrine/lib/util/shallowMerge';
 import defaultClasses from '@magento/venia-ui/lib/components/CartPage/PriceSummary/priceSummary.css';
 import DiscountSummary from '@magento/venia-ui/lib/components/CartPage/PriceSummary/discountSummary';
 import GiftCardSummary from '@magento/venia-ui/lib/components/CartPage/PriceSummary/giftCardSummary';

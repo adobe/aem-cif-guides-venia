@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- *    Copyright 2020 Adobe. All rights reserved.
+ *    Copyright 2021 Adobe. All rights reserved.
  *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License. You may obtain a copy
  *    of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,33 +11,47 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-
 import React from 'react';
-import { shape, string, bool } from 'prop-types';
+import { func, shape, string } from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import PriceSummary from '../PriceSummary';
+
 import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useAccountMenuItems } from './useAccountMenuItems';
 
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderSummary/orderSummary.css';
+import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenuItems.css';
 
-const OrderSummary = props => {
+const AccountMenuItems = props => {
+    const { onSignOut } = props;
+
+    const talonProps = useAccountMenuItems({ onSignOut });
+    const { handleSignOut, menuItems } = talonProps;
+
     const classes = useStyle(defaultClasses, props.classes);
+
+    const menu = menuItems.map(item => {
+        return (
+            <a className={classes.link} key={item.name} href={item.url}>
+                <FormattedMessage id={item.id} defaultMessage={item.name} />
+            </a>
+        );
+    });
+
     return (
         <div className={classes.root}>
-            <h1 className={classes.title}>
-                <FormattedMessage id={'checkoutPage.orderSummary'} defaultMessage={'Order Summary'} />
-            </h1>
-            <PriceSummary isUpdating={props.isUpdating} />
+            {menu}
+            <button className={classes.signOut} onClick={handleSignOut} type="button">
+                <FormattedMessage id={'accountMenu.signOutButtonText'} defaultMessage={'Sign Out'} />
+            </button>
         </div>
     );
 };
 
-export default OrderSummary;
+export default AccountMenuItems;
 
-OrderSummary.propTypes = {
+AccountMenuItems.propTypes = {
     classes: shape({
-        root: string,
-        title: string
+        link: string,
+        signOut: string
     }),
-    isUpdating: bool
+    onSignOut: func
 };

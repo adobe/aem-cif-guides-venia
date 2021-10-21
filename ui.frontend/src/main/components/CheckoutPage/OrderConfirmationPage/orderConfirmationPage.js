@@ -17,7 +17,7 @@ import { FormattedMessage } from 'react-intl';
 import { object, shape, string } from 'prop-types';
 import { useOrderConfirmationPage } from '@magento/peregrine/lib/talons/CheckoutPage/OrderConfirmationPage/useOrderConfirmationPage';
 
-import { useStyle } from '@magento/venia-ui/lib/classify';
+import useStyle from '@magento/peregrine/lib/util/shallowMerge';
 import ItemsReview from '@magento/venia-ui/lib/components/CheckoutPage/ItemsReview';
 import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderConfirmationPage/orderConfirmationPage.css';
 

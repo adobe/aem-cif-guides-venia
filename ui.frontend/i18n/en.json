@@ -1,4 +1,46 @@
 {
+  "accountInformationPage.accountInformation": [
+    {
+      "type": 0,
+      "value": "Account Information"
+    }
+  ],
+  "accountInformationPage.errorTryAgain": [
+    {
+      "type": 0,
+      "value": "Something went wrong. Please refresh and try again."
+    }
+  ],
+  "accountMenu.signOutButtonText": [
+    {
+      "type": 0,
+      "value": "Sign Out"
+    }
+  ],
+  "accountTrigger.ariaLabel": [
+    {
+      "type": 0,
+      "value": "Toggle My Account Menu"
+    }
+  ],
+  "accountTrigger.buttonFallback": [
+    {
+      "type": 0,
+      "value": "Sign In"
+    }
+  ],
+  "addressBookPage.addAddressText": [
+    {
+      "type": 0,
+      "value": "Add an Address"
+    }
+  ],
+  "addressBookPage.addressBookText": [
+    {
+      "type": 0,
+      "value": "Address Book"
+    }
+  ],
   "cartPage.emptyCart": [
     {
       "type": 0,
@@ -169,6 +211,30 @@
       "value": "Thank you for your order!"
     }
   ],
+  "global.editButton": [
+    {
+      "type": 0,
+      "value": "Edit"
+    }
+  ],
+  "global.email": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
+  "global.name": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "global.password": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "global.shippingInformation": [
     {
       "type": 0,
@@ -209,6 +275,62 @@
     {
       "type": 0,
       "value": "Items"
+    }
+  ],
+  "orderHistoryPage.emptyDataMessage": [
+    {
+      "type": 0,
+      "value": "You don't have any orders yet."
+    }
+  ],
+  "orderHistoryPage.invalidOrderNumber": [
+    {
+      "type": 0,
+      "value": "Order \""
+    },
+    {
+      "type": 1,
+      "value": "number"
+    },
+    {
+      "type": 0,
+      "value": "\" was not found."
+    }
+  ],
+  "orderHistoryPage.loadMore": [
+    {
+      "type": 0,
+      "value": "Load More"
+    }
+  ],
+  "orderHistoryPage.pageInfo": [
+    {
+      "type": 0,
+      "value": "Showing "
+    },
+    {
+      "type": 1,
+      "value": "current"
+    },
+    {
+      "type": 0,
+      "value": " of "
+    },
+    {
+      "type": 1,
+      "value": "total"
+    }
+  ],
+  "orderHistoryPage.pageTitleText": [
+    {
+      "type": 0,
+      "value": "Order History"
+    }
+  ],
+  "orderHistoryPage.search": [
+    {
+      "type": 0,
+      "value": "Search by Order Number"
     }
   ],
   "priceSummary.checkoutButton": [
