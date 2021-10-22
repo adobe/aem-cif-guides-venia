@@ -500,6 +500,35 @@
                         </cq:styleGroups>
                     </default>
                 </contentfragment>
+                <productrecommendations jcr:primaryType="nt:unstructured">
+                    <policy_1634893843292
+                        jcr:lastModified="{Date}2021-10-22T14:52:04.188+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Product Recs Content Page"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,just-for-you,recently-viewed]">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </policy_1634893843292>
+                    <policy_1615613612510752
+                        jcr:lastModified="{Date}2021-10-22T14:51:37.978+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Product Recs Product Page"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,viewed-viewed,viewed-bought,more-like-this,recently-viewed]">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </policy_1615613612510752>
+                    <policy_1616422079779221
+                        jcr:lastModified="{Date}2021-10-22T15:04:58.807+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Product Recs XF"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,viewed-viewed,viewed-bought,bought-bought,more-like-this,just-for-you,recently-viewed]">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </policy_1616422079779221>
+                </productrecommendations>
             </commerce>
         </components>
     </venia>
