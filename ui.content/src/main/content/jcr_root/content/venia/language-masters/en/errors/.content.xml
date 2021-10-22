@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:contextHubPath="/etc/cloudsettings/default/contexthub"
+        cq:contextHubSegmentsPath="/etc/segmentation/contexthub"
+        cq:lastModified="{Date}2021-10-15T11:06:45.169+02:00"
+        cq:lastModifiedBy="admin"
+        cq:redirectTarget="/content/venia/language-masters/en"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Errors"
+        sling:resourceType="venia/components/page"
+        hideInNav="true"
+        pwaCachestrategy="staleWhileRevalidate"
+        pwaDisplay="standalone"
+        pwaOrientation="any">
+        <root
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid"/>
+            </container>
+        </root>
+    </jcr:content>
+    <_x0034_04/>
+</jcr:root>

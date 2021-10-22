@@ -15,8 +15,12 @@
 package com.venia.it.tests;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.jsoup.Jsoup;
@@ -27,6 +31,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
+
+import static org.junit.Assert.assertEquals;
 
 public class CategoryPageIT extends CommerceTestBase {
 
@@ -42,36 +48,36 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Verify category name
         Elements elements = doc.select(PRODUCTLIST_TITLE_SELECTOR);
-        Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
+        assertEquals("Pants &amp; Shorts", elements.first().html());
 
         // Check that search filters are displayed
         elements = doc.select(PRODUCTLIST_SELECTOR + SEARCH_FILTERS_SELECTOR);
-        Assert.assertEquals(1, elements.size());
+        assertEquals(1, elements.size());
 
         // Check that the 6 products are displayed on the first page
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
-        Assert.assertEquals(6, elements.size());
+        assertEquals(6, elements.size());
 
         // Verify breadcrumb: Home > Outdoor > Collection
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        Assert.assertEquals(3, elements.size());
+        assertEquals(3, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(6, elements.size());
+        assertEquals(6, elements.size());
 
         // Check the meta data
         elements = doc.select("title");
-        Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
+        assertEquals("Pants &amp; Shorts", elements.first().html());
 
         elements = doc.select("link[rel=canonical]");
-        Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
+        assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
 
         // Verify category gallery datalayer
         elements = doc.select(PRODUCTLIST_GALLERY_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-gallery.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals(expected, result);
 
         // Verify product items datalayer attributes
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
@@ -80,7 +86,7 @@ public class CategoryPageIT extends CommerceTestBase {
             .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-items.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -90,7 +96,7 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Verify category name
         Elements elements = doc.select(PRODUCTLIST_TITLE_SELECTOR);
-        Assert.assertEquals("Category name", elements.first().html());
+        assertEquals("Category name", elements.first().html());
 
         // Check that search filters are NOT displayed
         elements = doc.select(PRODUCTLIST_SELECTOR + SEARCH_FILTERS_SELECTOR);
@@ -98,17 +104,17 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Check that the 6 products are displayed on the first page
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
-        Assert.assertEquals(6, elements.size());
+        assertEquals(6, elements.size());
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        Assert.assertEquals(1, elements.size());
+        assertEquals(1, elements.size());
 
         // Verify category gallery datalayer
         elements = doc.select(PRODUCTLIST_GALLERY_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-gallery.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals(expected, result);
 
         // Verify product items datalayer attributes
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
@@ -117,6 +123,17 @@ public class CategoryPageIT extends CommerceTestBase {
             .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/placeholder-category-items.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testCategoryNotFoundPage() throws ClientException {
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/unknown-category.html";
+        List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair("wcmmode","disabled"));
+        SlingHttpResponse response = adminAuthor.doGet(pagePath, params, 404);
+        Document doc = Jsoup.parse(response.getContent());
+
+        Elements elements = doc.select(H1_SELECTOR);
+        assertEquals("Ruh-Roh! Page Not Found",elements.first().text());
     }
 }
