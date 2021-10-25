@@ -2,21 +2,26 @@
 
 exports[`it renders correctly 1`] = `
 <div>
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
-  &lt;Link&gt;[object Object]&lt;/Link&gt;
+  <a
+    href="/content/venia/us/en/my-account/order-history.html"
+  >
+    Order History
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/address-book.html"
+  >
+    Address Book
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/account-details.html"
+  >
+    Account Information
+  </a>
   <button
-    onClick={[MockFunction handleSignOut]}
+    onClick={[Function]}
     type="button"
   >
-    <mock-FormattedMessage
-      defaultMessage="Sign Out"
-      id="accountMenu.signOutButtonText"
-    />
+    Sign Out
   </button>
 </div>
 `;

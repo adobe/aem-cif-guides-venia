@@ -70,7 +70,6 @@ export default {
         addressBook: `${basePath}/my-account/address-book.html`,
         accountDetails: `${basePath}/my-account/account-details.html`,
         cartDetails: `${basePath}/cart-details.html`,
-        resetPassword: `${basePath}/reset-password.html`,
         checkoutPage: `${basePath}/checkout.html`,
         orderHistory: `${basePath}/my-account/order-history.html`
     }

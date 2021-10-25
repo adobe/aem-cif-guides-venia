@@ -18,12 +18,12 @@ import { useAccountMenu } from '@magento/peregrine/lib/talons/Header/useAccountM
 
 import AccountMenu from '../accountMenu';
 
-jest.mock('../../../classify');
+jest.mock('@magento/venia-ui/lib/classify');
 /* eslint-disable react/display-name */
 jest.mock('../accountMenuItems', () => props => <mock-AccountMenuItems {...props} />);
-jest.mock('../../SignIn/signIn', () => props => <mock-SignIn {...props} />);
-jest.mock('../../ForgotPassword', () => props => <mock-ForgotPassword {...props} />);
-jest.mock('../../CreateAccount', () => props => <mock-CreateAccount {...props} />);
+jest.mock('@magento/venia-ui/lib/components/SignIn/signIn', () => props => <mock-SignIn {...props} />);
+jest.mock('@magento/venia-ui/lib/components/ForgotPassword', () => props => <mock-ForgotPassword {...props} />);
+jest.mock('@magento/venia-ui/lib/components/CreateAccount', () => props => <mock-CreateAccount {...props} />);
 /* eslint-enable react/display-name */
 
 jest.mock('@magento/peregrine/lib/talons/Header/useAccountMenu', () => ({

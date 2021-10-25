@@ -18,7 +18,7 @@ import { useIntl } from 'react-intl';
 
 import { usePaymentMethods } from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/usePaymentMethods';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import RadioGroup from '@magento/venia-ui/lib/components/RadioGroup';
 import Radio from '@magento/venia-ui/lib/components/RadioGroup/radio';
 import paymentMethodOperations from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentMethods.gql';

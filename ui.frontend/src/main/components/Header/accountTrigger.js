@@ -16,7 +16,7 @@ import { useIntl } from 'react-intl';
 import { shape, string } from 'prop-types';
 
 import { useAccountTrigger } from '@magento/peregrine/lib/talons/Header/useAccountTrigger';
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import AccountChip from '@magento/venia-ui/lib/components/AccountChip';
 

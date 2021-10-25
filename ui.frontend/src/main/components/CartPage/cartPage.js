@@ -15,7 +15,7 @@ import React, { useEffect } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Check } from 'react-feather';
 import { useCartPage } from '@magento/peregrine/lib/talons/CartPage/useCartPage';
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import { useToasts } from '@magento/peregrine/lib/Toasts/useToasts';
 
 import Icon from '@magento/venia-ui/lib/components/Icon';

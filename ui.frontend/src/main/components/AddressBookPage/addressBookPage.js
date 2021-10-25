@@ -16,7 +16,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { PlusSquare } from 'react-feather';
 
 import { useAddressBookPage } from '@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage';
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import LinkButton from '@magento/venia-ui/lib/components/LinkButton';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';

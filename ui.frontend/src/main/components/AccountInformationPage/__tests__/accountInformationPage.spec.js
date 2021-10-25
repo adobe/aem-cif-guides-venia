@@ -12,14 +12,14 @@
  *
  ******************************************************************************/
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
+import render from '../../utils/test-utils';
 import { useAccountInformationPage } from '@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage';
 
 import AccountInformationPage from '../accountInformationPage';
-import LoadingIndicator from '../../LoadingIndicator';
+import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
 
 jest.mock('@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage');
-jest.mock('../../../classify');
+jest.mock('@magento/venia-ui/lib/classify');
 
 const handleSubmit = jest.fn().mockName('handleSubmit');
 const handleCancel = jest.fn().mockName('handleCancel');
@@ -43,8 +43,6 @@ const emptyFormProps = {
     showUpdateMode
 };
 
-jest.mock('../../Head', () => ({ StoreTitle: () => 'Account Information' }));
-
 jest.mock('react-router-dom', () => ({
     // eslint-disable-next-line react/display-name
     Redirect: props => <mock-Redirect {...props} />
@@ -55,7 +53,7 @@ test('redirects when not authenticated', () => {
         isSignedIn: false
     });
 
-    const tree = createTestInstance(<AccountInformationPage />);
+    const tree = render(<AccountInformationPage />);
     expect(tree.toJSON()).toMatchSnapshot();
 });
 
@@ -65,7 +63,7 @@ test('renders a loading indicator', () => {
         isSignedIn: true
     });
 
-    const { root } = createTestInstance(<AccountInformationPage />);
+    const { root } = render(<AccountInformationPage />);
 
     expect(root.findByType(LoadingIndicator)).toBeTruthy();
 });
@@ -76,6 +74,6 @@ test('renders form error', () => {
         loadDataError: { loadDataError: 'Form Error' }
     });
 
-    const tree = createTestInstance(<AccountInformationPage />);
+    const tree = render(<AccountInformationPage />);
     expect(tree.toJSON()).toMatchSnapshot();
 });

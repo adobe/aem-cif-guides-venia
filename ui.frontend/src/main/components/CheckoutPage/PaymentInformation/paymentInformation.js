@@ -20,7 +20,7 @@ import { shape, func, string, bool, instanceOf } from 'prop-types';
 import { usePaymentInformation } from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/usePaymentInformation';
 import CheckoutError from '@magento/peregrine/lib/talons/CheckoutPage/CheckoutError';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import paymentInformationOperations from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentInformation.gql';
 import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentInformation.css';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';

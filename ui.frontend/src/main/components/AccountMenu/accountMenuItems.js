@@ -15,7 +15,7 @@ import React from 'react';
 import { func, shape, string } from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import { useAccountMenuItems } from './useAccountMenuItems';
 
 import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenuItems.css';

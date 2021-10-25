@@ -12,11 +12,12 @@
  *
  ******************************************************************************/
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
+import render from '../../utils/test-utils';
 import { useToasts } from '@magento/peregrine/lib/Toasts';
 import { useOrderHistoryPage } from '@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage';
 
-import OrderHistoryPage from '@magento/venia-ui/lib/components/orderHistoryPage';
+import { MockedProvider } from '@apollo/client/testing';
+import OrderHistoryPage from '../orderHistoryPage';
 
 jest.mock('@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage', () => ({
     useOrderHistoryPage: jest
@@ -52,9 +53,8 @@ jest.mock('@magento/peregrine/lib/Toasts', () => ({
         ])
 }));
 
-jest.mock('../../../classify');
-jest.mock('../../Head', () => ({ StoreTitle: () => 'Title' }));
-jest.mock('../orderRow', () => 'OrderRow');
+jest.mock('@magento/venia-ui/lib/classify');
+jest.mock('@magento/venia-ui/lib/components/OrderHistoryPage/orderRow', () => 'OrderRow');
 
 const talonProps = {
     errorMessage: null,
@@ -75,7 +75,11 @@ test('renders loading indicator', () => {
         orders: []
     });
 
-    const tree = createTestInstance(<OrderHistoryPage />);
+    const tree = render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -87,7 +91,11 @@ test('renders correctly without data', () => {
         orders: []
     });
 
-    const tree = createTestInstance(<OrderHistoryPage />);
+    const tree = render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -101,7 +109,11 @@ test('renders correctly with data', () => {
         pageInfo: { current: 3, total: 6 }
     });
 
-    const tree = createTestInstance(<OrderHistoryPage />);
+    const tree = render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -114,7 +126,11 @@ test('renders error messages if any', () => {
     const addToast = jest.fn();
     useToasts.mockReturnValueOnce([{}, { addToast }]);
 
-    createTestInstance(<OrderHistoryPage />);
+    render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(addToast).toHaveBeenCalled();
     expect(addToast.mock.calls).toMatchSnapshot();
@@ -128,7 +144,11 @@ test('renders invalid order id message if order id is wrong', () => {
         orders: []
     });
 
-    const tree = createTestInstance(<OrderHistoryPage />);
+    const tree = render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -141,7 +161,11 @@ test('renders no orders message is orders is empty', () => {
         orders: []
     });
 
-    const tree = createTestInstance(<OrderHistoryPage />);
+    const tree = render(
+        <MockedProvider>
+            <OrderHistoryPage />
+        </MockedProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });

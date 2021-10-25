@@ -16,7 +16,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 import { useAccountInformationPage } from '@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import Button from '@magento/venia-ui/lib/components/Button';
 import { Message } from '@magento/venia-ui/lib/components/Field';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';

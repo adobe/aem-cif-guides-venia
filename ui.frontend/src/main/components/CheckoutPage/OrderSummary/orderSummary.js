@@ -16,7 +16,7 @@ import React from 'react';
 import { shape, string, bool } from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import PriceSummary from '../PriceSummary';
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderSummary/orderSummary.css';
 
