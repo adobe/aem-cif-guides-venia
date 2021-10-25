@@ -50,7 +50,7 @@ describe('Venia React Components', () => {
         browser.url(venia_homepage);
 
         // Check sign in button
-        const signInButton = $('.cmp-AccountContainer__accountTrigger__root');
+        const signInButton = $('.cmp-cmp-VeniaHeader__accountTrigger__trigger');
         expect(signInButton).toBeDisplayed();
 
         // Check sign in form
@@ -63,14 +63,14 @@ describe('Venia React Components', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
 
-        expect($('.cmp-AddressBook__addressBook__root')).toBeDisplayed();
+        expect($('.cmp-VeniaAddressBookPage__addressBookPage__root')).toBeDisplayed();
     });
 
     it('should render the account details', () => {
         // Go to account details page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
 
-        expect($('.cmp-AccountDetails__accountDetails__messageText')).toBeDisplayed();
+        expect($('.cmp-VeniaAccountInformationPage__accountInformationPage__root')).toBeDisplayed();
     });
 
     it('should render the password reset component', () => {
