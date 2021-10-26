@@ -13,14 +13,14 @@
  ******************************************************************************/
 import React from 'react';
 import render from '../../utils/test-utils';
-import { useAddressBookPage } from '@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage';
-
+import { useAddressBookPage } from '../../../talons/AddressBookPage/useAddressBookPage';
+import { ConfigContextProvider } from '@adobe/aem-core-cif-react-components';
 import AddressBookPage from '../addressBookPage';
 
 jest.mock('@magento/venia-ui/lib/classify');
 
 jest.mock('@magento/venia-ui/lib/components/Icon', () => 'Icon');
-jest.mock('@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage', () => {
+jest.mock('../../../talons/AddressBookPage/useAddressBookPage', () => {
     return {
         useAddressBookPage: jest.fn()
     };
@@ -49,12 +49,22 @@ const talonProps = {
     isLoading: false
 };
 
+const config = {
+    pagePaths: {
+        baseUrl: '/content/venia/us/en.html'
+    }
+};
+
 it('renders correctly when there are no existing addresses', () => {
     // Arrange.
     useAddressBookPage.mockReturnValueOnce(talonProps);
 
     // Act.
-    const instance = render(<AddressBookPage {...props} />);
+    const instance = render(
+        <ConfigContextProvider config={config}>
+            <AddressBookPage {...props} />
+        </ConfigContextProvider>
+    );
 
     // Assert.
     expect(instance.toJSON()).toMatchSnapshot();
@@ -63,7 +73,11 @@ it('renders correctly when there are no existing addresses', () => {
 it('renders loading indicator', () => {
     useAddressBookPage.mockReturnValueOnce({ ...talonProps, isLoading: true });
 
-    const instance = render(<AddressBookPage {...props} />);
+    const instance = render(
+        <ConfigContextProvider config={config}>
+            <AddressBookPage {...props} />
+        </ConfigContextProvider>
+    );
 
     expect(instance.toJSON()).toMatchSnapshot();
 });
@@ -81,7 +95,11 @@ it('renders correctly when there are existing addresses', () => {
     useAddressBookPage.mockReturnValueOnce(myTalonProps);
 
     // Act.
-    const instance = render(<AddressBookPage {...props} />);
+    const instance = render(
+        <ConfigContextProvider config={config}>
+            <AddressBookPage {...props} />
+        </ConfigContextProvider>
+    );
 
     // Assert.
     expect(instance.toJSON()).toMatchSnapshot();
@@ -102,7 +120,11 @@ it('renders delete confirmation on address that is being deleted', () => {
     useAddressBookPage.mockReturnValueOnce(myTalonProps);
 
     // Act.
-    const instance = render(<AddressBookPage {...props} />);
+    const instance = render(
+        <ConfigContextProvider config={config}>
+            <AddressBookPage {...props} />
+        </ConfigContextProvider>
+    );
 
     // Assert.
     expect(instance.toJSON()).toMatchSnapshot();

@@ -14,9 +14,10 @@
 import React from 'react';
 import render from '../../utils/test-utils';
 import { useAccountInformationPage } from '@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage';
-
 import AccountInformationPage from '../accountInformationPage';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
+import { ConfigContextProvider } from '@adobe/aem-core-cif-react-components';
+import { useHistory } from 'react-router-dom';
 
 jest.mock('@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage');
 jest.mock('@magento/venia-ui/lib/classify');
@@ -43,37 +44,72 @@ const emptyFormProps = {
     showUpdateMode
 };
 
-jest.mock('react-router-dom', () => ({
-    // eslint-disable-next-line react/display-name
-    Redirect: props => <mock-Redirect {...props} />
-}));
+const config = {
+    pagePaths: {
+        baseUrl: '/content/venia/us/en.html'
+    }
+};
 
-test('redirects when not authenticated', () => {
-    useAccountInformationPage.mockReturnValue({
-        isSignedIn: false
-    });
-
-    const tree = render(<AccountInformationPage />);
-    expect(tree.toJSON()).toMatchSnapshot();
+jest.mock('react-router-dom', () => {
+    const replace = jest.fn();
+    const go = jest.fn();
+    return {
+        useHistory: () => ({
+            replace,
+            go
+        })
+    };
 });
 
-test('renders a loading indicator', () => {
-    useAccountInformationPage.mockReturnValueOnce({
-        initialValues: null,
-        isSignedIn: true
+describe('AccountInformationPage', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
 
-    const { root } = render(<AccountInformationPage />);
+    test('redirects when not authenticated', () => {
+        useAccountInformationPage.mockReturnValue({
+            isSignedIn: false
+        });
 
-    expect(root.findByType(LoadingIndicator)).toBeTruthy();
-});
+        const { replace, go } = useHistory();
 
-test('renders form error', () => {
-    useAccountInformationPage.mockReturnValueOnce({
-        ...emptyFormProps,
-        loadDataError: { loadDataError: 'Form Error' }
+        render(
+            <ConfigContextProvider config={config}>
+                <AccountInformationPage />
+            </ConfigContextProvider>
+        );
+        expect(replace).toHaveBeenCalledTimes(1);
+        expect(replace).toHaveBeenCalledWith(config.pagePaths.baseUrl);
+        expect(go).toHaveBeenCalledTimes(1);
+        expect(go).toHaveBeenCalledWith(0);
     });
 
-    const tree = render(<AccountInformationPage />);
-    expect(tree.toJSON()).toMatchSnapshot();
+    test('renders a loading indicator', () => {
+        useAccountInformationPage.mockReturnValueOnce({
+            initialValues: null,
+            isSignedIn: true
+        });
+
+        const { root } = render(
+            <ConfigContextProvider config={config}>
+                <AccountInformationPage />
+            </ConfigContextProvider>
+        );
+
+        expect(root.findByType(LoadingIndicator)).toBeTruthy();
+    });
+
+    test('renders form error', () => {
+        useAccountInformationPage.mockReturnValueOnce({
+            ...emptyFormProps,
+            loadDataError: { loadDataError: 'Form Error' }
+        });
+
+        const tree = render(
+            <ConfigContextProvider config={config}>
+                <AccountInformationPage />
+            </ConfigContextProvider>
+        );
+        expect(tree.toJSON()).toMatchSnapshot();
+    });
 });
