@@ -48,37 +48,28 @@ describe('Venia React Components', () => {
     it('should redirect to homepage from address book page without login', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
-        browser.waitUntil(
-            () => (browser.getUrl()) === venia_homepage,
-            {
-                timeout: 5000,
-                timeoutMsg: 'expected browser to navigate to homepage after 5s'
-            }
-        );
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
     });
 
     it('should redirect to homepage from account info page without login', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
-        browser.waitUntil(
-            () => (browser.getUrl()) === venia_homepage,
-            {
-                timeout: 5000,
-                timeoutMsg: 'expected browser to navigate to homepage after 5s'
-            }
-        );
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
     });
 
     it('should redirect to homepage from order history page without login', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
-        browser.waitUntil(
-            () => (browser.getUrl()) === venia_homepage,
-            {
-                timeout: 5000,
-                timeoutMsg: 'expected browser to navigate to homepage after 5s'
-            }
-        );
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
     });
 
     it('should render the sign in component in the header', () => {

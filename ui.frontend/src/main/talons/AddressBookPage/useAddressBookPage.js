@@ -54,41 +54,22 @@ export const useAddressBookPage = (props = { baseUrl: '/content/venia/us/en.html
 
     const history = useHistory();
 
-    const { data: customerAddressesData, loading } = useQuery(
-        getCustomerAddressesQuery,
-        {
-            fetchPolicy: 'cache-and-network',
-            skip: !isSignedIn
-        }
-    );
-    const [
-        deleteCustomerAddress,
-        { loading: isDeletingCustomerAddress }
-    ] = useMutation(deleteCustomerAddressMutation);
+    const { data: customerAddressesData, loading } = useQuery(getCustomerAddressesQuery, {
+        fetchPolicy: 'cache-and-network',
+        skip: !isSignedIn
+    });
+    const [deleteCustomerAddress, { loading: isDeletingCustomerAddress }] = useMutation(deleteCustomerAddressMutation);
 
     const [confirmDeleteAddressId, setConfirmDeleteAddressId] = useState();
 
     const isRefetching = !!customerAddressesData && loading;
     const customerAddresses =
-        (customerAddressesData &&
-            customerAddressesData.customer &&
-            customerAddressesData.customer.addresses) ||
-        [];
+        (customerAddressesData && customerAddressesData.customer && customerAddressesData.customer.addresses) || [];
 
-    const [
-        createCustomerAddress,
-        {
-            error: createCustomerAddressError,
-            loading: isCreatingCustomerAddress
-        }
-    ] = useMutation(createCustomerAddressMutation);
-    const [
-        updateCustomerAddress,
-        {
-            error: updateCustomerAddressError,
-            loading: isUpdatingCustomerAddress
-        }
-    ] = useMutation(updateCustomerAddressMutation);
+    const [createCustomerAddress, { error: createCustomerAddressError, loading: isCreatingCustomerAddress }] =
+        useMutation(createCustomerAddressMutation);
+    const [updateCustomerAddress, { error: updateCustomerAddressError, loading: isUpdatingCustomerAddress }] =
+        useMutation(updateCustomerAddressMutation);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDialogEditMode, setIsDialogEditMode] = useState(false);
@@ -141,11 +122,7 @@ export const useAddressBookPage = (props = { baseUrl: '/content/venia/us/en.html
         } catch {
             return;
         }
-    }, [
-        confirmDeleteAddressId,
-        deleteCustomerAddress,
-        getCustomerAddressesQuery
-    ]);
+    }, [confirmDeleteAddressId, deleteCustomerAddress, getCustomerAddressesQuery]);
 
     const handleEditAddress = useCallback(address => {
         // Hide all previous errors when we open the dialog.
@@ -217,13 +194,7 @@ export const useAddressBookPage = (props = { baseUrl: '/content/venia/us/en.html
                 }
             }
         },
-        [
-            createCustomerAddress,
-            formAddress,
-            getCustomerAddressesQuery,
-            isDialogEditMode,
-            updateCustomerAddress
-        ]
+        [createCustomerAddress, formAddress, getCustomerAddressesQuery, isDialogEditMode, updateCustomerAddress]
     );
 
     const formErrors = useMemo(() => {

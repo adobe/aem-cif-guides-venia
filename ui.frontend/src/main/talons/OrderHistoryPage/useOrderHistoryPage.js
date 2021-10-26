@@ -76,10 +76,7 @@ export const useOrderHistoryPage = (props = { baseUrl: '/content/venia/us/en.htm
         return null;
     }, [orderData, pageSize]);
 
-    const derivedErrorMessage = useMemo(
-        () => deriveErrorMessage([getOrderError]),
-        [getOrderError]
-    );
+    const derivedErrorMessage = useMemo(() => deriveErrorMessage([getOrderError]), [getOrderError]);
 
     const handleReset = useCallback(() => {
         setSearchText('');
