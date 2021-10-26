@@ -109,7 +109,7 @@ describe('Venia React Components', () => {
 
     it('should render the order history component', () => {
         // Go to order history page
-        browser.url(`${config.aem.author.base_url}/content/venia/us/en/order-history.html`);
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
 
         expect($('.cmp-VeniaOrderHistoryPage__orderHistoryPage__root')).toBeDisplayed();
     });
