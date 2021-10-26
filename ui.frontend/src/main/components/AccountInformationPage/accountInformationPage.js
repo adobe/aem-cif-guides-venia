@@ -11,10 +11,11 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-import React, { Fragment, Suspense } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { Redirect } from 'react-router-dom';
+import React, { Fragment, Suspense, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 import { useAccountInformationPage } from '@magento/peregrine/lib/talons/AccountInformationPage/useAccountInformationPage';
+import { useConfigContext } from '@adobe/aem-core-cif-react-components';
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Button from '@magento/venia-ui/lib/components/Button';
@@ -27,8 +28,10 @@ import AccountInformationPageOperations from '@magento/venia-ui/lib/components/A
 const EditModal = React.lazy(() => import('@magento/venia-ui/lib/components/AccountInformationPage/editModal'));
 
 const AccountInformationPage = props => {
+    const { pagePaths } = useConfigContext();
     const classes = useStyle(defaultClasses, props.classes);
 
+    const history = useHistory();
     const talonProps = useAccountInformationPage({
         ...AccountInformationPageOperations
     });
@@ -46,11 +49,14 @@ const AccountInformationPage = props => {
         shouldShowNewPassword,
         showUpdateMode
     } = talonProps;
-    const { formatMessage } = useIntl();
 
-    if (!isSignedIn) {
-        return <Redirect to="/" />;
-    }
+    // If the user is no longer signed in, redirect to the home page.
+    useEffect(() => {
+        if (!isSignedIn) {
+            history.replace(pagePaths.baseUrl);
+            history.go(0);
+        }
+    }, [history, isSignedIn]);
 
     const errorMessage = loadDataError ? (
         <Message>

@@ -16,10 +16,11 @@ import { useIntl, FormattedMessage } from 'react-intl';
 import { Search as SearchIcon, AlertCircle as AlertCircleIcon, ArrowRight as SubmitIcon } from 'react-feather';
 import { shape, string } from 'prop-types';
 import { Form } from 'informed';
+import { useConfigContext } from '@adobe/aem-core-cif-react-components';
 
 import { useToasts } from '@magento/peregrine/lib/Toasts';
 import OrderHistoryContextProvider from '@magento/peregrine/lib/talons/OrderHistoryPage/orderHistoryContext';
-import { useOrderHistoryPage } from '@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage';
+import { useOrderHistoryPage } from '../../talons/OrderHistoryPage/useOrderHistoryPage';
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Button from '@magento/venia-ui/lib/components/Button';
@@ -42,7 +43,8 @@ const errorIcon = (
 const searchIcon = <Icon src={SearchIcon} size={24} />;
 
 const OrderHistoryPage = props => {
-    const talonProps = useOrderHistoryPage();
+    const { pagePaths } = useConfigContext();
+    const talonProps = useOrderHistoryPage({ baseUrl: pagePaths.baseUrl });
     const {
         errorMessage,
         loadMoreOrders,

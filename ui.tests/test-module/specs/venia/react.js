@@ -50,7 +50,7 @@ describe('Venia React Components', () => {
         browser.url(venia_homepage);
 
         // Check sign in button
-        const signInButton = $('.cmp-cmp-VeniaHeader__accountTrigger__trigger');
+        const signInButton = $('.cmp-VeniaHeader__accountTrigger__trigger');
         expect(signInButton).toBeDisplayed();
 
         // Check sign in form

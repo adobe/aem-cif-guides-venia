@@ -14,8 +14,9 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { PlusSquare } from 'react-feather';
+import { useConfigContext } from '@adobe/aem-core-cif-react-components';
 
-import { useAddressBookPage } from '@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage';
+import { useAddressBookPage } from '../../talons/AddressBookPage/useAddressBookPage';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import LinkButton from '@magento/venia-ui/lib/components/LinkButton';
@@ -26,7 +27,8 @@ import AddEditDialog from '@magento/venia-ui/lib/components/AddressBookPage/addE
 import defaultClasses from '@magento/venia-ui/lib/components/AddressBookPage/addressBookPage.css';
 
 const AddressBookPage = props => {
-    const talonProps = useAddressBookPage();
+    const { pagePaths } = useConfigContext();
+    const talonProps = useAddressBookPage({ baseUrl: pagePaths.baseUrl });
     const {
         confirmDeleteAddressId,
         countryDisplayNameMap,
