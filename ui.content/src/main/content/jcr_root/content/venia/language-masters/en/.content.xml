@@ -14,6 +14,7 @@
         cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]" 
         jcr:primaryType="cq:PageContent" 
         jcr:title="Venia Demo Store - Home"
+        errorPages="/content/venia/language-masters/en/errors"
         navRoot="{Boolean}true" 
         sling:resourceType="venia/components/page" 
         pageTitle="Home">
