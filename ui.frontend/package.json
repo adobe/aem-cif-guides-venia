@@ -10,7 +10,8 @@
   "main": "src/main/site/main.js",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "pwa": "webpack -d  --env.mode development --config ./webpack.pwa.js && clientlib --verbose",
+    "pwa": "webpack -d --env.mode development --config ./webpack.pwa.js --display verbose && clientlib --verbose",
+    "pwa:prod": "webpack -p --env.mode production --config ./webpack.pwa.js --display verbose && clientlib --verbose",
     "dev": "npm run i18n:extract-compile && webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
     "prod": "npm run i18n:extract-compile && webpack -p --config ./webpack.prod.js && clientlib --verbose",
     "start": "npm run i18n:extract-compile && webpack-dev-server --open --config ./webpack.dev.js",
@@ -109,9 +110,6 @@
     "react-redux": "^7.1.3",
     "react-router-dom": "~5.1.0",
     "redux": "^4.0.5"
-  },
-  "resolutions": {
-    "workbox-build": "~6.0.2"
   },
   "browserslist": [
     "last 2 version",

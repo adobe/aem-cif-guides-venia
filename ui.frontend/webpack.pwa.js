@@ -23,7 +23,6 @@ const { DefinePlugin } = webpack;
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
-// Magento Buildpack stuff
 const BuildBus = require('@magento/pwa-buildpack/lib/BuildBus');
 const { MagentoResolver, ModuleTransformConfig } = require('@magento/pwa-buildpack');
 const getModuleRules = require('@magento/pwa-buildpack/lib/WebpackTools/configureWebpack/getModuleRules');
@@ -44,7 +43,6 @@ async function configureExtensions(options) {
     bus.attach('configureExtensions', (...args) => busTrackingQueue.push(args));
     bus.init();
 
-    // hardcode, because we do not use UPWARD
     const babelRootMode = 'root';
 
     const resolverOpts = {
@@ -58,9 +56,7 @@ async function configureExtensions(options) {
     }
 
     const resolver = new MagentoResolver(resolverOpts);
-
     const hasFlag = await getSpecialFlags(options.special, bus, resolver);
-
     const transforms = new ModuleTransformConfig(
         resolver,
         require(path.resolve(context, 'package.json')).name
@@ -80,19 +76,11 @@ async function configureExtensions(options) {
         transformRequests
     })
 
-    // console.log('rule', JSON.stringify(rule, null, 4));
-
     return rule;
-
-
-
-    // TODO: ConfigHelper to assemble
-}
-
+};
 
 module.exports = async env => {
-
-    console.log('env', env);
+    const { mode } = env;
 
     const SOURCE_ROOT = __dirname + '/src/main';
     const alias = Object.keys(pkg.dependencies)
@@ -118,11 +106,11 @@ module.exports = async env => {
                 esModules: true
             }
         },
-        env
+        ...env
     });
 
     const config = {
-        mode: 'production',
+        mode,
         entry: {
             site: SOURCE_ROOT + '/site/main.js'
         },
