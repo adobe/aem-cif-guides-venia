@@ -24,7 +24,6 @@ import {
     Portal,
     ConfigContextProvider,
     BundleProductOptions,
-    ResetPassword,
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
 
@@ -78,12 +77,6 @@ const App = props => {
                                 <HeadProvider>
                                     <CartPage />
                                 </HeadProvider>
-                            </Portal>
-                        </Route>
-
-                        <Route path={pagePaths.resetPassword}>
-                            <Portal selector={mountingPoints.resetPasswordPage}>
-                                <ResetPassword />
                             </Portal>
                         </Route>
 
