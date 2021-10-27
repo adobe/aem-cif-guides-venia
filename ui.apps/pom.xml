@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
         <artifactId>aem-cif-guides-venia</artifactId>
-        <version>2021.09.24-SNAPSHOT</version>
+        <version>2021.10.13-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -69,6 +69,10 @@
                         <dependency>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-extensions-product-recs-content</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.adobe.acs</groupId>
+                            <artifactId>acs-aem-commons-content</artifactId>
                         </dependency>
                     </dependencies>
                 </configuration>
@@ -174,6 +178,12 @@
         </dependency>
 
         <!-- Other dependencies -->
+        <dependency>
+            <groupId>com.adobe.acs</groupId>
+            <artifactId>acs-aem-commons-content</artifactId>
+            <scope>provided</scope>
+            <type>zip</type>
+        </dependency>
         <dependency>
             <groupId>com.adobe.cq</groupId>
             <artifactId>core.wcm.components.core</artifactId>

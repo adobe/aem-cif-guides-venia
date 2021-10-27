@@ -3,4 +3,5 @@
     <filter root="/apps/venia/clientlibs"/>
     <filter root="/apps/venia/components"/>
     <filter root="/apps/venia/i18n"/>
+    <filter root="/apps/sling/servlet"/>
 </workspaceFilter>
