@@ -10,6 +10,7 @@
   "main": "src/main/site/main.js",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
+    "pwa": "webpack -d  --env.mode development --config ./webpack.pwa.js && clientlib --verbose",
     "dev": "npm run i18n:extract-compile && webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
     "prod": "npm run i18n:extract-compile && webpack -p --config ./webpack.prod.js && clientlib --verbose",
     "start": "npm run i18n:extract-compile && webpack-dev-server --open --config ./webpack.dev.js",
@@ -37,6 +38,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@formatjs/cli": "^4.2.33",
     "@magento/babel-preset-peregrine": "~1.1.0",
+    "@magento/pwa-buildpack": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "acorn": "^6.1.0",
@@ -82,7 +84,9 @@
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.9.0",
     "webpack-import-glob-loader": "^1.6.3",
-    "webpack-merge": "^4.2.1"
+    "webpack-merge": "^4.2.1",
+    "workbox-build": "^6.0.2",
+    "workbox-webpack-plugin": "^6.0.2"
   },
   "dependencies": {
     "@adobe/aem-core-cif-product-recs-extension": "^2.3.1",
@@ -106,8 +110,16 @@
     "react-router-dom": "~5.1.0",
     "redux": "^4.0.5"
   },
+  "resolutions": {
+    "workbox-build": "~6.0.2"
+  },
   "browserslist": [
     "last 2 version",
     "> 1%"
-  ]
+  ],
+  "pwa-studio": {
+    "targets": {
+      "intercept": "./local-intercept.js"
+    }
+  }
 }
