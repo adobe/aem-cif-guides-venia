@@ -70,14 +70,6 @@ public class CategoryPageIT extends CommerceTestBase {
         elements = doc.select("title");
         Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
 
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=keywords]");
-        //Assert.assertEquals("Meta keywords for Outdoor Collection", elements.first().attr("content"));
-
-        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
-        //elements = doc.select("meta[name=description]");
-        //Assert.assertEquals("Meta description for Outdoor Collection", elements.first().attr("content"));
-
         // todo CIF-2511
         // temporally disabled assertion because of failure related to CIF-2262 - test will be refactored later
         // elements = doc.select("link[rel=canonical]");
