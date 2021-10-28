@@ -68,7 +68,7 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Check the meta data
         elements = doc.select("title");
-        Assert.assertEquals("Pants &amp; Shorts", elements.first().html());
+        assertEquals("Pants &amp; Shorts", elements.first().html());
 
         // todo CIF-2511
         // temporally disabled assertion because of failure related to CIF-2262 - test will be refactored later
