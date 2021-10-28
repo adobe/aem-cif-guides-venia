@@ -53,7 +53,6 @@ public class CommerceTestBase {
     protected static final String VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE = VENIA_CONTENT_US_EN_PRODUCTS + "/category-page";
     protected static final String VENIA_CONTENT_US_EN_SEARCH_PAGE = VENIA_CONTENT_US_EN + "/search";
 
-    protected static final String H1_SELECTOR = "h1";
     protected static final String BREADCRUMB_ITEMS_SELECTOR = ".breadcrumb .cmp-breadcrumb__item";
     protected static final String SEARCH_FILTERS_SELECTOR = ".productcollection__filters";
     protected static final String PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR = ".productcollection__item";

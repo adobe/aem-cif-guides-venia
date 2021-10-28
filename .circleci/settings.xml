@@ -66,25 +66,9 @@
                 </pluginRepository>
             </pluginRepositories>
         </profile>
-
-        <profile>
-            <id>ossrh</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <gpg.executable>gpg</gpg.executable>
-                <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-            </properties>
-        </profile>
     </profiles>
 
     <servers>
-        <server>
-            <id>ossrh</id>
-            <username>${env.SONATYPE_USER}</username>
-            <password>${env.SONATYPE_PASS}</password>
-        </server>
         <server>
             <id>maven-adobe-cif-release</id>
             <username>${env.ARTIFACTORY_CLOUD_USER}</username>

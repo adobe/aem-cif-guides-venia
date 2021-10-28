@@ -15,22 +15,17 @@
 package com.venia.it.tests;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
-
-import static org.junit.Assert.assertEquals;
 
 public class ProductPageIT extends CommerceTestBase {
 
@@ -47,33 +42,39 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Honora Wide Leg Pants", elements.first().html());
+        Assert.assertEquals("Honora Wide Leg Pants", elements.first().html());
 
         // Verify that the section for GroupedProduct is NOT displayed
-        assertEquals(0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
+        Assert.assertEquals(0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
         // Verify breadcrumb: Home > Bottoms > Pants & Shorts > Honora Wide Leg Pants
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(4, elements.size());
+        Assert.assertEquals(4, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        assertEquals(6, elements.size());
+        Assert.assertEquals(6, elements.size());
 
         // Check the meta data
         elements = doc.select("title");
-        assertEquals("Honora Wide Leg Pants", elements.first().html());
+        Assert.assertEquals("Honora Wide Leg Pants", elements.first().html());
 
-        // todo CIF-2511
-        // temporally disabled assertion because of failure related to CIF-2262 - test will be refactored later
-        // elements = doc.select("link[rel=canonical]");
-        // assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=keywords]");
+        //Assert.assertEquals("Meta keywords for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+
+        // TODO: reenable with https://jira.corp.adobe.com/browse/CIF-2293
+        //elements = doc.select("meta[name=description]");
+        //Assert.assertEquals("Meta description for Chaz Kangeroo Hoodie", elements.first().attr("content"));
+
+        elements = doc.select("link[rel=canonical]");
+        Assert.assertEquals("http://localhost:4502" + pagePath, elements.first().attr("href"));
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/simple-product.json"));
-        assertEquals(expected, result);
+        Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -83,16 +84,16 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Augusta Trio", elements.first().html());
+        Assert.assertEquals("Augusta Trio", elements.first().html());
 
         // Verify that the section for GroupedProduct is displayed
-        assertEquals(1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
+        Assert.assertEquals(1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/grouped-product.json"));
-        assertEquals(expected, result);
+        Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -102,27 +103,16 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Product name", elements.first().html());
+        Assert.assertEquals("Product name", elements.first().html());
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(1, elements.size());
+        Assert.assertEquals(1, elements.size());
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/placeholder-product.json"));
-        assertEquals(expected, result);
-    }
-
-    @Test
-    public void testProductNotFoundPage() throws ClientException {
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/unknown-product.html";
-        List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair("wcmmode","disabled"));
-        SlingHttpResponse response = adminAuthor.doGet(pagePath, params, 404);
-        Document doc = Jsoup.parse(response.getContent());
-
-        Elements elements = doc.select(H1_SELECTOR);
-        assertEquals("Ruh-Roh! Page Not Found",elements.first().text());
+        Assert.assertEquals(expected, result);
     }
 }
