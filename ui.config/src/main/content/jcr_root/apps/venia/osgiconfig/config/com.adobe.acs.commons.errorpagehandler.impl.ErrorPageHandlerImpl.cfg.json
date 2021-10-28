@@ -1,0 +1,5 @@
+{
+    "enabled": true,
+    "cache.serve-authenticated": true,
+    "cache.ttl": 300
+}
