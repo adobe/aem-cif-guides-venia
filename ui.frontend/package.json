@@ -90,7 +90,7 @@
     "@apollo/client": "^3.2.4",
     "@babel/runtime": "^7.4.5",
     "@magento/peregrine": "11.0.0",
-    "@magento/recommendations-js-sdk": "^2.0.2",
+    "@magento/recommendations-js-sdk": "^2.0.3",
     "@magento/venia-sample-payments-checkmo": "0.0.2",
     "@magento/venia-ui": "8.0.0",
     "apollo-cache-persist": "^0.1.1",
