@@ -88,8 +88,8 @@
         <vault.password>admin</vault.password>
         <acs.aem.commons.version>5.0.12</acs.aem.commons.version>
         <core.wcm.components.version>2.17.10</core.wcm.components.version>
-        <core.cif.components.version>2.3.3-SNAPSHOT</core.cif.components.version>
-        <graphql.client.version>1.7.4</graphql.client.version>
+        <core.cif.components.version>2.4.0</core.cif.components.version>
+        <graphql.client.version>1.7.5</graphql.client.version>
         <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
