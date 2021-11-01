@@ -23,60 +23,20 @@ const { DefinePlugin } = webpack;
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
-const BuildBus = require('@magento/pwa-buildpack/lib/BuildBus');
-const { MagentoResolver, ModuleTransformConfig } = require('@magento/pwa-buildpack');
-const getModuleRules = require('@magento/pwa-buildpack/lib/WebpackTools/configureWebpack/getModuleRules');
-const getSpecialFlags = require('@magento/pwa-buildpack/lib/WebpackTools/configureWebpack/getSpecialFlags');
+const { configureWebpack } = require('@magento/pwa-buildpack');
 
 async function configureExtensions(options) {
-    const { context, mode } = options;
+    // Generate full webpack configuration as used by PWA Studio
+    const config = await configureWebpack(options);
 
-    const paths = {
-        src: path.resolve(context, 'src'),
-        output: path.resolve(context, 'dist')
-    };
+    // Extract the buildbus rule
+    const rule = config.module.rules[1];
 
-    BuildBus.enableTracking();
+    // Extract the buildbus plugin
+    const plugin = config.plugins[0];
 
-    const busTrackingQueue = [];
-    const bus = BuildBus.for(context);
-    bus.attach('configureExtensions', (...args) => busTrackingQueue.push(args));
-    bus.init();
-
-    const babelRootMode = 'root';
-
-    const resolverOpts = {
-        isEE: true,
-        paths: {
-            root: context
-        }
-    };
-    if (options.alias) {
-        resolverOpts.alias = { ...options.alias };
-    }
-
-    const resolver = new MagentoResolver(resolverOpts);
-    const hasFlag = await getSpecialFlags(options.special, bus, resolver);
-    const transforms = new ModuleTransformConfig(
-        resolver,
-        require(path.resolve(context, 'package.json')).name
-    );
-
-    await bus
-        .getTargetsOf('@magento/pwa-buildpack')
-        .transformModules.promise(x => transforms.add(x));
-
-    const transformRequests = await transforms.toLoaderOptions();
-
-    const rule = await getModuleRules.js({
-        mode,
-        paths,
-        hasFlag,
-        babelRootMode,
-        transformRequests
-    })
-
-    return rule;
+    // Return only parts that are relevant for the extension mechanism
+    return [rule, plugin];
 };
 
 module.exports = async env => {
@@ -86,7 +46,7 @@ module.exports = async env => {
     const alias = Object.keys(pkg.dependencies)
         .reduce((obj, key) => ({ ...obj, [key]: path.resolve('node_modules', key) }), {});
 
-    const rule = await configureExtensions({
+    const [rule, plugin] = await configureExtensions({
         context: __dirname,
         vendor: [
             '@apollo/client',
@@ -122,29 +82,6 @@ module.exports = async env => {
         module: {
             rules: [
                 rule,
-                /* {
-                    test: /\.tsx?$/,
-                    exclude: /node_modules/,
-                    use: [
-                        {
-                            loader: 'ts-loader'
-                        },
-                        {
-                            loader: 'webpack-import-glob-loader',
-                            options: {
-                                url: false
-                            }
-                        }
-                    ]
-                },
-                {
-                    test: /\.jsx?$/,
-                    exclude: /node_modules\/(?!@magento\/)/,
-                    loader: 'babel-loader',
-                    options: {
-                        envName: env,
-                    }
-                }, */
                 {
                     test: /\.css$/,
                     include: /node_modules\/@magento/,
@@ -216,6 +153,7 @@ module.exports = async env => {
             extensions: ['.ee.js', '.js', '.json', '.wasm']
         },
         plugins: [
+            plugin,
             new CleanWebpackPlugin(),
             new webpack.NoEmitOnErrorsPlugin(),
             new MiniCssExtractPlugin({
@@ -301,7 +239,7 @@ module.exports = async env => {
         performance: { hints: false }
     };
 
-    //console.log('FINAL CONFIG', config);
+    console.log('FINAL CONFIG', JSON.stringify(config, null, 4));
 
     return config;
 };

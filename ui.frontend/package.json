@@ -10,7 +10,7 @@
   "main": "src/main/site/main.js",
   "license": "SEE LICENSE IN LICENSE.txt",
   "scripts": {
-    "pwa": "webpack -d --env.mode development --config ./webpack.pwa.js --display verbose && clientlib --verbose",
+    "pwa": "webpack -d --env.mode development --config ./webpack.pwa.js && clientlib --verbose",
     "pwa:prod": "webpack -p --env.mode production --config ./webpack.pwa.js --display verbose && clientlib --verbose",
     "dev": "npm run i18n:extract-compile && webpack -d --env dev --config ./webpack.dev.js && clientlib --verbose",
     "prod": "npm run i18n:extract-compile && webpack -p --config ./webpack.prod.js && clientlib --verbose",
@@ -96,6 +96,7 @@
     "@babel/runtime": "^7.4.5",
     "@magento/peregrine": "11.0.0",
     "@magento/recommendations-js-sdk": "^2.0.1",
+    "@magento/venia-data-collector": "^1.0.3",
     "@magento/venia-sample-payments-checkmo": "0.0.2",
     "@magento/venia-ui": "8.0.0",
     "apollo-cache-persist": "^0.1.1",
