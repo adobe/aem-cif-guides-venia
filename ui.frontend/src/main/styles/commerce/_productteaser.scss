@@ -7,7 +7,6 @@
         grid-template-areas: "main";
     }
     .item__image {
-        border: #3498db 1px solid;
         display: block;
         grid-area: main;
         height: auto;
@@ -23,23 +22,23 @@
         display: block;
         top: 40%;
         left: 20%;
-        background: unset;
         text-transform: uppercase;
         font-size: 22px;
         color: #ffffff;
         font-weight: 900;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        background-color: rgba(0,0,0,0.5);
+        padding: 0.5rem;
     }
     .price {
         position: absolute;
         display: block;
         top: 45%;
         left: 20%;
-        background: unset;
         font-size: 18px;
         color: #ffffff;
         font-weight: 900;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        background-color: rgba(0,0,0,0.5);
+        padding: 0.5rem;
 
         .regularPrice {
             text-decoration: line-through;
