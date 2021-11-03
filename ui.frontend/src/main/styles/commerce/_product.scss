@@ -371,7 +371,7 @@ tr:nth-child(even) {
     align-items: center;
     display: flex;
     grid-area: cart;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
 @media (min-width: 1024px) {
