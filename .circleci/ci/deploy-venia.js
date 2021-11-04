@@ -42,9 +42,9 @@ ci.stage("Deploy Venia Sample Project to GitHub");
 // build also the classic artifacts for github
 ci.sh(`mvn ${mvnOpts} clean install -Pclassic -pl classic/ui.config,classic/ui.content,classic/dispatcher,classic/all`);
 ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
-//ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
-//    -u ${ci.env("CIRCLE_PROJECT_USERNAME")} \
-//    -r ${ci.env("CIRCLE_PROJECT_REPONAME")} \
-//    -c ${ci.env("CIRCLE_SHA1")} \
-//    -replace ${ci.env("CIRCLE_TAG")} artifacts/`);
+ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
+    -u ${ci.env("CIRCLE_PROJECT_USERNAME")} \
+    -r ${ci.env("CIRCLE_PROJECT_REPONAME")} \
+    -c ${ci.env("CIRCLE_SHA1")} \
+    -replace ${ci.env("CIRCLE_TAG")} artifacts/`);
 

@@ -245,7 +245,6 @@ workflows:
             - build
           filters:
             branches:
-              only: /issue\/CIF-2458/
-              # ignore: /.*/
+              ignore: /.*/
             tags:
               only: /^venia(-classic)?-\d+\.\d+\.\d+$/
