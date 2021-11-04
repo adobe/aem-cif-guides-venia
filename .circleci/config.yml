@@ -188,7 +188,11 @@ jobs:
             - maven-repo-v2-
       - run:
           name: Deploy Venia Sample Project to GitHub
-          command: node .circleci/ci/deploy-venia.js
+          command: |
+            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
+            node .circleci/ci/deploy-venia.js
+            rm -rf /home/circleci/.gnupg
+            rm -rf /home/circleci/.npmrc
 
 workflows:
   version: 2
@@ -235,6 +239,7 @@ workflows:
       - deploy-sample:
           context:
             - CIF Artifactory Cloud
+            - CIF Maven Central
             - CIF GitHub
           requires:
             - build
