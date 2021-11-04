@@ -20,7 +20,7 @@ ci.context();
 
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
-const mvnOpts = `-B -s /home/circleci/project/.circleci/settings.xml`
+const mvnOpts = `-B -s /home/circleci/repo/.circleci/settings.xml`
 
 ci.stage("Install GHR");
 ci.sh("mkdir -p tmp");
