@@ -27,6 +27,7 @@ import {
     AccountContainer,
     AddressBook,
     BundleProductOptions,
+    GiftCartOptions,
     AccountDetails,
     ResetPassword,
     PortalPlacer
@@ -94,6 +95,10 @@ const App = props => {
 
                         <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                             <BundleProductOptions />
+                        </Portal>
+
+                        <Portal selector={mountingPoints.giftCardProductOptionsContainer}>
+                            <GiftCartOptions />
                         </Portal>
 
                         <Route path={pagePaths.accountDetails}>
