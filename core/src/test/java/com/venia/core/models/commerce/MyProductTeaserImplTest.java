@@ -201,6 +201,13 @@ class MyProductTeaserImplTest {
     }
 
     @Test
+    public void testGetCallToActionCommand() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn("TestCTACommand").when(productTeaser).getCallToActionCommand();
+        Assertions.assertEquals("TestCTACommand", underTest.getCallToActionCommand());
+    }
+
+    @Test
     void testIsVirtualProduct() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Mockito.doReturn(true).when(productTeaser).isVirtualProduct();
