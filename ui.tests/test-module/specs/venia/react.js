@@ -16,6 +16,8 @@
 
 const config = require('../../lib/config');
 
+const itif = condition => (condition ? it : it.skip);
+
 describe('Venia React Components', () => {
     const venia_homepage = `${config.aem.author.base_url}/content/venia/us/en.html`;
 
