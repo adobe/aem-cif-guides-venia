@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`it renders correctly 1`] = `
+<div>
+  <a
+    href="/content/venia/us/en/my-account/order-history.html"
+  >
+    Order History
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/address-book.html"
+  >
+    Address Book
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/account-details.html"
+  >
+    Account Information
+  </a>
+  <button
+    onClick={[Function]}
+    type="button"
+  >
+    Sign Out
+  </button>
+</div>
+`;
