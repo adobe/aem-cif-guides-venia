@@ -72,26 +72,29 @@ describe('Venia React Components', () => {
         });
     });
 
-    it('should render the sign in component in the header', () => {
-        // Go to the Venia homepage
-        browser.url(venia_homepage);
+    itif(config.venia && config.venia.email && config.venia.password)(
+        'should render the sign in component in the header',
+        () => {
+            // Go to the Venia homepage
+            browser.url(venia_homepage);
 
-        // Check sign in button
-        const signInTrigger = $('.cmp-VeniaHeader__accountTrigger__trigger');
-        expect(signInTrigger).toBeDisplayed();
+            // Check sign in button
+            const signInTrigger = $('.cmp-VeniaHeader__accountTrigger__trigger');
+            expect(signInTrigger).toBeDisplayed();
 
-        // Check sign in form
-        signInTrigger.click();
-        const signInForm = $('.cmp-VeniaSignIn__signIn__form');
-        expect(signInForm).toBeDisplayed();
+            // Check sign in form
+            signInTrigger.click();
+            const signInForm = $('.cmp-VeniaSignIn__signIn__form');
+            expect(signInForm).toBeDisplayed();
 
-        $('input[autocomplete="email"]').setValue(config.venia.email);
-        $('input[type="password"]').setValue(config.venia.password);
+            $('input[autocomplete="email"]').setValue(config.venia.email);
+            $('input[type="password"]').setValue(config.venia.password);
 
-        $('button[type="submit"]').click();
+            $('button[type="submit"]').click();
 
-        expect($('.cmp-VeniaAccountMenu__accountMenuItems__root')).toBeDisplayed();
-    });
+            expect($('.cmp-VeniaAccountMenu__accountMenuItems__root')).toBeDisplayed();
+        }
+    );
 
     it('should render the address book component', () => {
         // Go to address book page
