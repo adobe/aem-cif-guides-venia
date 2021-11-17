@@ -54,6 +54,7 @@ try {
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
+    let excludedCategory = classifier === 'classic' ? 'junit.category.IgnoreOn65' : 'junit.category.IgnoreOnCloud';
 
     ci.dir(qpPath, () => {
         // Connect to QP
@@ -105,7 +106,7 @@ try {
     // Run integration tests
     if (TYPE === 'integration') {
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Dexclude.category=${excludedCategory} -Plocal`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {

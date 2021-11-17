@@ -20,6 +20,7 @@ ci.context();
 
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
+const mvnOpts = `-B -s /home/circleci/repo/.circleci/settings.xml`
 
 ci.stage("Install GHR");
 ci.sh("mkdir -p tmp");
@@ -29,16 +30,21 @@ ci.sh(
 ci.sh("mv tmp/**/ghr ./ghr");
 ci.sh("chmod +x ghr");
 
-ci.sh("mkdir -p artifacts"); // target folder for all the build artifacts
+// target folder for all the build artifacts
+ci.sh("mkdir -p artifacts");
 
-ci.stage(`Build and install Venia`);
-ci.sh(`mvn -B clean install -Pclassic`);
+ci.stage("Deploy Venia Sample Project to Maven Central");
+// build and deploy only the cloud artifacts
+ci.sh(`mvn ${mvnOpts} clean deploy -Prelease,ossrh`)
 ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}.zip`);
-ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 
 ci.stage("Deploy Venia Sample Project to GitHub");
+// build also the classic artifacts for github
+ci.sh(`mvn ${mvnOpts} clean install -Pclassic -pl classic/ui.config,classic/ui.content,classic/dispatcher,classic/all`);
+ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
     -u ${ci.env("CIRCLE_PROJECT_USERNAME")} \
     -r ${ci.env("CIRCLE_PROJECT_REPONAME")} \
     -c ${ci.env("CIRCLE_SHA1")} \
     -replace ${ci.env("CIRCLE_TAG")} artifacts/`);
+
