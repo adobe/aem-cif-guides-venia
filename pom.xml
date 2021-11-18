@@ -114,6 +114,7 @@
                     <releaseProfiles>release,classic</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
+                    <tagNameFormat>venia-@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
             <!-- Maven Source Plugin -->
@@ -433,7 +434,7 @@ Bundle-DocURL:
                     <configuration>
                         <serverId>ossrh</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     </configuration>
                 </plugin>
             </plugins>

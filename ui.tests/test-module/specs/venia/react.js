@@ -16,6 +16,8 @@
 
 const config = require('../../lib/config');
 
+const itif = condition => (condition ? it : it.skip);
+
 describe('Venia React Components', () => {
     const venia_homepage = `${config.aem.author.base_url}/content/venia/us/en.html`;
 
@@ -45,39 +47,76 @@ describe('Venia React Components', () => {
         expect(minicart).toBeDisplayed();
     });
 
-    it('should render the sign in component in the header', () => {
-        // Go to the Venia homepage
-        browser.url(venia_homepage);
-
-        // Check sign in button
-        const signInButton = $('.cmp-AccountContainer__accountTrigger__root');
-        expect(signInButton).toBeDisplayed();
-
-        // Check sign in form
-        signInButton.click();
-        const signInForm = $('.cmp-SignIn__signIn__form');
-        expect(signInForm).toBeDisplayed();
+    it('should redirect to homepage from address book page without login', () => {
+        // Go to address book page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
     });
+
+    it('should redirect to homepage from account info page without login', () => {
+        // Go to address book page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
+    });
+
+    it('should redirect to homepage from order history page without login', () => {
+        // Go to address book page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
+        browser.waitUntil(() => browser.getUrl() === venia_homepage, {
+            timeout: 5000,
+            timeoutMsg: 'expected browser to navigate to homepage after 5s'
+        });
+    });
+
+    itif(config.venia && config.venia.email && config.venia.password)(
+        'should render the sign in component in the header',
+        () => {
+            // Go to the Venia homepage
+            browser.url(venia_homepage);
+
+            // Check sign in button
+            const signInTrigger = $('.cmp-VeniaHeader__accountTrigger__trigger');
+            expect(signInTrigger).toBeDisplayed();
+
+            // Check sign in form
+            signInTrigger.click();
+            const signInForm = $('.cmp-VeniaSignIn__signIn__form');
+            expect(signInForm).toBeDisplayed();
+
+            $('input[autocomplete="email"]').setValue(config.venia.email);
+            $('input[type="password"]').setValue(config.venia.password);
+
+            $('button[type="submit"]').click();
+
+            expect($('.cmp-VeniaAccountMenu__accountMenuItems__root')).toBeDisplayed();
+        }
+    );
 
     it('should render the address book component', () => {
         // Go to address book page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
 
-        expect($('.cmp-AddressBook__addressBook__root')).toBeDisplayed();
+        expect($('.cmp-VeniaAddressBookPage__addressBookPage__root')).toBeDisplayed();
     });
 
     it('should render the account details', () => {
         // Go to account details page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
 
-        expect($('.cmp-AccountDetails__accountDetails__messageText')).toBeDisplayed();
+        expect($('.cmp-VeniaAccountInformationPage__accountInformationPage__root')).toBeDisplayed();
     });
 
-    it('should render the password reset component', () => {
-        // Go to password reset page
-        browser.url(`${config.aem.author.base_url}/content/venia/us/en/reset-password.html?token=abc`);
+    it('should render the order history component', () => {
+        // Go to order history page
+        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
 
-        expect($('.cmp-ResetPassword__ResetPassword__root')).toBeDisplayed();
+        expect($('.cmp-VeniaOrderHistoryPage__orderHistoryPage__root')).toBeDisplayed();
     });
 
     it('should render the cart page', () => {
