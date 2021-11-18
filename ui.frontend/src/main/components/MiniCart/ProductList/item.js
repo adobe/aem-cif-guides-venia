@@ -34,9 +34,9 @@ const Item = props => {
     const stockStatusText =
         product.stock_status === 'OUT_OF_STOCK'
             ? formatMessage({
-                id: 'productList.outOfStock',
-                defaultMessage: 'Out-of-stock'
-            })
+                  id: 'productList.outOfStock',
+                  defaultMessage: 'Out-of-stock'
+              })
             : '';
 
     const { isDeleting, removeItem } = useItem({
@@ -49,10 +49,7 @@ const Item = props => {
 
     return (
         <div className={rootClass}>
-            <a
-                className={classes.thumbnailContainer}
-                href={itemLink}
-            >
+            <a className={classes.thumbnailContainer} href={itemLink}>
                 <Image
                     alt={product.name}
                     classes={{
@@ -60,17 +57,13 @@ const Item = props => {
                     }}
                     width={100}
                     resource={
-                        configurableThumbnailSource === 'itself' &&
-                            configured_variant
+                        configurableThumbnailSource === 'itself' && configured_variant
                             ? configured_variant.thumbnail.url
                             : product.thumbnail.url
                     }
                 />
             </a>
-            <a
-                className={classes.name}
-                href={itemLink}
-            >
+            <a className={classes.name} href={itemLink}>
                 {product.name}
             </a>
             <ProductOptions
@@ -80,29 +73,14 @@ const Item = props => {
                 }}
             />
             <span className={classes.quantity}>
-                <FormattedMessage
-                    id={'productList.quantity'}
-                    defaultMessage={'Qty :'}
-                    values={{ quantity }}
-                />
+                <FormattedMessage id={'productList.quantity'} defaultMessage={'Qty :'} values={{ quantity }} />
             </span>
             <span className={classes.price}>
-                <Price
-                    currencyCode={prices.price.currency}
-                    value={prices.price.value}
-                />
-                <FormattedMessage
-                    id={'productList.each'}
-                    defaultMessage={' ea.'}
-                />
+                <Price currencyCode={prices.price.currency} value={prices.price.value} />
+                <FormattedMessage id={'productList.each'} defaultMessage={' ea.'} />
             </span>
             <span className={classes.stockStatus}>{stockStatusText}</span>
-            <button
-                onClick={removeItem}
-                type="button"
-                className={classes.deleteButton}
-                disabled={isDeleting}
-            >
+            <button onClick={removeItem} type="button" className={classes.deleteButton} disabled={isDeleting}>
                 <Icon
                     size={16}
                     src={DeleteIcon}

@@ -7,13 +7,7 @@ import { useStyle } from '@magento/venia-ui/lib/classify';
 import defaultClasses from './productList.css';
 
 const ProductList = props => {
-    const {
-        items,
-        handleRemoveItem,
-        classes: propClasses,
-        closeMiniCart,
-        configurableThumbnailSource
-    } = props;
+    const { items, handleRemoveItem, classes: propClasses, closeMiniCart, configurableThumbnailSource } = props;
     const classes = useStyle(defaultClasses, propClasses);
 
     const cartItems = useMemo(() => {
