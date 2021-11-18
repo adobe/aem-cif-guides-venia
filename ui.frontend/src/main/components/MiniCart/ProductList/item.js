@@ -1,4 +1,17 @@
-import React, { useMemo } from 'react';
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { string, number, shape, func, arrayOf, oneOf } from 'prop-types';
 import { Trash2 as DeleteIcon } from 'react-feather';
@@ -6,7 +19,6 @@ import { createProductPageUrl } from '@adobe/aem-core-cif-react-components';
 
 import Price from '@magento/venia-ui/lib/components/Price';
 import { useItem } from '@magento/peregrine/lib/talons/MiniCart/useItem';
-import resourceUrl from '@magento/peregrine/lib/util/makeUrl';
 
 import ProductOptions from '@magento/venia-ui/lib/components/LegacyMiniCart/productOptions';
 import Image from '@magento/venia-ui/lib/components/Image';

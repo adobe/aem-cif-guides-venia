@@ -1,21 +1,35 @@
+/*******************************************************************************
+ *
+ *    Copyright 2021 Adobe. All rights reserved.
+ *    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License. You may obtain a copy
+ *    of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software distributed under
+ *    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ *    OF ANY KIND, either express or implied. See the License for the specific language
+ *    governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
+import render from '../../../utils/test-utils';
+import { ConfigContextProvider } from '@adobe/aem-core-cif-react-components';
 import { useItem } from '@magento/peregrine/lib/talons/MiniCart/useItem';
 
 import Item from '../item';
 
-jest.mock('../../../../classify');
+jest.mock('@magento/venia-ui/lib/classify');
 jest.mock('@magento/peregrine/lib/talons/MiniCart/useItem', () => ({
     useItem: jest.fn().mockReturnValue({
         isDeleting: false,
-        removeItem: () => {}
+        removeItem: jest.fn()
     })
 }));
+/* eslint-disable react/display-name */
 jest.mock('react-router-dom', () => ({
     Link: ({ children, ...rest }) => <div {...rest}>{children}</div>
 }));
-// jest.mock('@magento/peregrine/lib/util/makeUrl', () => jest.fn(src => src));
-
+/* eslint-enable react/display-name */
 const props = {
     product: {
         name: 'P1',
@@ -61,7 +75,7 @@ const props = {
             value_id: 2
         }
     ],
-    handleRemoveItem: () => {},
+    handleRemoveItem: jest.fn(),
     prices: {
         price: {
             value: 420,
@@ -71,7 +85,11 @@ const props = {
 };
 
 test('Should render correctly', () => {
-    const tree = createTestInstance(<Item {...props} />);
+    const tree = render(
+        <ConfigContextProvider>
+            <Item {...props} />
+        </ConfigContextProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -84,7 +102,11 @@ test('Should render correctly with out of stock product', () => {
             stock_status: 'OUT_OF_STOCK'
         }
     };
-    const tree = createTestInstance(<Item {...outOfStockProps} />);
+    const tree = render(
+        <ConfigContextProvider>
+            <Item {...outOfStockProps} />
+        </ConfigContextProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -94,7 +116,11 @@ test('Should render correctly when configured to use variant thumbnail', () => {
         ...props,
         configurableThumbnailSource: 'itself'
     };
-    const tree = createTestInstance(<Item {...variantThumbnailProps} />);
+    const tree = render(
+        <ConfigContextProvider>
+            <Item {...variantThumbnailProps} />
+        </ConfigContextProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -102,9 +128,13 @@ test('Should render correctly when configured to use variant thumbnail', () => {
 test('Should disable delete icon while loading', () => {
     useItem.mockReturnValueOnce({
         isDeleting: true,
-        removeItem: () => {}
+        removeItem: jest.fn()
     });
-    const tree = createTestInstance(<Item {...props} />);
+    const tree = render(
+        <ConfigContextProvider>
+            <Item {...props} />
+        </ConfigContextProvider>
+    );
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
