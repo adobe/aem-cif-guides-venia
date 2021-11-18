@@ -42,6 +42,8 @@ const errorIcon = (
 );
 const searchIcon = <Icon src={SearchIcon} size={24} />;
 
+console.log('order history');
+
 const OrderHistoryPage = props => {
     const { pagePaths } = useConfigContext();
     const talonProps = useOrderHistoryPage({ baseUrl: pagePaths.baseUrl });

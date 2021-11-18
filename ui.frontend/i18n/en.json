@@ -387,6 +387,24 @@
       "value": "Remove from cart"
     }
   ],
+  "productList.each": [
+    {
+      "type": 0,
+      "value": "ea."
+    }
+  ],
+  "productList.outOfStock": [
+    {
+      "type": 0,
+      "value": "Out-of-stock"
+    }
+  ],
+  "productList.quantity": [
+    {
+      "type": 0,
+      "value": "Qty :"
+    }
+  ],
   "productListing.loading": [
     {
       "type": 0,

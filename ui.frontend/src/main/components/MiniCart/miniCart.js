@@ -24,9 +24,9 @@ import { useConfigContext } from '@adobe/aem-core-cif-react-components';
 import Button from '@magento/venia-ui/lib/components/Button';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import StockStatusMessage from '@magento/venia-ui/lib/components/StockStatusMessage';
-import ProductList from '@magento/venia-ui/lib/components/MiniCart/ProductList';
+import ProductList from './ProductList';
 import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/miniCart.css';
-import operations from '@magento/venia-ui/lib/components/MiniCart/miniCart.gql';
+import operations from './miniCart.gql';
 
 const errorIcon = <Icon src={AlertCircleIcon} size={20} />;
 
@@ -58,6 +58,8 @@ const MiniCart = React.forwardRef((props, ref) => {
         totalQuantity,
         configurableThumbnailSource
     } = talonProps;
+
+    console.log('productList', productList);
 
     const { pagePaths } = useConfigContext();
 

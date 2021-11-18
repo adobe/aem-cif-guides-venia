@@ -49,6 +49,8 @@ const ProductListing = props => {
     });
     const { activeEditItem, isLoading, items, setActiveEditItem, wishlistConfig } = talonProps;
 
+    console.log('items', items);
+
     const classes = useStyle(defaultClasses, props.classes);
 
     if (isLoading) {
