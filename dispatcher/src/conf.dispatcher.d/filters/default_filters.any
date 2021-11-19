@@ -69,6 +69,9 @@
 # to allow invoke service functionality (FDM)
 /0037 { /type "allow" /path "/content/forms/*" /selectors '(af)'  /extension '(dermis)' }
 
+# to allow forms portal draft and submissions component operation servlet
+/0038 { /type "allow" /path "/content/*" /method "GET" /selectors '(fp)' /extension '(operation)' }
+
 # AEM Screens Filters
 # to allow AEM Screens channels selectors
 /0050 { /type "allow" /method "GET" /url "/screens/channels.json" }
