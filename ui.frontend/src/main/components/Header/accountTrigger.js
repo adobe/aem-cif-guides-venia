@@ -19,6 +19,7 @@ import { useAccountTrigger } from '@magento/peregrine/lib/talons/Header/useAccou
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import AccountChip from '@magento/venia-ui/lib/components/AccountChip';
+import useAddToWishlistEvent from '../WishlistPage/useAddToWishlistEvent';
 
 import defaultClasses from './accountTrigger.css';
 
@@ -39,6 +40,8 @@ const AccountTrigger = props => {
     const classes = useStyle(defaultClasses, props.classes);
     const rootClassName = accountMenuIsOpen ? classes.root_open : classes.root;
     const { formatMessage } = useIntl();
+
+    useAddToWishlistEvent();
 
     return (
         <Fragment>

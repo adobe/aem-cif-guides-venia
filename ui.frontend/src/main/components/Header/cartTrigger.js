@@ -26,7 +26,6 @@ const MiniCart = React.lazy(() => import('../MiniCart'));
 
 const CartTrigger = props => {
     const {
-        handleLinkClick,
         handleTriggerClick,
         itemCount,
         miniCartRef,

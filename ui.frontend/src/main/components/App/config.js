@@ -63,7 +63,8 @@ export default {
         productRecs: '[data-is-product-recs]',
         cartDetailsContainer: '.cartcontainer__body',
         checkoutPageContainer: '.checkoutpage__body',
-        orderHistoryPageContainer: '.orderhistory__body'
+        orderHistoryPageContainer: '.orderhistory__body',
+        wishlistPageContainer: '.wishlist__body'
     },
     pagePaths: {
         baseUrl,
@@ -71,6 +72,7 @@ export default {
         accountDetails: `${basePath}/my-account/account-details.html`,
         cartDetails: `${basePath}/cart-details.html`,
         checkoutPage: `${basePath}/checkout.html`,
-        orderHistory: `${basePath}/my-account/order-history.html`
+        orderHistory: `${basePath}/my-account/order-history.html`,
+        wishlist: `${basePath}/my-account/wishlist.html`
     }
 };
