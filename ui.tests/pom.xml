@@ -31,12 +31,11 @@
     <artifactId>aem-cif-guides-venia.ui.tests</artifactId>
     <name>Venia - UI Tests</name>
     <description>UI Tests for Venia</description>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <HEADLESS_BROWSER>false</HEADLESS_BROWSER>
-
         <!-- AEMaaCS UI testing convention properties -->
         <AEM_AUTHOR_URL>http://localhost:4502</AEM_AUTHOR_URL>
         <AEM_AUTHOR_USERNAME>admin</AEM_AUTHOR_USERNAME>
