@@ -13,7 +13,7 @@
  ******************************************************************************/
 import React from 'react';
 import render from '../../utils/test-utils';
-import { useAddressBookPage } from '../../../talons/AddressBookPage/useAddressBookPage';
+import { useAddressBookPage } from '@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage';
 import { ConfigContextProvider } from '@adobe/aem-core-cif-react-components';
 import AddressBookPage from '../addressBookPage';
 
@@ -32,7 +32,7 @@ jest.mock('@magento/peregrine/lib/context/user', () => ({
     ]
 }));
 jest.mock('@magento/venia-ui/lib/components/Icon', () => 'Icon');
-jest.mock('../../../talons/AddressBookPage/useAddressBookPage', () => {
+jest.mock('@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage', () => {
     return {
         useAddressBookPage: jest.fn()
     };
