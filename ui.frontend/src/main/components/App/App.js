@@ -97,9 +97,7 @@ const App = props => {
                             <BundleProductOptions />
                         </Portal>
 
-                        <Portal selector={mountingPoints.giftCardProductOptionsContainer}>
-                            <GiftCartOptions />
-                        </Portal>
+                        <PortalPlacer selector={mountingPoints.giftCardProductOptionsContainer} component={GiftCartOptions} />
 
                         <Route path={pagePaths.accountDetails}>
                             <Portal selector={mountingPoints.accountDetails}>
