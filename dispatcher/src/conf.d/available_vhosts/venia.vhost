@@ -17,7 +17,7 @@ Include conf.d/variables/custom.vars
 	ServerAlias	 "*"
 	# Use a document root that matches the one in conf.dispatcher.d/default.farm
 	DocumentRoot "${DOCROOT}"
-    # URI dereferencing algorithm is applied at Sling's level, do not decode parameters here
+	# URI dereferencing algorithm is applied at Sling's level, do not decode parameters here
     AllowEncodedSlashes NoDecode
 	# Add header breadcrumbs for help in troubleshooting
 	<IfModule mod_headers.c>
@@ -52,7 +52,7 @@ Include conf.d/variables/custom.vars
 		# Enabled to allow rewrites to take affect and not be ignored by the dispatcher module
 		DispatcherUseProcessedURL	On
 		# Default setting to allow all errors to come from the aem instance
-		DispatcherPassError		0
+		DispatcherPassError		404
 	</IfModule>
 	<IfModule mod_rewrite.c>
 		RewriteEngine	on
@@ -60,6 +60,8 @@ Include conf.d/variables/custom.vars
 
 		# Rewrite index page internally, pass through (PT)
 		RewriteRule "^(/?)$" "/index.html" [PT]
-
 	</IfModule>
+
+	# Customizations made to the vhost compared to default
+	ErrorDocument 404 ${404_PAGE}
 </VirtualHost>

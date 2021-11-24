@@ -15,7 +15,6 @@
         jcr:mixinTypes="[cq:LiveRelationship,cq:LiveSync,cq:PropertyLiveSyncCancelled]"
         jcr:primaryType="cq:PageContent" 
         jcr:title="Venia Demo Store - Home"
-        errorPages="/content/venia/us/en/errors"
         navRoot="{Boolean}true" 
         sling:resourceType="venia/components/page"
         sling:sitemapRoot="{Boolean}true"

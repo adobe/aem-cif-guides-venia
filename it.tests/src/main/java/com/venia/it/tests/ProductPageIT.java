@@ -147,11 +147,8 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     public void testProductNotFoundPage() throws ClientException {
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/unknown-product.html";
-        List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair("wcmmode", "disabled"));
-        SlingHttpResponse response = adminAuthor.doGet(pagePath, params, 404);
-        Document doc = Jsoup.parse(response.getContent());
+        List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair("wcmmode","disabled"));
 
-        Elements elements = doc.select(H1_SELECTOR);
-        assertEquals("Ruh-Roh! Page Not Found", elements.first().text());
+        adminAuthor.doGet(pagePath, params, 404);
     }
 }
