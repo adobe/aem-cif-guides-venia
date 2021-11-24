@@ -18,7 +18,19 @@ import { ConfigContextProvider } from '@adobe/aem-core-cif-react-components';
 import AddressBookPage from '../addressBookPage';
 
 jest.mock('@magento/venia-ui/lib/classify');
-
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({
+        replace: jest.fn(),
+        go: jest.fn()
+    })
+}));
+jest.mock('@magento/peregrine/lib/context/user', () => ({
+    useUserContext: () => [
+        {
+            isSignedIn: true
+        }
+    ]
+}));
 jest.mock('@magento/venia-ui/lib/components/Icon', () => 'Icon');
 jest.mock('../../../talons/AddressBookPage/useAddressBookPage', () => {
     return {

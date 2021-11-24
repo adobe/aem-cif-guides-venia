@@ -7,6 +7,9 @@ exports[`it renders correctly 1`] = `
   >
     Order History
   </a>
+  <a>
+    Favorites Lists
+  </a>
   <a
     href="/content/venia/us/en/my-account/address-book.html"
   >
