@@ -53,9 +53,12 @@ mvn verify -Pui-tests-local-execution
 | `AEM_PUBLISH_URL`       | false     | -                       | URL of the publish instance |
 | `AEM_PUBLISH_USERNAME`  | false     | `admin`                 | Username used to access the publish instance |
 | `AEM_PUBLISH_PASSWORD`  | false     | `admin`                 | Password used to access the publish instance |
+| `VENIA_ACCOUNT_EMAIL`   | true      | -                       | Email used to access the demo account |
+| `VENIA_ACCOUNT_PASSWORD`| true      | -                       | Password used to access the pdemo account |
 | `SELENIUM_BROWSER`      | false     | `chrome`                | Browser used in the tests (`chrome` **_or_** `firefox`) |
 | `HEADLESS_BROWSER`      | false     | `false`                 | Set [headless mode](https://en.wikipedia.org/wiki/Headless_browser) of the browser |
 
+The credentials for the Venia Demo account are available [here](https://zerobin.corp.adobe.com/?pasteid=c97361b84f3f6de7&k=3mXOJZl6%2BEk2W%2FjN9FDYsEmcHo3ygVtXFrveknpou34%3D)
 #### Example
 
 Run tests on <span style="color:green">local</span> <span style="color:orange">headless</span> <span style="color:purple">firefox</span>, targeting a <span style="color:blue">custom AEM author instance</span>:
@@ -67,7 +70,9 @@ mvn test \
     <span style="color:purple">-DSELENIUM_BROWSER=firefox</span> \
     <span style="color:blue">-DAEM_AUTHOR_URL=http://my-aem-author-instance.com</span> \
     <span style="color:blue">-DAEM_AUTHOR_USERNAME=testuser</span> \
-    <span style="color:blue">-DAEM_AUTHOR_PASSWORD=aVVe5om3</span>
+    <span style="color:blue">-DAEM_AUTHOR_PASSWORD=aVVe5om3</span>\
+    <span style="color:red">-DVENIA_ACCOUNT_EMAIL=user@venia.com</span> \
+    <span style="color:red">-DVENIA_ACCOUNT_PASSWORD=P@$$0rd</span>
 </PRE>
 
 
