@@ -16,7 +16,7 @@ import { shape, string } from 'prop-types';
 import { ShoppingBag as ShoppingCartIcon } from 'react-feather';
 import { useIntl } from 'react-intl';
 import { useCartTrigger } from '@magento/peregrine/lib/talons/Header/useCartTrigger';
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import defaultClasses from '@magento/venia-ui/lib/components/Header/cartTrigger.css';
 import { GET_ITEM_COUNT_QUERY } from '@magento/venia-ui/lib/components/Header/cartTrigger.gql';
@@ -67,10 +67,6 @@ const CartTrigger = props => {
                     {maybeItemCounter}
                 </button>
             </div>
-            <button aria-label={buttonAriaLabel} className={classes.link} onClick={handleLinkClick}>
-                <Icon src={ShoppingCartIcon} />
-                {maybeItemCounter}
-            </button>
             <Suspense fallback={null}>
                 <MiniCart isOpen={miniCartIsOpen} setIsOpen={setMiniCartIsOpen} ref={miniCartRef} />
             </Suspense>

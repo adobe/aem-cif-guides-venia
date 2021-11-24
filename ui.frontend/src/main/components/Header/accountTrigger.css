@@ -1,0 +1,25 @@
+.root {
+    align-items: center;
+    display: grid;
+    width: max-content;
+}
+
+.root_open {
+    composes: root;
+
+    box-shadow: 0 4px rgb(var(--venia-brand-color-1-700));
+}
+
+.trigger {
+    composes: root from '@magento/venia-ui/lib/components/clickable.css';
+
+    height: 3rem;
+    min-width: 6rem;
+    z-index: 1;
+}
+
+@media (max-width: 640px) {
+    .root {
+        display: none;
+    }
+}

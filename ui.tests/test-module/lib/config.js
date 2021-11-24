@@ -41,6 +41,9 @@ let aem_author_password = process.env.AEM_AUTHOR_PASSWORD || 'admin';
 let aem_publish_basel_url = process.env.AEM_PUBLISH_URL || 'http://localhost:4503';
 let aem_publish_username = process.env.AEM_PUBLISH_USERNAME || 'admin';
 let aem_publish_password = process.env.AEM_PUBLISH_PASSWORD || 'admin';
+// Venia account
+let venia_account_email = process.env.VENIA_ACCOUNT_EMAIL || '';
+let venia_account_password = process.env.VENIA_ACCOUNT_PASSWORD || '';
 
 let type = process.env.AEM || 'cloud'; // If testing against AEM cloud or classic
 
@@ -64,6 +67,10 @@ module.exports = {
             username: aem_publish_username,
             password: aem_publish_password
         }
+    },
+    venia: {
+        email: venia_account_email,
+        password: venia_account_password
     },
     reports_path: reports_path,
     shared_folder: shared_folder,
