@@ -41,8 +41,6 @@ const Wishlist = props => {
     const talonProps = useWishlist({ id, itemsCount, isCollapsed, operations });
     const { handleContentToggle, isOpen, items, isLoading, isFetchingMore, handleLoadMore } = talonProps;
 
-    console.log('items', items);
-
     const classes = useStyle(defaultClasses, props.classes);
     const contentClass = isOpen ? classes.content : classes.content_hidden;
     const contentToggleIconSrc = isOpen ? ChevronUp : ChevronDown;

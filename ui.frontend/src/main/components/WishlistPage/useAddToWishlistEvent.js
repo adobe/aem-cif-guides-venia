@@ -22,7 +22,6 @@ const useAddToWishlistEvent = (props = {}) => {
 
     useEventListener(document, 'aem.cif.add-to-wishlist', async event => {
         const items = typeof event.detail === 'string' ? JSON.parse(event.detail) : event.detail;
-        console.log('wishlist event item', items);
         items.forEach(item => {
             addProductToWishlist({
                 variables: { wishlistId: '0', itemOptions: item }
