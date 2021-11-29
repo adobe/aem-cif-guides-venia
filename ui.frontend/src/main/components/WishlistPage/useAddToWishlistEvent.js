@@ -16,6 +16,19 @@ import defaultOperations from '@magento/peregrine/lib/talons/Wishlist/AddToListB
 import mergeOperations from '@magento/peregrine/lib/util/shallowMerge';
 import { useMutation } from '@apollo/client';
 
+const productMapper = item => {
+    const result = {
+        sku: item.sku,
+        quantity: item.quantity
+    };
+
+    if (item.parent_sku) {
+        result.parent_sku = item.parent_sku;
+    }
+
+    return result;
+};
+
 const useAddToWishlistEvent = (props = {}) => {
     const operations = mergeOperations(defaultOperations, props.operations);
     const [addProductToWishlist] = useMutation(operations.addProductToWishlistMutation);
@@ -24,7 +37,7 @@ const useAddToWishlistEvent = (props = {}) => {
         const items = typeof event.detail === 'string' ? JSON.parse(event.detail) : event.detail;
         items.forEach(item => {
             addProductToWishlist({
-                variables: { wishlistId: '0', itemOptions: item }
+                variables: { wishlistId: '0', itemOptions: productMapper(item) }
             });
         });
     });
