@@ -24,6 +24,7 @@ import {
     Portal,
     ConfigContextProvider,
     BundleProductOptions,
+    GiftCartOptions,
     PortalPlacer
 } from '@adobe/aem-core-cif-react-components';
 
@@ -83,6 +84,11 @@ const App = props => {
                         <Portal selector={mountingPoints.bundleProductOptionsContainer}>
                             <BundleProductOptions />
                         </Portal>
+
+                        <PortalPlacer
+                            selector={mountingPoints.giftCardProductOptionsContainer}
+                            component={GiftCartOptions}
+                        />
 
                         <Route path={pagePaths.accountDetails}>
                             <Portal selector={mountingPoints.accountDetails}>
