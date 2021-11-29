@@ -19,7 +19,7 @@ import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListin
 import resourceUrl from '@magento/peregrine/lib/util/makeUrl';
 import Price from '@magento/venia-ui/lib/components/Price';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import Image from '@magento/venia-ui/lib/components/Image';
 import Kebab from '@magento/venia-ui/lib/components/LegacyMiniCart/kebab';
 import ProductOptions from '@magento/venia-ui/lib/components/LegacyMiniCart/productOptions';

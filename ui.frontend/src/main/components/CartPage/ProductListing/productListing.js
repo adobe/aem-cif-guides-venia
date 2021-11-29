@@ -16,7 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import { gql } from '@apollo/client';
 import { useProductListing } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProductListing';
 
-import useStyle from '@magento/peregrine/lib/util/shallowMerge';
+import { useStyle } from '@magento/venia-ui/lib/classify';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
 import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/productListing.css';
 import Product from './product';
