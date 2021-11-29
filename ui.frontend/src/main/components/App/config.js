@@ -58,6 +58,7 @@ export default {
         minicart: '.minicart__body',
         navPanel: 'aside.navigation__root',
         bundleProductOptionsContainer: '#bundle-product-options',
+        giftCardProductOptionsContainer: '#gift-card-product-options',
         accountDetails: '.accountdetails__body',
         resetPasswordPage: '.resetpassword__body',
         productRecs: '[data-is-product-recs]',
