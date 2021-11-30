@@ -393,6 +393,17 @@
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </productcarousel>
+                <productteaser jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Product Teaser Default"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToWishList="{Boolean}true">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </productteaser>
                 <relatedproducts jcr:primaryType="nt:unstructured">
                     <default
                         jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"

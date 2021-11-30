@@ -35,6 +35,9 @@
                         <productcarousel jcr:primaryType="nt:unstructured"
                             cq:policy="venia/components/commerce/productcarousel/default"
                             sling:resourceType="wcm/core/components/policies/mapping" />
+                        <productteaser jcr:primaryType="nt:unstructured"
+                            cq:policy="venia/components/commerce/productteaser/default"
+                            sling:resourceType="wcm/core/components/policies/mapping" />
                         <relatedproducts jcr:primaryType="nt:unstructured"
                             cq:policy="venia/components/commerce/relatedproducts/default"
                             sling:resourceType="wcm/core/components/policies/mapping" />
