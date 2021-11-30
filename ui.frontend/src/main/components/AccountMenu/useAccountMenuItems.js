@@ -29,7 +29,7 @@ export const useAccountMenuItems = props => {
     }, [onSignOut]);
 
     const { pagePaths } = useConfigContext();
-    const MENU_ITEMS = []
+    const MENU_ITEMS = [];
 
     MENU_ITEMS.push({
         name: 'Order History',
