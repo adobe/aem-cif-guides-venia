@@ -18,7 +18,7 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER, COMMERCE_ENDPOINT } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid) => {
     if (!pid) {
@@ -54,11 +54,12 @@ try {
     let cifVersion = ci.sh('mvn help:evaluate -Dexpression=core.cif.components.version -q -DforceStdout', true);
     let wcmVersion = ci.sh('mvn help:evaluate -Dexpression=core.wcm.components.version -q -DforceStdout', true);
     let classifier = process.env.AEM;
+    let excludedCategory = classifier === 'classic' ? 'junit.category.IgnoreOn65' : 'junit.category.IgnoreOnCloud';
 
     ci.dir(qpPath, () => {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
-        
+
         let extras;
         if (classifier == 'classic') {
             // Download latest add-on for AEM 6.5 release from artifactory
@@ -105,7 +106,7 @@ try {
     // Run integration tests
     if (TYPE === 'integration') {
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Dexclude.category=${excludedCategory} -Plocal`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {
@@ -115,16 +116,16 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER}`);
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
         });
     }
-    
+
     ci.dir(qpPath, () => {
         // Stop CQ
         ci.sh('./qp.sh -v stop --id author');
     });
 
-} finally { 
+} finally {
     // Copy tests results
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
@@ -133,7 +134,7 @@ try {
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
-    
+
     // Always download logs from AEM container
     ci.sh('mkdir logs');
     ci.dir('logs', () => {

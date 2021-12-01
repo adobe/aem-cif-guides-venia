@@ -91,12 +91,6 @@
                             <target>/apps/venia-packages/application/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.adobe.acs</groupId>
-                            <artifactId>acs-aem-commons-content</artifactId>
-                            <type>zip</type>
-                            <target>/apps/venia-vendor-packages/application/install</target>
-                        </embedded>
-                        <embedded>
                             <groupId>com.adobe.commerce.cif</groupId>
                             <artifactId>core-cif-components-apps</artifactId>
                             <type>zip</type>
@@ -289,13 +283,6 @@
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.config-classic</artifactId>
             <version>${project.version}</version>
-            <type>zip</type>
-        </dependency>
-
-        <!-- Adobe ACS Commons -->
-        <dependency>
-            <groupId>com.adobe.acs</groupId>
-            <artifactId>acs-aem-commons-content</artifactId>
             <type>zip</type>
         </dependency>
 
