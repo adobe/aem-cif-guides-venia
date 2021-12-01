@@ -41,7 +41,7 @@ const AccountTrigger = props => {
     const { formatMessage } = useIntl();
     const { showWishList } = props;
 
-    if (!showWishList) {
+    if (showWishList) {
         useAddToWishlistEvent();
     }
 
