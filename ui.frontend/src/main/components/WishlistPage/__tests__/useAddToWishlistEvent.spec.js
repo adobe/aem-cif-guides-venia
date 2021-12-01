@@ -59,10 +59,12 @@ test('handles event with string details', async () => {
     const addProductToWishlistMutationMock = jest.fn();
     render(<MockComponent operations={{ addProductToWishlistMutation: addProductToWishlistMutationMock }} />);
 
-    dispatchEvent('[{"foo": "bar"}]');
+    dispatchEvent('[{"sku": "bar", "quantity": 1, "parent_sku": "test", "extra": "ignore"}]');
 
     await testEventDetails(addProductToWishlistMutationMock, {
-        foo: 'bar'
+        sku: 'bar',
+        quantity: 1,
+        parent_sku: 'test'
     });
 });
 
@@ -70,9 +72,10 @@ test('handles event with JSON details', async () => {
     const addProductToWishlistMutationMock = jest.fn();
     render(<MockComponent operations={{ addProductToWishlistMutation: addProductToWishlistMutationMock }} />);
 
-    dispatchEvent([{ foo: 'bar' }]);
+    dispatchEvent([{ sku: 'bar', quantity: 1, extra: 'ignore' }]);
 
     await testEventDetails(addProductToWishlistMutationMock, {
-        foo: 'bar'
+        sku: 'bar',
+        quantity: 1
     });
 });
