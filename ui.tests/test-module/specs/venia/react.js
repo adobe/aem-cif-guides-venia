@@ -16,7 +16,7 @@
 
 const config = require('../../lib/config');
 
-const itif = condition => (condition ? it : it.skip);
+const describeif = condition => (condition ? describe : describe.skip);
 
 describe('Venia React Components', () => {
     const venia_homepage = `${config.aem.author.base_url}/content/venia/us/en.html`;
@@ -74,9 +74,8 @@ describe('Venia React Components', () => {
         });
     });
 
-    itif(config.venia && config.venia.email && config.venia.password)(
-        'should render the sign in component in the header',
-        () => {
+    describeif(config.venia && config.venia.email && config.venia.password)('for signed in users', () => {
+        it('should render the sign in component in the header', () => {
             // Go to the Venia homepage
             browser.url(venia_homepage);
 
@@ -95,32 +94,32 @@ describe('Venia React Components', () => {
             $('button[type="submit"]').click();
 
             expect($('.cmp-VeniaAccountMenu__accountMenuItems__root')).toBeDisplayed();
-        }
-    );
+        });
 
-    it('should render the address book component', () => {
-        // Go to address book page
-        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
+        it('should render the address book component', () => {
+            // Go to address book page
+            browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/address-book.html`);
 
-        expect($('.cmp-VeniaAddressBookPage__addressBookPage__root')).toBeDisplayed();
-    });
+            expect($('.cmp-VeniaAddressBookPage__addressBookPage__root')).toBeDisplayed();
+        });
 
-    it('should render the account details', () => {
-        // Go to account details page
-        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
+        it('should render the account details', () => {
+            // Go to account details page
+            browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/account-details.html`);
 
-        expect($('.cmp-VeniaAccountInformationPage__accountInformationPage__root')).toBeDisplayed();
-    });
+            expect($('.cmp-VeniaAccountInformationPage__accountInformationPage__root')).toBeDisplayed();
+        });
 
-    it('should render the order history component', () => {
-        // Go to order history page
-        browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
+        it('should render the order history component', () => {
+            // Go to order history page
+            browser.url(`${config.aem.author.base_url}/content/venia/us/en/my-account/order-history.html`);
 
-        expect($('.cmp-VeniaOrderHistoryPage__orderHistoryPage__root')).toBeDisplayed();
+            expect($('.cmp-VeniaOrderHistoryPage__orderHistoryPage__root')).toBeDisplayed();
+        });
     });
 
     it('should render the cart page', () => {
-        // Go to password cart page
+        // Go to cart page
         browser.url(`${config.aem.author.base_url}/content/venia/us/en/cart-details.html`);
 
         expect($('.cmp-VeniaCartPage__cartPage__root')).toBeDisplayed();
