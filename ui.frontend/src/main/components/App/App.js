@@ -38,6 +38,7 @@ import CartPage from '../CartPage';
 import CheckoutPage from '../CheckoutPage';
 import AccountTrigger from '../Header/accountTrigger';
 import OrderHistoryPage from '../OrderHistoryPage';
+import WishlistPage from '../WishlistPage';
 import AccountInformationPage from '../AccountInformationPage';
 
 import loadLocaleData from './i18n';
@@ -99,6 +100,12 @@ const App = props => {
                         <Route path={pagePaths.orderHistory}>
                             <Portal selector={mountingPoints.orderHistoryPageContainer}>
                                 <OrderHistoryPage />
+                            </Portal>
+                        </Route>
+
+                        <Route path={pagePaths.wishlist}>
+                            <Portal selector={mountingPoints.wishlistPageContainer}>
+                                <WishlistPage />
                             </Portal>
                         </Route>
 

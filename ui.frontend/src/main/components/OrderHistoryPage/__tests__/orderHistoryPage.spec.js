@@ -14,12 +14,12 @@
 import React from 'react';
 import render from '../../utils/test-utils';
 import { useToasts } from '@magento/peregrine/lib/Toasts';
-import { useOrderHistoryPage } from '../../../talons/OrderHistoryPage/useOrderHistoryPage';
+import { useOrderHistoryPage } from '@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage';
 
 import { MockedProvider } from '@apollo/client/testing';
 import OrderHistoryPage from '../orderHistoryPage';
 
-jest.mock('../../../talons/OrderHistoryPage/useOrderHistoryPage', () => ({
+jest.mock('@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage', () => ({
     useOrderHistoryPage: jest
         .fn()
         .mockName('useOrderHistoryPage')
@@ -53,6 +53,19 @@ jest.mock('@magento/peregrine/lib/Toasts', () => ({
         ])
 }));
 
+jest.mock('react-router-dom', () => ({
+    useHistory: () => ({
+        replace: jest.fn(),
+        go: jest.fn()
+    })
+}));
+jest.mock('@magento/peregrine/lib/context/user', () => ({
+    useUserContext: () => [
+        {
+            isSignedIn: true
+        }
+    ]
+}));
 jest.mock('@magento/venia-ui/lib/classify');
 jest.mock('@magento/venia-ui/lib/components/OrderHistoryPage/orderRow', () => 'OrderRow');
 jest.mock('@adobe/aem-core-cif-react-components', () => ({

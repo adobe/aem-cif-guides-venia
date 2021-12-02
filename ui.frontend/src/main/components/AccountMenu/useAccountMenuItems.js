@@ -37,6 +37,11 @@ export const useAccountMenuItems = props => {
             url: pagePaths.orderHistory
         },
         {
+            name: 'Favorites Lists',
+            id: 'accountMenu.favoritesListsLink',
+            url: pagePaths.wishlist
+        },
+        {
             name: 'Address Book',
             id: 'accountMenu.addressBookLink',
             url: pagePaths.addressBook
