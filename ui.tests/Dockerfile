@@ -31,6 +31,9 @@ ENV AEM_AUTHOR_PASSWORD admin
 ENV AEM_PUBLISH_URL http://localhost:4503
 ENV AEM_PUBLISH_USERNAME admin
 ENV AEM_PUBLISH_PASSWORD admin
+ENV VENIA_ACCOUNT_EMAIL venia@adobe.com
+ENV VENIA_ACCOUNT_PASSWORD password
+
 # Following convention variables are null by default
 # ENV SHARED_FOLDER
 # ENV UPLOAD_URL
