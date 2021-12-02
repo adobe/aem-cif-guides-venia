@@ -19,7 +19,7 @@ import { useAccountTrigger } from '@magento/peregrine/lib/talons/Header/useAccou
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import AccountChip from '@magento/venia-ui/lib/components/AccountChip';
-import useAddToWishlistEvent from '../WishlistPage/useAddToWishlistEvent';
+import { useAddToWishlistEvent } from '@adobe/aem-core-cif-react-components';
 
 import defaultClasses from './accountTrigger.css';
 
