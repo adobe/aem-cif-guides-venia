@@ -18,7 +18,7 @@ const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
 
 describe('Catalog Page Component Dialog', function () {
-    const page_properties = `${config.aem.author.base_url}/mnt/overlay/wcm/core/content/sites/properties.html`;
+    const page_properties = `${config.aem.author.base_url}/ui#/aem/mnt/overlay/wcm/core/content/sites/properties.html`;
     const catalog_page = '/content/venia/us/en/products';
 
     let onboardingHdler;
@@ -46,7 +46,7 @@ describe('Catalog Page Component Dialog', function () {
 
     it('Catalog page dialog extensions are displayed', () => {
         // Catalog page properties
-        browser.url(`${page_properties}?item=${encodeURIComponent(`${catalog_page}`)}`);
+        browser.urlUnifiedShell(`${page_properties}?item=${encodeURIComponent(`${catalog_page}`)}`);
 
         // Open Commerce tab
         let commerceTab = $('coral-tab-label=Commerce');

@@ -70,8 +70,8 @@ describe('Venia Searchbar Component', () => {
 
     it('honors the placeholder property', () => {
         // Open Venia header in the XF editor
-        let xfPath = `${config.aem.author.base_url}/editor.html/content/experience-fragments/venia/us/en/site/header/master.html`;
-        browser.url(xfPath);
+        let xfPath = `${config.aem.author.base_url}/ui#/aem/editor.html/content/experience-fragments/venia/us/en/site/header/master.html`;
+        browser.urlUnifiedShell(xfPath);
         let searchBar = $(
             'div[data-path="/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/searchbar"]'
         );
@@ -109,7 +109,7 @@ describe('Venia Searchbar Component', () => {
         expect(input).toHaveAttr('placeholder', searchProductsText);
 
         // clear the placeholder
-        browser.url(xfPath);
+        browser.urlUnifiedShell(xfPath);
         searchBar = $(
             'div[data-path="/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/searchbar"]'
         );

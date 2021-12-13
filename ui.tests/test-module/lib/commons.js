@@ -51,7 +51,7 @@ function _getLoginCookies(browser) {
     let cookies = browser.getCookies();
 
     // Get login and affinity cookies only
-    let loginCookies = cookies.filter(e => ['login-token', 'affinity'].includes(e.name));
+    let loginCookies = cookies.filter(e => ['login-token', 'affinity', 'oauth-authid', 'oauth-configid'].includes(e.name));
 
     // Throw if mandatory login cookie is not there
     if (!loginCookies.find(element => element.name == 'login-token')) {

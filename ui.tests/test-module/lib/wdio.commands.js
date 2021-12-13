@@ -24,24 +24,25 @@ const errors = require('request-promise/errors');
 const AEM_SITES_PATH = '/sites.html';
 
 browser.addCommand('AEMLogin', function (username, password) {
-    // Check presence of local sign-in Accordion
-    if ($('[class*="Accordion"] form').isExisting()) {
-        try {
-            $('#username').setValue(username);
-        } catch (e) {
-            // Form field not interactable, not visible
-            // Need to open the Accordion
-            $('[class*="Accordion"] button').click();
-            browser.pause(500);
-        }
-    }
+    $('button=Sign in with Adobe').click();
+    $('input[name="username"]').setValue(username);
+    $('button=Continue').click();
+    $('input[name="password"]').setValue(password);
+    $('button=Continue').click();
+    $('#exc').waitForExist(5000);
+    expect(browser).toHaveUrl(`${config.aem.author.base_url}/ui#/aem/aem/start.html`);
+});
 
-    $('#username').setValue(username);
-    $('#password').setValue(password);
+browser.addCommand('urlUnifiedShell', function (path) {
+    // Switch to top level frame
+    browser.switchToFrame(null);
 
-    $('form [type="submit"]').click();
+    // Change url
+    browser.url(path);
 
-    $('coral-shell-content').waitForExist(5000);
+    // Switch to Unified Shell iframe
+    const iframe = $('.exc-core-sandbox > iframe');
+    browser.switchToFrame(iframe);
 });
 
 browser.addCommand('AEMForceLogout', function () {

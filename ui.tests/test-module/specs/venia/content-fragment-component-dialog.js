@@ -20,7 +20,7 @@ const request = require('request-promise');
 const url = require('url');
 
 describe('Commerce Content Fragment Component Dialog', function () {
-    const editor_page = `${config.aem.author.base_url}/editor.html`;
+    const editor_page = `${config.aem.author.base_url}/ui#/aem/editor.html`;
 
     const conteFragmentModelJson = `{
         "jcr:primaryType": "cq:Template",
@@ -163,7 +163,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
     });
 
     const addComponentToPage = (name = 'Commerce Content Fragment', group = 'Venia - Commerce') => {
-        browser.url(`${editor_page}${testing_page}.html`);
+        browser.urlUnifiedShell(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
         browser.EditorOpenSidePanel();
 

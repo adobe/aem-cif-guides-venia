@@ -18,7 +18,7 @@ const config = require('../../lib/config');
 const { OnboardingDialogHandler, randomString } = require('../../lib/commons');
 
 describe('Component Dialogs', function () {
-    const editor_page = `${config.aem.author.base_url}/editor.html`;
+    const editor_page = `${config.aem.author.base_url}/ui#/aem/editor.html`;
 
     let testing_page;
     let onboardingHdler;
@@ -61,7 +61,7 @@ describe('Component Dialogs', function () {
     });
 
     const addComponentToPage = (name, group = 'Venia - Commerce') => {
-        browser.url(`${editor_page}${testing_page}.html`);
+        browser.urlUnifiedShell(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
         browser.EditorOpenSidePanel();
 

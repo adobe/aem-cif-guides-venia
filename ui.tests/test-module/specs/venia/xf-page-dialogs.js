@@ -18,7 +18,7 @@ const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
 
 describe('XF Page Component Dialog', function () {
-    const xf_properties = `${config.aem.author.base_url}/mnt/overlay/wcm/core/content/sites/properties.html`;
+    const xf_properties = `${config.aem.author.base_url}/ui#/aem/mnt/overlay/wcm/core/content/sites/properties.html`;
     const sample_xf = '/content/experience-fragments/venia/us/en/site/products/promotions/master';
 
     let onboardingHdler;
@@ -46,7 +46,7 @@ describe('XF Page Component Dialog', function () {
 
     it('XF dialog extensions are displayed when CIF Add-On is present', () => {
         // Open XF properties
-        browser.url(`${xf_properties}?item=${encodeURIComponent(`${sample_xf}`)}`);
+        browser.urlUnifiedShell(`${xf_properties}?item=${encodeURIComponent(`${sample_xf}`)}`);
 
         // Open Commerce tab
         let commerceTab = $('coral-tab-label=Commerce');
