@@ -28,6 +28,8 @@ services:
       - AEM_PUBLISH_URL
       - AEM_PUBLISH_USERNAME
       - AEM_PUBLISH_PASSWORD
+      - VENIA_ACCOUNT_EMAIL
+      - VENIA_ACCOUNT_PASSWORD
       - REPORTS_PATH=/tmp/reports/wdio-chrome
       - SHARED_FOLDER=/tmp/shared
       - HEADLESS_BROWSER
