@@ -47,21 +47,16 @@ export const useAccountMenuItems = props => {
 
     MENU_ITEMS.push(
         {
-            name: 'Favorites Lists',
-            id: 'accountMenu.favoritesListsLink',
-            url: pagePaths.wishlist
-        },
-        {
             name: 'Address Book',
             id: 'accountMenu.addressBookLink',
             url: pagePaths.addressBook
+        },
+        {
+            name: 'Account Information',
+            id: 'accountMenu.accountInfoLink',
+            url: pagePaths.accountDetails
         }
     );
-    MENU_ITEMS.push({
-        name: 'Account Information',
-        id: 'accountMenu.accountInfoLink',
-        url: pagePaths.accountDetails
-    });
 
     // Hide links until features are completed
     // {
