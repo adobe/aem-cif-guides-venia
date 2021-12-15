@@ -11,12 +11,13 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { PlusSquare } from 'react-feather';
 import { useConfigContext } from '@adobe/aem-core-cif-react-components';
-
-import { useAddressBookPage } from '../../talons/AddressBookPage/useAddressBookPage';
+import { useUserContext } from '@magento/peregrine/lib/context/user';
+import { useAddressBookPage } from '@magento/peregrine/lib/talons/AddressBookPage/useAddressBookPage';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import LinkButton from '@magento/venia-ui/lib/components/LinkButton';
@@ -27,8 +28,20 @@ import AddEditDialog from '@magento/venia-ui/lib/components/AddressBookPage/addE
 import defaultClasses from '@magento/venia-ui/lib/components/AddressBookPage/addressBookPage.css';
 
 const AddressBookPage = props => {
-    const { pagePaths } = useConfigContext();
-    const talonProps = useAddressBookPage({ baseUrl: pagePaths.baseUrl });
+    const {
+        pagePaths: { baseUrl }
+    } = useConfigContext();
+    const history = useHistory();
+    const [{ isSignedIn }] = useUserContext();
+
+    useEffect(() => {
+        if (!isSignedIn) {
+            history.replace(baseUrl);
+            history.go(0);
+        }
+    }, [history, isSignedIn]);
+
+    const talonProps = useAddressBookPage();
     const {
         confirmDeleteAddressId,
         countryDisplayNameMap,
