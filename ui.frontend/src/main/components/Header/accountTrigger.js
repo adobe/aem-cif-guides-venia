@@ -36,10 +36,14 @@ const AccountTrigger = props => {
     const talonProps = useAccountTrigger();
     const { accountMenuIsOpen, accountMenuRef, accountMenuTriggerRef, setAccountMenuIsOpen, handleTriggerClick } =
         talonProps;
-
     const classes = useStyle(defaultClasses, props.classes);
     const rootClassName = accountMenuIsOpen ? classes.root_open : classes.root;
     const { formatMessage } = useIntl();
+    const { showWishList } = props;
+
+    if (showWishList) {
+        useAddToWishlistEvent();
+    }
 
     useAddToWishlistEvent();
 
@@ -68,6 +72,7 @@ const AccountTrigger = props => {
                     ref={accountMenuRef}
                     accountMenuIsOpen={accountMenuIsOpen}
                     setAccountMenuIsOpen={setAccountMenuIsOpen}
+                    showWishList={showWishList}
                 />
             </Suspense>
         </Fragment>

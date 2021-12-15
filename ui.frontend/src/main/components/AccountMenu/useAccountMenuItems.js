@@ -22,47 +22,51 @@ import { useConfigContext } from '@adobe/aem-core-cif-react-components';
  * @returns {Function}  result.handleSignOut - The function to handle sign out actions.
  */
 export const useAccountMenuItems = props => {
-    const { onSignOut } = props;
+    const { onSignOut, showWishList } = props;
 
     const handleSignOut = useCallback(() => {
         onSignOut();
     }, [onSignOut]);
 
     const { pagePaths } = useConfigContext();
+    const MENU_ITEMS = [];
 
-    const MENU_ITEMS = [
-        {
-            name: 'Order History',
-            id: 'accountMenu.orderHistoryLink',
-            url: pagePaths.orderHistory
-        },
-        {
+    MENU_ITEMS.push({
+        name: 'Order History',
+        id: 'accountMenu.orderHistoryLink',
+        url: pagePaths.orderHistory
+    });
+
+    if (showWishList) {
+        MENU_ITEMS.push({
             name: 'Favorites Lists',
+            id: 'accountMenu.favoritesListsLink',
+            url: pagePaths.wishlist
+        });
+    }
+
+    MENU_ITEMS.push({
+        name: 'Favorites Lists',
             id: 'accountMenu.favoritesListsLink',
             url: pagePaths.wishlist
         },
         {
             name: 'Address Book',
-            id: 'accountMenu.addressBookLink',
-            url: pagePaths.addressBook
-        },
-        {
-            name: 'Account Information',
-            id: 'accountMenu.accountInfoLink',
-            url: pagePaths.accountDetails
-        }
-        // Hide links until features are completed
-        // {
-        //     name: 'Favorites Lists',
-        //     id: 'accountMenu.favoritesListsLink',
-        //     url: '/wishlist'
-        // },
-        // {
-        //     name: 'Saved Payments',
-        //     id: 'accountMenu.savedPaymentsLink',
-        //     url: '/saved-payments'
-        // },
-    ];
+        id: 'accountMenu.addressBookLink',
+        url: pagePaths.addressBook
+    });
+    MENU_ITEMS.push({
+        name: 'Account Information',
+        id: 'accountMenu.accountInfoLink',
+        url: pagePaths.accountDetails
+    });
+
+    // Hide links until features are completed
+    // {
+    //     name: 'Saved Payments',
+    //     id: 'accountMenu.savedPaymentsLink',
+    //     url: '/saved-payments'
+    // }
 
     return {
         handleSignOut,

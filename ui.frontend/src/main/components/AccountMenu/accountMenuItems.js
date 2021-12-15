@@ -21,9 +21,9 @@ import { useAccountMenuItems } from './useAccountMenuItems';
 import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenuItems.css';
 
 const AccountMenuItems = props => {
-    const { onSignOut } = props;
+    const { onSignOut, showWishList } = props;
 
-    const talonProps = useAccountMenuItems({ onSignOut });
+    const talonProps = useAccountMenuItems({ onSignOut, showWishList });
     const { handleSignOut, menuItems } = talonProps;
 
     const classes = useStyle(defaultClasses, props.classes);

@@ -43,11 +43,14 @@ const talonProps = {
     menuItems: []
 };
 
-test('it renders correctly', () => {
+test.each([
+    ['without wishlist', false],
+    ['with wishlist', true]
+])('it renders correctly (%s)', (name, showWishList) => {
     // Act.
     const instance = render(
         <ConfigContextProvider config={config}>
-            <AccountMenuItems {...props} />
+            <AccountMenuItems {...props} showWishList={showWishList} />
         </ConfigContextProvider>
     );
 
