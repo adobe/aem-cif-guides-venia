@@ -203,7 +203,7 @@ export const useAddressBookPage = (props = { baseUrl: '/content/venia/us/en.html
                 ['createCustomerAddressMutation', createCustomerAddressError],
                 ['updateCustomerAddressMutation', updateCustomerAddressError]
             ]);
-        } else return new Map();
+        } else {return new Map();}
     }, [createCustomerAddressError, displayError, updateCustomerAddressError]);
 
     // use data from backend until Intl.DisplayNames is widely supported
