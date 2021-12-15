@@ -46,7 +46,12 @@ export const useAccountMenuItems = props => {
     }
 
     MENU_ITEMS.push({
-        name: 'Address Book',
+        name: 'Favorites Lists',
+            id: 'accountMenu.favoritesListsLink',
+            url: pagePaths.wishlist
+        },
+        {
+            name: 'Address Book',
         id: 'accountMenu.addressBookLink',
         url: pagePaths.addressBook
     });
