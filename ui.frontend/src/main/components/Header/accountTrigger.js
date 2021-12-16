@@ -45,8 +45,6 @@ const AccountTrigger = props => {
         useAddToWishlistEvent();
     }
 
-    useAddToWishlistEvent();
-
     return (
         <Fragment>
             <div className={rootClassName} ref={accountMenuTriggerRef}>
