@@ -393,6 +393,17 @@
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </productcarousel>
+                <productteaser jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Product Teaser Default"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToWishList="{Boolean}true">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </productteaser>
                 <relatedproducts jcr:primaryType="nt:unstructured">
                     <default
                         jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
@@ -507,6 +518,7 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Product Recs Content Page"
                         sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToWishList="{Boolean}true"
                         allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,just-for-you,recently-viewed]">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </policy_1634893843292>
@@ -516,6 +528,7 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Product Recs Product Page"
                         sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToWishList="{Boolean}true"
                         allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,viewed-viewed,viewed-bought,more-like-this,recently-viewed]">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </policy_1615613612510752>
@@ -525,10 +538,29 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Product Recs XF"
                         sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToWishList="{Boolean}true"
                         allowedRecTypes="[most-viewed,most-purchased,purchase-session-conversion-rate,most-added-to-cart,add-to-cart-conversion-rate,trending,viewed-viewed,viewed-bought,bought-bought,more-like-this,just-for-you,recently-viewed]">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </policy_1616422079779221>
                 </productrecommendations>
+                <miniaccount jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Mini Account Default"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        enableWishList="{Boolean}true">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </miniaccount>
+                <product jcr:primaryType="nt:unstructured">
+                    <default
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Product Details Default"
+                            sling:resourceType="wcm/core/components/policy/policy"
+                            enableAddToWishList="{Boolean}true">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </product>
             </commerce>
         </components>
     </venia>

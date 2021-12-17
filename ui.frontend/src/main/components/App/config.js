@@ -14,7 +14,7 @@
 
 const storeConfigEl = document.querySelector('meta[name="store-config"]');
 let storeConfig;
-let headers;
+let headers = {};
 
 if (storeConfigEl) {
     storeConfig = JSON.parse(storeConfigEl.content);
@@ -22,11 +22,13 @@ if (storeConfigEl) {
 } else {
     // TODO: deprecated - the store configuration on the <body> has been deprecated and will be removed
     storeConfig = document.body.dataset;
-    headers = JSON.parse(storeConfig.httpHeaders);
+    if (storeConfig.httpHeaders) {
+        headers = JSON.parse(storeConfig.httpHeaders);
+    }
 }
 
 const baseUrl = storeConfig.storeRootUrl;
-const basePath = baseUrl.substr(0, baseUrl.indexOf('.'));
+const basePath = baseUrl ? baseUrl.substr(0, baseUrl.indexOf('.')) : '';
 
 // necessary to be set for venia-ui components
 window.STORE_VIEW_CODE = storeConfig.storeView || '';
@@ -64,7 +66,8 @@ export default {
         productRecs: '[data-is-product-recs]',
         cartDetailsContainer: '.cartcontainer__body',
         checkoutPageContainer: '.checkoutpage__body',
-        orderHistoryPageContainer: '.orderhistory__body'
+        orderHistoryPageContainer: '.orderhistory__body',
+        wishlistPageContainer: '.wishlist__body'
     },
     pagePaths: {
         baseUrl,
@@ -72,6 +75,7 @@ export default {
         accountDetails: `${basePath}/my-account/account-details.html`,
         cartDetails: `${basePath}/cart-details.html`,
         checkoutPage: `${basePath}/checkout.html`,
-        orderHistory: `${basePath}/my-account/order-history.html`
+        orderHistory: `${basePath}/my-account/order-history.html`,
+        wishlist: `${basePath}/my-account/wishlist.html`
     }
 };
