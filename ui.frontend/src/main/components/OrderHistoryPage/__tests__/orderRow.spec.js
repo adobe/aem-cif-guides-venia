@@ -13,10 +13,10 @@
  ******************************************************************************/
 /* eslint-disable react/display-name */
 import React from 'react';
-import { createTestInstance } from '@magento/peregrine';
 import { useOrderRow } from '@magento/peregrine/lib/talons/OrderHistoryPage/useOrderRow';
 
 import OrderRow from '../orderRow';
+import render from '../../utils/test-utils';
 
 jest.mock('@magento/peregrine/lib/talons/OrderHistoryPage/useOrderRow');
 
@@ -28,12 +28,12 @@ jest.mock('@magento/venia-ui/lib/components/OrderHistoryPage/orderProgressBar', 
     <div componentName="OrderProgressBar" {...props} />
 ));
 jest.mock('../OrderDetails', () => props => <div componentName="Order Details" {...props} />);
-jest.mock('react-intl', () => ({
+/* jest.mock('react-intl', () => ({
     FormattedMessage: props => <div componentName="Formatted Message Component" {...props} />,
     useIntl: jest.fn().mockReturnValue({
         formatMessage: jest.fn().mockImplementation(options => options.defaultMessage)
     })
-}));
+})); */
 
 const mockOrder = {
     billing_address: {
@@ -196,7 +196,7 @@ test('it renders collapsed order row', () => {
         handleContentToggle: jest.fn().mockName('handleContentToggle')
     });
 
-    const tree = createTestInstance(<OrderRow order={mockOrder} />);
+    const tree = render(<OrderRow order={mockOrder} />);
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -209,7 +209,7 @@ test('it does not render order details if loading is true', () => {
         handleContentToggle: jest.fn().mockName('handleContentToggle')
     });
 
-    const tree = createTestInstance(<OrderRow order={mockOrder} />);
+    const tree = render(<OrderRow order={mockOrder} />);
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -226,7 +226,7 @@ test('it renders open order row', () => {
         ...mockOrder,
         shipments: [1]
     };
-    const tree = createTestInstance(<OrderRow order={orderWithShipment} />);
+    const tree = render(<OrderRow order={orderWithShipment} />);
 
     expect(tree.toJSON()).toMatchSnapshot();
 });
@@ -243,7 +243,7 @@ test('it renders shipped status', () => {
         ...mockOrder,
         invoices: [1]
     };
-    const tree = createTestInstance(<OrderRow order={orderWithInvoice} />);
+    const tree = render(<OrderRow order={orderWithInvoice} />);
     const { root } = tree;
     const orderProgressProps = root.findByProps({
         componentName: 'OrderProgressBar'
@@ -264,7 +264,7 @@ test('it renders delivered status', () => {
         ...mockOrder,
         status: 'Complete'
     };
-    const tree = createTestInstance(<OrderRow order={completedOrder} />);
+    const tree = render(<OrderRow order={completedOrder} />);
     const { root } = tree;
     const orderProgressProps = root.findByProps({
         componentName: 'OrderProgressBar'

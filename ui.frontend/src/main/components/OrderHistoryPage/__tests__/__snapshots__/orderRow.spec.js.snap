@@ -10,11 +10,7 @@ exports[`it does not render order details if loading is true 1`] = `
     <span
       className="orderNumberLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order #"
-        id="orderRow.orderNumberText"
-      />
+      Order #
     </span>
     <span
       className="orderNumber"
@@ -28,11 +24,7 @@ exports[`it does not render order details if loading is true 1`] = `
     <span
       className="orderDateLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Date"
-        id="orderRow.orderDateText"
-      />
+      Order Date
     </span>
     <span
       className="orderDate"
@@ -46,17 +38,13 @@ exports[`it does not render order details if loading is true 1`] = `
     <span
       className="orderTotalLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Total"
-        id="orderRow.orderTotalText"
-      />
+      Order Total
     </span>
     <div
       className="orderTotal"
     >
       <span>
-        US$
+        $
       </span>
       <span>
         1
@@ -168,11 +156,7 @@ exports[`it renders collapsed order row 1`] = `
     <span
       className="orderNumberLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order #"
-        id="orderRow.orderNumberText"
-      />
+      Order #
     </span>
     <span
       className="orderNumber"
@@ -186,11 +170,7 @@ exports[`it renders collapsed order row 1`] = `
     <span
       className="orderDateLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Date"
-        id="orderRow.orderDateText"
-      />
+      Order Date
     </span>
     <span
       className="orderDate"
@@ -204,17 +184,13 @@ exports[`it renders collapsed order row 1`] = `
     <span
       className="orderTotalLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Total"
-        id="orderRow.orderTotalText"
-      />
+      Order Total
     </span>
     <div
       className="orderTotal"
     >
       <span>
-        US$
+        $
       </span>
       <span>
         1
@@ -489,11 +465,7 @@ exports[`it renders open order row 1`] = `
     <span
       className="orderNumberLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order #"
-        id="orderRow.orderNumberText"
-      />
+      Order #
     </span>
     <span
       className="orderNumber"
@@ -507,11 +479,7 @@ exports[`it renders open order row 1`] = `
     <span
       className="orderDateLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Date"
-        id="orderRow.orderDateText"
-      />
+      Order Date
     </span>
     <span
       className="orderDate"
@@ -525,17 +493,13 @@ exports[`it renders open order row 1`] = `
     <span
       className="orderTotalLabel"
     >
-      <div
-        componentName="Formatted Message Component"
-        defaultMessage="Order Total"
-        id="orderRow.orderTotalText"
-      />
+      Order Total
     </span>
     <div
       className="orderTotal"
     >
       <span>
-        US$
+        $
       </span>
       <span>
         1
