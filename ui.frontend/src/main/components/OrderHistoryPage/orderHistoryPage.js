@@ -30,7 +30,7 @@ import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator'
 import TextInput from '@magento/venia-ui/lib/components/TextInput';
 
 import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/orderHistoryPage.css';
-import OrderRow from '@magento/venia-ui/lib/components/OrderHistoryPage/orderRow';
+import OrderRow from './orderRow';
 import ResetButton from '@magento/venia-ui/lib/components/OrderHistoryPage/resetButton';
 
 const errorIcon = (
