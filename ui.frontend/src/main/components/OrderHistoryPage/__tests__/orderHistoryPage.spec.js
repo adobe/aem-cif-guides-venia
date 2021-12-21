@@ -67,7 +67,7 @@ jest.mock('@magento/peregrine/lib/context/user', () => ({
     ]
 }));
 jest.mock('@magento/venia-ui/lib/classify');
-jest.mock('@magento/venia-ui/lib/components/OrderHistoryPage/orderRow', () => 'OrderRow');
+jest.mock('../orderRow', () => 'OrderRow');
 jest.mock('@adobe/aem-core-cif-react-components', () => ({
     useConfigContext: () => ({
         pagePaths: {
