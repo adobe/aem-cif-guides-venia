@@ -27,18 +27,14 @@ import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/or
 
 const OrderRow = props => {
     const { order } = props;
-    const { formatMessage } = useIntl();
+    const { formatMessage, formatDate } = useIntl();
     const { invoices, items, number: orderNumber, order_date: orderDate, shipments, status, total } = order;
     const { grand_total: grandTotal } = total;
     const { currency, value: orderTotal } = grandTotal;
 
     // Convert date to ISO-8601 format so Safari can also parse it
     const isoFormattedDate = orderDate.replace(' ', 'T');
-    const formattedDate = new Date(isoFormattedDate).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
+    const formattedDate = formatDate(new Date(isoFormattedDate));
 
     const hasInvoice = !!invoices.length;
     const hasShipment = !!shipments.length;

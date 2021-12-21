@@ -29,7 +29,7 @@ exports[`it does not render order details if loading is true 1`] = `
     <span
       className="orderDate"
     >
-      26 May 2020
+      5/26/2020
     </span>
   </div>
   <div
@@ -175,7 +175,7 @@ exports[`it renders collapsed order row 1`] = `
     <span
       className="orderDate"
     >
-      26 May 2020
+      5/26/2020
     </span>
   </div>
   <div
@@ -484,7 +484,7 @@ exports[`it renders open order row 1`] = `
     <span
       className="orderDate"
     >
-      26 May 2020
+      5/26/2020
     </span>
   </div>
   <div

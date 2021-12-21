@@ -28,12 +28,6 @@ jest.mock('@magento/venia-ui/lib/components/OrderHistoryPage/orderProgressBar', 
     <div componentName="OrderProgressBar" {...props} />
 ));
 jest.mock('../OrderDetails', () => props => <div componentName="Order Details" {...props} />);
-/* jest.mock('react-intl', () => ({
-    FormattedMessage: props => <div componentName="Formatted Message Component" {...props} />,
-    useIntl: jest.fn().mockReturnValue({
-        formatMessage: jest.fn().mockImplementation(options => options.defaultMessage)
-    })
-})); */
 
 const mockOrder = {
     billing_address: {
