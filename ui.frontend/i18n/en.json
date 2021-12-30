@@ -277,6 +277,24 @@
       "value": "Items"
     }
   ],
+  "orderDetails.buyAgain": [
+    {
+      "type": 0,
+      "value": "Buy Again"
+    }
+  ],
+  "orderDetails.printLabel": [
+    {
+      "type": 0,
+      "value": "Print Receipt"
+    }
+  ],
+  "orderDetails.quantity": [
+    {
+      "type": 0,
+      "value": "Qty"
+    }
+  ],
   "orderHistoryPage.emptyDataMessage": [
     {
       "type": 0,
@@ -333,6 +351,54 @@
       "value": "Search by Order Number"
     }
   ],
+  "orderItems.itemsHeading": [
+    {
+      "type": 0,
+      "value": "Items"
+    }
+  ],
+  "orderRow.deliveredText": [
+    {
+      "type": 0,
+      "value": "Delivered"
+    }
+  ],
+  "orderRow.orderDateText": [
+    {
+      "type": 0,
+      "value": "Order Date"
+    }
+  ],
+  "orderRow.orderNumberText": [
+    {
+      "type": 0,
+      "value": "Order #"
+    }
+  ],
+  "orderRow.orderTotalText": [
+    {
+      "type": 0,
+      "value": "Order Total"
+    }
+  ],
+  "orderRow.processingText": [
+    {
+      "type": 0,
+      "value": "Processing"
+    }
+  ],
+  "orderRow.readyToShipText": [
+    {
+      "type": 0,
+      "value": "Ready to ship"
+    }
+  ],
+  "orderRow.shippedText": [
+    {
+      "type": 0,
+      "value": "Shipped"
+    }
+  ],
   "priceSummary.checkoutButton": [
     {
       "type": 0,
@@ -385,6 +451,24 @@
     {
       "type": 0,
       "value": "Remove from cart"
+    }
+  ],
+  "productList.each": [
+    {
+      "type": 0,
+      "value": "ea."
+    }
+  ],
+  "productList.outOfStock": [
+    {
+      "type": 0,
+      "value": "Out-of-stock"
+    }
+  ],
+  "productList.quantity": [
+    {
+      "type": 0,
+      "value": "Qty :"
     }
   ],
   "productListing.loading": [

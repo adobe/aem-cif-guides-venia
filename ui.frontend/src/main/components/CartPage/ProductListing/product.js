@@ -11,12 +11,10 @@
  *    governing permissions and limitations under the License.
  *
  ******************************************************************************/
-import React, { useMemo } from 'react';
+import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { gql } from '@apollo/client';
-import { Link } from 'react-router-dom';
 import { useProduct } from '@magento/peregrine/lib/talons/CartPage/ProductListing/useProduct';
-import resourceUrl from '@magento/peregrine/lib/util/makeUrl';
 import Price from '@magento/venia-ui/lib/components/Price';
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
@@ -75,8 +73,6 @@ const Product = props => {
         />
     ) : null;
 
-    const itemLink = useMemo(() => resourceUrl(`/${urlKey}${urlSuffix || ''}`), [urlKey, urlSuffix]);
-
     const stockStatusMessage =
         stockStatus === 'OUT_OF_STOCK'
             ? formatMessage({
@@ -89,7 +85,7 @@ const Product = props => {
         <li className={classes.root}>
             <span className={classes.errorText}>{errorMessage}</span>
             <div className={itemClassName}>
-                <Link to={itemLink} className={classes.imageContainer}>
+                <div className={classes.imageContainer}>
                     <Image
                         alt={name}
                         classes={{
@@ -99,11 +95,9 @@ const Product = props => {
                         width={IMAGE_SIZE}
                         resource={image}
                     />
-                </Link>
+                </div>
                 <div className={classes.details}>
-                    <div className={classes.name}>
-                        <Link to={itemLink}>{name}</Link>
-                    </div>
+                    <div className={classes.name}>{name}</div>
                     <ProductOptions
                         options={options}
                         classes={{
