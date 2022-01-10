@@ -214,12 +214,12 @@ workflows:
   version: 2
   build-and-release:
     jobs:
-      - build:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
+#      - build:
+#          context:
+#            - CIF Artifactory Cloud
+#          filters:
+#            tags:
+#              only: /.*/
 #      - integration-test-655:
 #          context:
 #            - CIF Artifactory Cloud
@@ -266,9 +266,10 @@ workflows:
 #              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
       - update-cm:
           context:
+            - CIF Artifactory Cloud
             - CIF CM Stage
-          requires:
-            - build
+#          requires:
+#            - build
 #          filters:
 #            branches:
 #              ignore: /.*/
