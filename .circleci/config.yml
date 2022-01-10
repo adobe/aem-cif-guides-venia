@@ -194,6 +194,22 @@ jobs:
             rm -rf /home/circleci/.gnupg
             rm -rf /home/circleci/.npmrc
 
+  update-cm:
+    executor: cif_executor
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Update CM Repository
+          command: |
+            export C_TAG="venia-2021.12.01"
+            git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
+            git remote add downstream $GIT_REPO
+            git fetch downstream
+            git switch -c tmp downstream/main
+            git merge $C_TAG
+            git push tmp
+
 workflows:
   version: 2
   build-and-release:
@@ -204,47 +220,58 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - integration-test-655:
+#      - integration-test-655:
+#          context:
+#            - CIF Artifactory Cloud
+#          filters:
+#            tags:
+#              only: /.*/
+#          requires:
+#            - build
+#      - integration-test-cloudready-with-addon:
+#          context:
+#            - CIF Artifactory Cloud
+#          filters:
+#            tags:
+#              only: /.*/
+#          requires:
+#            - build
+#      - selenium-chrome-cloudready-with-addon:
+#          context:
+#            - CIF Artifactory Cloud
+#          filters:
+#            tags:
+#              only: /.*/
+#          requires:
+#            - build
+#      - selenium-chrome-655:
+#          context:
+#            - CIF Artifactory Cloud
+#          filters:
+#            tags:
+#              only: /.*/
+#          requires:
+#            - build
+#      - deploy-sample:
+#          context:
+#            - CIF Artifactory Cloud
+#            - CIF Maven Central
+#            - CIF GitHub
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+      - update-cm:
           context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
+            - CIF CM Stage
           requires:
             - build
-      - integration-test-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - deploy-sample:
-          context:
-            - CIF Artifactory Cloud
-            - CIF Maven Central
-            - CIF GitHub
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+
