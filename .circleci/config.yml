@@ -208,7 +208,7 @@ jobs:
             git fetch downstream
             git checkout -b tmp downstream/main
             git merge $C_TAG
-            git push tmp
+            git push downstream main
 
 workflows:
   version: 2
