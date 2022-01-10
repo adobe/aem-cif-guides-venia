@@ -22,7 +22,7 @@
     "prettier:fix": "prettier --write '{src,test}/**/*.{js,css}' --config ./.prettierrc",
     "eslint:check": "eslint 'src/**/*.js'",
     "eslint:fix": "eslint --fix 'src/**/*.js'",
-    "i18n:extract-compile": "formatjs extract --out-file i18n/__temp.json 'src/**/*.js' && formatjs compile --ast --out-file i18n/en.json i18n/__temp.json && rm i18n/__temp.json"
+    "i18n:extract-compile": "formatjs extract --out-file i18n/__temp.json 'src/**/*.js' && formatjs compile --ast --out-file i18n/en.json i18n/__temp.json"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",

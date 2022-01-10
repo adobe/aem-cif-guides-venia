@@ -104,3 +104,6 @@ coverage/
 # UI Tests
 ui.tests/test-module/reports
 test-reports
+
+# Formatjs
+ui.frontend/i18n/__temp.json
