@@ -206,7 +206,7 @@ jobs:
             git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
             git remote add downstream $GIT_REPO
             git fetch downstream
-            git switch -c tmp downstream/main
+            git checkout -b tmp downstream/main
             git merge $C_TAG
             git push tmp
 
