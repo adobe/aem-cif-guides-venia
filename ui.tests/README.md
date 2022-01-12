@@ -58,7 +58,8 @@ mvn verify -Pui-tests-local-execution
 | `SELENIUM_BROWSER`      | false     | `chrome`                | Browser used in the tests (`chrome` **_or_** `firefox`) |
 | `HEADLESS_BROWSER`      | false     | `false`                 | Set [headless mode](https://en.wikipedia.org/wiki/Headless_browser) of the browser |
 
-The credentials for the Venia Demo account are available [here](https://zerobin.corp.adobe.com/?pasteid=c97361b84f3f6de7&k=3mXOJZl6%2BEk2W%2FjN9FDYsEmcHo3ygVtXFrveknpou34%3D)
+Credentials for the Venia Demo account can be retrieved using `vault kv get dx_aem_commerce/cif/magento/ams/stage`. Make sure you surround the password with single-quotes because it can contain special characters.
+
 #### Example
 
 Run tests on <span style="color:green">local</span> <span style="color:orange">headless</span> <span style="color:purple">firefox</span>, targeting a <span style="color:blue">custom AEM author instance</span>:
