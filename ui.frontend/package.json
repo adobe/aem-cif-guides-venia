@@ -38,6 +38,7 @@
     "@formatjs/cli": "^4.2.33",
     "@magento/babel-preset-peregrine": "~1.1.0",
     "@testing-library/react": "^9.5.0",
+    "@testing-library/react-hooks": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "acorn": "^6.1.0",
