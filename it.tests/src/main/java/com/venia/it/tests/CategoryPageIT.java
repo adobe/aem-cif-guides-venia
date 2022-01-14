@@ -49,6 +49,8 @@ public class CategoryPageIT extends CommerceTestBase {
     @Test
     @Category({ IgnoreOnCloud.class })
     public void testProductListPageWithSampleData65() throws ClientException, IOException {
+        assumeOnPrem();
+
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/venia-bottoms/venia-pants.html";
         testProductListPageWithSampleData(
             pagePath,
@@ -63,6 +65,8 @@ public class CategoryPageIT extends CommerceTestBase {
     @Test
     @Category({ IgnoreOn65.class })
     public void testProductListPageWithSampleDataCloud() throws ClientException, IOException {
+        assumeCloud();
+        
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/venia-bottoms/venia-pants.html";
         testProductListPageWithSampleData(
             pagePath,

@@ -14,38 +14,19 @@
 
 package com.venia.it.tests;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.sling.testing.clients.ClientException;
-import org.apache.sling.testing.clients.SlingHttpResponse;
-import org.apache.sling.testing.clients.osgi.OsgiConsoleClient;
-import org.apache.sling.testing.clients.util.JsonUtils;
-import org.apache.sling.testing.clients.util.poller.Polling;
-import org.codehaus.jackson.JsonNode;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.testing.client.CQClient;
 import com.adobe.cq.testing.client.CommerceClient;
 import com.adobe.cq.testing.junit.rules.CQAuthorClassRule;
 import com.adobe.cq.testing.junit.rules.CQRule;
 
-import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class CommerceTestBase {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CommerceTestBase.class);
-
-    public static final String GRAPHQL_CLIENT_BUNDLE = "com.adobe.commerce.cif.graphql-client";
-    public static final String GRAPHQL_CLIENT_FACTORY_PID = "com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl";
 
     protected static final String VENIA_CONTENT_US_EN = "/content/venia/us/en";
     protected static final String VENIA_CONTENT_US_EN_PRODUCTS = VENIA_CONTENT_US_EN + "/products";
@@ -53,7 +34,6 @@ public class CommerceTestBase {
     protected static final String VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE = VENIA_CONTENT_US_EN_PRODUCTS + "/category-page";
     protected static final String VENIA_CONTENT_US_EN_SEARCH_PAGE = VENIA_CONTENT_US_EN + "/search";
 
-    protected static final String H1_SELECTOR = "h1";
     protected static final String BREADCRUMB_ITEMS_SELECTOR = ".breadcrumb .cmp-breadcrumb__item";
     protected static final String SEARCH_FILTERS_SELECTOR = ".productcollection__filters";
     protected static final String PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR = ".productcollection__item";
@@ -66,9 +46,21 @@ public class CommerceTestBase {
     public CQRule cqBaseRule = new CQRule(cqBaseClassRule.authorRule);
 
     protected static CQClient adminAuthor;
+    protected static boolean isCloudEnvironment;
 
     @BeforeClass
     public static void init() {
         adminAuthor = cqBaseClassRule.authorRule.getAdminClient(CommerceClient.class);
+        // check again if the environment may be a cloud environment (either skd on localhost, or an adobeaemcloud host)
+        isCloudEnvironment = adminAuthor.getUrl().getAuthority().contains("localhost")
+            || adminAuthor.getUrl().getAuthority().contains("adobeaemcloud");
+    }
+
+    protected static void assumeCloud() {
+        assumeTrue("not a cloud environment", isCloudEnvironment);
+    }
+
+    protected static void assumeOnPrem() {
+        assumeFalse("not an on-prem environment", isCloudEnvironment);
     }
 }

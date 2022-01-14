@@ -37,6 +37,8 @@ import junit.category.IgnoreOn65;
 import junit.category.IgnoreOnCloud;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class ProductPageIT extends CommerceTestBase {
 
@@ -48,6 +50,8 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category({ IgnoreOnCloud.class })
     public void testProductPageWithSampleData65() throws ClientException, IOException {
+        assumeOnPrem();
+
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
         testProductPageWithSampleData(
             pagePath,
@@ -62,6 +66,8 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category({ IgnoreOn65.class })
     public void testProductPageWithSampleDataCloud() throws ClientException, IOException {
+        assumeCloud();
+
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
         testProductPageWithSampleData(
             pagePath,
