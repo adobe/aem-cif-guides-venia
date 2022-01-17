@@ -40,14 +40,7 @@ describe('useToastEvents', () => {
     it('displays a wishlist success toast', () => {
         renderHook(() => useToastEvents(), { wrapper });
 
-        document.dispatchEvent(
-            new CustomEvent('aem.cif.toast', {
-                detail: {
-                    type: 'info',
-                    message: 'wishlist.success'
-                }
-            })
-        );
+        document.dispatchEvent(new CustomEvent('aem.cif.add-to-wishlist.success'));
 
         expect(mockAddToast).toHaveBeenCalledTimes(1);
         expect(mockAddToast).toHaveBeenCalledWith({
@@ -61,10 +54,8 @@ describe('useToastEvents', () => {
         renderHook(() => useToastEvents(), { wrapper });
 
         document.dispatchEvent(
-            new CustomEvent('aem.cif.toast', {
+            new CustomEvent('aem.cif.add-to-wishlist.error', {
                 detail: {
-                    type: 'error',
-                    message: 'wishlist.error',
                     error: 'This is some error.'
                 }
             })

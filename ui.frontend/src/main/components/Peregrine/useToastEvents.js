@@ -13,7 +13,7 @@
  ******************************************************************************/
 
 import React, { useEffect } from 'react';
-import { useIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import { useToasts } from '@magento/peregrine/lib/Toasts/useToasts';
 import Icon from '@magento/venia-ui/lib/components/Icon';
@@ -22,42 +22,55 @@ import { Check, AlertCircle } from 'react-feather';
 const CheckIcon = <Icon size={20} src={Check} />;
 const ErrorIcon = <Icon src={AlertCircle} size={20} />;
 
+const messages = defineMessages({
+    wishlistSuccess: {
+        id: 'toast.wishlist.success',
+        defaultMessage: 'Product was added to wishlist.'
+    },
+    wishlistError: {
+        id: 'toast.wishlist.error',
+        defaultMessage: 'Product could not be added to wishlist.'
+    }
+});
+
+const toastEvents = {
+    'aem.cif.add-to-wishlist.success': {
+        message: messages.wishlistSuccess,
+        type: 'info',
+        icon: CheckIcon
+    },
+    'aem.cif.add-to-wishlist.error': {
+        message: messages.wishlistError,
+        type: 'error',
+        icon: ErrorIcon
+    }
+};
+
 const useToastEvents = () => {
     const { formatMessage } = useIntl();
     const [, { addToast }] = useToasts();
 
     const eventHandler = event => {
-        const { type, message } = event.detail;
+        const eventType = event.type;
 
-        let toastMessage = message;
-        switch (message) {
-            case 'wishlist.success':
-                toastMessage = formatMessage({
-                    id: 'toast.wishlist.success',
-                    defaultMessage: 'Product was added to wishlist.'
-                });
-                break;
-            case 'wishlist.error':
-                toastMessage = formatMessage({
-                    id: 'toast.wishlist.error',
-                    defaultMessage: 'Product could not be added to wishlist.'
-                });
+        if (!(eventType in toastEvents)) {
+            // Event is not in toastEvents list
+            return;
         }
 
-        let icon;
-        if (type === 'info') {
-            icon = CheckIcon;
-        } else if (type === 'error') {
-            icon = ErrorIcon;
-        }
+        const { type, icon, message } = toastEvents[eventType];
 
-        addToast({ type, icon, message: toastMessage });
+        addToast({
+            type: type,
+            icon: icon,
+            message: formatMessage(message)
+        });
     };
 
     useEffect(() => {
-        document.addEventListener('aem.cif.toast', eventHandler);
+        Object.keys(toastEvents).forEach(event => document.addEventListener(event, eventHandler));
         return () => {
-            document.removeEventListener('aem.cif.toast', eventHandler);
+            Object.keys(toastEvents).forEach(event => document.removeEventListener(event, eventHandler));
         };
     }, []);
 };
