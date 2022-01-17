@@ -37,7 +37,7 @@ ENV AEM_PUBLISH_PASSWORD admin
 RUN apt -qqy update \
     # Generic dependencies
     && apt -qqy --no-install-recommends install \
-    python \
+    python3.6 \
     build-essential \
     # for wait_for_grid script
     && apt -qqy --no-install-recommends install \
