@@ -477,6 +477,18 @@
       "value": "Fetching Cart..."
     }
   ],
+  "toast.wishlist.error": [
+    {
+      "type": 0,
+      "value": "Product could not be added to wishlist."
+    }
+  ],
+  "toast.wishlist.success": [
+    {
+      "type": 0,
+      "value": "Product was added to wishlist."
+    }
+  ],
   "wishlist.emptyListText": [
     {
       "type": 0,
