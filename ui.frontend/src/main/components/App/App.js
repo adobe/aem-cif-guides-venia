@@ -33,6 +33,7 @@ import { ProductRecsGallery, StorefrontInstanceContextProvider } from '@adobe/ae
 import { AppContextProvider as PeregrineContextProvider } from '../Peregrine';
 import CartTrigger from '../Header/cartTrigger';
 import { HeadProvider } from '@magento/venia-ui/lib/components/Head';
+import ToastContainer from '@magento/venia-ui/lib/components/ToastContainer';
 import AddressBookPage from '../AddressBookPage';
 import CartPage from '../CartPage';
 import CheckoutPage from '../CheckoutPage';
@@ -62,6 +63,8 @@ const App = props => {
             <ConfigContextProvider config={config}>
                 <CommerceApp>
                     <PeregrineContextProvider>
+                        <ToastContainer />
+
                         <StorefrontInstanceContextProvider>
                             <PortalPlacer selector={mountingPoints.productRecs} component={ProductRecsGallery} />
                         </StorefrontInstanceContextProvider>
