@@ -19,7 +19,7 @@
     <groupId>com.adobe.aem.guides</groupId>
     <artifactId>aem-cif-guides-venia</artifactId>
     <packaging>pom</packaging>
-    <version>2021.12.01</version>
+    <version>2021.12.02-SNAPSHOT</version>
     <name>Venia CIF Project - Reactor Project</name>
     <description>Venia CIF Project</description>
     <url>https://github.com/adobe/aem-cif-guides-venia</url>
@@ -29,7 +29,7 @@
         <connection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</connection>
         <developerConnection>scm:git:https://github.com/adobe/aem-cif-guides-venia.git</developerConnection>
         <url>https://github.com/adobe/aem-cif-guides-venia/tree/main/</url>
-        <tag>venia-2021.12.01</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <organization>
@@ -87,7 +87,7 @@
         <vault.user>admin</vault.user>
         <vault.password>admin</vault.password>
         <core.wcm.components.version>2.17.10</core.wcm.components.version>
-        <core.cif.components.version>2.4.2</core.cif.components.version>
+        <core.cif.components.version>2.4.3-SNAPSHOT</core.cif.components.version>
         <graphql.client.version>1.7.6</graphql.client.version>
         <magento.graphql.version>9.0.0-magento242ee</magento.graphql.version>
         <bnd.version>5.1.2</bnd.version>

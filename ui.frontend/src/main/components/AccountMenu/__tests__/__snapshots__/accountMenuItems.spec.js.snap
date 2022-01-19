@@ -1,6 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`it renders correctly 1`] = `
+exports[`it renders correctly (with wishlist) 1`] = `
+<div>
+  <a
+    href="/content/venia/us/en/my-account/order-history.html"
+  >
+    Order History
+  </a>
+  <a>
+    Favorites Lists
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/address-book.html"
+  >
+    Address Book
+  </a>
+  <a
+    href="/content/venia/us/en/my-account/account-details.html"
+  >
+    Account Information
+  </a>
+  <button
+    onClick={[Function]}
+    type="button"
+  >
+    Sign Out
+  </button>
+</div>
+`;
+
+exports[`it renders correctly (without wishlist) 1`] = `
 <div>
   <a
     href="/content/venia/us/en/my-account/order-history.html"

@@ -38,6 +38,7 @@ import CartPage from '../CartPage';
 import CheckoutPage from '../CheckoutPage';
 import AccountTrigger from '../Header/accountTrigger';
 import OrderHistoryPage from '../OrderHistoryPage';
+import WishlistPage from '../WishlistPage';
 import AccountInformationPage from '../AccountInformationPage';
 
 import loadLocaleData from './i18n';
@@ -46,6 +47,12 @@ import '../../site/main.scss';
 const App = props => {
     const { mountingPoints, pagePaths, storeView } = config;
     const { locale, messages } = props;
+
+    let { showWishList } = document.querySelector(mountingPoints.accountContainer)?.dataset || {};
+
+    if (showWishList === '') {
+        showWishList = true;
+    }
 
     window.STORE_NAME = storeView;
     window.DEFAULT_COUNTRY_CODE = locale;
@@ -64,7 +71,7 @@ const App = props => {
                         </Portal>
 
                         <Portal selector={mountingPoints.accountContainer}>
-                            <AccountTrigger />
+                            <AccountTrigger showWishList={showWishList} />
                         </Portal>
 
                         <Route path={pagePaths.addressBook}>
@@ -99,6 +106,12 @@ const App = props => {
                         <Route path={pagePaths.orderHistory}>
                             <Portal selector={mountingPoints.orderHistoryPageContainer}>
                                 <OrderHistoryPage />
+                            </Portal>
+                        </Route>
+
+                        <Route path={pagePaths.wishlist}>
+                            <Portal selector={mountingPoints.wishlistPageContainer}>
+                                <WishlistPage />
                             </Portal>
                         </Route>
 
