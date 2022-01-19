@@ -36,7 +36,7 @@ services:
     volumes:
       - ./reports:/tmp/reports
       - 'shared:/tmp/shared'
-    image: 'com.venia-venia.ui.tests/ui.tests:latest'
+    image: 'com.adobe.aem.guides-aem-cif-guides-venia.ui.tests/ui.tests:latest'
   selenium-chrome:
     image: 'selenium/standalone-chrome-debug:latest'
     ports:
