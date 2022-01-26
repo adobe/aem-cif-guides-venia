@@ -17,9 +17,8 @@ package com.venia.it.tests;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
@@ -28,17 +27,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ImmutableMap;
 import com.venia.it.utils.Utils;
-import junit.category.IgnoreOn65;
-import junit.category.IgnoreOnCloud;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertTrue;
 
 public class ProductPageIT extends CommerceTestBase {
 
@@ -48,39 +42,8 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
     @Test
-    @Category({ IgnoreOnCloud.class })
-    public void testProductPageWithSampleData65() throws ClientException, IOException {
-        assumeOnPrem();
-
+    public void testProductPageWithSampleData() throws ClientException, IOException {
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
-        testProductPageWithSampleData(
-            pagePath,
-            ImmutableMap.of(
-                doc -> doc.select("title").first().html(), "Honora Wide Leg Pants",
-                // on 6.5.8 the Sites SEO API is NOT available, and so the canonical link is created using the Externalizer and its
-                // default configuration
-                doc -> doc.select("link[rel=canonical]").first().attr("href"), "http://localhost:4502" + pagePath
-            ));
-    }
-
-    @Test
-    @Category({ IgnoreOn65.class })
-    public void testProductPageWithSampleDataCloud() throws ClientException, IOException {
-        assumeCloud();
-
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
-        testProductPageWithSampleData(
-            pagePath,
-            ImmutableMap.of(
-                doc -> doc.select("title").first().html(), "Honora Wide Leg Pants",
-                // on Cloud the Sites SEO API is available, but without any mappings configured the pagePath is returned as is as canonical
-                // link
-                doc -> doc.select("link[rel=canonical]").first().attr("href"), pagePath
-            ));
-    }
-
-    private void testProductPageWithSampleData(String pagePath, Map<Function<Document, String>, String> expectations)
-        throws ClientException, IOException {
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
@@ -100,9 +63,10 @@ public class ProductPageIT extends CommerceTestBase {
         assertEquals(6, elements.size());
 
         // Check the meta data
-        for (Map.Entry<Function<Document, String>, String> expectation : expectations.entrySet()) {
-            assertEquals(expectation.getValue(), expectation.getKey().apply(doc));
-        }
+        assertEquals("Honora Wide Leg Pants", doc.select("title").first().html());
+        // when Sites SEO is available and no mapping exists this is only the path
+        // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
+        assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);

@@ -23,9 +23,6 @@ import com.adobe.cq.testing.client.CommerceClient;
 import com.adobe.cq.testing.junit.rules.CQAuthorClassRule;
 import com.adobe.cq.testing.junit.rules.CQRule;
 
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
-
 public class CommerceTestBase {
 
     protected static final String VENIA_CONTENT_US_EN = "/content/venia/us/en";
@@ -46,21 +43,9 @@ public class CommerceTestBase {
     public CQRule cqBaseRule = new CQRule(cqBaseClassRule.authorRule);
 
     protected static CQClient adminAuthor;
-    protected static boolean isCloudEnvironment;
 
     @BeforeClass
     public static void init() {
         adminAuthor = cqBaseClassRule.authorRule.getAdminClient(CommerceClient.class);
-        // check again if the environment may be a cloud environment (either skd on localhost, or an adobeaemcloud host)
-        isCloudEnvironment = adminAuthor.getUrl().getAuthority().contains("localhost")
-            || adminAuthor.getUrl().getAuthority().contains("adobeaemcloud");
-    }
-
-    protected static void assumeCloud() {
-        assumeTrue("not a cloud environment", isCloudEnvironment);
-    }
-
-    protected static void assumeOnPrem() {
-        assumeFalse("not an on-prem environment", isCloudEnvironment);
     }
 }
