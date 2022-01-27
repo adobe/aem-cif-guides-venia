@@ -28,13 +28,15 @@ services:
       - AEM_PUBLISH_URL
       - AEM_PUBLISH_USERNAME
       - AEM_PUBLISH_PASSWORD
+      - VENIA_ACCOUNT_EMAIL
+      - VENIA_ACCOUNT_PASSWORD
       - REPORTS_PATH=/tmp/reports/wdio-firefox
       - SHARED_FOLDER=/tmp/shared
       - HEADLESS_BROWSER
     volumes:
       - ./reports:/tmp/reports
       - 'shared:/tmp/shared'
-    image: 'com.venia-venia.ui.tests/ui.tests:latest'
+    image: 'com.adobe.aem.guides-aem-cif-guides-venia.ui.tests/ui.tests:latest'
   selenium-firefox:
     image: 'selenium/standalone-firefox-debug'
     ports:

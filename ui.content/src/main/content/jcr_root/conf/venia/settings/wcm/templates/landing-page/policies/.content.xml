@@ -50,6 +50,9 @@
                                 <productcarousel jcr:primaryType="nt:unstructured"
                                     cq:policy="venia/components/commerce/productcarousel/default"
                                     sling:resourceType="wcm/core/components/policies/mapping" />
+                                <productteaser jcr:primaryType="nt:unstructured"
+                                    cq:policy="venia/components/commerce/productteaser/default"
+                                    sling:resourceType="wcm/core/components/policies/mapping" />
                                 <relatedproducts jcr:primaryType="nt:unstructured"
                                     cq:policy="venia/components/commerce/relatedproducts/default"
                                     sling:resourceType="wcm/core/components/policies/mapping" />
@@ -63,6 +66,14 @@
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="wcm/core/components/policies/mapping" />
                                 <productrecommendations cq:policy="venia/components/commerce/productrecommendations/policy_1634893843292"
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="wcm/core/components/policies/mapping"/>
+                                <miniaccount
+                                    cq:policy="venia/components/commerce/miniaccount/default"
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="wcm/core/components/policies/mapping"/>
+                                <product
+                                    cq:policy="venia/components/commerce/product/default"
                                     jcr:primaryType="nt:unstructured"
                                     sling:resourceType="wcm/core/components/policies/mapping"/>
                             </commerce>

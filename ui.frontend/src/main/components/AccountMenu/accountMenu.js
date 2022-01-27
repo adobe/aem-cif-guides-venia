@@ -23,7 +23,7 @@ import ForgotPassword from '@magento/venia-ui/lib/components/ForgotPassword';
 import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenu.css';
 
 const AccountMenu = React.forwardRef((props, ref) => {
-    const { accountMenuIsOpen, setAccountMenuIsOpen } = props;
+    const { accountMenuIsOpen, setAccountMenuIsOpen, showWishList } = props;
     const talonProps = useAccountMenu({
         accountMenuIsOpen,
         setAccountMenuIsOpen
@@ -47,7 +47,7 @@ const AccountMenu = React.forwardRef((props, ref) => {
 
     switch (view) {
         case 'ACCOUNT': {
-            dropdownContents = <AccountMenuItems onSignOut={handleSignOut} />;
+            dropdownContents = <AccountMenuItems onSignOut={handleSignOut} showWishList={showWishList} />;
 
             break;
         }

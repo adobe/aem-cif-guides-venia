@@ -140,4 +140,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     public String getId() {
         return productTeaser.getId();
     }
+
+    @Override
+    public boolean getAddToWishListEnabled() {
+        return productTeaser.getAddToWishListEnabled();
+    }
 }

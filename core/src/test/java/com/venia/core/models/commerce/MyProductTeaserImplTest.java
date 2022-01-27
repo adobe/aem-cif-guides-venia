@@ -201,6 +201,15 @@ class MyProductTeaserImplTest {
     }
 
     @Test
+    public void testAddToWishListEnabled() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn(false).when(productTeaser).getAddToWishListEnabled();
+        Assertions.assertFalse(underTest.getAddToWishListEnabled());
+        Mockito.doReturn(true).when(productTeaser).getAddToWishListEnabled();
+        Assertions.assertTrue(underTest.getAddToWishListEnabled());
+    }
+
+    @Test
     void testIsVirtualProduct() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Mockito.doReturn(true).when(productTeaser).isVirtualProduct();

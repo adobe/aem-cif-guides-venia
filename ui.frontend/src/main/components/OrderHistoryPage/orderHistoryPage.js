@@ -12,15 +12,16 @@
  *
  ******************************************************************************/
 import React, { useMemo, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { Search as SearchIcon, AlertCircle as AlertCircleIcon, ArrowRight as SubmitIcon } from 'react-feather';
 import { shape, string } from 'prop-types';
 import { Form } from 'informed';
 import { useConfigContext } from '@adobe/aem-core-cif-react-components';
-
+import { useUserContext } from '@magento/peregrine/lib/context/user';
 import { useToasts } from '@magento/peregrine/lib/Toasts';
 import OrderHistoryContextProvider from '@magento/peregrine/lib/talons/OrderHistoryPage/orderHistoryContext';
-import { useOrderHistoryPage } from '../../talons/OrderHistoryPage/useOrderHistoryPage';
+import { useOrderHistoryPage } from '@magento/peregrine/lib/talons/OrderHistoryPage/useOrderHistoryPage';
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Button from '@magento/venia-ui/lib/components/Button';
@@ -29,7 +30,7 @@ import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator'
 import TextInput from '@magento/venia-ui/lib/components/TextInput';
 
 import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/orderHistoryPage.css';
-import OrderRow from '@magento/venia-ui/lib/components/OrderHistoryPage/orderRow';
+import OrderRow from './orderRow';
 import ResetButton from '@magento/venia-ui/lib/components/OrderHistoryPage/resetButton';
 
 const errorIcon = (
@@ -43,8 +44,20 @@ const errorIcon = (
 const searchIcon = <Icon src={SearchIcon} size={24} />;
 
 const OrderHistoryPage = props => {
-    const { pagePaths } = useConfigContext();
-    const talonProps = useOrderHistoryPage({ baseUrl: pagePaths.baseUrl });
+    const {
+        pagePaths: { baseUrl }
+    } = useConfigContext();
+    const history = useHistory();
+    const [{ isSignedIn }] = useUserContext();
+
+    useEffect(() => {
+        if (!isSignedIn) {
+            history.replace(baseUrl);
+            history.go(0);
+        }
+    }, [history, isSignedIn]);
+
+    const talonProps = useOrderHistoryPage();
     const {
         errorMessage,
         loadMoreOrders,

@@ -19,6 +19,8 @@ import { useAccountTrigger } from '@magento/peregrine/lib/talons/Header/useAccou
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import AccountChip from '@magento/venia-ui/lib/components/AccountChip';
+import { useAddToWishlistEvent } from '@adobe/aem-core-cif-react-components';
+import useToastEvents from '../Peregrine/useToastEvents';
 
 import defaultClasses from './accountTrigger.css';
 
@@ -35,10 +37,15 @@ const AccountTrigger = props => {
     const talonProps = useAccountTrigger();
     const { accountMenuIsOpen, accountMenuRef, accountMenuTriggerRef, setAccountMenuIsOpen, handleTriggerClick } =
         talonProps;
-
     const classes = useStyle(defaultClasses, props.classes);
     const rootClassName = accountMenuIsOpen ? classes.root_open : classes.root;
     const { formatMessage } = useIntl();
+    const { showWishList } = props;
+
+    if (showWishList) {
+        useAddToWishlistEvent();
+    }
+    useToastEvents();
 
     return (
         <Fragment>
@@ -65,6 +72,7 @@ const AccountTrigger = props => {
                     ref={accountMenuRef}
                     accountMenuIsOpen={accountMenuIsOpen}
                     setAccountMenuIsOpen={setAccountMenuIsOpen}
+                    showWishList={showWishList}
                 />
             </Suspense>
         </Fragment>

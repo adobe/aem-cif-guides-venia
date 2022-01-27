@@ -19,9 +19,7 @@ exports[`product renders configurable product with options 1`] = `
     </div>
     <div>
       <div>
-        <div>
-          
-        </div>
+        
       </div>
       <dl>
         <div>
@@ -275,9 +273,7 @@ exports[`product renders out of stock product 1`] = `
     </div>
     <div>
       <div>
-        <div>
-          
-        </div>
+        
       </div>
       <span>
         <span>
@@ -487,9 +483,7 @@ exports[`product renders simple product correctly 1`] = `
     </div>
     <div>
       <div>
-        <div>
-          
-        </div>
+        
       </div>
       <span>
         <span>
