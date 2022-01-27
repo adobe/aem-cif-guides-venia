@@ -15,12 +15,13 @@
 #
 # DO NOT MODIFY
 #
-FROM node:lts-slim
+FROM node:14-slim
 
 ENV APP_PATH /usr/src/app
 ENV SELENIUM_STARTUP_TIMEOUT 60
 
 # Begin CloudManager Convention >>>
+## Environment variables
 ENV SELENIUM_BASE_URL http://localhost:4444
 ENV SELENIUM_BROWSER chrome
 ENV REPORTS_PATH reports
@@ -30,14 +31,20 @@ ENV AEM_AUTHOR_PASSWORD admin
 ENV AEM_PUBLISH_URL http://localhost:4503
 ENV AEM_PUBLISH_USERNAME admin
 ENV AEM_PUBLISH_PASSWORD admin
-ENV VENIA_ACCOUNT_EMAIL venia@adobe.com
-ENV VENIA_ACCOUNT_PASSWORD password
+# ENV VENIA_ACCOUNT_EMAIL
+# ENV VENIA_ACCOUNT_PASSWORD
 
 # Following convention variables are null by default
 # ENV SHARED_FOLDER
 # ENV UPLOAD_URL
 
+## Install dependencies for wait_for_grid script
 RUN apt -qqy update \
+    # Generic dependencies
+    && apt -qqy --no-install-recommends install \
+    python \
+    build-essential \
+    # for wait_for_grid script
     && apt -qqy --no-install-recommends install \
     curl \
     jq
@@ -52,6 +59,7 @@ COPY test-module/ ./
 RUN npm install
 
 # Begin CloudManager Convention >>>
+## Copy helper to wait on Selenium readiness
 COPY wait-for-grid.sh .
 RUN chmod 555 wait-for-grid.sh
 
