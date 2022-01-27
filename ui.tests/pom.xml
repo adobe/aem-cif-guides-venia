@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
         <artifactId>aem-cif-guides-venia</artifactId>
-        <version>2021.12.02-SNAPSHOT</version>
+        <version>2022.01.27</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -44,8 +44,8 @@
         <AEM_PUBLISH_USERNAME>admin</AEM_PUBLISH_USERNAME>
         <AEM_PUBLISH_PASSWORD>admin</AEM_PUBLISH_PASSWORD>
         <SELENIUM_BROWSER>chrome</SELENIUM_BROWSER>
-        <VENIA_ACCOUNT_EMAIL></VENIA_ACCOUNT_EMAIL>
-        <VENIA_ACCOUNT_PASSWORD></VENIA_ACCOUNT_PASSWORD>
+        <VENIA_ACCOUNT_EMAIL />
+        <VENIA_ACCOUNT_PASSWORD />
     </properties>
 
     <build>
