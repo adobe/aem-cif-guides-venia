@@ -202,12 +202,7 @@ jobs:
       - run:
           name: Update CM Repository
           command: |
-            git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
-            git remote add downstream $GIT_REPO
-            git fetch downstream
-            git checkout -b tmp downstream/main
-            git merge $CIRCLE_TAG
-            git push downstream main
+            node .circleci/ci/update-cm.js
 
 workflows:
   version: 2
@@ -219,50 +214,50 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - integration-test-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - integration-test-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - deploy-sample:
-          context:
-            - CIF Artifactory Cloud
-            - CIF Maven Central
-            - CIF GitHub
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+      # - integration-test-655:
+      #     context:
+      #       - CIF Artifactory Cloud
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #     requires:
+      #       - build
+      # - integration-test-cloudready-with-addon:
+      #     context:
+      #       - CIF Artifactory Cloud
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #     requires:
+      #       - build
+      # - selenium-chrome-cloudready-with-addon:
+      #     context:
+      #       - CIF Artifactory Cloud
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #     requires:
+      #       - build
+      # - selenium-chrome-655:
+      #     context:
+      #       - CIF Artifactory Cloud
+      #     filters:
+      #       tags:
+      #         only: /.*/
+      #     requires:
+      #       - build
+      # - deploy-sample:
+      #     context:
+      #       - CIF Artifactory Cloud
+      #       - CIF Maven Central
+      #       - CIF GitHub
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         ignore: /.*/
+      #       tags:
+      #         only: /^venia(-classic)?-\d+\.\d+\.\d+$/
       - update-cm:
           context:
             - CIF Artifactory Cloud
@@ -271,7 +266,8 @@ workflows:
             - build
           filters:
             branches:
-              ignore: /.*/
+              #ignore: /.*/
+              only: issue/CIF-2114
             tags:
               only: /^venia(-classic)?-\d+\.\d+\.\d+$/
 
