@@ -208,62 +208,62 @@ workflows:
   version: 2
   build-and-release:
     jobs:
-      #- build:
-      #    context:
-      #      - CIF Artifactory Cloud
-      #    filters:
-      #      tags:
-      #        only: /.*/
-      # - integration-test-655:
-      #     context:
-      #       - CIF Artifactory Cloud
-      #     filters:
-      #       tags:
-      #         only: /.*/
-      #     requires:
-      #       - build
-      # - integration-test-cloudready-with-addon:
-      #     context:
-      #       - CIF Artifactory Cloud
-      #     filters:
-      #       tags:
-      #         only: /.*/
-      #     requires:
-      #       - build
-      # - selenium-chrome-cloudready-with-addon:
-      #     context:
-      #       - CIF Artifactory Cloud
-      #     filters:
-      #       tags:
-      #         only: /.*/
-      #     requires:
-      #       - build
-      # - selenium-chrome-655:
-      #     context:
-      #       - CIF Artifactory Cloud
-      #     filters:
-      #       tags:
-      #         only: /.*/
-      #     requires:
-      #       - build
-      # - deploy-sample:
-      #     context:
-      #       - CIF Artifactory Cloud
-      #       - CIF Maven Central
-      #       - CIF GitHub
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+      - build:
+         context:
+           - CIF Artifactory Cloud
+         filters:
+           tags:
+             only: /.*/
+      - integration-test-655:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - integration-test-cloudready-with-addon:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - selenium-chrome-cloudready-with-addon:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - selenium-chrome-655:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - deploy-sample:
+          context:
+            - CIF Artifactory Cloud
+            - CIF Maven Central
+            - CIF GitHub
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
       - update-cm:
           context:
             - CIF Artifactory Cloud
             - CIF CM Stage
-          #requires:
-          #  - build
+          requires:
+            - build
           filters:
             branches:
               #ignore: /.*/

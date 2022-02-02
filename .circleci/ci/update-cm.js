@@ -17,29 +17,35 @@
 const ci = new (require("./ci.js"))();
 
 const doUpdate = () => {
-    const tmpBranchExists = ci.sh(
-        'git rev-parse --verify "tmp" 2>/dev/null ||  echo "no"', true)
-        .toString().trim() != "no";
+    // the local branch that will be used to checkout the target branch 
+    // it will be force-deleted before the checkout if it exists, be careful
+    const LOCAL_BRANCH = "tmp";
+    // the target branch that should be updated
+    const TAGET_BRANCH = ci.env('CIRCLE_BRANCH'); // "main";
+    // the revision to update the TARGET_BRANCH to
+    const MERGE_REVISION = ci.env('CIRCLE_SHA1'); //ci.env('CIRCLE_TAG');
+    
     const downstreamRemoteExists = ci.sh(
-        'git remote get-url asdf 2>/dev/null || echo "no"', true)
+        'git remote get-url downstream 2>/dev/null || echo "no"', true)
         .toString().trim() != "no";
     
-
     if (!downstreamRemoteExists) {
         ci.sh(`git remote add downstream ${ci.env('GIT_REPO')}`);
     }
 
     ci.sh('git fetch downstream');
     
+    const tmpBranchExists = ci.sh(
+        `git rev-parse --verify "${LOCAL_BRANCH}" 2>/dev/null ||  echo "no"`, true)
+        .toString().trim() != "no";
+
     if (tmpBranchExists) {
-        ci.sh('git branch -D tmp')
+        ci.sh(`git branch -D ${LOCAL_BRANCH}`);
     } 
 
-    //ci.sh('git checkout -b tmp downstream/main');
-    //ci.sh(`git merge ${ci.env('CIRCLE_TAG')}`);
-    ci.sh(`git checkout -b tmp downstream/${ci.env('CIRCLE_BRANCH')}`);
-    ci.sh(`GIT_MERGE_AUTOEDIT=no git merge ${ci.env('CIRCLE_SHA1')}`);
-    ci.sh(`git push downstream ${ci.env('CIRCLE_BRANCH')}`);
+    ci.sh(`git checkout -b ${LOCAL_BRANCH} downstream/${TAGET_BRANCH}`);
+    ci.sh(`GIT_MERGE_AUTOEDIT=no git merge ${MERGE_REVISION}`);
+    ci.sh(`git push downstream ${TAGET_BRANCH}`);
 }
 
 ci.context();
