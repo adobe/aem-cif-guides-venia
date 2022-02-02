@@ -209,11 +209,11 @@ workflows:
   build-and-release:
     jobs:
       - build:
-         context:
-           - CIF Artifactory Cloud
-         filters:
-           tags:
-             only: /.*/
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
       - integration-test-655:
           context:
             - CIF Artifactory Cloud
