@@ -270,4 +270,3 @@ workflows:
               only: issue/CIF-2114
             tags:
               only: /^venia(-classic)?-\d+\.\d+\.\d+$/
-
