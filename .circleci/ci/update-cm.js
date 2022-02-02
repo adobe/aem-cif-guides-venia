@@ -38,7 +38,6 @@ const doUpdate = () => {
     //ci.sh('git checkout -b tmp downstream/main');
     //ci.sh(`git merge ${ci.env('CIRCLE_TAG')}`);
     ci.sh(`git checkout -b tmp downstream/${ci.env('CIRCLE_BRANCH')}`);
-    ci.sh(`git pull`);
     ci.sh(`GIT_MERGE_AUTOEDIT=no git merge ${ci.env('CIRCLE_SHA1')}`);
     ci.sh(`git push downstream ${ci.env('CIRCLE_BRANCH')}`);
 }
