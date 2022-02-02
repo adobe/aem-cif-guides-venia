@@ -266,7 +266,6 @@ workflows:
             - build
           filters:
             branches:
-              #ignore: /.*/
-              only: issue/CIF-2114
+              ignore: /.*/
             tags:
               only: /^venia(-classic)?-\d+\.\d+\.\d+$/

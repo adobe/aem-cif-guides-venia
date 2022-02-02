@@ -21,9 +21,9 @@ const doUpdate = () => {
     // it will be force-deleted before the checkout if it exists, be careful
     const LOCAL_BRANCH = "tmp";
     // the target branch that should be updated
-    const TAGET_BRANCH = ci.env('CIRCLE_BRANCH'); // "main";
+    const TAGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
     // the revision to update the TARGET_BRANCH to
-    const MERGE_REVISION = ci.env('CIRCLE_SHA1'); //ci.env('CIRCLE_TAG');
+    const MERGE_REVISION = ci.env('CIRCLE_TAG'); // ci.env('CIRCLE_SHA1');
     
     const downstreamRemoteExists = ci.sh(
         'git remote get-url downstream 2>/dev/null || echo "no"', true)
