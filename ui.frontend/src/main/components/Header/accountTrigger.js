@@ -20,6 +20,7 @@ import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import AccountChip from '@magento/venia-ui/lib/components/AccountChip';
 import { useAddToWishlistEvent } from '@adobe/aem-core-cif-react-components';
+import useToastEvents from '../Peregrine/useToastEvents';
 
 import defaultClasses from './accountTrigger.css';
 
@@ -44,6 +45,7 @@ const AccountTrigger = props => {
     if (showWishList) {
         useAddToWishlistEvent();
     }
+    useToastEvents();
 
     return (
         <Fragment>

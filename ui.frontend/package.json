@@ -22,7 +22,7 @@
     "prettier:fix": "prettier --write '{src,test}/**/*.{js,css}' --config ./.prettierrc",
     "eslint:check": "eslint 'src/**/*.js'",
     "eslint:fix": "eslint --fix 'src/**/*.js'",
-    "i18n:extract-compile": "formatjs extract --out-file i18n/__temp.json 'src/**/*.js' && formatjs compile --ast --out-file i18n/en.json i18n/__temp.json && rm i18n/__temp.json"
+    "i18n:extract-compile": "formatjs extract --out-file i18n/__temp.json 'src/**/*.js' && formatjs compile --ast --out-file i18n/en.json i18n/__temp.json"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
@@ -38,6 +38,7 @@
     "@formatjs/cli": "^4.2.33",
     "@magento/babel-preset-peregrine": "~1.1.0",
     "@testing-library/react": "^9.5.0",
+    "@testing-library/react-hooks": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "acorn": "^6.1.0",
@@ -86,8 +87,8 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "@adobe/aem-core-cif-product-recs-extension": "^2.4.2",
-    "@adobe/aem-core-cif-react-components": "^2.4.2",
+    "@adobe/aem-core-cif-product-recs-extension": "^2.5.0",
+    "@adobe/aem-core-cif-react-components": "^2.5.0",
     "@apollo/client": "^3.5.5",
     "@babel/runtime": "^7.4.5",
     "@magento/peregrine": "11.0.0",
