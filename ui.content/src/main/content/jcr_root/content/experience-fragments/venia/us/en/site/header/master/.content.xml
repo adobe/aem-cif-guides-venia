@@ -24,11 +24,11 @@
             <navigation
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="venia/components/commerce/navigation"
-                collectAllPages="true"
+                collectAllPages="false"
                 disableShadowing="false"
                 navigationRoot="/content/venia/us/en"
                 skipNavigationRoot="false"
-                structureDepth="2"
+                structureDepth="1"
                 structureStart="1">
                 <cq:responsive jcr:primaryType="nt:unstructured">
                     <default jcr:primaryType="nt:unstructured"

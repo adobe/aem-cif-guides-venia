@@ -5,10 +5,11 @@
     jcr:primaryType="cq:Page">
     <jcr:content cq:template="/conf/venia/settings/wcm/templates/catalog-page" 
         jcr:primaryType="cq:PageContent"
-        jcr:mixinTypes="[cq:LiveRelationship]"
+        jcr:mixinTypes="[cq:LiveRelationship,cq:PropertyLiveSyncCancelled]"
+        cq:propertyInheritanceCancelled="[showMainCategories]"
         jcr:title="Catalog Page" 
         sling:resourceType="venia/components/commerce/catalogpage" 
-        showMainCategories="{Boolean}true">
+        showMainCategories="{Boolean}false"/>
     </jcr:content>
     <category-page />
     <product-page />
