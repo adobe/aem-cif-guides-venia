@@ -72,7 +72,7 @@ describe('Product List Component Dialog', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        // Drag category carousel component on page
+        // Drag and drop component on the page
         const carouselCmp = $(`div[data-title="${name}"]`);
         expect(carouselCmp).toBeDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
@@ -107,7 +107,7 @@ describe('Product List Component Dialog', function () {
         expect(fields.length).toEqual(5);
         expect(fields[0].$('label')).toHaveText('Manual Category Selection');
         expect(fields[0].$('category-field')).toExist();
-        expect(fields[0].$('input[name="./selection"]')).toExist();
+        expect(fields[0].$('input[name="./category"]')).toExist();
         expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
         expect(fields[1].$('label')).toHaveText('Page Size');
         expect(fields[1].$('input[name="./pageSize"]')).toExist();
