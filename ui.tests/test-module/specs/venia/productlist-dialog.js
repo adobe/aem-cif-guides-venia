@@ -119,7 +119,7 @@ describe('Product List Component Dialog', function () {
         expect(fields[4].$('input[name="./id"]')).toExist();
 
         // close the dialog
-        dialog.$('button.cq-dialog-cancel[variant="default"]').waitAndClick();
+        dialog.$('button[title="Cancel"]').click();
         expect(dialog.isExisting()).toBe(false);
     });
 });
