@@ -16,14 +16,22 @@
  ******************************************************************************/
 
 .cmp-navigation__group {
+    display: flex;
+    flex-flow: row wrap;
     justify-content: center;
 }
 
 .cmp-navigation__item {
+    list-style: none;
     padding: 1.26em 1em;
 }
 
+.cmp-navigation__item--level-0 .cmp-navigation__group {
+    display: none;
+}
+
 .cmp-navigation__item--level-0:hover > .cmp-navigation__group {
+    display: flex;
     background: $venia-grey;
     box-shadow: 0 1px $venia-border;
     margin-top: 1.3em;
