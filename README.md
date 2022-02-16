@@ -58,7 +58,7 @@ This project includes sample configurations to demonstrate the usage of custom U
 
 This configuration must be adjusted with the external domain used by the project. The Sling Mappings are working based on the hostname and domain. Therefore this configuration is disabled by default and must be enabled before deployment. To do so rename the Sling Mapping `hostname.adobeaemcloud.com` folder in `ui.content/src/main/content/jcr_root/etc/map.publish/https` according to the used domain name and enable this config by adding `resource.resolver.map.location="/etc/map.publish"` to the [JcrResourceResolver](ui.apps/src/main/content/jcr_root/apps/venia/config.publish/org.apache.sling.jcr.resource.internal.JcrResourceResolverFactoryImpl.xml) config.
 
-For detailed configuration options see [Configuring and customizing product and category pages URLs](https://github.com/adobe/aem-core-cif-components/wiki/configuration#configuring-and-customising-product-and-category-pages-url) in the CIF Core Components Wiki and the [AEM Resource Mapping](https://docs.adobe.com/content/help/en/experience-manager-65/deploying/configuring/resource-mapping.html) documentation.
+For detailed configuration options see [Configuring and customizing product and category pages URLs](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/administering/advanced-url-configuration.html?lang=en) and the [AEM Resource Mapping](https://docs.adobe.com/content/help/en/experience-manager-65/deploying/configuring/resource-mapping.html) documentation.
 
 ### Component Caching
 
