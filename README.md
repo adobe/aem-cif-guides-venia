@@ -16,17 +16,17 @@ This project was generated using the [aem-project-archetype](https://github.com/
 
 ### AEM as a Cloud Service
 
-The default variant of the project is built and deployed on AEM as a Cloud Service. It requires an AEM as a Cloud Service with entitlement for the CIF Add-On. The CIF Add-On provides the commerce authoring tooling like product & category pickers or product search for authors it also manages the backend connection to Magento (or alternative commerce system) via GraphQL. Once provisioned it is deployed on AEM as a Cloud Service environments automatically.
+The default variant of the project is built and deployed on AEM as a Cloud Service. It requires an AEM as a Cloud Service with entitlement for the Commerce Add-On. The Commerce Add-On provides the commerce authoring tooling like product & category pickers or product search for authors it also manages the backend connection to Magento (or alternative commerce system) via GraphQL. Once provisioned it is deployed on AEM as a Cloud Service environments automatically.
 
 The deployment on AEM as a Cloud Service happens via [Cloud Manager](https://docs.adobe.com/content/help/en/experience-manager-cloud-service/implementing/deploying/overview.html) and this project can be transferred into the Cloud Manager git repository.
 
-For local development an AEM as a Cloud Service SDK with the CIF Add-On installed is required. Both can be downloaded via the Software Distribution channel. See [Set up local AEM Runtime](https://docs.adobe.com/content/help/en/experience-manager-learn/cloud-service/local-development-environment-set-up/aem-runtime.html) for instructions. For build and deployment steps see below.
+For local development an AEM as a Cloud Service SDK with the Commerce Add-On installed is required. Both can be downloaded via the Software Distribution channel. See [Set up local AEM Runtime](https://docs.adobe.com/content/help/en/experience-manager-learn/cloud-service/local-development-environment-set-up/aem-runtime.html) for instructions. For build and deployment steps see below.
 
-### Classic AEM
+### AEM 6.5
 
-In this variant the project is built and deployed on AEM 6.5 hosted by Adobe Managed Services or self-hosted. The minimum requirements are AEM 6.5 with the [CIF Connector](https://github.com/adobe/commerce-cif-connector) installed. The CIF Connector is not included in the generated project and must be installed separately. See [CIF Connector](https://github.com/adobe/commerce-cif-connector) project for instructions.
+In this variant the project is built and deployed on AEM 6.5 hosted by Adobe Managed Services or self-hosted. The minimum requirements are AEM 6.5.7 with the Commerce Add-On installed. The AEM Commerce Add-On for AEM 6.5 is also available on the [Software Distribution portal](https://experience.adobe.com/#/downloads/content/software-distribution/en/aem.html).
 
-The CIF Core Components and the CIF Connector connect to a Magento (or alternative) via GraphQL. This connection has to be configured in the `com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config` config. A reference is included in the project template. Consult [documentation](https://github.com/adobe/aem-core-cif-components/wiki/configuration) for detailed configuation steps.
+The CIF Core Components and the Commerce Add-On connect to a Magento (or alternative) via GraphQL. This connection has to be configured in the `com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl-default.config` config. A reference is included in the project template. Consult [documentation](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/home.html) for detailed configuation steps.
 
 The project deployment can be done via Cloud Manager or AEM package install. For project build and deployment use the `classic` profile, see steps below.
 
@@ -50,7 +50,7 @@ The main parts of the template are:
 
 ### Component Customization
 
-The Venia reference project code demonstrates how CIF core component can be adopted, customized, and extended for a project. The project includes an extended product teaser component example called `MyProductTeaser`. It demonstrates the [CIF core components customization](https://github.com/adobe/aem-core-cif-components/wiki/Customizing-CIF-Core-Components) options by using an extended Sling `MyProductTeaser` model and a proxy component overlay.
+The Venia reference project code demonstrates how CIF core component can be adopted, customized, and extended for a project. The project includes an extended product teaser component example called `MyProductTeaser`. It demonstrates the [CIF core components customization](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/developing/customize-cif-components.html) options by using an extended Sling `MyProductTeaser` model and a proxy component overlay.
 
 ### Individual product and category page URLs
 
@@ -58,11 +58,11 @@ This project includes sample configurations to demonstrate the usage of custom U
 
 This configuration must be adjusted with the external domain used by the project. The Sling Mappings are working based on the hostname and domain. Therefore this configuration is disabled by default and must be enabled before deployment. To do so rename the Sling Mapping `hostname.adobeaemcloud.com` folder in `ui.content/src/main/content/jcr_root/etc/map.publish/https` according to the used domain name and enable this config by adding `resource.resolver.map.location="/etc/map.publish"` to the [JcrResourceResolver](ui.apps/src/main/content/jcr_root/apps/venia/config.publish/org.apache.sling.jcr.resource.internal.JcrResourceResolverFactoryImpl.xml) config.
 
-For detailed configuration options see [Configuring and customizing product and category pages URLs](https://github.com/adobe/aem-core-cif-components/wiki/configuration#configuring-and-customising-product-and-category-pages-url) in the CIF Core Components Wiki and the [AEM Resource Mapping](https://docs.adobe.com/content/help/en/experience-manager-65/deploying/configuring/resource-mapping.html) documentation.
+For detailed configuration options see [Configuring and customizing product and category pages URLs](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/administering/advanced-url-configuration.html) in the AEM Content & Commerce and the [AEM Resource Mapping](https://docs.adobe.com/content/help/en/experience-manager-65/deploying/configuring/resource-mapping.html) documentation.
 
 ### Component Caching
 
-[CIF Core Components](https://github.com/adobe/aem-core-cif-components) already have built-in support for [caching GraphQL responses for individual components](https://github.com/adobe/aem-core-cif-components/wiki/caching#graphql-caching-recommendations). This feature can be used to reduce the number of GraphQL backend calls by a large factor. An effective caching can be achieved especially for repeating queries like retrieving the category tree for a navigation component or fetching all the available aggregations/facets values displayed on the product search and category pages.
+[CIF Core Components](https://github.com/adobe/aem-core-cif-components) already have built-in support for [caching GraphQL responses for individual components](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/administering/caching.html). This feature can be used to reduce the number of GraphQL backend calls by a large factor. An effective caching can be achieved especially for repeating queries like retrieving the category tree for a navigation component or fetching all the available aggregations/facets values displayed on the product search and category pages.
 
 ## How to build
 
