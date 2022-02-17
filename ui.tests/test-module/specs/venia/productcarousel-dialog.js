@@ -83,7 +83,7 @@ describe('Product Carousel Component Dialog', function () {
         node = 'productcarousel',
         trackingId = 'aem:sites:components:dialogs:cif-core-components:productcarousel:v1'
     ) => {
-        // Open component dialog
+        // Open edit dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
         cmpPlaceholder.click();
