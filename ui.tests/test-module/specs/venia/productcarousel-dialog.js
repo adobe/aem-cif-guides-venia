@@ -109,7 +109,7 @@ describe('Product Carousel Component Dialog', function () {
         expect(fields[0].$('input[name="./jcr:title"]')).toExist();
         expect(fields[1].$('label')).toHaveText('The HTML tag used to display the title.');
         expect(fields[1].$('coral-select[name="./titleType"]')).toExist();
-        expect(fields[2].$('label')).toHaveText('Selection Type');
+        expect(fields[2].$('label')).toHaveText('Display products from');
         let productRadio = fields[2].$('coral-radio[name="./selectionType"][value="product"]');
         expect(productRadio).toExist();
         let categoryRadio = fields[2].$('coral-radio[name="./selectionType"][value="category"]');
