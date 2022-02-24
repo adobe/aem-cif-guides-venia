@@ -110,18 +110,14 @@ module.exports = class CI {
     /**
      * Configure git credentials for the scope of the given function.
      */
-    gitCredentials(repo, func) {
+    gitCredentials(user, password, func) {
         try {
-            this.sh(
-                "git config credential.helper 'store --file .git-credentials'"
-            );
-            fs.writeFileSync(".git-credentials", repo);
-            console.log("// Created file .git-credentials.");
+            this.sh(`git config credential.helper '!f() { sleep 1; echo "username=${user}"; echo "password=${password}"; }; f'`);
+            console.log("// Credential Helper set");
             func();
         } finally {
             this.sh("git config --unset credential.helper");
-            fs.unlinkSync(".git-credentials");
-            console.log("// Deleted file .git-credentials.");
+            console.log("// Credential Helper unset");
         }
     }
 

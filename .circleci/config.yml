@@ -9,8 +9,8 @@ common:
       - checkout
       - restore_cache:
           keys:
-            - maven-repo-v2-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - attach_workspace:
           at: /home/circleci/build
       - run:
@@ -19,7 +19,7 @@ common:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
           path: test-reports
       # Save test results as artifacts
@@ -202,12 +202,7 @@ jobs:
       - run:
           name: Update CM Repository
           command: |
-            git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
-            git remote add downstream $GIT_REPO
-            git fetch downstream
-            git checkout -b tmp downstream/main
-            git merge $CIRCLE_TAG
-            git push downstream main
+            node .circleci/ci/update-cm.js
 
 workflows:
   version: 2
@@ -274,4 +269,3 @@ workflows:
               ignore: /.*/
             tags:
               only: /^venia(-classic)?-\d+\.\d+\.\d+$/
-
