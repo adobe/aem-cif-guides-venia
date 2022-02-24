@@ -130,13 +130,6 @@ describe('Component Dialogs', function () {
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
     });
 
-    it('opens the product carousel dialog', () => {
-        addComponentToPage('Product Carousel');
-        openComponentDialog('productcarousel', 'aem:sites:components:dialogs:cif-core-components:productcarousel:v1');
-
-        expect($('label=Carousel content')).toBeDisplayed();
-    });
-
     it('opens the product teaser dialog', () => {
         addComponentToPage('Product Teaser');
         openComponentDialog('productteaser', 'aem:sites:components:dialogs:cif-core-components:productteaser:v1');
@@ -151,6 +144,15 @@ describe('Component Dialogs', function () {
         expect(
             $('label=Base product - Leave empty to use the current product of the generic product page.')
         ).toBeDisplayed();
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('product-field')).toBeDisplayed();
+        expect(fields[2].$('input[name="./product"]')).toBeDefined();
+        expect(fields[3].$('coral-select[name="./relationType"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the product recommendations dialog', () => {
