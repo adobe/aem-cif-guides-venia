@@ -9,8 +9,8 @@ common:
       - checkout
       - restore_cache:
           keys:
-            - maven-repo-v2-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - attach_workspace:
           at: /home/circleci/build
       - run:
@@ -19,7 +19,7 @@ common:
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v2-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
       - store_test_results:
           path: test-reports
       # Save test results as artifacts
@@ -63,13 +63,13 @@ executors:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:5852-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:6198-azul
         <<: *docker_auth
   test_executor_655:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.8-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.11-azul
         <<: *docker_auth
 
 jobs:
