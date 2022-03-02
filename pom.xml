@@ -94,7 +94,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <uber.jar.version>6.5.0</uber.jar.version>
-        <jacoco.version>0.8.2</jacoco.version>
+        <jacoco.version>0.8.7</jacoco.version>
         <aem.sdk.api>2020.9.4277.20200929T030741Z-200924</aem.sdk.api>
         <componentGroupName>Venia</componentGroupName>
     </properties>
