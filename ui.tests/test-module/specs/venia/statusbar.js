@@ -53,7 +53,8 @@ describe('Catalog Page Status', function () {
         expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
     });
 
-    it('is shown on specific pages', () => {
+    // TODO: CIF-2734 enable the test after part of the next addon release
+    it.skip('is shown on specific pages', () => {
         browser.url(`${editor_page}${specific_page}.html`);
         browser.AEMEditorLoaded();
 
