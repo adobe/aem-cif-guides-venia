@@ -358,6 +358,7 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="AEM CIF Core Components Product List"
                         sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToCart="true"
                         showTitle="true"
                         showImage="true">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
@@ -381,6 +382,15 @@
                         </cq:styleGroups>
                     </default>
                 </productlist>
+                <searchresults jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="AEM CIF Core Components Search Results"
+                        sling:resourceType="wcm/core/components/policy/policy"
+                        enableAddToCart="true">
+                        <jcr:content jcr:primaryType="nt:unstructured"/>
+                    </default>
+                </searchresults>
                 <productcarousel jcr:primaryType="nt:unstructured">
                     <default
                         jcr:lastModified="{Date}2020-09-28T15:37:21.146+02:00"
