@@ -2,11 +2,13 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.1.1
+  browser-tools: circleci/browser-tools@1.2.4
 
 common:
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
+      - browser-tools/install-browser-tools
       - restore_cache:
           keys:
             - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
@@ -57,19 +59,18 @@ common:
 executors:
   cif_executor:
     docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-openjdk-azul:11-stretch-node-browsers
-        <<: *docker_auth
+      - image: cimg/openjdk:11.0-browsers
   test_executor_cloudready:
     docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:6198-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:6582-openjdk11
         <<: *docker_auth
   test_executor_655:
     docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.4-azul-jdk11
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
         <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.11-azul
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.11-openjdk11
         <<: *docker_auth
 
 jobs:
