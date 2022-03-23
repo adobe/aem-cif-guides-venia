@@ -21,7 +21,7 @@ const doUpdate = () => {
     // it will be force-deleted before the checkout if it exists, be careful
     const LOCAL_BRANCH = "tmp";
     // the target branch that should be updated
-    const TAGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
+    const TARGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
     // the revision to update the TARGET_BRANCH to
     const MERGE_REVISION = ci.env('CIRCLE_TAG'); // ci.env('CIRCLE_SHA1');
     
@@ -43,9 +43,9 @@ const doUpdate = () => {
         ci.sh(`git branch -D ${LOCAL_BRANCH}`);
     } 
 
-    ci.sh(`git checkout -b ${LOCAL_BRANCH} downstream/${TAGET_BRANCH}`);
-    ci.sh(`GIT_MERGE_AUTOEDIT=no git merge ${MERGE_REVISION}`);
-    ci.sh(`git push downstream ${TAGET_BRANCH}`);
+    ci.sh(`git checkout -b ${LOCAL_BRANCH} downstream/${TARGET_BRANCH}`);
+    ci.sh(`GIT_MERGE_AUTOEDIT=no git merge --no-ff ${MERGE_REVISION}`);
+    ci.sh(`git push downstream ${LOCAL_BRANCH}:${TARGET_BRANCH}`);
 }
 
 ci.context();
