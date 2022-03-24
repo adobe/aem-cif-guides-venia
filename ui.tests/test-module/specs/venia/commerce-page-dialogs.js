@@ -55,7 +55,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commerceTab).toBeClickable();
         commerceTab.click();
 
-        let commercePanel = $('coral-panelstack coral-panel[role="tabpanel"][selected]');
+        let commercePanel = $('coral-panelstack > coral-panel[selected]');
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Pages')).toBeDisplayed();
@@ -85,7 +85,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commerceTab).toBeClickable();
         commerceTab.click();
 
-        let commercePanel = $('coral-panelstack coral-panel[role="tabpanel"][selected]');
+        let commercePanel = $('coral-panelstack > coral-panel[selected]');
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Settings')).toBeDisplayed();
@@ -109,7 +109,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commerceTab).toBeClickable();
         commerceTab.click();
 
-        let commercePanel = $('coral-panelstack coral-panel[role="tabpanel"][selected]');
+        let commercePanel = $('coral-panelstack > coral-panel[selected]');
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Settings')).toBeDisplayed();
