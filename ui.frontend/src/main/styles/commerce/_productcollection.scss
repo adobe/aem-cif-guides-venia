@@ -144,6 +144,55 @@
   min-height: 1rem;
 }
 
+.productcollection__item-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.5rem;
+}
+
+.productcollection__item-button {
+  background: none;
+  border: 1px solid rgba(var(--color),1);
+  border-radius: 1.5rem;
+  color: rgba(var(--color),1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  height: 2rem;
+  min-width: 7.5rem;
+  padding: 0 1rem;
+  transition-duration: 384ms;
+  transition-property: background-color, color;
+  transition-timing-function: var(--venia-anim-standard);
+  --color: var(--venia-text);
+
+  :hover {
+    --color: var(--venia-teal);
+  }
+
+  :focus {
+    box-shadow: 0 0 0 2px $venia-teal-light, 0 0 0.5rem 2px rgba($venia-teal, 0.2);
+    outline: none;
+    transition-duration: 128ms;
+    --color: var(--venia-teal);
+  }
+
+  :active {
+    transition-duration: 128ms;
+    --color: var(--venia-teal-dark);
+  }
+
+  :disabled {
+    pointer-events: none;
+    --color: var(--venia-grey-dark);
+  }
+}
+
+.productcollection__item-button--add-to-cart {
+  background-color: rgba(var(--color),1);
+  color: white;
+}
+
 .productcollection__sort-title {
   font-size: 0.8rem;
   font-weight: bold;

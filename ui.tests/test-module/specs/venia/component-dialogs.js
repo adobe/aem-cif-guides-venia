@@ -146,13 +146,17 @@ describe('Component Dialogs', function () {
         ).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(5);
+        expect(fields.length).toEqual(7);
         expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
         expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-        expect(fields[2].$('product-field')).toBeDisplayed();
-        expect(fields[2].$('input[name="./product"]')).toBeDefined();
-        expect(fields[3].$('coral-select[name="./relationType"]')).toBeDisplayed();
-        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox-label')).toHaveText('Add to Cart');
+        expect(fields[2].$('input[name="./enableAddToCart"]')).toExist();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Wish List');
+        expect(fields[3].$('input[name="./enableAddToWishList"]')).toExist();
+        expect(fields[4].$('product-field')).toBeDisplayed();
+        expect(fields[4].$('input[name="./product"]')).toBeDefined();
+        expect(fields[5].$('coral-select[name="./relationType"]')).toBeDisplayed();
+        expect(fields[6].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the product recommendations dialog', () => {

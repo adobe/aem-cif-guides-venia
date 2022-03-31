@@ -81,6 +81,9 @@
 
 .productcarousel__cardscontainer {
     margin: auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
 
     :before,
     :after {
@@ -95,10 +98,68 @@
 
 .product__card {
     float: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.product__card-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .product__card__image {
-    height: 243px;
+    height: 100%;
+}
+
+.product__card-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.5rem;
+}
+
+.product__card-button {
+    background: none;
+    border: 1px solid rgba(var(--color),1);
+    border-radius: 1.5rem;
+    color: rgba(var(--color),1);
+    font-size: 0.75rem;
+    font-weight: 600;
+    height: 2rem;
+    min-width: 7.7rem;
+    padding: 0 0.2rem;
+    transition-duration: 384ms;
+    transition-property: background-color, color;
+    transition-timing-function: var(--venia-anim-standard);
+    --color: var(--venia-text);
+
+    :hover {
+        --color: var(--venia-teal);
+    }
+
+    :focus {
+        box-shadow: 0 0 0 2px $venia-teal-light, 0 0 0.5rem 2px rgba($venia-teal, 0.2);
+        outline: none;
+        transition-duration: 128ms;
+        --color: var(--venia-teal);
+    }
+
+    :active {
+        transition-duration: 128ms;
+        --color: var(--venia-teal-dark);
+    }
+
+    :disabled {
+        pointer-events: none;
+        --color: var(--venia-grey-dark);
+    }
+}
+
+.product__card-button--add-to-cart {
+    background-color: rgba(var(--color),1);
+    min-width: 6.3rem;
+    color: white;
 }
 
 .productcarousel__btn {
