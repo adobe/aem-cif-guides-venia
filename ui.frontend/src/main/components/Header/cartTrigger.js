@@ -20,7 +20,7 @@ import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import defaultClasses from '@magento/venia-ui/lib/components/Header/cartTrigger.css';
 import { GET_ITEM_COUNT_QUERY } from '@magento/venia-ui/lib/components/Header/cartTrigger.gql';
-import { useAddToCartEvent } from '@adobe/aem-core-cif-react-components';
+import { useAddProductsToCartEvent } from '@adobe/aem-core-cif-react-components';
 
 const MiniCart = React.lazy(() => import('../MiniCart'));
 
@@ -53,7 +53,7 @@ const CartTrigger = props => {
     const maybeItemCounter = itemCount ? <span className={classes.counter}>{itemCountDisplay}</span> : null;
 
     // listen to aem.cif.add-to-cart events using default addToCartApi
-    useAddToCartEvent();
+    useAddProductsToCartEvent();
 
     return hideCartTrigger ? null : (
         // Because this button behaves differently on desktop and mobile
