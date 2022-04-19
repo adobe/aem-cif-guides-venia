@@ -22,9 +22,6 @@ import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/ProductLis
 const ProductList = props => {
     const { items, handleRemoveItem, classes: propClasses, closeMiniCart, configurableThumbnailSource } = props;
     const classes = useStyle(defaultClasses, propClasses);
-
-    console.log('ProductList items', items);
-
     const cartItems = useMemo(() => {
         if (items) {
             return items.map(item => (
