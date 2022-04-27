@@ -94,7 +94,10 @@ describe('Commerce Page Component Dialog', function () {
 
         // check fields
         expect(fields.length).toEqual(2);
-        expect(fields[0].$('category-field')).toExist();
+        const categoryField = fields[0].$('category-field');
+        expect(categoryField).toExist();
+        expect(categoryField).toHaveAttribute('trackingelement', 'category filter');
+        expect(categoryField).toHaveAttribute('trackingfeature', 'aem:cif:specificcatalogtemplate');
         expect(fields[0].$('coral-taglist[name="./selectorFilter"]')).toExist();
         expect(fields[1].$('coral-checkbox')).toExist();
         expect(fields[1].$('input[name="./includesSubCategories"]')).toExist();
@@ -118,9 +121,17 @@ describe('Commerce Page Component Dialog', function () {
 
         // check fields
         expect(fields.length).toEqual(3);
+        const productField = fields[0].$('product-field');
+        expect(productField).toExist();
+        expect(productField).toHaveAttribute('trackingelement', 'product filter');
+        expect(productField).toHaveAttribute('trackingfeature', 'aem:cif:specificcatalogtemplate');
+
         expect(fields[0].$('product-field')).toExist();
         expect(fields[0].$('coral-taglist[name="./selectorFilter"]')).toExist();
-        expect(fields[1].$('category-field')).toExist();
+        const categoryField = fields[1].$('category-field');
+        expect(categoryField).toExist();
+        expect(categoryField).toHaveAttribute('trackingelement', 'category filter');
+        expect(categoryField).toHaveAttribute('trackingfeature', 'aem:cif:specificcatalogtemplate');
         expect(fields[1].$('coral-taglist[name="./useForCategories"]')).toExist();
         expect(fields[2].$('coral-checkbox')).toExist();
         expect(fields[2].$('input[name="./includesSubCategories"]')).toExist();
