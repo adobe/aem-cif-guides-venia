@@ -20,7 +20,7 @@ const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
 const { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
-const updateGraphqlClientConfiguration = (pid) => {
+const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
     if (!pid) {
         // create new configuration
         pid = encodeURIComponent('[Temporary PID replaced by real PID upon save]');
@@ -32,10 +32,11 @@ const updateGraphqlClientConfiguration = (pid) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
-                -d "httpMethod=GET"
+                -d "httpMethod=GET" \
+                -d "service.ranking=${ranking}"
     `)
 }
 
@@ -93,6 +94,7 @@ try {
 
     // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
     if (classifier == 'classic') {
+        // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {
         // update the existing default endpoint
