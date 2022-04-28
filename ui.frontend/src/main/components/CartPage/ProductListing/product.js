@@ -40,7 +40,11 @@ const Product = props => {
             removeItemMutation: REMOVE_ITEM_MUTATION,
             updateItemQuantityMutation: UPDATE_QUANTITY_MUTATION
         },
-        ...props
+        ...props,
+        item: {
+            ...item,
+            id: parseInt(item.id)
+        }
     });
 
     const {
@@ -53,7 +57,7 @@ const Product = props => {
         isProductUpdating
     } = talonProps;
 
-    const { currency, image, name, options, quantity, stockStatus, unitPrice, urlKey, urlSuffix } = product;
+    const { currency, image, name, options, quantity, stockStatus, unitPrice } = product;
 
     const classes = useStyle(defaultClasses, props.classes);
 

@@ -468,7 +468,11 @@
   "productList.quantity": [
     {
       "type": 0,
-      "value": "Qty :"
+      "value": "Qty : "
+    },
+    {
+      "type": 1,
+      "value": "qty"
     }
   ],
   "productListing.loading": [

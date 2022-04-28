@@ -50,7 +50,7 @@ const Item = props => {
             : '';
 
     const { isDeleting, removeItem } = useItem({
-        id,
+        id: parseInt(id),
         handleRemoveItem
     });
 
@@ -81,7 +81,7 @@ const Item = props => {
                 }}
             />
             <span className={classes.quantity}>
-                <FormattedMessage id={'productList.quantity'} defaultMessage={'Qty :'} values={{ quantity }} />
+                <FormattedMessage id={'productList.quantity'} defaultMessage="Qty : {qty}" values={{ qty: quantity }} />
             </span>
             <span className={classes.price}>
                 <Price currencyCode={prices.price.currency} value={prices.price.value} />
