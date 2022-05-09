@@ -104,19 +104,22 @@ describe('Product List Component Dialog', function () {
         let fields = dialog.$$('.cq-dialog-content .coral-Form-fieldwrapper');
 
         // check fields
-        expect(fields.length).toEqual(5);
+        expect(fields.length).toEqual(6);
         expect(fields[0].$('label')).toHaveText('Manual Category Selection');
         expect(fields[0].$('category-field')).toExist();
         expect(fields[0].$('input[name="./category"]')).toExist();
         expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
         expect(fields[1].$('label')).toHaveText('Page Size');
         expect(fields[1].$('input[name="./pageSize"]')).toExist();
-        expect(fields[2].$('coral-checkbox-label')).toHaveText('Show title');
-        expect(fields[2].$('input[name="./showTitle"]')).toExist();
-        expect(fields[3].$('coral-checkbox-label')).toHaveText('Show image');
-        expect(fields[3].$('input[name="./showImage"]')).toExist();
-        expect(fields[4].$('label')).toHaveText('ID');
-        expect(fields[4].$('input[name="./id"]')).toExist();
+        expect(fields[1].nextElement()).toHaveElementClass('coral-Well');
+        expect(fields[1].nextElement().$('input[name="./defaultSortField"]')).toExist();
+        expect(fields[1].nextElement().$('input[name="./defaultSortOrder"]')).toExist();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Show title');
+        expect(fields[3].$('input[name="./showTitle"]')).toExist();
+        expect(fields[4].$('coral-checkbox-label')).toHaveText('Show image');
+        expect(fields[4].$('input[name="./showImage"]')).toExist();
+        expect(fields[5].$('label')).toHaveText('ID');
+        expect(fields[5].$('input[name="./id"]')).toExist();
 
         // close the dialog
         dialog.$('button[title="Cancel"]').click();
