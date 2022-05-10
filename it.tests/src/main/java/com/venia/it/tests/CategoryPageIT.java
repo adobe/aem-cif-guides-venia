@@ -44,7 +44,7 @@ public class CategoryPageIT extends CommerceTestBase {
 
     @Test
     public void testProductListPageWithSampleData() throws ClientException, IOException {
-        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/venia-bottoms/venia-pants.html?sort_key=price&sort_order=asc";
+        String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_CATEGORY_PAGE + ".html/venia-bottoms/venia-pants.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
 
@@ -66,7 +66,7 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-//        assertEquals(6, elements.size());
+        assertEquals(6, elements.size());
 
         // Check the meta data
         assertEquals("Pants &amp; Shorts", doc.select("title").first().html());
