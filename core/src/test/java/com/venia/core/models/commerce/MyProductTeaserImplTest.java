@@ -98,6 +98,7 @@ class MyProductTeaserImplTest {
                 props.put("age", age);
             }
         }
+        props.put("linkTarget", "_blank");
         context.create().resource(page, name, props);
     }
 
@@ -129,6 +130,7 @@ class MyProductTeaserImplTest {
     void testShowBadge_false(String resourcePath) throws Exception {
         setup(resourcePath);
         Assertions.assertNotNull(underTest);
+        Assertions.assertEquals("_blank", underTest.getLinkTarget());
         Assertions.assertFalse(underTest.isShowBadge());
     }
 
