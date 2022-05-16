@@ -185,4 +185,21 @@ describe('Component Dialogs', function () {
         browser.url(`${config.aem.author.base_url}${testing_page}.html`);
         expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
     });
+
+    it('opens the searchresults dialog', () => {
+        addComponentToPage('Search Results');
+        openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        // check fields
+        expect(fields.length).toEqual(3);
+        expect(fields[0].$('label')).toHaveText('Page Size');
+        expect(fields[0].$('input[name="./pageSize"]')).toExist();
+        expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
+        expect(fields[0].nextElement().$('input[name="./defaultSortField"]')).toExist();
+        expect(fields[0].nextElement().$('input[name="./defaultSortOrder"]')).toExist();
+        expect(fields[2].$('label')).toHaveText('ID');
+        expect(fields[2].$('input[name="./id"]')).toExist();
+    });
 });
