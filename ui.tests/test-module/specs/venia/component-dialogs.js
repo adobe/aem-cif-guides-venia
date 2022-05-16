@@ -135,6 +135,17 @@ describe('Component Dialogs', function () {
         openComponentDialog('productteaser', 'aem:sites:components:dialogs:cif-core-components:productteaser:v1');
 
         expect($('label=Select Product')).toBeDisplayed();
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(7);
+
+        // fields of the OOTB component
+        expect(fields[0].$('product-field')).toBeDisplayed();
+        expect(fields[0].$('input[name="./selection"]')).toBeDefined();
+        expect(fields[1].$('coral-select[name="./cta"]')).toBeDisplayed();
+        expect(fields[2].$('input[name="./ctaText"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the releated products dialog', () => {
