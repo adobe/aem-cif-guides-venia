@@ -97,6 +97,14 @@ describe('Component Dialogs', function () {
         addComponentToPage('Category Carousel');
         openComponentDialog('categorycarousel', 'aem:sites:components:dialogs:cif-core-components:categorycarousel:v1');
 
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
+
         $('coral-multifield button').click();
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
     });
@@ -125,6 +133,14 @@ describe('Component Dialogs', function () {
             'featuredcategorylist',
             'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1'
         );
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
 
         $('coral-multifield button').click();
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
@@ -157,17 +173,18 @@ describe('Component Dialogs', function () {
         ).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(7);
+        expect(fields.length).toEqual(8);
         expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
         expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-        expect(fields[2].$('coral-checkbox-label')).toHaveText('Add to Cart');
-        expect(fields[2].$('input[name="./enableAddToCart"]')).toExist();
-        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Wish List');
-        expect(fields[3].$('input[name="./enableAddToWishList"]')).toExist();
-        expect(fields[4].$('product-field')).toBeDisplayed();
-        expect(fields[4].$('input[name="./product"]')).toBeDefined();
-        expect(fields[5].$('coral-select[name="./relationType"]')).toBeDisplayed();
-        expect(fields[6].$('input[name="./id"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Cart');
+        expect(fields[3].$('input[name="./enableAddToCart"]')).toExist();
+        expect(fields[4].$('coral-checkbox-label')).toHaveText('Add to Wish List');
+        expect(fields[4].$('input[name="./enableAddToWishList"]')).toExist();
+        expect(fields[5].$('product-field')).toBeDisplayed();
+        expect(fields[5].$('input[name="./product"]')).toBeDefined();
+        expect(fields[6].$('coral-select[name="./relationType"]')).toBeDisplayed();
+        expect(fields[7].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the product recommendations dialog', () => {
