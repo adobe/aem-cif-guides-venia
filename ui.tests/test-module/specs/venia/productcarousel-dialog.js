@@ -104,25 +104,26 @@ describe('Product Carousel Component Dialog', function () {
         let fields = dialog.$$('.cq-dialog-content .coral-Form-fieldwrapper');
 
         // check fields
-        expect(fields.length).toEqual(8);
+        expect(fields.length).toEqual(9);
         expect(fields[0].$('label')).toHaveText('Title');
         expect(fields[0].$('input[name="./jcr:title"]')).toExist();
         expect(fields[1].$('label')).toHaveText('The HTML tag used to display the title.');
         expect(fields[1].$('coral-select[name="./titleType"]')).toExist();
-        expect(fields[2].$('coral-checkbox-label')).toHaveText('Add to Cart');
-        expect(fields[2].$('input[name="./enableAddToCart"]')).toExist();
-        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Wish List');
-        expect(fields[3].$('input[name="./enableAddToWishList"]')).toExist();
-        expect(fields[4].$('label')).toHaveText('Display products from');
-        let productRadio = fields[4].$('coral-radio[name="./selectionType"][value="product"]');
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Cart');
+        expect(fields[3].$('input[name="./enableAddToCart"]')).toExist();
+        expect(fields[4].$('coral-checkbox-label')).toHaveText('Add to Wish List');
+        expect(fields[4].$('input[name="./enableAddToWishList"]')).toExist();
+        expect(fields[5].$('label')).toHaveText('Display products from');
+        let productRadio = fields[5].$('coral-radio[name="./selectionType"][value="product"]');
         expect(productRadio).toExist();
-        let categoryRadio = fields[4].$('coral-radio[name="./selectionType"][value="category"]');
+        let categoryRadio = fields[5].$('coral-radio[name="./selectionType"][value="category"]');
         expect(categoryRadio).toExist();
-        expect(fields[5].$('category-field')).toExist();
-        expect(fields[5].$('input[name="./category"]')).toExist();
-        expect(fields[6].$('input[name="./productCount"]')).toExist();
-        expect(fields[7].$('label')).toHaveText('ID');
-        expect(fields[7].$('input[name="./id"]')).toExist();
+        expect(fields[6].$('category-field')).toExist();
+        expect(fields[6].$('input[name="./category"]')).toExist();
+        expect(fields[7].$('input[name="./productCount"]')).toExist();
+        expect(fields[8].$('label')).toHaveText('ID');
+        expect(fields[8].$('input[name="./id"]')).toExist();
 
         let productField = dialog.$(
             '.cq-dialog-content coral-multifield[data-granite-coral-multifield-name="./product"]'
@@ -138,18 +139,18 @@ describe('Product Carousel Component Dialog', function () {
 
         expect(categoryRadio.$('input[type="radio"]')).toBeSelected();
         expect(productField).not.toBeDisplayed();
-        expect(fields[5].$('label')).toBeDisplayed();
-        expect(fields[5].$('label')).toHaveText('Category');
         expect(fields[6].$('label')).toBeDisplayed();
-        expect(fields[6].$('label')).toHaveText('Number of displayed products');
+        expect(fields[6].$('label')).toHaveText('Category');
+        expect(fields[7].$('label')).toBeDisplayed();
+        expect(fields[7].$('label')).toHaveText('Number of displayed products');
 
         expect(productRadio).toBeClickable();
         productRadio.click();
 
         expect(productRadio.$('input[type="radio"]')).toBeSelected();
         expect(productField).toBeDisplayed();
-        expect(fields[5].$('label')).not.toBeDisplayed();
         expect(fields[6].$('label')).not.toBeDisplayed();
+        expect(fields[7].$('label')).not.toBeDisplayed();
 
         // close the dialog
         dialog.$('button[title="Cancel"]').click();
