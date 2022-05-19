@@ -121,10 +121,40 @@ describe('Component Dialogs', function () {
 
     it('opens the commerce teaser dialog', () => {
         addComponentToPage('Commerce Teaser');
-        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v2');
+        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v3');
 
         $('coral-tab-label=Link & Actions').click();
         expect($('label=Link')).toBeDisplayed();
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        expect(fields[1].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+
+        let actionsCheckBox = fields[3].$('coral-checkbox[name="./actionsEnabled"]');
+        expect(actionsCheckBox).toBeClickable();
+        actionsCheckBox.click();
+
+        let actionsMultiField = fields[4].$('coral-multifield[data-granite-coral-multifield-name="./actions"]');
+        expect(actionsMultiField).toBeDisplayed();
+
+        let addActionButton = actionsMultiField.$('button[coral-multifield-add]');
+        expect(addActionButton).toBeClickable();
+        addActionButton.click();
+
+        expect(actionsMultiField.$('label=Page')).toExist();
+        expect(actionsMultiField.$('label=Category')).toExist();
+        expect(actionsMultiField.$('label=Product')).toExist();
+
+        let actionFields = actionsMultiField.$$('coral-multifield-item-content .coral-Form-fieldwrapper');
+
+        expect(actionFields.length).toEqual(5);
+        expect(actionFields[0].$('foundation-autocomplete[name="./actions/item0/link"]')).toExist();
+        expect(actionFields[1].$('coral-checkbox[name="./actions/item0/./linkTarget"]')).toExist();
+        expect(actionFields[2].$('product-field')).toExist();
+        expect(actionFields[2].$('input[name="./actions/item0/productSku"]')).toExist();
+        expect(actionFields[3].$('category-field')).toExist();
+        expect(actionFields[3].$('input[name="./actions/item0/categoryId"]')).toExist();
+        expect(actionFields[4].$('input[name="./actions/item0/text"]')).toExist();
     });
 
     it('opens the featured categories dialog', () => {
