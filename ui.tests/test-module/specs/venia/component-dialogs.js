@@ -130,11 +130,11 @@ describe('Component Dialogs', function () {
 
         expect(fields[1].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
 
-        let actionsCheckBox = fields[3].$('coral-checkbox[name="./actionsEnabled"]');
+        let actionsCheckBox = fields[2].$('coral-checkbox[name="./actionsEnabled"]');
         expect(actionsCheckBox).toBeClickable();
         actionsCheckBox.click();
 
-        let actionsMultiField = fields[4].$('coral-multifield[data-granite-coral-multifield-name="./actions"]');
+        let actionsMultiField = fields[3].$('coral-multifield[data-granite-coral-multifield-name="./actions"]');
         expect(actionsMultiField).toBeDisplayed();
 
         let addActionButton = actionsMultiField.$('button[coral-multifield-add]');
