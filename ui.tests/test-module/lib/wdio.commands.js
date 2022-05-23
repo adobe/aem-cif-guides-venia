@@ -219,6 +219,66 @@ browser.addCommand('EditorOpenSidePanel', function () {
     }
 });
 
+browser.addCommand('GraniteSelectPath', function (pathField, title) {
+    expect(pathField).toBeDisplayed();
+
+    // Open picker dialog
+    const pickerButton = pathField.$('button[aria-label="Open Selection Dialog"]');
+    pickerButton.waitForEnabled();
+    pickerButton.click();
+    expect($('input[aria-label="Type to search ..."]')).toBeDisplayed();
+
+    // Select node
+    const node = $(`div[title="${title}"]`);
+    expect(node).toExist();
+    node.parentElement().parentElement().$('coral-checkbox').click();
+
+    // Submit dialog
+    const submitButton = $('coral-button-label=Select').parentElement();
+    submitButton.waitForEnabled();
+    submitButton.click();
+});
+
+browser.addCommand('CIFSelectCategory', function (categoryField, categoryName) {
+    expect(categoryField).toBeDisplayed();
+
+    // Open picker dialog
+    const pickerButton = categoryField.$('button[aria-label="Open Picker"]');
+    pickerButton.waitForEnabled();
+    pickerButton.click();
+    expect($('h3=Add Category')).toBeDisplayed();
+
+    // Select category
+    const categoryRow = $(`//div[contains(text(),"${categoryName}")]`);
+    expect(categoryRow).toBeClickable();
+    categoryRow.click();
+
+    // Submit dialog
+    const submitButton = $('span=Add').parentElement();
+    submitButton.waitForEnabled();
+    submitButton.click();
+});
+
+browser.addCommand('CIFSelectProduct', function (productField, productName) {
+    expect(productField).toBeDisplayed();
+
+    // Open picker dialog
+    const pickerButton = productField.$('button[aria-label="Open Picker"]');
+    pickerButton.waitForEnabled();
+    pickerButton.click();
+    expect($('h3=Add Product')).toBeDisplayed();
+
+    // Select product
+    const productRow = $(`//div[contains(text(),"${productName}")]`);
+    expect(productRow).toBeClickable();
+    productRow.click();
+
+    // Submit dialog
+    const submitButton = $('span=Add').parentElement();
+    submitButton.waitForEnabled();
+    submitButton.click();
+});
+
 async function fileHandle(filePath) {
     if (config.upload_url) {
         return fileHandleByUploadUrl(config.upload_url, filePath);
