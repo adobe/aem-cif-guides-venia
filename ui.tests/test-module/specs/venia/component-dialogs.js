@@ -119,14 +119,6 @@ describe('Component Dialogs', function () {
         expect($('label=Experience fragment location name.')).toBeDisplayed();
     });
 
-    it('opens the commerce teaser dialog', () => {
-        addComponentToPage('Commerce Teaser');
-        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v2');
-
-        $('coral-tab-label=Link & Actions').click();
-        expect($('label=Link')).toBeDisplayed();
-    });
-
     it('opens the featured categories dialog', () => {
         addComponentToPage('Featured Categories');
         openComponentDialog(
