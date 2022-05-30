@@ -97,6 +97,14 @@ describe('Component Dialogs', function () {
         addComponentToPage('Category Carousel');
         openComponentDialog('categorycarousel', 'aem:sites:components:dialogs:cif-core-components:categorycarousel:v1');
 
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
+
         $('coral-multifield button').click();
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
     });
@@ -111,20 +119,20 @@ describe('Component Dialogs', function () {
         expect($('label=Experience fragment location name.')).toBeDisplayed();
     });
 
-    it('opens the commerce teaser dialog', () => {
-        addComponentToPage('Commerce Teaser');
-        openComponentDialog('teaser', 'aem:sites:components:dialogs:cif-core-components:teaser:v2');
-
-        $('coral-tab-label=Link & Actions').click();
-        expect($('label=Link')).toBeDisplayed();
-    });
-
     it('opens the featured categories dialog', () => {
         addComponentToPage('Featured Categories');
         openComponentDialog(
             'featuredcategorylist',
             'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1'
         );
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
 
         $('coral-multifield button').click();
         expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
@@ -135,6 +143,17 @@ describe('Component Dialogs', function () {
         openComponentDialog('productteaser', 'aem:sites:components:dialogs:cif-core-components:productteaser:v1');
 
         expect($('label=Select Product')).toBeDisplayed();
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(7);
+
+        // fields of the OOTB component
+        expect(fields[0].$('product-field')).toBeDisplayed();
+        expect(fields[0].$('input[name="./selection"]')).toBeDefined();
+        expect(fields[1].$('coral-select[name="./cta"]')).toBeDisplayed();
+        expect(fields[2].$('input[name="./ctaText"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the releated products dialog', () => {
@@ -146,17 +165,18 @@ describe('Component Dialogs', function () {
         ).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(7);
+        expect(fields.length).toEqual(8);
         expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
         expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-        expect(fields[2].$('coral-checkbox-label')).toHaveText('Add to Cart');
-        expect(fields[2].$('input[name="./enableAddToCart"]')).toExist();
-        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Wish List');
-        expect(fields[3].$('input[name="./enableAddToWishList"]')).toExist();
-        expect(fields[4].$('product-field')).toBeDisplayed();
-        expect(fields[4].$('input[name="./product"]')).toBeDefined();
-        expect(fields[5].$('coral-select[name="./relationType"]')).toBeDisplayed();
-        expect(fields[6].$('input[name="./id"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Cart');
+        expect(fields[3].$('input[name="./enableAddToCart"]')).toExist();
+        expect(fields[4].$('coral-checkbox-label')).toHaveText('Add to Wish List');
+        expect(fields[4].$('input[name="./enableAddToWishList"]')).toExist();
+        expect(fields[5].$('product-field')).toBeDisplayed();
+        expect(fields[5].$('input[name="./product"]')).toBeDefined();
+        expect(fields[6].$('coral-select[name="./relationType"]')).toBeDisplayed();
+        expect(fields[7].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the product recommendations dialog', () => {
@@ -173,5 +193,22 @@ describe('Component Dialogs', function () {
         // products. So the test just checks for the existence of the div element rendered by the React component.
         browser.url(`${config.aem.author.base_url}${testing_page}.html`);
         expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
+    });
+
+    it('opens the searchresults dialog', () => {
+        addComponentToPage('Search Results');
+        openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        // check fields
+        expect(fields.length).toEqual(3);
+        expect(fields[0].$('label')).toHaveText('Page Size');
+        expect(fields[0].$('input[name="./pageSize"]')).toExist();
+        expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
+        expect(fields[0].nextElement().$('input[name="./defaultSortField"]')).toExist();
+        expect(fields[0].nextElement().$('input[name="./defaultSortOrder"]')).toExist();
+        expect(fields[2].$('label')).toHaveText('ID');
+        expect(fields[2].$('input[name="./id"]')).toExist();
     });
 });

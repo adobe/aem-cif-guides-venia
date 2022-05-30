@@ -24,7 +24,9 @@
                     layout="responsiveGrid">
                     <searchresults jcr:primaryType="nt:unstructured"
                         jcr:mixinTypes="[cq:LiveRelationship]"
-                        sling:resourceType="venia/components/commerce/searchresults" />
+                        sling:resourceType="venia/components/commerce/searchresults"
+                        defaultSortField="relevance"
+                        defaultSortOrder="desc"/>
                 </container>
             </container>
         </root>

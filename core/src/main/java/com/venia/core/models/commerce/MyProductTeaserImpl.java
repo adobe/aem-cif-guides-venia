@@ -145,4 +145,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     public boolean getAddToWishListEnabled() {
         return productTeaser.getAddToWishListEnabled();
     }
+
+    @Override
+    public String getLinkTarget() {
+        return productTeaser.getLinkTarget();
+    }
 }
