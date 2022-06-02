@@ -208,8 +208,7 @@ describe('Commerce Teaser Component Dialog', function () {
         itemContents.forEach(content => checkFields(content, true));
     });
 
-    // skip this test until the next release
-    it.skip('clears non-empty fields in multifield on new selection', () => {
+    it('clears non-empty fields in multifield on new selection', () => {
         const fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
         const actionsCheckBox = fields[2].$('coral-checkbox[name="./actionsEnabled"]');
         const actionsMultiField = fields[3].$('coral-multifield[data-granite-coral-multifield-name="./actions"]');
@@ -229,7 +228,7 @@ describe('Commerce Teaser Component Dialog', function () {
         expect(actionFields[0].$('foundation-autocomplete input[name="./actions/item0/link"')).toHaveValue('');
 
         browser.CIFSelectCategory(actionFields[3].$('category-field'), 'Tops');
-        expect(actionFields[3].$('input[name="./actions/item0/categoryId"')).toHaveValue('OA==');
+        expect(actionFields[3].$('input[name="./actions/item0/categoryId"')).toHaveValue('MTk=');
         expect(actionFields[2].$('input[name="./actions/item0/productSku"')).toHaveValue('');
 
         browser.GraniteSelectPath(actionFields[0].$('foundation-autocomplete'), 'Venia Demo Store');
