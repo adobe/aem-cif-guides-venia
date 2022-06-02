@@ -231,7 +231,12 @@ browser.addCommand('GraniteSelectPath', function (pathField, title) {
     // Select node
     const node = $(`div[title="${title}"]`);
     expect(node).toExist();
-    node.parentElement().parentElement().$('coral-checkbox').click();
+    if (config.aem.type === 'classic') {
+        node.parentElement().parentElement().$('coral-columnview-item-thumbnail').moveTo({ xOffset: 1, yOffset: 1 });
+        node.parentElement().parentElement().$('coral-columnview-item-thumbnail').click();
+    } else {
+        node.parentElement().parentElement().$('coral-checkbox').click();
+    }
 
     // Submit dialog
     const submitButton = $('coral-button-label=Select').parentElement();
