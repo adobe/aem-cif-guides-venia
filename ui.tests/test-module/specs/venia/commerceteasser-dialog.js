@@ -208,8 +208,7 @@ describe('Commerce Teaser Component Dialog', function () {
         itemContents.forEach(content => checkFields(content, true));
     });
 
-    // skip this test until the next release
-    it.skip('clears non-empty fields in multifield on new selection', () => {
+    it('clears non-empty fields in multifield on new selection', () => {
         const fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
         const actionsCheckBox = fields[2].$('coral-checkbox[name="./actionsEnabled"]');
         const actionsMultiField = fields[3].$('coral-multifield[data-granite-coral-multifield-name="./actions"]');
