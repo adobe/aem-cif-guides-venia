@@ -228,7 +228,7 @@ describe('Commerce Teaser Component Dialog', function () {
         expect(actionFields[0].$('foundation-autocomplete input[name="./actions/item0/link"')).toHaveValue('');
 
         browser.CIFSelectCategory(actionFields[3].$('category-field'), 'Tops');
-        expect(actionFields[3].$('input[name="./actions/item0/categoryId"')).toHaveValue('OA==');
+        expect(actionFields[3].$('input[name="./actions/item0/categoryId"')).toHaveValue('MTk=');
         expect(actionFields[2].$('input[name="./actions/item0/productSku"')).toHaveValue('');
 
         browser.GraniteSelectPath(actionFields[0].$('foundation-autocomplete'), 'Venia Demo Store');
