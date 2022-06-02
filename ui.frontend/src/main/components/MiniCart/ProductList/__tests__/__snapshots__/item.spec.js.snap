@@ -64,7 +64,7 @@ https://backend.test/media/catalog/product/www.venia.com/p1?auto=webp&format=pjp
   <span
     className="quantity"
   >
-    Qty :
+    Qty : 10
   </span>
   <span
     className="price"
@@ -197,7 +197,7 @@ https://backend.test/media/catalog/product/www.venia.com/p1?auto=webp&format=pjp
   <span
     className="quantity"
   >
-    Qty :
+    Qty : 10
   </span>
   <span
     className="price"
@@ -330,7 +330,7 @@ https://backend.test/media/catalog/product/www.venia.com/p1-variant1?auto=webp&f
   <span
     className="quantity"
   >
-    Qty :
+    Qty : 10
   </span>
   <span
     className="price"
@@ -463,7 +463,7 @@ https://backend.test/media/catalog/product/www.venia.com/p1?auto=webp&format=pjp
   <span
     className="quantity"
   >
-    Qty :
+    Qty : 10
   </span>
   <span
     className="price"

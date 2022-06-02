@@ -1,26 +1,17 @@
 [
     {
-        "productlist-a8fbd236cd-item-e00955a3c3": {
-            "xdm:listPrice": 78.0,
-            "xdm:SKU": "VP05",
+        "productlist-a8fbd236cd-item-9fd914275e": {
+            "xdm:SKU": "VP01",
+            "xdm:listPrice": 108.0,
             "xdm:currencyCode": "USD",
-            "dc:title": "Honora Wide Leg Pants",
-            "@type": "core/cif/components/commerce/productlistitem"
-        }
-    },
-    {
-        "productlist-a8fbd236cd-item-44317b4816": {
-            "xdm:listPrice": 78.0,
-            "xdm:SKU": "VP09",
-            "xdm:currencyCode": "USD",
-            "dc:title": "Lenora Crochet Shorts",
+            "dc:title": "Selena Pants",
             "@type": "core/cif/components/commerce/productlistitem"
         }
     },
     {
         "productlist-a8fbd236cd-item-089c85bf92": {
-            "xdm:listPrice": 88.0,
             "xdm:SKU": "VP02",
+            "xdm:listPrice": 88.0,
             "xdm:currencyCode": "USD",
             "dc:title": "Gloria Palazzo Pants",
             "@type": "core/cif/components/commerce/productlistitem"
@@ -28,28 +19,37 @@
     },
     {
         "productlist-a8fbd236cd-item-f60b28fa82": {
-            "xdm:listPrice": 88.0,
             "xdm:SKU": "VP03",
+            "xdm:listPrice": 88.0,
             "xdm:currencyCode": "USD",
             "dc:title": "Camilla Palazzo Pants",
             "@type": "core/cif/components/commerce/productlistitem"
         }
     },
     {
-        "productlist-a8fbd236cd-item-3385ee1d32": {
-            "xdm:listPrice": 88.0,
-            "xdm:SKU": "VP07",
+        "productlist-a8fbd236cd-item-358f8d0758": {
+            "xdm:SKU": "VP04",
+            "xdm:listPrice": 98.0,
             "xdm:currencyCode": "USD",
-            "dc:title": "Fauna Palazzo Pants",
+            "dc:title": "Clara Wide Leg Pants",
             "@type": "core/cif/components/commerce/productlistitem"
         }
     },
     {
-        "productlist-a8fbd236cd-item-358f8d0758": {
-            "xdm:listPrice": 98.0,
-            "xdm:SKU": "VP04",
+        "productlist-a8fbd236cd-item-e00955a3c3": {
+            "xdm:SKU": "VP05",
+            "xdm:listPrice": 78.0,
             "xdm:currencyCode": "USD",
-            "dc:title": "Clara Wide Leg Pants",
+            "dc:title": "Honora Wide Leg Pants",
+            "@type": "core/cif/components/commerce/productlistitem"
+        }
+    },
+    {
+        "productlist-a8fbd236cd-item-24b8a07ed4": {
+            "xdm:SKU": "VP06",
+            "xdm:listPrice": 98.0,
+            "xdm:currencyCode": "USD",
+            "dc:title": "Calista Linen Pants",
             "@type": "core/cif/components/commerce/productlistitem"
         }
     }
