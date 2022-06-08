@@ -131,6 +131,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>aemanalyser-maven-plugin</artifactId>
+                <version>1.4.10</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>analyse-project</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>project-analyse</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -196,6 +211,11 @@
     <!-- D E P E N D E N C I E S                                                -->
     <!-- ====================================================================== -->
     <dependencies>
+        <dependency>
+            <artifactId>aem-cif-sdk-api</artifactId>
+            <groupId>com.adobe.aem</groupId>
+            <version>${aem.cif.sdk.api}</version>
+        </dependency>
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
