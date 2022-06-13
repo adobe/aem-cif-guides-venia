@@ -3,11 +3,11 @@
     xmlns:cq="http://www.day.com/jcr/cq/1.0" 
     xmlns:jcr="http://www.jcp.org/jcr/1.0" 
     jcr:primaryType="cq:Page">
-    <jcr:content 
-        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]"
-        cq:template="/conf/venia/settings/wcm/templates/root-page" 
+    <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/catalog-page,/conf/venia/settings/wcm/templates/page-content]"
+        cq:template="/conf/venia/settings/wcm/templates/landing-page"
         jcr:primaryType="cq:PageContent" 
-        jcr:title="Site root page" 
+        jcr:title="Site Landing Page"
         sling:resourceType="venia/components/page">
         <root jcr:primaryType="nt:unstructured" 
             sling:resourceType="venia/components/container">
