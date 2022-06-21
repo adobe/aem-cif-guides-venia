@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import javax.annotation.PostConstruct;
 
 import com.adobe.cq.commerce.core.components.datalayer.ProductData;
+import com.adobe.cq.commerce.core.components.models.common.CombinedSku;
 import com.adobe.cq.commerce.core.components.models.common.CommerceIdentifier;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
@@ -149,5 +150,15 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     @Override
     public String getLinkTarget() {
         return productTeaser.getLinkTarget();
+    }
+
+    @Override
+    public CombinedSku getCombinedSku() {
+        return productTeaser.getCombinedSku();
+    }
+
+    @Override
+    public boolean loadClientPrice() {
+        return productTeaser.loadClientPrice();
     }
 }
