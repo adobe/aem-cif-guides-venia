@@ -4,6 +4,7 @@
     xmlns:jcr="http://www.jcp.org/jcr/1.0" 
     jcr:primaryType="cq:Page">
     <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         cq:robotsTags="[noindex]"
         jcr:primaryType="cq:PageContent"

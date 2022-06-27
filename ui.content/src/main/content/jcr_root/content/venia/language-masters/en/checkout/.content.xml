@@ -4,6 +4,7 @@
     <jcr:content
         cq:lastModified="{Date}2020-09-17T16:00:12.953+02:00"
         cq:lastModifiedBy="admin"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Checkout"
