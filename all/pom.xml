@@ -54,6 +54,12 @@
                     <properties>
                         <cloudManagerTarget>all</cloudManagerTarget>
                     </properties>
+                    <repositoryStructurePackages>
+                        <repositoryStructurePackage>
+                            <groupId>com.adobe.aem.guides</groupId>
+                            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
+                        </repositoryStructurePackage>
+                    </repositoryStructurePackages>
                     <embeddeds>
                         <embedded>
                             <groupId>com.adobe.aem.guides</groupId>
@@ -199,6 +205,12 @@
         <dependency>
             <groupId>com.adobe.aem.guides</groupId>
             <artifactId>aem-cif-guides-venia.ui.apps</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem.guides</groupId>
+            <artifactId>aem-cif-guides-venia.ui.apps.structure</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
         </dependency>
