@@ -5,6 +5,7 @@
         cq:lastModified="{Date}2020-07-08T09:32:42.260+03:00"
         cq:lastModifiedBy="admin"
         cq:robotsTags="[noindex]"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Cart Details"

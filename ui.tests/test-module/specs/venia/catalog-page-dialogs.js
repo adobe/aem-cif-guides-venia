@@ -55,7 +55,7 @@ describe('Catalog Page Component Dialog', function () {
 
         expect($('.coral-Form-fieldset-legend=Catalog Page')).toBeDisplayed();
         expect($('coral-checkbox-label=Show catalog page')).toBeDisplayed();
-        expect($('.coral-Form-fieldset-legend=Magento Store Configuration')).toBeDisplayed();
+        expect($('.coral-Form-fieldset-legend=Store Configuration')).toBeDisplayed();
         expect($('.coral-Form-fieldlabel=Root Category Identifier')).toBeDisplayed();
     });
 });

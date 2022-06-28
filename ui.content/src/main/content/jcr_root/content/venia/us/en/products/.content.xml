@@ -3,11 +3,13 @@
     xmlns:cq="http://www.day.com/jcr/cq/1.0" 
     xmlns:jcr="http://www.jcp.org/jcr/1.0" 
     jcr:primaryType="cq:Page">
-    <jcr:content cq:template="/conf/venia/settings/wcm/templates/catalog-page" 
+    <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/product-page,/conf/venia/settings/wcm/templates/category-page]"
+        cq:template="/conf/venia/settings/wcm/templates/catalog-page"
         jcr:primaryType="cq:PageContent"
         jcr:mixinTypes="[cq:LiveRelationship]"
-        jcr:title="Catalog Page" 
-        sling:resourceType="venia/components/commerce/catalogpage" 
+        jcr:title="Catalog Page"
+        sling:resourceType="venia/components/commerce/catalogpage"
         showMainCategories="{Boolean}true">
     </jcr:content>
     <category-page />
