@@ -3,10 +3,12 @@
     xmlns:cq="http://www.day.com/jcr/cq/1.0" 
     xmlns:jcr="http://www.jcp.org/jcr/1.0" 
     jcr:primaryType="cq:Page">
-    <jcr:content cq:template="/conf/venia/settings/wcm/templates/page-content" 
-        jcr:primaryType="cq:PageContent" 
+    <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Search Results"
-        sling:resourceType="venia/components/page" 
+        sling:resourceType="venia/components/page"
         hideInNav="true">
         <root jcr:primaryType="nt:unstructured" 
             sling:resourceType="venia/components/container" 

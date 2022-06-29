@@ -4,6 +4,8 @@
     <jcr:content
         cq:lastModified="{Date}2020-09-16T18:18:00.145+03:00"
         cq:lastModifiedBy="admin"
+        cq:robotsTags="[noindex]"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
         jcr:title="My Account Details"

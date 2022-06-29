@@ -6,6 +6,7 @@
         cq:contextHubSegmentsPath="/etc/segmentation/contexthub"
         cq:lastModified="{Date}2021-08-03T11:44:15.934+02:00"
         cq:lastModifiedBy="admin"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/category-page]"
         cq:template="/conf/venia/settings/wcm/templates/category-page"
         jcr:primaryType="cq:PageContent"
         jcr:title="Shop the look"
