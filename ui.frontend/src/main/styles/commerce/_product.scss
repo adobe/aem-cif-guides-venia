@@ -298,7 +298,9 @@
     grid-area: quantity;
 }
 
-.productFullDetail__quantityTitle {}
+.productFullDetail__quantityTitle {
+    display: block;
+}
 
 .productFullDetail__groupedProducts table {
     width: 100%;
