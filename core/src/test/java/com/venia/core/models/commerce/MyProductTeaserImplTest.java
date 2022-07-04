@@ -223,16 +223,6 @@ class MyProductTeaserImplTest {
     }
 
     @Test
-    public void testLoadClientPrice() throws Exception {
-        setup(PRODUCTTEASER_NO_BADGE);
-        Mockito.doReturn(true).when(productTeaser).loadClientPrice();
-        Assertions.assertTrue(underTest.loadClientPrice());
-
-        Mockito.doReturn(false).when(productTeaser).loadClientPrice();
-        Assertions.assertFalse(underTest.loadClientPrice());
-    }
-
-    @Test
     public void testGetCombinedSku() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Mockito.doReturn(new CombinedSku("foo", "bar")).when(productTeaser).getCombinedSku();

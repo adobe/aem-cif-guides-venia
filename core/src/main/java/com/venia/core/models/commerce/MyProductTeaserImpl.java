@@ -157,8 +157,4 @@ public class MyProductTeaserImpl implements MyProductTeaser {
         return productTeaser.getCombinedSku();
     }
 
-    @Override
-    public boolean loadClientPrice() {
-        return productTeaser.loadClientPrice();
-    }
 }

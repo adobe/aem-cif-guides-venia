@@ -399,8 +399,7 @@
                         jcr:title="AEM CIF Core Components Product Carousel"
                         sling:resourceType="wcm/core/components/policy/policy"
                         allowedTypes="[h2,h3,h4,h5,h6]"
-                        type="h2"
-                        loadClientPrices="{Boolean}true">
+                        type="h2">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </productcarousel>
@@ -411,7 +410,6 @@
                         jcr:primaryType="nt:unstructured"
                         jcr:title="Product Teaser Default"
                         sling:resourceType="wcm/core/components/policy/policy"
-                        loadClientPrice="{Boolean}true"
                         enableAddToWishList="{Boolean}true">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
@@ -424,8 +422,7 @@
                         jcr:title="AEM CIF Core Components Related Products"
                         sling:resourceType="wcm/core/components/policy/policy"
                         allowedTypes="[h2,h3,h4,h5,h6]"
-                        type="h2"
-                        loadClientPrices="{Boolean}true">
+                        type="h2">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
                     </default>
                 </relatedproducts>

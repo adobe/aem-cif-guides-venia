@@ -15,7 +15,6 @@
 */-->
 
 <sly data-sly-use.product="com.venia.core.models.commerce.MyProductTeaser"
-    data-sly-use.page="com.adobe.cq.wcm.core.components.models.Page"
     data-sly-use.templates="core/wcm/components/commons/v1/templates.html"
     data-sly-use.actionsTpl="actions.html"
     data-sly-use.imageTpl="image.html"
@@ -29,9 +28,7 @@
          class="item__root"
          data-cmp-is="productteaser"
          data-cmp-data-layer="${product.data.json}"
-         data-virtual="${product.virtualProduct}"
-         data-locale="${page.language}"
-         data-load-price="${product.loadClientPrice}">
+         data-virtual="${product.virtualProduct}">
         <div data-sly-test="${product.showBadge}" class="item__badge">
             <span>${properties.text || 'New'}</span>
         </div>
