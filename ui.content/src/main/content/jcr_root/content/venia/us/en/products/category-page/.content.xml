@@ -25,9 +25,14 @@
                     sling:resourceType="venia/components/container" 
                     layout="responsiveGrid">
                     <productlist cq:styleIds="[1570700958199]" 
-                        jcr:primaryType="nt:unstructured"
-                        jcr:mixinTypes="[cq:LiveRelationship]"
-                        sling:resourceType="venia/components/commerce/productlist" />
+                        jcr:primaryType="nt:unstructured" 
+                        sling:resourceType="venia/components/commerce/productlist">
+                        <fragments jcr:primaryType="nt:unstructured">
+                            <item0 jcr:primaryType="nt:unstructured"
+                                fragmentLocation="grid"
+                                fragmentCssClass="marketing-content__row-2"/>
+                        </fragments>
+                    </productlist>
                 </container>
             </container>
         </root>
