@@ -104,7 +104,7 @@ describe('Product List Component Dialog', function () {
         let fields = dialog.$$('.cq-dialog-content .coral-Form-fieldwrapper');
 
         // check fields
-        expect(fields.length).toEqual(6);
+        expect(fields.length).toEqual(7);
         expect(fields[0].$('label')).toHaveText('Manual Category Selection');
         expect(fields[0].$('category-field')).toExist();
         expect(fields[0].$('input[name="./category"]')).toExist();
@@ -120,6 +120,8 @@ describe('Product List Component Dialog', function () {
         expect(fields[4].$('input[name="./showImage"]')).toExist();
         expect(fields[5].$('label')).toHaveText('ID');
         expect(fields[5].$('input[name="./id"]')).toExist();
+        expect(fields[6].$('label')).toHaveText('Experince Fragment placeholders');
+        expect(fields[6].$('coral-multifield[data-granite-coral-multifield-name="./fragments"]')).toExist();
 
         // close the dialog
         dialog.$('button[title="Cancel"]').click();
