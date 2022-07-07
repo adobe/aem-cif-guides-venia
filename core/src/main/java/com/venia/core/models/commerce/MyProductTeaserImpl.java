@@ -26,6 +26,7 @@ import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 
+import com.adobe.cq.commerce.magento.graphql.FilterEqualTypeInput;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
@@ -59,6 +60,14 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             // automatically take care of executing your query as soon
             // as you try to access any product property.
             productRetriever.extendProductQueryWith(p -> p.createdAt());
+
+            // Replace the product attribute filter of the product query by passing your own to the ProductRetriever.
+            // In comparison to extending product queries, the filter will not be extended but completely replaced.
+            // For this purpose, the lambda function will receive the product identifier and the instance of
+            // ProductAttributeFilterInput instance.
+            productRetriever.replaceProductFilterWith((identifier, f) -> f
+                    .setSku(new FilterEqualTypeInput().setEq(identifier))
+                    .setCustomFilter("eco-friendly", new FilterEqualTypeInput().setEq("yes")));
         }
     }
 
