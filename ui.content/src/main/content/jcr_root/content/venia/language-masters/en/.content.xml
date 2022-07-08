@@ -11,7 +11,7 @@
         cq:cifCategoryPage="/content/venia/language-masters/en/products/category-page" 
         cq:cifProductPage="/content/venia/language-masters/en/products/product-page" 
         cq:cifSearchResultsPage="/content/venia/language-masters/en/search" 
-        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]" 
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content,/conf/venia/settings/wcm/templates/catalog-page]"
         jcr:primaryType="cq:PageContent" 
         jcr:title="Venia Demo Store - Home"
         navRoot="{Boolean}true" 

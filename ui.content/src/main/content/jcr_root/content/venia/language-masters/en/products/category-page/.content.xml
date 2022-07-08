@@ -4,8 +4,10 @@
     xmlns:jcr="http://www.jcp.org/jcr/1.0" 
     xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
     jcr:primaryType="cq:Page">
-    <jcr:content cq:template="/conf/venia/settings/wcm/templates/category-page" 
-        jcr:primaryType="cq:PageContent" 
+    <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/category-page]"
+        cq:template="/conf/venia/settings/wcm/templates/category-page"
+        jcr:primaryType="cq:PageContent"
         jcr:title="Venia Demo Store - Category page"
         sling:resourceType="venia/components/page">
         <root jcr:primaryType="nt:unstructured" 

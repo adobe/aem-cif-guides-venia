@@ -23,6 +23,7 @@
     <div
          data-sly-test="${isConfigured && hasProduct}"
          data-product-sku="${product.sku}"
+         data-product-base-sku="${product.combinedSku.baseSku}"
          id="${product.id}"
          class="item__root"
          data-cmp-is="productteaser"

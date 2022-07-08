@@ -14,6 +14,7 @@
 package com.venia.core.models.commerce;
 
 import com.adobe.cq.commerce.core.components.datalayer.ProductData;
+import com.adobe.cq.commerce.core.components.models.common.CombinedSku;
 import com.adobe.cq.commerce.core.components.models.common.CommerceIdentifier;
 import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
@@ -219,6 +220,15 @@ class MyProductTeaserImplTest {
 
         Mockito.doReturn(false).when(productTeaser).isVirtualProduct();
         Assertions.assertFalse(underTest.isVirtualProduct());
+    }
+
+    @Test
+    public void testGetCombinedSku() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Mockito.doReturn(new CombinedSku("foo", "bar")).when(productTeaser).getCombinedSku();
+        Assertions.assertNotNull(underTest.getCombinedSku());
+        Assertions.assertEquals("foo", underTest.getCombinedSku().getBaseSku());
+        Assertions.assertEquals("bar", underTest.getCombinedSku().getVariantSku());
     }
 
 

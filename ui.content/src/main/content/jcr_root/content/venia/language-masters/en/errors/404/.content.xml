@@ -7,6 +7,7 @@
         cq:lastModified="{Date}2021-10-15T11:13:08.217+02:00"
         cq:lastModifiedBy="admin"
         cq:robotsTags="noindex"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:isCheckedOut="{Boolean}true"
         jcr:mixinTypes="[mix:versionable]"
