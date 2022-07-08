@@ -10,5 +10,6 @@
         cq:graphqlClient="default"
         magentoRootCategoryId="Mg=="
         magentoStore="default"
-        enableUIDSupport="true"/>
+        enableUIDSupport="true"
+        enableClientSidePriceLoadin="{Boolean}true"/>
 </jcr:root>
