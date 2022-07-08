@@ -7,7 +7,7 @@
     <jcr:content cq:contextHubPath="/etc/cloudsettings/default/contexthub" 
         cq:contextHubSegmentsPath="/etc/segmentation/contexthub" 
         cq:template="/conf/venia/settings/wcm/templates/landing-page" 
-        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/(?!(landing|root)).*]" 
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content,/conf/venia/settings/wcm/templates/catalog-page]"
         cq:cifCategoryPage="/content/venia/us/en/products/category-page" 
         cq:cifProductPage="/content/venia/us/en/products/product-page" 
         cq:cifSearchResultsPage="/content/venia/us/en/search"

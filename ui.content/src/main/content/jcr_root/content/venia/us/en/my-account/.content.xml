@@ -7,6 +7,7 @@
         cq:lastRolledout="{Date}2020-07-08T09:32:42.236+03:00"
         cq:lastRolledoutBy="admin"
         cq:robotsTags="[noindex]"
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         jcr:mixinTypes="[cq:LiveRelationship]"
         jcr:primaryType="cq:PageContent"

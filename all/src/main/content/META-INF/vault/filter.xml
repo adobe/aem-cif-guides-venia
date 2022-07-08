@@ -17,4 +17,5 @@
 <workspaceFilter version="1.0">
     <filter root="/apps/venia-packages"/>
     <filter root="/apps/venia-vendor-packages"/>
+    <filter root="/apps/venia/osgiconfig-cloud"/>
 </workspaceFilter>

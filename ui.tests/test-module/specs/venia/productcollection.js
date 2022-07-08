@@ -58,4 +58,22 @@ describe('Product Collection Component', function () {
         categoryFilter.click();
         expect($(categoryFilterList)).not.toBeDisplayed();
     });
+
+    it('Displays category filters', () => {
+        // Accessories should have three category filters
+        browser.url(
+            `${config.aem.author.base_url}/content/venia/us/en/products/category-page.html/venia-accessories.html`
+        );
+        expect($('label[for="category_id"]')).toBeDisplayed();
+        const categoryFilterItems = $$(
+            'label[for="category_id"] ~ .productcollection__filter-items .productcollection__filter-item'
+        );
+        expect(categoryFilterItems.length).toBe(3);
+
+        // Jewelry shouldn't have category filters
+        browser.url(
+            `${config.aem.author.base_url}/content/venia/us/en/products/category-page.html/venia-accessories/venia-jewelry.html`
+        );
+        expect($('label[for="category_id"]')).not.toBeDisplayed();
+    });
 });
