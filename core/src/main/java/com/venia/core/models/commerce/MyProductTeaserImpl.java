@@ -61,13 +61,12 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             // as you try to access any product property.
             productRetriever.extendProductQueryWith(p -> p.createdAt());
 
-            // Replace the product attribute filter of the product query by passing your own to the ProductRetriever.
-            // In comparison to extending product queries, the filter will not be extended but completely replaced.
-            // For this purpose, the lambda function will receive the product identifier and the instance of
-            // ProductAttributeFilterInput instance.
-            productRetriever.replaceProductFilterWith((identifier, f) -> f
-                    .setSku(new FilterEqualTypeInput().setEq(identifier))
-                    .setCustomFilter("eco-friendly", new FilterEqualTypeInput().setEq("yes")));
+            // Extend the product attribute query by passing a partial filter to the ProductRetriever.
+            // Alternatively you can also return your own instance of ProductAttributeFilterInput to
+            // completely replace the filter.
+            productRetriever.extendProductFilterWith(f -> f
+                .setCustomFilter("my-attribute", new FilterEqualTypeInput()
+                    .setEq("my-value")));
         }
     }
 
