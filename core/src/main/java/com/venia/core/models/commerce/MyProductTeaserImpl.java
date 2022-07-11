@@ -26,7 +26,8 @@ import com.adobe.cq.commerce.core.components.models.common.Price;
 import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 
-import com.adobe.cq.commerce.magento.graphql.FilterEqualTypeInput;
+import com.adobe.cq.commerce.magento.graphql.FilterRangeTypeInput;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
@@ -65,8 +66,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             // Alternatively you can also return your own instance of ProductAttributeFilterInput to
             // completely replace the filter.
             productRetriever.extendProductFilterWith(f -> f
-                .setCustomFilter("my-attribute", new FilterEqualTypeInput()
-                    .setEq("my-value")));
+                .setPrice(new FilterRangeTypeInput()
+                    .setFrom("0")
+                    .setTo("50000")));
         }
     }
 
