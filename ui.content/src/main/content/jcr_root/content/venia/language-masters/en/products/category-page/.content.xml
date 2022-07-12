@@ -24,6 +24,7 @@
                         <fragments jcr:primaryType="nt:unstructured">
                             <item0 jcr:primaryType="nt:unstructured"
                                 fragmentLocation="grid"
+                                fragmentPage="1"
                                 fragmentCssClass="marketing-content__row-2"/>
                         </fragments>
                     </productlist>
