@@ -65,7 +65,7 @@ describe('Commerce Page Component Dialog', function () {
         let fields = commercePanel.$$('.coral-Form-fieldwrapper');
 
         // check fields
-        expect(fields.length).toEqual(5);
+        expect(fields.length).toEqual(6);
         expect(fields[0].$('label')).toHaveText('Product Page');
         expect(fields[0].$('foundation-autocomplete[name="./cq:cifProductPage"]')).toExist();
         expect(fields[1].$('label')).toHaveText('Category Page');
@@ -76,6 +76,9 @@ describe('Commerce Page Component Dialog', function () {
         expect(fields[3].$('foundation-autocomplete[name="./cq:cifAddressBookPage"]')).toExist();
         expect(fields[4].$('label')).toHaveText('My Account Page');
         expect(fields[4].$('foundation-autocomplete[name="./cq:cifMyAccountPage"]')).toExist();
+        expect(fields[5].$('coral-checkbox')).toExist();
+        expect(fields[5].$('label')).toHaveText('Landing Page');
+        expect(fields[5].$('input[name="./navRoot"]')).toExist();
     });
 
     it('shows dialog extensions on category page', () => {
