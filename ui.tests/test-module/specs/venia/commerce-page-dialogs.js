@@ -22,6 +22,7 @@ describe('Commerce Page Component Dialog', function () {
     const landing_page = '/content/venia/us/en';
     const category_page = '/content/venia/us/en/products/category-page';
     const product_page = '/content/venia/us/en/products/product-page';
+    const content_page = '/content/venia/us/en/cart-details';
 
     let onboardingHdler;
 
@@ -46,7 +47,7 @@ describe('Commerce Page Component Dialog', function () {
         onboardingHdler.disable();
     });
 
-    it('Landing page dialog extensions are displayed', () => {
+    it('shows dialog extensions on landing page', () => {
         // Landing page properties
         browser.url(`${page_properties}?item=${encodeURIComponent(`${landing_page}`)}`);
 
@@ -59,6 +60,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Pages')).toBeDisplayed();
+        expect(commercePanel.$('.coral-Form-fieldset-legend=Associated Content')).not.toBeDisplayed();
 
         let fields = commercePanel.$$('.coral-Form-fieldwrapper');
 
@@ -76,7 +78,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(fields[4].$('foundation-autocomplete[name="./cq:cifMyAccountPage"]')).toExist();
     });
 
-    it('Category page dialog extensions are displayed', () => {
+    it('shows dialog extensions on category page', () => {
         // Category page properties
         browser.url(`${page_properties}?item=${encodeURIComponent(`${category_page}`)}`);
 
@@ -89,6 +91,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Settings')).toBeDisplayed();
+        expect(commercePanel.$('.coral-Form-fieldset-legend=Associated Content')).not.toBeDisplayed();
 
         let fields = commercePanel.$$('.coral-Form-fieldwrapper');
 
@@ -103,7 +106,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(fields[1].$('input[name="./includesSubCategories"]')).toExist();
     });
 
-    it('Product page dialog extensions are displayed', () => {
+    it('shows dialog extensions on product page', () => {
         // Product page properties
         browser.url(`${page_properties}?item=${encodeURIComponent(`${product_page}`)}`);
 
@@ -116,6 +119,7 @@ describe('Commerce Page Component Dialog', function () {
         expect(commercePanel).toBeDisplayed();
 
         expect(commercePanel.$('.coral-Form-fieldset-legend=Commerce Settings')).toBeDisplayed();
+        expect(commercePanel.$('.coral-Form-fieldset-legend=Associated Content')).not.toBeDisplayed();
 
         let fields = commercePanel.$$('.coral-Form-fieldwrapper');
 
@@ -135,5 +139,34 @@ describe('Commerce Page Component Dialog', function () {
         expect(fields[1].$('coral-taglist[name="./useForCategories"]')).toExist();
         expect(fields[2].$('coral-checkbox')).toExist();
         expect(fields[2].$('input[name="./includesSubCategories"]')).toExist();
+    });
+
+    it('shows dialog extensions on content page', () => {
+        // Content page properties
+        browser.url(`${page_properties}?item=${encodeURIComponent(`${content_page}`)}`);
+
+        // Open Commerce tab
+        let commerceTab = $('coral-tab-label=Commerce');
+        expect(commerceTab).toBeClickable();
+        commerceTab.click();
+
+        let commercePanel = $('coral-panelstack > coral-panel[selected]');
+        expect(commercePanel).toBeDisplayed();
+
+        // Verify associated content fields
+        expect(commercePanel.$('.coral-Form-fieldset-legend=Associated Content')).toBeDisplayed();
+
+        let fieldset = commercePanel.$('.coral-Form-fieldset');
+        expect(fieldset).toBeDisplayed();
+
+        const productField = fieldset.$('product-field');
+        expect(productField).toBeDisplayed();
+        expect(productField).toHaveAttribute('trackingElement', 'associated product');
+        expect(productField).toHaveAttribute('trackingFeature', 'aem:cif:associatedcontentpage');
+
+        const categoryField = fieldset.$('category-field');
+        expect(categoryField).toBeDisplayed();
+        expect(categoryField).toHaveAttribute('trackingElement', 'associated category');
+        expect(categoryField).toHaveAttribute('trackingFeature', 'aem:cif:associatedcontentpage');
     });
 });
