@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2021-10-11T14:30:58.039+02:00"
+        cq:lastModifiedBy="admin"
+        cq:categories="Mzc="
+        cq:template="/conf/venia/settings/wcm/templates/xf-web-variation"
+        cq:xfMasterVariation="{Boolean}true"
+        cq:xfVariantType="web"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Dresses Category Productlist Content"
+        sling:resourceType="venia/components/xfpage"
+        fragmentLocation="grid">
+        <root
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container"
+            layout="responsiveGrid">
+            <image
+                alt="An elegant dress for dinner."
+                altValueFromDAM="false"
+                displayPopupTitle="false"
+                titleValueFromDAM="false"
+                jcr:title="An elegant dress for dinner."
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2021-10-11T14:13:06.288+02:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/image"
+                fileReference="/content/dam/venia/shop_the_latest_image1.jpg">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="6"/>
+                </cq:responsive>
+            </image>
+            <image_880932412
+                alt="A comfortable dress for a walk."
+                altValueFromDAM="false"
+                displayPopupTitle="false"
+                titleValueFromDAM="false"
+                jcr:title="A comfortable dress for a walk."
+                jcr:created="{Date}2021-10-11T14:13:10.571+02:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2021-10-11T14:13:10.571+02:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/image"
+                fileReference="/content/dam/venia/landing_page_image3.jpg">
+                <cq:responsive jcr:primaryType="nt:unstructured">
+                    <default
+                        jcr:primaryType="nt:unstructured"
+                        offset="0"
+                        width="6"/>
+                </cq:responsive>
+            </image_880932412>
+        </root>
+        <cq:metadata jcr:primaryType="nt:unstructured"/>
+    </jcr:content>
+</jcr:root>

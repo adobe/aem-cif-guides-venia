@@ -362,6 +362,12 @@
                         showTitle="true"
                         showImage="true">
                         <jcr:content jcr:primaryType="nt:unstructured"/>
+                        <fragmentStyles jcr:primaryType="nt:unstructured">
+                            <item0 
+                                jcr:primaryType="nt:unstructured"
+                                fragmentStyleCssClass="marketing-content__row-2"
+                                fragmentStyleName="Second Row"/>
+                        </fragmentStyles>
                         <cq:styleGroups jcr:primaryType="nt:unstructured">
                             <item0
                                 cq:styleGroupLabel="Layout"

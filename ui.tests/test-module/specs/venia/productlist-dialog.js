@@ -37,15 +37,18 @@ describe('Product List Component Dialog', function () {
         onboardingHdler.enable();
 
         const pageName = `testing-${randomString()}`;
-        testing_page = `/content/venia/us/en/${pageName}`;
+        testing_page = `/content/venia/us/en/products/category-page/${pageName}`;
         browser.AEMCreatePage({
             title: 'Testing Page',
             name: pageName,
-            parent: '/content/venia/us/en',
-            template: '/conf/venia/settings/wcm/templates/page-content'
+            parent: '/content/venia/us/en/products/category-page',
+            template: '/conf/venia/settings/wcm/templates/category-page'
         });
         browser.pause(1000);
-        addComponentToPage();
+
+        browser.url(`${editor_page}${testing_page}.html`);
+        browser.AEMEditorLoaded();
+        browser.EditorOpenSidePanel();
     });
 
     after(function () {
@@ -57,27 +60,6 @@ describe('Product List Component Dialog', function () {
             browser.AEMDeletePage(testing_page);
         }
     });
-
-    const addComponentToPage = (name = 'Product List', group = 'Venia - Commerce') => {
-        browser.url(`${editor_page}${testing_page}.html`);
-        browser.AEMEditorLoaded();
-        browser.EditorOpenSidePanel();
-
-        // Open the Components tab
-        $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
-
-        // Filter for Commerce components
-        $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
-        $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
-        expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
-
-        // Drag and drop component on the page
-        const carouselCmp = $(`div[data-title="${name}"]`);
-        expect(carouselCmp).toBeDisplayed();
-        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        carouselCmp.dragAndDrop(dropTarget, 1000);
-    };
 
     const openComponentDialog = (
         node = 'productlist',
@@ -104,7 +86,7 @@ describe('Product List Component Dialog', function () {
         let fields = dialog.$$('.cq-dialog-content .coral-Form-fieldwrapper');
 
         // check fields
-        expect(fields.length).toEqual(6);
+        expect(fields.length).toEqual(7);
         expect(fields[0].$('label')).toHaveText('Manual Category Selection');
         expect(fields[0].$('category-field')).toExist();
         expect(fields[0].$('input[name="./category"]')).toExist();
@@ -120,6 +102,8 @@ describe('Product List Component Dialog', function () {
         expect(fields[4].$('input[name="./showImage"]')).toExist();
         expect(fields[5].$('label')).toHaveText('ID');
         expect(fields[5].$('input[name="./id"]')).toExist();
+        expect(fields[6].$('label')).toHaveText('Experince Fragment placeholders');
+        expect(fields[6].$('coral-multifield[data-granite-coral-multifield-name="./fragments"]')).toExist();
 
         // close the dialog
         dialog.$('button[title="Cancel"]').click();
