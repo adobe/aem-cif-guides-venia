@@ -211,4 +211,34 @@ describe('Component Dialogs', function () {
         expect(fields[2].$('label')).toHaveText('ID');
         expect(fields[2].$('input[name="./id"]')).toExist();
     });
+
+    it('opens the commerce list dialog', () => {
+        addComponentToPage('Commerce List');
+        openComponentDialog('list', 'aem:sites:components:dialogs:cif-core-components:list:v1');
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        expect(fields[9].$('product-field')).toExist();
+        expect(fields[9].$('product-field')).not.toBeDisplayed();
+        expect(fields[10].$('category-field')).toExist();
+        expect(fields[10].$('category-field')).not.toBeDisplayed();
+
+        // check fields
+        expect(fields[0].$('coral-select')).toHaveAttribute('name', './listFrom');
+        let selectItems = fields[0].$$('coral-select coral-select-item');
+
+        expect(selectItems.length).toEqual(6);
+        expect(selectItems[4]).toHaveValue('productAssociation');
+        expect(selectItems[5]).toHaveValue('categoryAssociation');
+
+        fields[0].$('coral-select').click();
+        $('coral-popover-content coral-selectlist-item[value="productAssociation"]').click();
+        expect(fields[9].$('product-field')).toBeDisplayed();
+        expect(fields[10].$('category-field')).not.toBeDisplayed();
+
+        fields[0].$('coral-select').click();
+        $('coral-popover-content coral-selectlist-item[value="categoryAssociation"]').click();
+        expect(fields[9].$('product-field')).not.toBeDisplayed();
+        expect(fields[10].$('category-field')).toBeDisplayed();
+    });
 });
