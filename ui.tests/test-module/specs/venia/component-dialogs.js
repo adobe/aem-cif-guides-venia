@@ -213,7 +213,7 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the commerce list dialog', () => {
-        addComponentToPage('Commerce List');
+        addComponentToPage('List');
         openComponentDialog('list', 'aem:sites:components:dialogs:cif-core-components:list:v1');
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
