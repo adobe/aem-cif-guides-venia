@@ -213,7 +213,7 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the commerce list dialog', () => {
-        addComponentToPage('List');
+        addComponentToPage('List', 'Venia - Content');
         openComponentDialog('list', 'aem:sites:components:dialogs:cif-core-components:list:v1');
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
@@ -232,12 +232,18 @@ describe('Component Dialogs', function () {
         expect(selectItems[5]).toHaveValue('categoryAssociation');
 
         fields[0].$('coral-select').click();
-        $('coral-popover-content coral-selectlist-item[value="productAssociation"]').click();
+
+        let dropdownSelector = config.aem.type === 'classic' ? 'coral-overlay.is-open' : 'coral-popover-content';
+        let dropdown = $(dropdownSelector);
+        expect(dropdown).toBeDefined();
+        dropdown.$('coral-selectlist-item[value="productAssociation"]').click();
         expect(fields[9].$('product-field')).toBeDisplayed();
         expect(fields[10].$('category-field')).not.toBeDisplayed();
 
         fields[0].$('coral-select').click();
-        $('coral-popover-content coral-selectlist-item[value="categoryAssociation"]').click();
+        dropdown = $(dropdownSelector);
+        expect(dropdown).toBeDefined();
+        dropdown.$('coral-selectlist-item[value="categoryAssociation"]').click();
         expect(fields[9].$('product-field')).not.toBeDisplayed();
         expect(fields[10].$('category-field')).toBeDisplayed();
     });
