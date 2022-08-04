@@ -233,17 +233,20 @@ describe('Component Dialogs', function () {
 
         fields[0].$('coral-select').click();
 
-        let dropdownSelector = config.aem.type === 'classic' ? 'coral-overlay.is-open' : 'coral-popover-content';
-        let dropdown = $(dropdownSelector);
-        expect(dropdown).toBeDefined();
-        dropdown.$('coral-selectlist-item[value="productAssociation"]').click();
+        let itemsSelector =
+            config.aem.type === 'classic'
+                ? 'coral-overlay.is-open coral-selectlist-item[value="productAssociation"]'
+                : 'coral-popover-content coral-selectlist-item[value="productAssociation"]';
+        $(itemsSelector).click();
         expect(fields[9].$('product-field')).toBeDisplayed();
         expect(fields[10].$('category-field')).not.toBeDisplayed();
 
         fields[0].$('coral-select').click();
-        dropdown = $(dropdownSelector);
-        expect(dropdown).toBeDefined();
-        dropdown.$('coral-selectlist-item[value="categoryAssociation"]').click();
+        itemsSelector =
+            config.aem.type === 'classic'
+                ? 'coral-overlay.is-open coral-selectlist-item[value="categoryAssociation"]'
+                : 'coral-popover-content coral-selectlist-item[value="categoryAssociation"]';
+        $(itemsSelector).click();
         expect(fields[9].$('product-field')).not.toBeDisplayed();
         expect(fields[10].$('category-field')).toBeDisplayed();
     });
