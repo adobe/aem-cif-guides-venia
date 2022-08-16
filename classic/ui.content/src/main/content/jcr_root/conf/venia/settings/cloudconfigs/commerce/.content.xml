@@ -5,13 +5,13 @@
         jcr:primaryType="cq:PageContent"
         jcr:title="Commerce"
         sling:configPropertyInherit="true"
-        cq:template="/libs/commerce/gui/components/configuration/page/template"
-        sling:resourceType="commerce/gui/components/configuration/page"
-        cq:catalogDataResourceProviderFactory="magento-graphql"
-        cq:catalogIdentifier="default"
-        cq:catalogPath="/var/commerce/products/venia-default"
+        cq:template="/libs/cif/shell/components/configuration/page/template"
+        sling:resourceType="cif/shell/components/configuration/page"
         cq:graphqlClient="default"
+        magentoGraphqlEndpoint="/magento/graphql"
         magentoRootCategoryId="Mg=="
         magentoStore="default"
-        enableUIDSupport="true"/>
+        enableUIDSupport="true"
+        categoryPageUrlFormat="\{{page}}.html/{{uid}}.html"
+        productPageUrlFormat="\{{page}}.html/{{sku}}.html#{{variant_sku}}"/>
 </jcr:root>
