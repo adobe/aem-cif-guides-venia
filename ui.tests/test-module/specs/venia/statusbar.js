@@ -16,11 +16,12 @@
 
 const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
+const isClassic = process.env.AEM_VERSION === 'classic';
 
 describe('Catalog Page Status', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
     const product_page = '/content/venia/us/en/products/product-page';
-    const specific_page = '/content/venia/us/en/products/category-page/shop-the-look.html/shop-the-look';
+    const specific_page = '/content/venia/us/en/products/category-page/shop-the-look';
 
     let onboardingHdler;
 
@@ -50,7 +51,11 @@ describe('Catalog Page Status', function () {
         browser.AEMEditorLoaded();
 
         expect($('coral-alert-header=Venia Demo Store - Product page')).toBeDisplayed();
-        expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
+
+        if (!isClassic) {
+            // actions are not available on 6.5 in general
+            expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
+        }
     });
 
     it('is shown on specific pages', () => {
@@ -59,7 +64,10 @@ describe('Catalog Page Status', function () {
 
         expect($('coral-alert-header=Shop the look')).toBeDisplayed();
 
-        const openTemplatePageButton = $('a[data-status-action-id="open-template-page"]');
-        expect(openTemplatePageButton).toBeClickable();
+        if (!isClassic) {
+            // actions are not available on 6.5 in general
+            const openTemplatePageButton = $('a[data-status-action-id="open-template-page"]');
+            expect(openTemplatePageButton).toBeClickable();
+        }
     });
 });

@@ -43,6 +43,7 @@
         <AEM_PUBLISH_URL />
         <AEM_PUBLISH_USERNAME>admin</AEM_PUBLISH_USERNAME>
         <AEM_PUBLISH_PASSWORD>admin</AEM_PUBLISH_PASSWORD>
+        <AEM_VERSION>cloud</AEM_VERSION>
         <SELENIUM_BROWSER>chrome</SELENIUM_BROWSER>
         <VENIA_ACCOUNT_EMAIL />
         <VENIA_ACCOUNT_PASSWORD />
@@ -151,6 +152,7 @@
                                 <AEM_PUBLISH_URL>${AEM_PUBLISH_URL}</AEM_PUBLISH_URL>
                                 <AEM_PUBLISH_USERNAME>${AEM_PUBLISH_USERNAME}</AEM_PUBLISH_USERNAME>
                                 <AEM_PUBLISH_PASSWORD>${AEM_PUBLISH_PASSWORD}</AEM_PUBLISH_PASSWORD>
+                                <AEM_VERSION>${AEM_VERSION}</AEM_VERSION>
                                 <VENIA_ACCOUNT_EMAIL>${VENIA_ACCOUNT_EMAIL}</VENIA_ACCOUNT_EMAIL>
                                 <VENIA_ACCOUNT_PASSWORD>${VENIA_ACCOUNT_PASSWORD}</VENIA_ACCOUNT_PASSWORD>
                                 <SELENIUM_BROWSER>${SELENIUM_BROWSER}</SELENIUM_BROWSER>
@@ -241,6 +243,7 @@
                                         <AEM_PUBLISH_URL>${AEM_PUBLISH_URL}</AEM_PUBLISH_URL>
                                         <AEM_PUBLISH_USERNAME>${AEM_PUBLISH_USERNAME}</AEM_PUBLISH_USERNAME>
                                         <AEM_PUBLISH_PASSWORD>${AEM_PUBLISH_PASSWORD}</AEM_PUBLISH_PASSWORD>
+                                        <AEM_VERSION>${AEM_VERSION}</AEM_VERSION>
                                         <VENIA_ACCOUNT_EMAIL>${VENIA_ACCOUNT_EMAIL}</VENIA_ACCOUNT_EMAIL>
                                         <VENIA_ACCOUNT_PASSWORD>${VENIA_ACCOUNT_PASSWORD}</VENIA_ACCOUNT_PASSWORD>
                                         <SELENIUM_BROWSER>${SELENIUM_BROWSER}</SELENIUM_BROWSER>
