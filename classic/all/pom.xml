@@ -124,11 +124,6 @@
                             <target>/apps/venia-vendor-packages/application/install</target>
                         </embedded>
                         <embedded>
-                            <groupId>com.adobe.commerce.cif</groupId>
-                            <artifactId>graphql-client</artifactId>
-                            <target>/apps/venia-vendor-packages/application/install</target>
-                        </embedded>
-                        <embedded>
                             <groupId>com.adobe.cq</groupId>
                             <artifactId>core.wcm.components.content</artifactId>
                             <type>zip</type>
@@ -309,10 +304,6 @@
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
             <artifactId>core-cif-components-extensions-product-recs-bundle</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.commerce.cif</groupId>
-            <artifactId>graphql-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.adobe.commerce.cif</groupId>
