@@ -4,6 +4,7 @@
             "xdm:SKU": "VP06",
             "xdm:listPrice": 98.0,
             "xdm:currencyCode": "USD",
+            "xdm:discountAmount": 0.0,
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Calista Linen Pants"
         }
@@ -12,6 +13,7 @@
         "searchresults-5931a2d225-item-f60b28fa82": {
             "xdm:SKU": "VP03",
             "xdm:listPrice": 88.0,
+            "xdm:discountAmount": 0.0,
             "xdm:currencyCode": "USD",
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Camilla Palazzo Pants"
@@ -21,6 +23,7 @@
         "searchresults-5931a2d225-item-df6faa2c86": {
             "xdm:SKU": "VD02",
             "xdm:listPrice": 108.0,
+            "xdm:discountAmount": 0.0,
             "xdm:currencyCode": "USD",
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Candace Dress"
@@ -30,6 +33,7 @@
         "searchresults-5931a2d225-item-358f8d0758": {
             "xdm:SKU": "VP04",
             "xdm:listPrice": 98.0,
+            "xdm:discountAmount": 0.0,
             "xdm:currencyCode": "USD",
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Clara Wide Leg Pants"
@@ -39,6 +43,7 @@
         "searchresults-5931a2d225-item-3385ee1d32": {
             "xdm:SKU": "VP07",
             "xdm:listPrice": 88.0,
+            "xdm:discountAmount": 0.0,
             "xdm:currencyCode": "USD",
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Fauna Palazzo Pants"
@@ -48,6 +53,7 @@
         "searchresults-5931a2d225-item-089c85bf92": {
             "xdm:SKU": "VP02",
             "xdm:listPrice": 88.0,
+            "xdm:discountAmount": 0.0,
             "xdm:currencyCode": "USD",
             "@type": "core/cif/components/commerce/productlistitem",
             "dc:title": "Gloria Palazzo Pants"

@@ -3,6 +3,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 101.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #1"
     }
@@ -11,6 +12,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 102.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #2"
     }
@@ -19,6 +21,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 103.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #3"
     }
@@ -27,6 +30,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 104.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #4"
     }
@@ -35,6 +39,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 105.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #5"
     }
