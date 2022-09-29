@@ -48,6 +48,7 @@
     "productlist-a8fbd236cd-item-e3b0c44298": {
       "xdm:currencyCode": "USD",
       "xdm:listPrice": 106.0,
+      "xdm:discountAmount": 0.0,
       "@type": "core/cif/components/commerce/productlistitem",
       "dc:title": "Product #6"
     }
