@@ -16,12 +16,13 @@
 
 const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
-const isClassic = process.env.AEM_VERSION === 'classic';
+const isCloud = process.env.AEM_VERSION !== 'classic';
 
 describe('Catalog Page Status', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
     const product_page = '/content/venia/us/en/products/product-page';
-    const specific_page = '/content/venia/us/en/products/category-page/shop-the-look';
+    const specific_page_no_suffix = '/content/venia/us/en/products/category-page/shop-the-look';
+    const specific_page_with_suffix = '/content/venia/us/en/products/category-page/shop-the-look.html/shop-the-look';
 
     let onboardingHdler;
 
@@ -52,22 +53,36 @@ describe('Catalog Page Status', function () {
 
         expect($('coral-alert-header=Venia Demo Store - Product page')).toBeDisplayed();
 
-        if (!isClassic) {
+        if (isCloud) {
             // actions are not available on 6.5 in general
             expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
         }
     });
 
     it('is shown on specific pages', () => {
-        browser.url(`${editor_page}${specific_page}.html`);
+        browser.url(`${editor_page}${specific_page_no_suffix}.html`);
         browser.AEMEditorLoaded();
 
         expect($('coral-alert-header=Shop the look')).toBeDisplayed();
 
-        if (!isClassic) {
+        if (isCloud) {
             // actions are not available on 6.5 in general
-            const openTemplatePageButton = $('a[data-status-action-id="open-template-page"]');
-            expect(openTemplatePageButton).toBeClickable();
+            expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
         }
     });
+
+    if (isCloud) {
+        // due to an issue in the editors getPageInfoLocation function, the status bar is not shown
+        // on classic at all with a suffix. This is a known issue, fixed for CS but not yet back
+        // ported to 6.5
+        it('is shown on specific pages with suffix', () => {
+            browser.url(`${editor_page}${specific_page_with_suffix}.html`);
+            browser.AEMEditorLoaded();
+
+            expect($('coral-alert-header=Shop the look')).toBeDisplayed();
+
+            const openTemplatePageButton = $('a[data-status-action-id="open-template-page"]');
+            expect(openTemplatePageButton).toBeClickable();
+        });
+    }
 });
