@@ -11,5 +11,5 @@
         magentoRootCategoryId="Mg=="
         magentoStore="default"
         enableUIDSupport="true"
-        enableClientSidePriceLoadin="{Boolean}true"/>
+        enableClientSidePriceLoading="{Boolean}true"/>
 </jcr:root>
