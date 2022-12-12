@@ -117,7 +117,7 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
         });
     }
 
