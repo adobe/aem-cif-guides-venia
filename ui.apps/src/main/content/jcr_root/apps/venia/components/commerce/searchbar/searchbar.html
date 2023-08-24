@@ -1,0 +1,50 @@
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js"
+></script>
+<div
+  data-sly-use.storeconfig="com.adobe.cq.commerce.core.components.models.storeconfigexporter.StoreConfigExporter"
+  class="block block-search widget-search"
+>
+  <div class="block block-title" style="display: none">
+    <strong>Search</strong>
+  </div>
+  <div class="block block-content">
+    <form class="form minisearch" id="search_mini_form" method="get">
+      <div class="field search">
+        <label class="label" for="search" data-role="minisearch-label">
+          <span style="display: none">Search</span>
+        </label>
+        <div class="control">
+          <input
+            id="search"
+            type="text"
+            name="q"
+            value=""
+            placeholder="Search entire store here..."
+            class="input-text"
+            maxlength="128"
+            role="combobox"
+            aria-haspopup="false"
+            aria-autocomplete="both"
+            autocomplete="off"
+            aria-expanded="false"
+            onchange=""
+          />
+          <div id="search_autocomplete" class="search-autocomplete"></div>
+        </div>
+      </div>
+      <div class="actions" style="display: none">
+        <button
+          type="submit"
+          title="Search"
+          class="action search"
+          aria-label="Search"
+        >
+          <span>Search</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
