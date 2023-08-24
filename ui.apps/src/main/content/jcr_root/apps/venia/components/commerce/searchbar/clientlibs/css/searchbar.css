@@ -47,11 +47,21 @@ input.input-text {
 .search-autocomplete {
   position: absolute;
 }
-
+div.searchbar {
+  width: 100% !important;
+}
+div.field.search {
+  display: flex;
+  justify-content: center;
+}
 @media only screen and (max-width: 768px) {
 }
 
 @media all and (min-width: 769px) {
+  div.searchbar {
+    width: 8.33333333% !important;
+    margin: 0;
+  }
   .block-search {
     position: relative;
     z-index: 4;

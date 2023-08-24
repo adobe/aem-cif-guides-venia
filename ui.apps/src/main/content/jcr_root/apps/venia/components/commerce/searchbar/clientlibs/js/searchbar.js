@@ -40,22 +40,7 @@ async function getStoreDataGraphQLQuery() {
 }
 
 class Searchbar {
-  constructor(props) {
-    // this._classes = {
-    //   open: "searchbar__body--open",
-    // };
-
-    // this._searchBarRoot = document.querySelector(
-    //   Searchbar.selectors.searchBarRoot
-    // );
-    // if (!this._searchBarRoot) {
-    //   return;
-    // }
-
-    // this._searchBox = this._searchBarRoot.querySelector(
-    //   Searchbar.selectors.searchBox
-    // );
-
+  constructor() {
     const stateObject = {
       dataServicesStorefrontInstanceContext: null,
       storeConfig: null,
@@ -90,14 +75,6 @@ class Searchbar {
       `/catalogsearch/result` // Verify this is correct for venia
       // `${dataServicesStorefrontInstanceContext.store_url}catalogsearch/result`
     );
-  }
-
-  _show() {
-    // this._searchBarRoot.classList.add(this._classes.open);
-  }
-
-  _hide() {
-    // this._searchBarRoot.classList.remove(this._classes.open);
   }
 
   toggle() {
