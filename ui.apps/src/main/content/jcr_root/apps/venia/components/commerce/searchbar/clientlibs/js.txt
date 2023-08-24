@@ -1,0 +1,2 @@
+js/searchbar.js
+dist/index.js
