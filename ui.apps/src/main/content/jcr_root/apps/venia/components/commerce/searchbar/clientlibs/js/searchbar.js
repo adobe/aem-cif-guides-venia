@@ -106,7 +106,7 @@ class SearchBar {
 
     // initialize live-search
     new window.LiveSearchAutocomplete({
-      environmentId: dataServicesStorefrontInstanceContext.environment_id, // TODO: Test using
+      environmentId: dataServicesStorefrontInstanceContext.environment_id,
       websiteCode: dataServicesStorefrontInstanceContext.website_code,
       storeCode: dataServicesStorefrontInstanceContext.store_code,
       storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
