@@ -54,8 +54,6 @@ div.field.search {
   display: flex;
   justify-content: center;
 }
-@media only screen and (max-width: 768px) {
-}
 
 @media all and (min-width: 769px) {
   div.searchbar {
@@ -66,13 +64,11 @@ div.field.search {
     position: relative;
     z-index: 4;
   }
-
   .block-search .control {
     border-top: 0;
     margin: 0;
     padding: 0.75em 0;
   }
-
   .block-search input {
     margin: 0;
     padding-right: 16px;
