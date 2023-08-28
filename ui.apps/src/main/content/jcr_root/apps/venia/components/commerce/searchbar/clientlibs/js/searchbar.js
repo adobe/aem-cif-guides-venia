@@ -115,12 +115,11 @@ class SearchBar {
         minQueryLength: "2",
         currencySymbol: "$",
         currencyRate: "1",
-        // displaySearchBox: true,
         displayOutOfStock: true,
         allowAllProducts: false,
       },
       context: {
-        customerGroup: "", // TODO: Not a mandatory parameter for b2c merchants
+        customerGroup: "", // TODO:
       },
     });
 
@@ -161,7 +160,7 @@ class SearchBar {
       catalog_extension_version,
       environment,
       environment_id,
-      store_code, // should we use this? or from storeConfig?
+      store_code, // TODO: storeCode is also in storeConfig w/ diff value
       store_id,
       store_name,
       store_url,
@@ -189,7 +188,7 @@ class SearchBar {
     });
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-      // instanceId, // TODO: Missing
+      // instanceId, // TODO:
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
@@ -207,8 +206,7 @@ class SearchBar {
     });
   }
 }
-// FIXME: Fix onClick product search url
-// How does canonical_url : "//master-7rqtwti-wdxwuaerh4gbm.eu-4.magentosite.cloud/default/layla-tee.html"  is set?
+
 (function () {
   function onDocumentReady() {
     new SearchBar({});
