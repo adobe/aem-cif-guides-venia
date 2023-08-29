@@ -35,7 +35,6 @@ async function getStoreDataGraphQLQuery() {
                     store_view_code
                     store_view_id
                     store_view_name
-                    store_view_currency_code
                     website_code
                     website_id
                     website_name
@@ -170,7 +169,6 @@ class SearchBar {
       website_code,
       website_id,
       website_name,
-      store_view_currency_code,
     } = dataServicesStorefrontInstanceContext;
     const { baseCurrencyCode /* , storeCode */ } = storeConfig;
     // mse.context.setMagentoExtension({
@@ -201,7 +199,7 @@ class SearchBar {
       storeName: store_name,
       storeViewName: store_view_name,
       baseCurrencyCode,
-      storeViewCurrencyCode: store_view_currency_code,
+      storeViewCurrencyCode: store_view_code,
       catalogExtensionVersion: catalog_extension_version,
     });
   }
