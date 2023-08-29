@@ -52,11 +52,34 @@ async function getStoreDataGraphQLQuery() {
   return response.data;
 }
 
+async function getMagentoExtensionVersion() {
+  const graphqlEndpoint = `/api/graphql`;
+  const response = await fetch(graphqlEndpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
+            query DataServicesStorefrontInstanceContext {
+                dataServicesMagentoExtensionContext {
+                    magento_extension_version
+                  }
+                }
+                `,
+      variables: {},
+    }),
+  }).then((res) => res.json());
+
+  return response.data;
+}
+
 class SearchBar {
   constructor() {
     const stateObject = {
       dataServicesStorefrontInstanceContext: null,
       storeConfig: null,
+      magentoExtensionVersion: null,
     };
     this._state = stateObject;
     this._init();
@@ -84,9 +107,22 @@ class SearchBar {
       return;
     }
   }
+  async _getMagentoExtensionVersion() {
+    const { dataServicesMagentoExtensionContext } =
+      (await getMagentoExtensionVersion()) || {};
+    this._state.magentoExtensionVersion =
+      dataServicesMagentoExtensionContext?.magento_extension_version;
+    if (!dataServicesMagentoExtensionContext) {
+      console.log("no magentoExtensionVersion");
+      return;
+    }
+  }
 
   async _initLiveSearch() {
-    await this._getStoreData();
+    await Promise.all([
+      this._getStoreData(),
+      this._getMagentoExtensionVersion(),
+    ]);
     if (!window.LiveSearchAutocomplete) {
       this._injectStoreScript(
         "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js"
@@ -102,7 +138,10 @@ class SearchBar {
       });
     }
     const { dataServicesStorefrontInstanceContext } = this._state;
-
+    if (!dataServicesStorefrontInstanceContext) {
+      console.log("no dataServicesStorefrontInstanceContext");
+      return;
+    }
     // initialize live-search
     new window.LiveSearchAutocomplete({
       environmentId: dataServicesStorefrontInstanceContext.environment_id,
@@ -171,10 +210,11 @@ class SearchBar {
       website_name,
     } = dataServicesStorefrontInstanceContext;
     const { baseCurrencyCode /* , storeCode */ } = storeConfig;
-    // mse.context.setMagentoExtension({
-    //   magentoExtensionVersion: "1.0.0",
-    // });
-    // mse.context.setShopper({ shopperId: "logged-in" });
+
+    mse.context.setMagentoExtension({
+      magentoExtensionVersion: this._state.magentoExtensionVersion,
+    });
+    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
     mse.context.setPage({
       pageType: "pdp",
       maxXOffset: 0,
