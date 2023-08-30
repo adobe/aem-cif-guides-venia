@@ -18,32 +18,32 @@
 const dataServicesStorefrontInstanceContextQuery = `
   query DataServicesStorefrontInstanceContext {
     dataServicesStorefrontInstanceContext {
-        catalog_extension_version
-        customer_group
-        environment
-        environment_id
-        store_code
-        store_id
-        store_name
-        store_url
-        store_view_code
-        store_view_id
-        store_view_name
-        website_code
-        website_id
-        website_name
-      }
-      storeConfig {
-        base_currency_code
-        store_code
-      }
+      catalog_extension_version
+      customer_group
+      environment
+      environment_id
+      store_code
+      store_id
+      store_name
+      store_url
+      store_view_code
+      store_view_id
+      store_view_name
+      website_code
+      website_id
+      website_name
+    }
+    storeConfig {
+      base_currency_code
+      store_code
+    }
   }
 `;
 const dataServicesMagentoExtensionContextQuery = `
   query DataServicesStorefrontInstanceContext {
     dataServicesMagentoExtensionContext {
-        magento_extension_version
-      }
+      magento_extension_version
+    }
   }
 `;
 
