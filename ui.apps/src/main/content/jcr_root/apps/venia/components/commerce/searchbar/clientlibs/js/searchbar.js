@@ -14,7 +14,40 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 "use strict";
-async function getStoreDataGraphQLQuery() {
+
+const dataServicesStorefrontInstanceContextQuery = `
+  query DataServicesStorefrontInstanceContext {
+    dataServicesStorefrontInstanceContext {
+        catalog_extension_version
+        customer_group
+        environment
+        environment_id
+        store_code
+        store_id
+        store_name
+        store_url
+        store_view_code
+        store_view_id
+        store_view_name
+        website_code
+        website_id
+        website_name
+      }
+      storeConfig {
+        base_currency_code
+        store_code
+      }
+  }
+`;
+const dataServicesMagentoExtensionContextQuery = `
+  query DataServicesStorefrontInstanceContext {
+    dataServicesMagentoExtensionContext {
+        magento_extension_version
+      }
+  }
+`;
+
+async function getGraphQLQuery(query, variables = {}) {
   const graphqlEndpoint = `/api/graphql`;
   const response = await fetch(graphqlEndpoint, {
     method: "POST",
@@ -22,52 +55,8 @@ async function getStoreDataGraphQLQuery() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      query: `
-            query DataServicesStorefrontInstanceContext {
-                dataServicesStorefrontInstanceContext {
-                    catalog_extension_version
-                    environment
-                    environment_id
-                    store_code
-                    store_id
-                    store_name
-                    store_url
-                    store_view_code
-                    store_view_id
-                    store_view_name
-                    website_code
-                    website_id
-                    website_name
-                  }
-                  storeConfig {
-                    base_currency_code
-                    store_code
-                  }
-                }
-                `,
-      variables: {},
-    }),
-  }).then((res) => res.json());
-
-  return response.data;
-}
-
-async function getMagentoExtensionVersion() {
-  const graphqlEndpoint = `/api/graphql`;
-  const response = await fetch(graphqlEndpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: `
-            query DataServicesStorefrontInstanceContext {
-                dataServicesMagentoExtensionContext {
-                    magento_extension_version
-                  }
-                }
-                `,
-      variables: {},
+      query,
+      variables,
     }),
   }).then((res) => res.json());
 
@@ -98,7 +87,7 @@ class SearchBar {
 
   async _getStoreData() {
     const { dataServicesStorefrontInstanceContext, storeConfig } =
-      (await getStoreDataGraphQLQuery()) || {};
+      (await getGraphQLQuery(dataServicesStorefrontInstanceContextQuery)) || {};
     this._state.dataServicesStorefrontInstanceContext =
       dataServicesStorefrontInstanceContext;
     this._state.storeConfig = storeConfig;
@@ -109,7 +98,7 @@ class SearchBar {
   }
   async _getMagentoExtensionVersion() {
     const { dataServicesMagentoExtensionContext } =
-      (await getMagentoExtensionVersion()) || {};
+      (await getGraphQLQuery(dataServicesMagentoExtensionContextQuery)) || {};
     this._state.magentoExtensionVersion =
       dataServicesMagentoExtensionContext?.magento_extension_version;
     if (!dataServicesMagentoExtensionContext) {
@@ -157,7 +146,7 @@ class SearchBar {
         allowAllProducts: false,
       },
       context: {
-        customerGroup: "", // TODO:
+        customerGroup: dataServicesStorefrontInstanceContext.customer_group,
       },
     });
 
