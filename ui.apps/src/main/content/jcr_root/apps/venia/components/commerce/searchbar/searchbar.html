@@ -1,25 +1,34 @@
 <!-- Livesearch popover -->
 <div
   data-sly-use.storeconfig="com.adobe.cq.commerce.core.components.models.storeconfigexporter.StoreConfigExporter"
-  class="block-search widget-search"
+  class="searchbar__root widget-search"
 >
   <div class="block-title" style="display: none">
     <strong>Search</strong>
   </div>
   <div class="live-search-popover block-content">
-    <form class="form minisearch" id="search_mini_form" method="get">
-      <div class="field search">
-        <label class="label" for="search" data-role="minisearch-label">
-          <span style="display: none">Search</span>
+    <form
+      class="searchbar__form"
+      id="search_mini_form"
+      method="get"
+      style="width: auto"
+    >
+      <div class="searchbar__fields">
+        <label
+          class="searchbar__label"
+          for="search"
+          data-role="minisearch-label"
+        >
+          <span>Search</span>
         </label>
-        <div class="control">
+        <div class="searchbar__control">
           <input
             id="search"
             type="text"
             name="q"
             value=""
             placeholder="Search entire store here..."
-            class="input-text"
+            class="searchbar__input"
             maxlength="128"
             role="combobox"
             aria-haspopup="false"
