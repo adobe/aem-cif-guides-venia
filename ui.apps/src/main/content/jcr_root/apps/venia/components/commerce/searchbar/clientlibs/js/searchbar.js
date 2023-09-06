@@ -162,15 +162,8 @@ class SearchBar {
 
   async _initStoreEvent() {
     //  Magento Store event
-    if (!window.magentoStorefrontEvents) {
-      this._injectStoreScript(
-        "https://unpkg.com/@adobe/magento-storefront-events-sdk@qa/dist/index.js"
-      );
-      this._injectStoreScript(
-        "https://unpkg.com/@adobe/magento-storefront-event-collector@qa/dist/index.js"
-      );
-    }
-    // wait until script is loaded
+
+    // wait until script is magentoStorefrontEvents is found
     await new Promise((resolve) => {
       const interval = setInterval(() => {
         if (window.magentoStorefrontEvents) {
