@@ -18,24 +18,12 @@
 const dataServicesStorefrontInstanceContextQuery = `
   query DataServicesStorefrontInstanceContext {
     dataServicesStorefrontInstanceContext {
-      catalog_extension_version
       customer_group
-      environment
       environment_id
       store_code
-      store_id
-      store_name
-      store_url
       store_view_code
-      store_view_id
-      store_view_name
       website_code
-      website_id
-      website_name
-    }
-    storeConfig {
-      base_currency_code
-      store_code
+      store_url
     }
   }
 `;
@@ -96,7 +84,9 @@ class SearchBar {
       return;
     }
   }
+
   async _getMagentoExtensionVersion() {
+    // TODO: Might not need it.
     const { dataServicesMagentoExtensionContext } =
       (await getGraphQLQuery(dataServicesMagentoExtensionContextQuery)) || {};
     this._state.magentoExtensionVersion =
@@ -157,40 +147,34 @@ class SearchBar {
       `${dataServicesStorefrontInstanceContext.store_url}catalogsearch/result`
     );
     // initialize store event after live-search
-    this._initStoreEvent();
+    // this._initStoreEvent();
   }
 
   async _initStoreEvent() {
     // wait until script is Magento Store event is found
-    await new Promise((resolve) => {
-      const interval = setInterval(() => {
-        if (window.magentoStorefrontEvents) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 200);
-    });
-
-    const mse = window.magentoStorefrontEvents;
-    const { dataServicesStorefrontInstanceContext, storeConfig } = this._state;
-
-    const {
-      catalog_extension_version,
-      environment,
-      environment_id,
-      store_code, // TODO: storeCode is also in storeConfig w/ diff value
-      store_id,
-      store_name,
-      store_url,
-      store_view_code,
-      store_view_id,
-      store_view_name,
-      website_code,
-      website_id,
-      website_name,
-    } = dataServicesStorefrontInstanceContext;
-    const { baseCurrencyCode /* , storeCode */ } = storeConfig;
-
+    // await new Promise((resolve) => {
+    //   const interval = setInterval(() => {
+    //     if (window.magentoStorefrontEvents) {
+    //       clearInterval(interval);
+    //       resolve();
+    //     }
+    //   }, 200);
+    // });
+    // const mse = window.magentoStorefrontEvents;
+    // const { dataServicesStorefrontInstanceContext, storeConfig } = this._state;
+    // const {
+    //   environment,
+    //   store_code, // TODO: storeCode is also in storeConfig w/ diff value
+    //   store_id,
+    //   store_view_id,
+    //   website_id,
+    //   store_url,
+    //   store_view_code,
+    //   store_view_name,
+    //   website_code,
+    //   website_name,
+    // } = dataServicesStorefrontInstanceContext;
+    // const { baseCurrencyCode /* , storeCode */ } = storeConfig;
     // mse.context.setMagentoExtension({
     //   magentoExtensionVersion: this._state.magentoExtensionVersion,
     // });
