@@ -1,0 +1,24 @@
+/* #search-plp-root */
+
+/* .productlist__root * {
+  font-size: 62.5%!important;
+}
+
+div {
+} */
+
+
+html {
+  /* 10px */
+  /* font-size: 62.5%; */
+  font-size: 62.5%!important;
+}
+
+body {
+  font-size: 1.6rem;
+}
+:root .productlist__root {
+  /* 16px */
+  /* font-size: 1.6rem; */
+  /* font-size: 62.5%!important; */
+}
