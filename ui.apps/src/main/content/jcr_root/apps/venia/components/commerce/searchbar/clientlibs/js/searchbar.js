@@ -55,7 +55,6 @@ class SearchBar {
   constructor() {
     const stateObject = {
       dataServicesStorefrontInstanceContext: null,
-      storeConfig: null,
       magentoExtensionVersion: null,
     };
     this._state = stateObject;
@@ -74,11 +73,11 @@ class SearchBar {
   }
 
   async _getStoreData() {
-    const { dataServicesStorefrontInstanceContext, storeConfig } =
+    const { dataServicesStorefrontInstanceContext } =
       (await getGraphQLQuery(dataServicesStorefrontInstanceContextQuery)) || {};
     this._state.dataServicesStorefrontInstanceContext =
       dataServicesStorefrontInstanceContext;
-    this._state.storeConfig = storeConfig;
+
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
       return;
