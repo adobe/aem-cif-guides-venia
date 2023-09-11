@@ -16,23 +16,6 @@
 "use strict";
 // TODO: Document steps categories="[core.cif.productlist.v1]" on clientlibs/.content.xml
 // then need to add this to the clientlib-cif/.content.xml embed="[core.cif.productlist.v1]"
-const storeQuery = `
-  query DataServicesStorefrontInstanceContext {
-    dataServicesStorefrontInstanceContext {
-      catalog_extension_version
-      customer_group
-      website_id
-      website_name
-    }
-    storeConfig {
-      base_currency_code
-      store_code
-    }
-  }
-`;
-
-// async function getGraphQLQuery(query, variables = {}) {
-// }
 
 const qaPLP =
   "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
@@ -40,7 +23,10 @@ const prodPLP = "https://plp-widgets-ui.magento-ds.com/v1/search.js";
 
 class ProductList {
   constructor() {
-    const stateObject = {};
+    const stateObject = {
+      categoryName: null,
+      currentCategoryUrlPath: null,
+    };
     this._state = stateObject;
     this._init();
   }
@@ -56,38 +42,51 @@ class ProductList {
     document.head.appendChild(script);
   }
 
-  async _getStoreData() {}
+  async _getStoreData() {
+    // get from session storage
+    const sessionData = sessionStorage.getItem(
+      "WIDGET_STOREFRONT_INSTANCE_CONTEXT"
+    );
+    // WIDGET_STOREFRONT_INSTANCE_CONTEXT is set from searchbar/clientlibs/js/searchbar.js
+    // if not, we will need to retrieve from graphql separately here.
+
+    if (sessionData) {
+      this._state.dataServicesStorefrontInstanceContext =
+        JSON.parse(sessionData);
+      return;
+    }
+  }
   async _getMagentoExtensionVersion() {}
 
   async _initWidgetPLP() {
-    console.log("plp.js loading");
-    this._getStoreData();
     if (!window.LiveSearchPLP) {
       this._injectStoreScript(qaPLP);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
-          if (window.LiveSearchPLP) {
+          if (window.LiveSearchPLP && window.LiveSearchAutocomplete) {
+            // Widget expects LiveSearchAutocomplete already loaded to rely on data-service-graphql
             clearInterval(interval);
             resolve();
           }
         }, 200);
       });
     }
-    // const { dataServicesStorefrontInstanceContext } = this._state;
-    // if (!dataServicesStorefrontInstanceContext) {
-    //   console.log("no dataServicesStorefrontInstanceContext");
-    //   return;
-    // }
+    this._getStoreData();
+    const { dataServicesStorefrontInstanceContext } = this._state;
+    if (!dataServicesStorefrontInstanceContext) {
+      console.log("no dataServicesStorefrontInstanceContext");
+      return;
+    }
 
     const root = document.getElementById("search-plp-root");
     const storeDetails = {
-      environmentId: "22500baf\u002D135e\u002D4b8f\u002D8f18\u002D14276de7d356",
-      environmentType: "Testing",
-      apiKey: "5280da1b5a174b4b89b70b497ad5b437",
-      websiteCode: "base",
-      storeCode: "main_website_store",
-      storeViewCode: "default",
+      environmentId: dataServicesStorefrontInstanceContext.environment_id,
+      environmentType: dataServicesStorefrontInstanceContext.environment,
+      apiKey: "5280da1b5a174b4b89b70b497ad5b437", // hardcode? or how do I get it from backend?
+      websiteCode: dataServicesStorefrontInstanceContext.website_code,
+      storeCode: dataServicesStorefrontInstanceContext.store_code,
+      storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
       config: {
         pageSize: "8",
         perPageConfig: {
@@ -99,17 +98,17 @@ class ProductList {
         currencyRate: "1",
         displayOutOfStock: "1",
         allowAllProducts: "1",
-        currentCategoryUrlPath: "women\u002Ftops\u002Dwomen",
-        // currentCategoryUrlPath: "men\u002Fbottoms\u002Dmen",
-        categoryName: "Bottoms",
-        displayMode: "",
+
+        currentCategoryUrlPath: "men\u002Fbottoms\u002Dmen", // FIXME:
+        categoryName: "Bottoms", // FIXME:
+        displayMode: "", // FIXME:
         locale: "en_US",
       },
       context: {
-        customerGroup: "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+        customerGroup: dataServicesStorefrontInstanceContext.customer_group,
       },
     };
-    console.log("initializing PLP widget");
+
     window.LiveSearchPLP({ storeDetails, root });
   }
 }
