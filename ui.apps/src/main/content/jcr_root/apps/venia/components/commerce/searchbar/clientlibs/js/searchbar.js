@@ -20,6 +20,7 @@ const dataServicesStorefrontInstanceContextQuery = `
     dataServicesStorefrontInstanceContext {
       customer_group
       environment_id
+      environment
       store_code
       store_view_code
       website_code
@@ -82,6 +83,11 @@ class SearchBar {
       console.log("no dataServicesStorefrontInstanceContext");
       return;
     }
+    // set session storage to expose for widget
+    sessionStorage.setItem(
+      "WIDGET_STOREFRONT_INSTANCE_CONTEXT",
+      JSON.stringify(dataServicesStorefrontInstanceContext)
+    );
   }
 
   async _getMagentoExtensionVersion() {
@@ -102,9 +108,10 @@ class SearchBar {
       this._getMagentoExtensionVersion(),
     ]);
     if (!window.LiveSearchAutocomplete) {
-      this._injectStoreScript(
-        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js"
-      );
+      const liveSearchSrc =
+        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
+
+      this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
@@ -136,6 +143,16 @@ class SearchBar {
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
+      },
+      route: ({ sku }) => {
+        const storeConfig = JSON.parse(
+          document
+            .querySelector("meta[name='store-config']")
+            .getAttribute("content")
+        );
+        const { storeRootUrl } = storeConfig;
+        const redirectUrl = storeRootUrl.split(".html")[0];
+        return `${redirectUrl}.cifproductredirect.html/${sku}`;
       },
     });
 
