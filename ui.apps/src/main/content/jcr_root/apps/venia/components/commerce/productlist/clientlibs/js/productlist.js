@@ -80,6 +80,9 @@ class ProductList {
     }
 
     const root = document.getElementById("search-plp-root");
+    // get dataset from root
+    const categoryUrlPath = root.getAttribute("data-plp-urlPath") || "";
+    const categoryName = root.getAttribute("data-plp-title") || "";
     const storeDetails = {
       environmentId: dataServicesStorefrontInstanceContext.environment_id,
       environmentType: dataServicesStorefrontInstanceContext.environment,
@@ -99,8 +102,8 @@ class ProductList {
         displayOutOfStock: "1",
         allowAllProducts: "1",
 
-        currentCategoryUrlPath: "men\u002Fbottoms\u002Dmen", // FIXME:
-        categoryName: "Bottoms", // FIXME:
+        currentCategoryUrlPath: categoryUrlPath,
+        categoryName,
         displayMode: "", // FIXME:
         locale: "en_US",
       },
