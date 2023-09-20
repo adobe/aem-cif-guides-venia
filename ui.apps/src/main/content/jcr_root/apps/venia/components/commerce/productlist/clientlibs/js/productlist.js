@@ -86,7 +86,7 @@ class ProductList {
     const storeDetails = {
       environmentId: dataServicesStorefrontInstanceContext.environment_id,
       environmentType: dataServicesStorefrontInstanceContext.environment,
-      apiKey: "5280da1b5a174b4b89b70b497ad5b437", // hardcode? or how do I get it from backend?
+      apiKey: dataServicesStorefrontInstanceContext.api_key,
       websiteCode: dataServicesStorefrontInstanceContext.website_code,
       storeCode: dataServicesStorefrontInstanceContext.store_code,
       storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
@@ -101,11 +101,11 @@ class ProductList {
         currencyRate: "1",
         displayOutOfStock: "1",
         allowAllProducts: "1",
+        locale: "en_US",
 
         currentCategoryUrlPath: categoryUrlPath,
         categoryName,
-        displayMode: "", // FIXME:
-        locale: "en_US",
+        displayMode: "", //   "" for plp || "PAGE" for category/catalog
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,

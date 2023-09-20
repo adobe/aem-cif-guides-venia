@@ -16,23 +16,19 @@
 "use strict";
 
 const dataServicesStorefrontInstanceContextQuery = `
-   query DataServicesStorefrontInstanceContext {
-     dataServicesStorefrontInstanceContext {
-       customer_group
-       environment_id
-       environment
-       store_code
-       store_view_code
-       website_code
-       store_url
-       api_key
-     }
-     storeConfig {
-       base_currency_code
-       store_code
-     }
-   }
- `;
+  query DataServicesStorefrontInstanceContext {
+    dataServicesStorefrontInstanceContext {
+      customer_group
+      environment_id
+      environment
+      store_code
+      store_view_code
+      website_code
+      store_url
+      api_key
+    }
+  }
+`;
 const dataServicesMagentoExtensionContextQuery = `
    query DataServicesStorefrontInstanceContext {
      dataServicesMagentoExtensionContext {
