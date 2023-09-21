@@ -80,6 +80,10 @@ class ProductList {
     }
 
     const root = document.getElementById("search-plp-root");
+    if (!root) {
+      console.log("plp root not found.");
+      return;
+    }
     // get dataset from root
     const categoryUrlPath = root.getAttribute("data-plp-urlPath") || "";
     const categoryName = root.getAttribute("data-plp-title") || "";
