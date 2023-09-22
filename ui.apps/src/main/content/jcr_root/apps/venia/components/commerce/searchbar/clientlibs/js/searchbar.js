@@ -162,11 +162,73 @@ class SearchBar {
       `${dataServicesStorefrontInstanceContext.store_url}catalogsearch/result`
     );
     // initialize store event after live-search
-    // this._initMetrics();
+    this._initMetrics();
   }
 
   async _initMetrics() {
-    // TODO:
+    //  Magento Store event
+
+    // wait until script is magentoStorefrontEvents is found
+    await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (window.magentoStorefrontEvents) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 200);
+    });
+
+    const mse = window.magentoStorefrontEvents;
+    const { dataServicesStorefrontInstanceContext, storeConfig } = this._state;
+
+    const {
+      catalog_extension_version,
+      environment,
+      environment_id,
+      store_code, // TODO: storeCode is also in storeConfig w/ diff value
+      store_id,
+      store_name,
+      store_url,
+      store_view_code,
+      store_view_id,
+      store_view_name,
+      website_code,
+      website_id,
+      website_name,
+    } = dataServicesStorefrontInstanceContext;
+    const { baseCurrencyCode /* , storeCode */ } = storeConfig;
+
+    mse.context.setMagentoExtension({
+      magentoExtensionVersion: this._state.magentoExtensionVersion,
+    });
+    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
+    mse.context.setPage({
+      pageType: "pdp",
+      maxXOffset: 0,
+      maxYOffset: 0,
+      minXOffset: 0,
+      minYOffset: 0,
+      ping_interval: 5,
+      pings: 1,
+    });
+    mse.context.setStorefrontInstance({
+      environmentId: environment_id,
+      // instanceId, // TODO:
+      environment: environment,
+      storeUrl: store_url,
+      websiteId: website_id,
+      websiteCode: website_code,
+      storeId: store_id,
+      storeCode: store_code,
+      storeViewId: store_view_id,
+      storeViewCode: store_view_code,
+      websiteName: website_name,
+      storeName: store_name,
+      storeViewName: store_view_name,
+      baseCurrencyCode,
+      storeViewCurrencyCode: store_view_code,
+      catalogExtensionVersion: catalog_extension_version,
+    });
   }
 }
 
