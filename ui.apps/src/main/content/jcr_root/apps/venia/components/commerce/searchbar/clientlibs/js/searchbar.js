@@ -16,23 +16,23 @@
 "use strict";
 
 const dataServicesStorefrontInstanceContextQuery = `
-   query DataServicesStorefrontInstanceContext {
-     dataServicesStorefrontInstanceContext {
-       customer_group
-       environment_id
-       environment
-       store_code
-       store_view_code
-       website_code
-       store_url
-       api_key
-     }
-     storeConfig {
-       base_currency_code
-       store_code
-     }
-   }
- `;
+  query DataServicesStorefrontInstanceContext {
+    dataServicesStorefrontInstanceContext {
+      customer_group
+      environment_id
+      environment
+      store_code
+      store_view_code
+      website_code
+      store_url
+      api_key
+    }
+    storeConfig {
+      base_currency_code
+      store_code
+    }
+  }
+`;
 const dataServicesMagentoExtensionContextQuery = `
    query DataServicesStorefrontInstanceContext {
      dataServicesMagentoExtensionContext {
@@ -108,7 +108,7 @@ class SearchBar {
     }
   }
 
-  async getStoreConfigMetadata() {
+  getStoreConfigMetadata() {
     const storeConfig = JSON.parse(
       document
         .querySelector("meta[name='store-config']")
@@ -140,6 +140,7 @@ class SearchBar {
         }, 200);
       });
     }
+
     const { dataServicesStorefrontInstanceContext } = this._state;
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
