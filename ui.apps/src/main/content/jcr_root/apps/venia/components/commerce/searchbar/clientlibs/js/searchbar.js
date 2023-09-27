@@ -16,25 +16,30 @@
 "use strict";
 
 const dataServicesStorefrontInstanceContextQuery = `
-  query DataServicesStorefrontInstanceContext {
-    dataServicesStorefrontInstanceContext {
-      customer_group
-      environment_id
-      environment
-      store_code
-      store_view_code
-      website_code
-      store_url
-    }
-  }
-`;
+   query DataServicesStorefrontInstanceContext {
+     dataServicesStorefrontInstanceContext {
+       customer_group
+       environment_id
+       environment
+       store_code
+       store_view_code
+       website_code
+       store_url
+       api_key
+     }
+     storeConfig {
+       base_currency_code
+       store_code
+     }
+   }
+ `;
 const dataServicesMagentoExtensionContextQuery = `
-  query DataServicesStorefrontInstanceContext {
-    dataServicesMagentoExtensionContext {
-      magento_extension_version
-    }
-  }
-`;
+   query DataServicesStorefrontInstanceContext {
+     dataServicesMagentoExtensionContext {
+       magento_extension_version
+     }
+   }
+ `;
 
 async function getGraphQLQuery(query, variables = {}) {
   const graphqlEndpoint = `/api/graphql`;
@@ -57,6 +62,7 @@ class SearchBar {
     const stateObject = {
       dataServicesStorefrontInstanceContext: null,
       magentoExtensionVersion: null,
+      storeConfig: null,
     };
     this._state = stateObject;
     this._init();
@@ -74,10 +80,11 @@ class SearchBar {
   }
 
   async _getStoreData() {
-    const { dataServicesStorefrontInstanceContext } =
+    const { dataServicesStorefrontInstanceContext, storeConfig } =
       (await getGraphQLQuery(dataServicesStorefrontInstanceContextQuery)) || {};
     this._state.dataServicesStorefrontInstanceContext =
       dataServicesStorefrontInstanceContext;
+    this._state.storeConfig = storeConfig;
 
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
@@ -101,6 +108,18 @@ class SearchBar {
     }
   }
 
+  async getStoreConfigMetadata() {
+    const storeConfig = JSON.parse(
+      document
+        .querySelector("meta[name='store-config']")
+        .getAttribute("content")
+    );
+
+    const { storeRootUrl } = storeConfig;
+    const redirectUrl = storeRootUrl.split(".html")[0];
+    return { storeConfig, redirectUrl };
+  }
+
   async _initLiveSearch() {
     await Promise.all([
       this._getStoreData(),
@@ -108,7 +127,7 @@ class SearchBar {
     ]);
     if (!window.LiveSearchAutocomplete) {
       const liveSearchSrc =
-       "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
+        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
 
       this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
@@ -126,13 +145,6 @@ class SearchBar {
       console.log("no dataServicesStorefrontInstanceContext");
       return;
     }
-    const storeConfig = JSON.parse(
-      document
-        .querySelector("meta[name='store-config']")
-        .getAttribute("content")
-    );
-    const { storeRootUrl } = storeConfig;
-    const redirectUrl = storeRootUrl.split(".html")[0];
 
     // initialize live-search
     new window.LiveSearchAutocomplete({
@@ -152,10 +164,12 @@ class SearchBar {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
       },
       route: ({ sku }) => {
-        return `${redirectUrl}.cifproductredirect.html/${sku}`;
+        return `${
+          this.getStoreConfigMetadata().redirectUrl
+        }.cifproductredirect.html/${sku}`;
       },
       searchRoute: {
-        route: `${redirectUrl}/search.html`,
+        route: `${this.getStoreConfigMetadata().redirectUrl}/search.html`,
         query: "search_query",
       },
     });
@@ -202,7 +216,6 @@ class SearchBar {
       website_name,
     } = dataServicesStorefrontInstanceContext;
     const { baseCurrencyCode /* , storeCode */ } = storeConfig;
-    console.log(storeConfig);
 
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
