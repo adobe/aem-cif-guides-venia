@@ -27,6 +27,10 @@ const dataServicesStorefrontInstanceContextQuery = `
       store_url
       api_key
     }
+    storeConfig {
+      base_currency_code
+      store_code
+    }
   }
 `;
 const dataServicesMagentoExtensionContextQuery = `
