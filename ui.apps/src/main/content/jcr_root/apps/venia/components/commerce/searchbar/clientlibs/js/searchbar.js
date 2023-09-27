@@ -108,7 +108,7 @@ class SearchBar {
     }
   }
 
-  async getStoreConfigMetadata() {
+  getStoreConfigMetadata() {
     const storeConfig = JSON.parse(
       document
         .querySelector("meta[name='store-config']")
@@ -140,6 +140,7 @@ class SearchBar {
         }, 200);
       });
     }
+
     const { dataServicesStorefrontInstanceContext } = this._state;
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
