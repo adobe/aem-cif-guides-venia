@@ -56,7 +56,18 @@ class ProductList {
       return;
     }
   }
-  async _getMagentoExtensionVersion() {}
+
+  getStoreConfigMetadata() {
+    const storeConfig = JSON.parse(
+      document
+        .querySelector("meta[name='store-config']")
+        .getAttribute("content")
+    );
+
+    const { storeRootUrl } = storeConfig;
+    const redirectUrl = storeRootUrl.split(".html")[0];
+    return { storeConfig, redirectUrl };
+  }
 
   async _initWidgetPLP() {
     if (!window.LiveSearchPLP) {
@@ -113,6 +124,11 @@ class ProductList {
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
+      },
+      route: ({ sku }) => {
+        return `${
+          this.getStoreConfigMetadata().redirectUrl
+        }.cifproductredirect.html/${sku}`;
       },
     };
 
