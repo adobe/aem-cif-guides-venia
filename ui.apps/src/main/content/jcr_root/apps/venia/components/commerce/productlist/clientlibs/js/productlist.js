@@ -83,7 +83,7 @@ class ProductList {
         }, 200);
       });
     }
-    this._getStoreData();
+    await this._getStoreData();
     const { dataServicesStorefrontInstanceContext } = this._state;
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
@@ -130,6 +130,7 @@ class ProductList {
           this.getStoreConfigMetadata().redirectUrl
         }.cifproductredirect.html/${sku}`;
       },
+      searchQuery: "search_query",
     };
 
     window.LiveSearchPLP({ storeDetails, root });

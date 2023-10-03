@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" 
-    xmlns:cq="http://www.day.com/jcr/cq/1.0" 
-    xmlns:jcr="http://www.jcp.org/jcr/1.0" 
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="cq:Page">
     <jcr:content
         cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
         cq:template="/conf/venia/settings/wcm/templates/page-content"
         cq:robotsTags="[noindex]"
         jcr:primaryType="cq:PageContent"
-        jcr:mixinTypes="[cq:LiveRelationship]" 
+        jcr:mixinTypes="[cq:LiveRelationship]"
         jcr:title="Venia Demo Store - Search Results"
-        sling:resourceType="venia/components/page" 
+        sling:resourceType="venia/components/page"
         hideInNav="true">
         <root jcr:primaryType="nt:unstructured"
             jcr:mixinTypes="[cq:LiveRelationship]"
-            sling:resourceType="venia/components/container" 
+            sling:resourceType="venia/components/container"
             layout="responsiveGrid">
             <container jcr:primaryType="nt:unstructured"
                 jcr:mixinTypes="[cq:LiveRelationship]"
                 sling:resourceType="venia/components/container">
                 <container jcr:primaryType="nt:unstructured"
                     jcr:mixinTypes="[cq:LiveRelationship]"
-                    sling:resourceType="venia/components/container" 
+                    sling:resourceType="venia/components/container"
                     layout="responsiveGrid">
                     <searchresults jcr:primaryType="nt:unstructured"
                         jcr:mixinTypes="[cq:LiveRelationship]"
-                        sling:resourceType="venia/components/commerce/searchresults"
+                        sling:resourceType="venia/components/commerce/productlist"
                         defaultSortField="relevance"
                         defaultSortOrder="desc"/>
                 </container>
