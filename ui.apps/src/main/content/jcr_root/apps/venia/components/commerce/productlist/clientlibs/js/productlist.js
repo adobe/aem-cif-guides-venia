@@ -18,8 +18,7 @@
 // then need to add this to the clientlib-cif/.content.xml embed="[core.cif.productlist.v1]"
 
 const qaPLP =
-  "http://localhost:8081/v1/search.js";
-  // "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
+  "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
 const prodPLP = "https://plp-widgets-ui.magento-ds.com/v1/search.js";
 
 class ProductList {
@@ -31,6 +30,7 @@ class ProductList {
     this._state = stateObject;
     this._init();
   }
+
   _init() {
     this._initWidgetPLP();
   }
