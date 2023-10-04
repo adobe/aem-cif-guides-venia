@@ -205,7 +205,7 @@ class SearchBar {
       catalog_extension_version,
       environment,
       environment_id,
-      store_code, // TODO: storeCode is also in storeConfig w/ diff value
+      store_code,
       store_id,
       store_name,
       store_url,
@@ -221,7 +221,7 @@ class SearchBar {
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });
-    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
+
     mse.context.setPage({
       pageType: "pdp",
       maxXOffset: 0,
@@ -233,7 +233,7 @@ class SearchBar {
     });
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-      // instanceId, // TODO:
+
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
