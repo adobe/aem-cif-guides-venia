@@ -121,7 +121,7 @@ class ProductList {
 
         currentCategoryUrlPath: categoryUrlPath,
         categoryName,
-        displayMode: "", //   "" for plp || "PAGE" for category/catalog
+        displayMode: "", // "" for plp || "PAGE" for category/catalog
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
