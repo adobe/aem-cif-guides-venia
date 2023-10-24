@@ -133,7 +133,7 @@ class ProductList {
       },
       searchQuery: "search_query",
     };
-
+    console.log("init PLP");
     window.LiveSearchPLP({ storeDetails, root });
   }
 }

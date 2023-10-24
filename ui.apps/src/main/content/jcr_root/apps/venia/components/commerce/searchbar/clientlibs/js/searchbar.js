@@ -218,6 +218,7 @@ class SearchBar {
     } = dataServicesStorefrontInstanceContext;
     const { baseCurrencyCode /* , storeCode */ } = storeConfig;
 
+    console.log("initializing magento extension");
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });
@@ -231,6 +232,7 @@ class SearchBar {
       ping_interval: 5,
       pings: 1,
     });
+    console.log("initializing StorefrontInstance");
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
       // instanceId, // TODO:
