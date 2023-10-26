@@ -25,11 +25,11 @@ const dataServicesStorefrontInstanceContextQuery = `
       store_view_id
       store_code
       store_view_code
+      website_id
+      website_name
       website_code
       store_url
       api_key
-      websiteId
-      website_name
       store_name
       store_view_name
       base_currency_code
