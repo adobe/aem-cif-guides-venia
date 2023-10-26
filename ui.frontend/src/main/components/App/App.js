@@ -44,7 +44,6 @@ import AccountInformationPage from '../AccountInformationPage';
 
 import loadLocaleData from './i18n';
 
-import mse from "@adobe/magento-storefront-events-sdk";
 import "@adobe/magento-storefront-event-collector";
 
 import '../../site/main.scss';
@@ -60,8 +59,7 @@ const App = props => {
 
     window.STORE_NAME = storeView;
     window.DEFAULT_COUNTRY_CODE = locale;
-    console.log(mse,'MSE From app.js');
-    console.log('loading app.js');
+
     return (
         <IntlProvider locale={locale} messages={messages}>
             <ConfigContextProvider config={config}>
