@@ -25,15 +25,16 @@ const dataServicesStorefrontInstanceContextQuery = `
       store_view_id
       store_code
       store_view_code
+      website_id
+      website_name
       website_code
       store_url
       api_key
-      websiteId
-      website_name
       store_name
       store_view_name
       base_currency_code
       store_view_currency_code
+      catalog_extension_version
     }
     storeConfig {
       base_currency_code
@@ -137,6 +138,7 @@ class SearchBar {
       const liveSearchSrc =
         "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
 
+      // this._injectStoreScript("https://unpkg.com/@adobe/commerce-events-sdk/dist/index.js");
       this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
@@ -207,9 +209,11 @@ class SearchBar {
     });
 
     const mse = window.magentoStorefrontEvents;
+
     const { dataServicesStorefrontInstanceContext, storeConfig } = this._state;
 
     const {
+      base_currency_code,
       catalog_extension_version,
       environment,
       environment_id,
@@ -224,12 +228,12 @@ class SearchBar {
       website_id,
       website_name,
     } = dataServicesStorefrontInstanceContext;
-    const { baseCurrencyCode /* , storeCode */ } = storeConfig;
 
+    console.log("initializing magento extension");
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });
-
+    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
     mse.context.setPage({
       pageType: "pdp",
       maxXOffset: 0,
@@ -239,9 +243,27 @@ class SearchBar {
       ping_interval: 5,
       pings: 1,
     });
+    console.log("initializing StorefrontInstance", {
+      environmentId: environment_id || "_MISSING_",
+      // instanceId, // TODO:
+      environment: environment || "_MISSING_",
+      storeUrl: store_url || "_MISSING_",
+      websiteId: website_id || "_MISSING_",
+      websiteCode: website_code || "_MISSING_",
+      storeId: store_id || "_MISSING_",
+      storeCode: store_code || "_MISSING_",
+      storeViewId: store_view_id || "_MISSING_",
+      storeViewCode: store_view_code || "_MISSING_",
+      websiteName: website_name || "_MISSING_",
+      storeName: store_name || "_MISSING_",
+      storeViewName: store_view_name || "_MISSING_",
+      baseCurrencyCode: base_currency_code || "_MISSING_",
+      storeViewCurrencyCode: store_view_code || "_MISSING_",
+      catalogExtensionVersion: catalog_extension_version || "_MISSING_",
+    });
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-
+      // instanceId, // TODO:
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
@@ -253,7 +275,7 @@ class SearchBar {
       websiteName: website_name,
       storeName: store_name,
       storeViewName: store_view_name,
-      baseCurrencyCode,
+      baseCurrencyCode:base_currency_code,
       storeViewCurrencyCode: store_view_code,
       catalogExtensionVersion: catalog_extension_version,
     });
