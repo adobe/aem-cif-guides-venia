@@ -3,5 +3,5 @@
     jcr:description="Search Result Component"
     jcr:primaryType="cq:Component"
     jcr:title="Search Results"
-    sling:resourceSuperType="venia/components/commerce/productlist"
+    sling:resourceSuperType="core/cif/components/commerce/searchresults/v2/searchresults"
     componentGroup="Venia - Commerce"/>
