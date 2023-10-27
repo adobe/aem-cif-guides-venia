@@ -224,6 +224,7 @@ class SearchBar {
       store_view_code,
       store_view_id,
       store_view_name,
+      store_view_currency_code,
       website_code,
       website_id,
       website_name,
@@ -258,7 +259,7 @@ class SearchBar {
       storeName: store_name || "_MISSING_",
       storeViewName: store_view_name || "_MISSING_",
       baseCurrencyCode: base_currency_code || "_MISSING_",
-      storeViewCurrencyCode: store_view_code || "_MISSING_",
+      storeViewCurrencyCode: store_view_currency_code || "_MISSING_",
       catalogExtensionVersion: catalog_extension_version || "_MISSING_",
     });
     mse.context.setStorefrontInstance({
@@ -276,7 +277,7 @@ class SearchBar {
       storeName: store_name,
       storeViewName: store_view_name,
       baseCurrencyCode: base_currency_code,
-      storeViewCurrencyCode: store_view_code,
+      storeViewCurrencyCode: store_view_currency_code,
       catalogExtensionVersion: catalog_extension_version,
     });
   }
