@@ -72,7 +72,7 @@ class ProductList {
 
   async _initWidgetPLP() {
     if (!window.LiveSearchPLP) {
-      this._injectStoreScript(qaPLP);
+      this._injectStoreScript(prodPLP);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
