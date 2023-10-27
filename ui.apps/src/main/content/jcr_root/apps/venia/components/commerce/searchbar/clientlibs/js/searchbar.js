@@ -244,24 +244,7 @@ class SearchBar {
       ping_interval: 5,
       pings: 1,
     });
-    console.log("initializing StorefrontInstance", {
-      environmentId: environment_id || "_MISSING_",
-      // instanceId, // TODO:
-      environment: environment || "_MISSING_",
-      storeUrl: store_url || "_MISSING_",
-      websiteId: website_id || "_MISSING_",
-      websiteCode: website_code || "_MISSING_",
-      storeId: store_id || "_MISSING_",
-      storeCode: store_code || "_MISSING_",
-      storeViewId: store_view_id || "_MISSING_",
-      storeViewCode: store_view_code || "_MISSING_",
-      websiteName: website_name || "_MISSING_",
-      storeName: store_name || "_MISSING_",
-      storeViewName: store_view_name || "_MISSING_",
-      baseCurrencyCode: base_currency_code || "_MISSING_",
-      storeViewCurrencyCode: store_view_currency_code || "_MISSING_",
-      catalogExtensionVersion: catalog_extension_version || "_MISSING_",
-    });
+
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
       //  instanceId, // TODO:
