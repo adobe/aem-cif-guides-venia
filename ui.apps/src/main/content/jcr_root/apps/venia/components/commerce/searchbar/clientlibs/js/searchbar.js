@@ -14,7 +14,7 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 "use strict";
-
+console.log("searchbar.js");
 const dataServicesStorefrontInstanceContextQuery = `
    query DataServicesStorefrontInstanceContext {
      dataServicesStorefrontInstanceContext {
@@ -135,10 +135,12 @@ class SearchBar {
       this._getMagentoExtensionVersion(),
     ]);
     if (!window.LiveSearchAutocomplete) {
-      const liveSearchSrc =
+      const liveSearchQaSrc =
+        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
+      const liveSearchProdSrc =
         "https://livesearch-autocomplete.magento-ds.com/v0/LiveSearchAutocomplete.js";
 
-      this._injectStoreScript(liveSearchSrc);
+      this._injectStoreScript(liveSearchQaSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
