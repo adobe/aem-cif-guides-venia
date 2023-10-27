@@ -16,39 +16,39 @@
 "use strict";
 
 const dataServicesStorefrontInstanceContextQuery = `
-  query DataServicesStorefrontInstanceContext {
-    dataServicesStorefrontInstanceContext {
-      customer_group
-      environment_id
-      environment
-      store_id
-      store_view_id
-      store_code
-      store_view_code
-      website_id
-      website_name
-      website_code
-      store_url
-      api_key
-      store_name
-      store_view_name
-      base_currency_code
-      store_view_currency_code
-      catalog_extension_version
-    }
-    storeConfig {
-      base_currency_code
-      store_code
-    }
-  }
-`;
-const dataServicesMagentoExtensionContextQuery = `
    query DataServicesStorefrontInstanceContext {
-     dataServicesMagentoExtensionContext {
-       magento_extension_version
+     dataServicesStorefrontInstanceContext {
+       customer_group
+       environment_id
+       environment
+       store_id
+       store_view_id
+       store_code
+       store_view_code
+       website_id
+       website_name
+       website_code
+       store_url
+       api_key
+       store_name
+       store_view_name
+       base_currency_code
+       store_view_currency_code
+       catalog_extension_version
+     }
+     storeConfig {
+       base_currency_code
+       store_code
      }
    }
  `;
+const dataServicesMagentoExtensionContextQuery = `
+    query DataServicesStorefrontInstanceContext {
+      dataServicesMagentoExtensionContext {
+        magento_extension_version
+      }
+    }
+  `;
 
 async function getGraphQLQuery(query, variables = {}) {
   const graphqlEndpoint = `/api/graphql`;
@@ -224,6 +224,7 @@ class SearchBar {
       store_view_code,
       store_view_id,
       store_view_name,
+      store_view_currency_code,
       website_code,
       website_id,
       website_name,
@@ -258,12 +259,12 @@ class SearchBar {
       storeName: store_name || "_MISSING_",
       storeViewName: store_view_name || "_MISSING_",
       baseCurrencyCode: base_currency_code || "_MISSING_",
-      storeViewCurrencyCode: store_view_code || "_MISSING_",
+      storeViewCurrencyCode: store_view_currency_code || "_MISSING_",
       catalogExtensionVersion: catalog_extension_version || "_MISSING_",
     });
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-      // instanceId, // TODO:
+      //  instanceId, // TODO:
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
@@ -275,8 +276,8 @@ class SearchBar {
       websiteName: website_name,
       storeName: store_name,
       storeViewName: store_view_name,
-      baseCurrencyCode:base_currency_code,
-      storeViewCurrencyCode: store_view_code,
+      baseCurrencyCode: base_currency_code,
+      storeViewCurrencyCode: store_view_currency_code,
       catalogExtensionVersion: catalog_extension_version,
     });
   }
