@@ -140,7 +140,7 @@ class SearchBar {
       const liveSearchProdSrc =
         "https://livesearch-autocomplete.magento-ds.com/v0/LiveSearchAutocomplete.js";
 
-      this._injectStoreScript(liveSearchQaSrc);
+      this._injectStoreScript(liveSearchProdSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
