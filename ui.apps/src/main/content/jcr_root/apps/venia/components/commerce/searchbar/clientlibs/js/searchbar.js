@@ -14,41 +14,57 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 "use strict";
-console.log("searchbar.js");
+
 const dataServicesStorefrontInstanceContextQuery = `
-   query DataServicesStorefrontInstanceContext {
-     dataServicesStorefrontInstanceContext {
-       customer_group
-       environment_id
-       environment
-       store_id
-       store_view_id
-       store_code
-       store_view_code
-       website_id
-       website_name
-       website_code
-       store_url
-       api_key
-       store_name
-       store_view_name
-       base_currency_code
-       store_view_currency_code
-       catalog_extension_version
-     }
-     storeConfig {
-       base_currency_code
-       store_code
-     }
-   }
- `;
-const dataServicesMagentoExtensionContextQuery = `
     query DataServicesStorefrontInstanceContext {
-      dataServicesMagentoExtensionContext {
-        magento_extension_version
+      dataServicesStorefrontInstanceContext {
+        customer_group
+        environment_id
+        environment
+        store_id
+        store_view_id
+        store_code
+        store_view_code
+        website_id
+        website_name
+        website_code
+        store_url
+        api_key
+        store_name
+        store_view_name
+        base_currency_code
+        store_view_currency_code
+        catalog_extension_version
+      }
+      storeConfig {
+        base_currency_code
+        store_code
       }
     }
   `;
+
+const dataServicesMagentoExtensionContextQuery = `
+     query DataServicesStorefrontInstanceContext {
+       dataServicesMagentoExtensionContext {
+         magento_extension_version
+       }
+     }
+   `;
+
+const dataServicesStoreConfigurationContextQuery = `
+     query DataServicesStoreConfigurationContext {
+       dataServicesStoreConfigurationContext {
+         currency_symbol
+         currency_rate
+         page_size
+         page_size_options
+         default_page_size_option
+         display_out_of_stock
+         allow_all_products
+         locale
+       }
+     }
+   `;
 
 async function getGraphQLQuery(query, variables = {}) {
   const graphqlEndpoint = `/api/graphql`;
@@ -70,6 +86,7 @@ class SearchBar {
   constructor() {
     const stateObject = {
       dataServicesStorefrontInstanceContext: null,
+      dataServicesStoreConfigurationContext: null,
       magentoExtensionVersion: null,
       storeConfig: null,
     };
@@ -91,8 +108,12 @@ class SearchBar {
   async _getStoreData() {
     const { dataServicesStorefrontInstanceContext, storeConfig } =
       (await getGraphQLQuery(dataServicesStorefrontInstanceContextQuery)) || {};
+    const { dataServicesStoreConfigurationContext } =
+      (await getGraphQLQuery(dataServicesStoreConfigurationContextQuery)) || {};
     this._state.dataServicesStorefrontInstanceContext =
       dataServicesStorefrontInstanceContext;
+    this._state.dataServicesStoreConfigurationContext =
+      dataServicesStoreConfigurationContext;
     this._state.storeConfig = storeConfig;
 
     if (!dataServicesStorefrontInstanceContext) {
@@ -102,7 +123,10 @@ class SearchBar {
     // set session storage to expose for widget
     sessionStorage.setItem(
       "WIDGET_STOREFRONT_INSTANCE_CONTEXT",
-      JSON.stringify(dataServicesStorefrontInstanceContext)
+      JSON.stringify({
+        ...dataServicesStorefrontInstanceContext,
+        ...dataServicesStoreConfigurationContext,
+      })
     );
   }
 
@@ -152,11 +176,15 @@ class SearchBar {
       });
     }
 
-    const { dataServicesStorefrontInstanceContext } = this._state;
+    const {
+      dataServicesStorefrontInstanceContext,
+      dataServicesStoreConfigurationContext,
+    } = this._state;
     if (!dataServicesStorefrontInstanceContext) {
       console.log("no dataServicesStorefrontInstanceContext");
       return;
     }
+
 
     // initialize live-search
     new window.LiveSearchAutocomplete({
@@ -165,12 +193,12 @@ class SearchBar {
       storeCode: dataServicesStorefrontInstanceContext.store_code,
       storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
       config: {
-        pageSize: 8,
+        pageSize: dataServicesStoreConfigurationContext.page_size,
         minQueryLength: "2",
-        currencySymbol: "$",
-        currencyRate: "1",
-        displayOutOfStock: true,
-        allowAllProducts: false,
+        currencySymbol: dataServicesStoreConfigurationContext.currency_symbol,
+        currencyRate: dataServicesStoreConfigurationContext.currency_rate,
+        displayOutOfStock: dataServicesStoreConfigurationContext.display_out_of_stock,
+        allowAllProducts: dataServicesStoreConfigurationContext.allow_all_products,
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
