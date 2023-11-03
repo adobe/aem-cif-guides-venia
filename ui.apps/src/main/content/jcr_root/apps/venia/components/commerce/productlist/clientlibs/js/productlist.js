@@ -20,7 +20,7 @@
 const qaPLP =
   "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
 const prodPLP = "https://plp-widgets-ui.magento-ds.com/v1/search.js";
-console.log("productlist.js");
+
 class ProductList {
   constructor() {
     const stateObject = {
@@ -52,7 +52,7 @@ class ProductList {
     // if not, we will need to retrieve from graphql separately here.
 
     if (sessionData) {
-      this._state.dataServicesStorefrontInstanceContext =
+      this._state.dataServicesSessionContext =
         JSON.parse(sessionData);
       return;
     }
@@ -86,11 +86,12 @@ class ProductList {
       });
     }
     await this._getStoreData();
-    const { dataServicesStorefrontInstanceContext } = this._state;
-    if (!dataServicesStorefrontInstanceContext) {
-      console.log("no dataServicesStorefrontInstanceContext");
+    const { dataServicesSessionContext } = this._state;
+    if (!dataServicesSessionContext) {
+      console.log("no dataServicesSessionContext");
       return;
     }
+
 
     const root = document.getElementById("search-plp-root");
     if (!root) {
@@ -101,31 +102,30 @@ class ProductList {
     const categoryUrlPath = root.getAttribute("data-plp-urlPath") || "";
     const categoryName = root.getAttribute("data-plp-title") || "";
     const storeDetails = {
-      environmentId: dataServicesStorefrontInstanceContext.environment_id,
-      environmentType: dataServicesStorefrontInstanceContext.environment,
-      apiKey: dataServicesStorefrontInstanceContext.api_key,
-      websiteCode: dataServicesStorefrontInstanceContext.website_code,
-      storeCode: dataServicesStorefrontInstanceContext.store_code,
-      storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
+      environmentId: dataServicesSessionContext.environment_id,
+      environmentType: dataServicesSessionContext.environment,
+      apiKey: dataServicesSessionContext.api_key,
+      websiteCode: dataServicesSessionContext.website_code,
+      storeCode: dataServicesSessionContext.store_code,
+      storeViewCode: dataServicesSessionContext.store_view_code,
       config: {
-        pageSize: "8",
+        pageSize: dataServicesSessionContext.page_size,
         perPageConfig: {
-          pageSizeOptions: "12,24,36,48",
-          defaultPageSizeOption: "12",
+          pageSizeOptions: dataServicesSessionContext.page_size_options,
+          defaultPageSizeOption: dataServicesSessionContext.default_page_size_option,
         },
         minQueryLength: "2",
-        currencySymbol: "LBP",
-        currencyRate: "1",
-        displayOutOfStock: "1",
-        allowAllProducts: "1",
-        locale: "en_US",
-
+        currencySymbol: dataServicesSessionContext.currency_symbol,
+        currencyRate: dataServicesSessionContext.currency_rate,
+        displayOutOfStock: dataServicesSessionContext.display_out_of_stock,
+        allowAllProducts: dataServicesSessionContext.allow_all_products,
+        locale: dataServicesSessionContext.locale,
         currentCategoryUrlPath: categoryUrlPath,
         categoryName,
         displayMode: "", // "" for plp || "PAGE" for category/catalog
       },
       context: {
-        customerGroup: dataServicesStorefrontInstanceContext.customer_group,
+        customerGroup: dataServicesSessionContext.customer_group,
       },
       route: ({ sku }) => {
         return `${
