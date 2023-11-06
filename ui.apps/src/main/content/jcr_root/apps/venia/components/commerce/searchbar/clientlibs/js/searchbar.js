@@ -159,12 +159,10 @@ class SearchBar {
       this._getMagentoExtensionVersion(),
     ]);
     if (!window.LiveSearchAutocomplete) {
-      const liveSearchQaSrc =
-        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
-      const liveSearchProdSrc =
+      const liveSearchSrc =
         "https://livesearch-autocomplete.magento-ds.com/v0/LiveSearchAutocomplete.js";
 
-      this._injectStoreScript(liveSearchProdSrc);
+      this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
@@ -263,7 +261,7 @@ class SearchBar {
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });
-    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
+
     mse.context.setPage({
       pageType: "pdp",
       maxXOffset: 0,
@@ -276,7 +274,6 @@ class SearchBar {
 
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-      //  instanceId, // TODO:
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
