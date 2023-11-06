@@ -14,12 +14,6 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 "use strict";
-// TODO: Document steps categories="[core.cif.productlist.v1]" on clientlibs/.content.xml
-// then need to add this to the clientlib-cif/.content.xml embed="[core.cif.productlist.v1]"
-
-const qaPLP =
-  "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
-const prodPLP = "https://plp-widgets-ui.magento-ds.com/v1/search.js";
 
 class ProductList {
   constructor() {
@@ -52,8 +46,7 @@ class ProductList {
     // if not, we will need to retrieve from graphql separately here.
 
     if (sessionData) {
-      this._state.dataServicesSessionContext =
-        JSON.parse(sessionData);
+      this._state.dataServicesSessionContext = JSON.parse(sessionData);
       return;
     }
   }
@@ -72,8 +65,9 @@ class ProductList {
 
   async _initWidgetPLP() {
     if (!window.LiveSearchPLP) {
-      // this._injectStoreScript(qaPLP);
-      this._injectStoreScript(prodPLP);
+      const liveSearchPlpSrc =
+        "https://plp-widgets-ui.magento-ds.com/v1/search.js";
+      this._injectStoreScript(liveSearchPlpSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
@@ -91,7 +85,6 @@ class ProductList {
       console.log("no dataServicesSessionContext");
       return;
     }
-
 
     const root = document.getElementById("search-plp-root");
     if (!root) {
@@ -112,7 +105,8 @@ class ProductList {
         pageSize: dataServicesSessionContext.page_size,
         perPageConfig: {
           pageSizeOptions: dataServicesSessionContext.page_size_options,
-          defaultPageSizeOption: dataServicesSessionContext.default_page_size_option,
+          defaultPageSizeOption:
+            dataServicesSessionContext.default_page_size_option,
         },
         minQueryLength: "2",
         currencySymbol: dataServicesSessionContext.currency_symbol,
