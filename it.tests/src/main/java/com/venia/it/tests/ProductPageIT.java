@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import com.venia.it.category.IgnoreOn65;
+import com.venia.it.category.IgnoreOnCloud;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -30,6 +32,7 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,7 +45,18 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
     @Test
+    @Category(IgnoreOn65.class)
     public void testProductPageWithSampleData() throws ClientException, IOException {
+        testProductPageWithSampleData("datalayer/simple-product.json");
+    }
+
+    @Test
+    @Category(IgnoreOnCloud.class)
+    public void testProductPageWithSampleData65() throws ClientException, IOException {
+        testProductPageWithSampleData("datalayer/simple-product-65.json");
+    }
+
+    public void testProductPageWithSampleData(String jsonFile) throws ClientException, IOException {
         String pagePath = VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/honora-wide-leg-pants.html";
         SlingHttpResponse response = adminAuthor.doGet(pagePath, 200);
         Document doc = Jsoup.parse(response.getContent());
@@ -71,12 +85,23 @@ public class ProductPageIT extends CommerceTestBase {
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/simple-product.json"));
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
         assertEquals(expected, result);
     }
 
     @Test
+    @Category(IgnoreOn65.class )
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
+        testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product.json");
+    }
+
+    @Test
+    @Category(IgnoreOnCloud.class)
+    public void testProductPageWithSampleDataForGroupedProduct65() throws ClientException, IOException {
+        testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product-65.json");
+    }
+
+    public void testProductPageWithSampleDataForGroupedProduct(String jsonFile) throws ClientException, IOException {
         SlingHttpResponse response = adminAuthor.doGet(VENIA_CONTENT_US_EN_PRODUCTS_PRODUCT_PAGE + ".html/augusta-trio.html", 200);
         Document doc = Jsoup.parse(response.getContent());
 
@@ -90,7 +115,7 @@ public class ProductPageIT extends CommerceTestBase {
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/grouped-product.json"));
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
         assertEquals(expected, result);
     }
 
