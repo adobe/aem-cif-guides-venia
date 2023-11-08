@@ -33,9 +33,11 @@ import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.via.ResourceSuperType;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -122,59 +124,18 @@ public class MySearchResultsImpl implements SearchResults , Component {
     @Override
     public ComponentData getData() {
         final ComponentData data = ((Component) searchResults).getData();
-
-        return new ComponentData() {
-            @Override
-            public String getId() {
-                return data.getId();
-            }
-
-            @Override
-            public String getType() {
-                return getExportedType();
-            }
-
-            @Override
-            public Date getLastModifiedDate() {
-                return data.getLastModifiedDate();
-            }
-
-            @Override
-            public String getParentId() {
-                return data.getParentId();
-            }
-
-            @Override
-            public String getTitle() {
-                return data.getTitle();
-            }
-
-            @Override
-            public String getDescription() {
-                return data.getDescription();
-            }
-
-            @Override
-            public String getText() {
-                return data.getText();
-            }
-
-            @Override
-            public String getLinkUrl() {
-                return data.getLinkUrl();
-            }
-
-            @Override
-            public String getJson() {
-                try {
-                    return String.format("{\"%s\":%s}",
-                            getId(),
-                            new ObjectMapper().writeValueAsString(this));
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
+        final AtomicReference<ComponentData> dataRef = new AtomicReference<>();
+        ComponentData componentData = (ComponentData) Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                new Class[]{ComponentData.class}, (proxy, method, args) -> {
+                    if (method.getName().equals("getJson")) {
+                        return String.format("{\"%s\":%s}", getId(), new ObjectMapper().writeValueAsString(dataRef.get()));
+                    } else if (method.getName().equals("getType")) {
+                        return getExportedType();
+                    }
+                    return method.invoke(data, args);
+                });
+        dataRef.set(componentData);
+        return componentData;
     }
 
     @Override
