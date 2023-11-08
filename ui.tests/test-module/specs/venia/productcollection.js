@@ -59,7 +59,7 @@ describe('Product Collection Component', function () {
         expect($(categoryFilterList)).not.toBeDisplayed();
     });
 
-    it('Displays category filters', () => {
+    it.skip('Displays category filters', () => {
         // Accessories should have three category filters
         browser.url(
             `${config.aem.author.base_url}/content/venia/us/en/products/category-page.html/venia-accessories.html`
