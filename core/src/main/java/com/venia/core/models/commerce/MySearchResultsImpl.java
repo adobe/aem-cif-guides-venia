@@ -13,7 +13,6 @@
  ******************************************************************************/
 package com.venia.core.models.commerce;
 
-import com.adobe.cq.commerce.core.components.internal.datalayer.ComponentDataImpl;
 import com.adobe.cq.commerce.core.components.models.common.ProductListItem;
 import com.adobe.cq.commerce.core.components.models.searchresults.SearchResults;
 import com.adobe.cq.commerce.core.components.storefrontcontext.SearchResultsStorefrontContext;
@@ -24,7 +23,6 @@ import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
 import com.adobe.cq.commerce.magento.graphql.ProductInterfaceQuery;
 import com.adobe.cq.wcm.core.components.models.Component;
 import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.Model;
@@ -35,7 +33,6 @@ import org.apache.sling.models.annotations.via.ResourceSuperType;
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
