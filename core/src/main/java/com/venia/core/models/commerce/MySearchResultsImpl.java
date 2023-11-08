@@ -13,13 +13,19 @@
  ******************************************************************************/
 package com.venia.core.models.commerce;
 
+import com.adobe.cq.commerce.core.components.internal.datalayer.ComponentDataImpl;
 import com.adobe.cq.commerce.core.components.models.common.ProductListItem;
 import com.adobe.cq.commerce.core.components.models.searchresults.SearchResults;
 import com.adobe.cq.commerce.core.components.storefrontcontext.SearchResultsStorefrontContext;
 import com.adobe.cq.commerce.core.components.storefrontcontext.SearchStorefrontContext;
 import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
+import com.adobe.cq.commerce.core.search.models.SorterKey;
 import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
 import com.adobe.cq.commerce.magento.graphql.ProductInterfaceQuery;
+import com.adobe.cq.wcm.core.components.models.Component;
+import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.Via;
@@ -28,6 +34,8 @@ import org.apache.sling.models.annotations.via.ResourceSuperType;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -37,7 +45,7 @@ import java.util.function.Function;
  * See the initModel() method for details.
  */
 @Model(adaptables = SlingHttpServletRequest.class, adapters = SearchResults.class, resourceType = MySearchResultsImpl.RESOURCE_TYPE)
-public class MySearchResultsImpl implements SearchResults {
+public class MySearchResultsImpl implements SearchResults , Component {
     protected static final String RESOURCE_TYPE = "venia/components/commerce/searchresults";
     @Self
     @Via(type = ResourceSuperType.class)
@@ -50,8 +58,10 @@ public class MySearchResultsImpl implements SearchResults {
     @PostConstruct
     public void initModel() {
         // remove sort key with the name "position"
-        searchResults.getSearchResultsSet().getSorter().getKeys().
-                removeIf(sorterKey -> sorterKey.getName().equals("position"));
+        List<SorterKey> keys = searchResults.getSearchResultsSet().getSorter().getKeys();
+        if (keys != null) {
+            keys.removeIf(sorterKey -> sorterKey.getName().equals("position"));
+        }
     }
 
     @Override
@@ -102,5 +112,78 @@ public class MySearchResultsImpl implements SearchResults {
     @Override
     public boolean isAddToWishListEnabled() {
         return searchResults.isAddToWishListEnabled();
+    }
+
+    @Override
+    public String getId() {
+        return ((Component)searchResults).getId();
+    }
+
+    @Override
+    public ComponentData getData() {
+        final ComponentData data = ((Component) searchResults).getData();
+
+        return new ComponentData() {
+            @Override
+            public String getId() {
+                return data.getId();
+            }
+
+            @Override
+            public String getType() {
+                return getExportedType();
+            }
+
+            @Override
+            public Date getLastModifiedDate() {
+                return data.getLastModifiedDate();
+            }
+
+            @Override
+            public String getParentId() {
+                return data.getParentId();
+            }
+
+            @Override
+            public String getTitle() {
+                return data.getTitle();
+            }
+
+            @Override
+            public String getDescription() {
+                return data.getDescription();
+            }
+
+            @Override
+            public String getText() {
+                return data.getText();
+            }
+
+            @Override
+            public String getLinkUrl() {
+                return data.getLinkUrl();
+            }
+
+            @Override
+            public String getJson() {
+                try {
+                    return String.format("{\"%s\":%s}",
+                            getId(),
+                            new ObjectMapper().writeValueAsString(this));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
+
+    @Override
+    public String getAppliedCssClasses() {
+        return ((Component)searchResults).getAppliedCssClasses();
+    }
+
+    @Override
+    public String getExportedType() {
+        return "venia/components/commerce/searchresults";
     }
 }
