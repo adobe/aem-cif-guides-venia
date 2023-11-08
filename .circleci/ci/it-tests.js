@@ -106,7 +106,7 @@ try {
 
     // Run integration tests
     if (TYPE === 'integration') {
-        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOnCloud' : 'com.venia.it.category.IgnoreOn65';
+        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOn65' : 'com.venia.it.category.IgnoreOnCloud';
         ci.dir('it.tests', () => {
             ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory}`); // The -Plocal profile comes from the AEM archetype
         });

@@ -45,11 +45,13 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
     @Test
+    @Category(IgnoreOn65.class)
     public void testProductPageWithSampleData() throws ClientException, IOException {
         testProductPageWithSampleData("datalayer/simple-product.json");
     }
 
     @Test
+    @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleData65() throws ClientException, IOException {
         testProductPageWithSampleData("datalayer/simple-product-65.json");
     }
@@ -88,13 +90,13 @@ public class ProductPageIT extends CommerceTestBase {
     }
 
     @Test
-    @Category({ IgnoreOn65.class })
+    @Category(IgnoreOn65.class )
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product.json");
     }
 
     @Test
-    @Category({ IgnoreOnCloud.class })
+    @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleDataForGroupedProduct65() throws ClientException, IOException {
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product-65.json");
     }
