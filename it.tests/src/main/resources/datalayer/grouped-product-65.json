@@ -1,0 +1,34 @@
+{
+    "product-3c02043652": {
+        "xdm:listPrice": 78.0,
+        "xdm:SKU": "VA23",
+        "xdm:assets": [
+            {
+
+                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/a/va23_main.jpg",
+                "repo:id": "image-3d3553c5dc",
+                "@type": "image"
+            }
+        ],
+        "xdm:categories": [
+            {
+                "repo:id": "category-8c01c593b9",
+                "xdm:name": "Accessories",
+                "xdm:asset": {
+                    "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/carefree.jpg",
+                    "repo:id": "image-6310f9e8a5",
+                    "@type": "image"
+                }
+            },
+            {
+                "repo:id": "category-f5a5c5aea0",
+                "xdm:name": "Jewelry",
+                "xdm:asset": null
+            }
+        ],
+        "xdm:currencyCode": "USD",
+        "dc:description": "This trio is designed for versatility. Brighten up a simple look or add another layer of “wow” to an already vibrant ensemble. Go as big and bold, or understated as you're in the mood to be.",
+        "dc:title": "Augusta Trio",
+        "@type": "venia/components/commerce/product"
+    }
+}
