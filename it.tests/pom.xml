@@ -32,6 +32,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <exclude.category></exclude.category>
     </properties>
 
 
@@ -150,6 +151,7 @@
                                 <sling.it.instance.adminPassword.2>${it.publish.password}
                                 </sling.it.instance.adminPassword.2>
                             </systemPropertyVariables>
+                            <excludedGroups>${exclude.category}</excludedGroups>
                         </configuration>
                         <executions>
                             <execution>
