@@ -66,13 +66,45 @@ const dataServicesStoreConfigurationContextQuery = `
      }
    `;
 
+const getCookie = (cookieName) => {
+  const cookie = document.cookie.match(
+    `(^|[^;]+)\\s*${cookieName}\\s*=\\s*([^;]+)`
+  );
+  return cookie ? cookie.pop() : "";
+};
+
+const getLoginToken = () => {
+  const key = "M2_VENIA_BROWSER_PERSISTENCE__signin_token";
+  let token = getCookie("cif.userToken") || "";
+
+  try {
+    const lsToken = JSON.parse(localStorage.getItem(key));
+    if (lsToken && lsToken.value) {
+      const timestamp = new Date().getTime();
+      if (timestamp - lsToken.timeStored < lsToken.ttl * 1000) {
+        token = lsToken.value.replace(/"/g, "");
+      }
+    }
+  } catch (e) {
+    console.error(`Login token at ${key} is not valid JSON.`);
+  }
+  return token;
+};
+
 async function getGraphQLQuery(query, variables = {}) {
   const graphqlEndpoint = `/api/graphql`;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const loginToken = getLoginToken();
+  if (loginToken) {
+    headers["Authorization"] = `Bearer ${loginToken}`;
+  }
+
   const response = await fetch(graphqlEndpoint, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify({
       query,
       variables,
@@ -159,12 +191,10 @@ class SearchBar {
       this._getMagentoExtensionVersion(),
     ]);
     if (!window.LiveSearchAutocomplete) {
-      const liveSearchQaSrc =
-        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
-      const liveSearchProdSrc =
+      const liveSearchSrc =
         "https://livesearch-autocomplete.magento-ds.com/v0/LiveSearchAutocomplete.js";
 
-      this._injectStoreScript(liveSearchProdSrc);
+      this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
         const interval = setInterval(() => {
@@ -185,7 +215,6 @@ class SearchBar {
       return;
     }
 
-
     // initialize live-search
     new window.LiveSearchAutocomplete({
       environmentId: dataServicesStorefrontInstanceContext.environment_id,
@@ -197,8 +226,10 @@ class SearchBar {
         minQueryLength: "2",
         currencySymbol: dataServicesStoreConfigurationContext.currency_symbol,
         currencyRate: dataServicesStoreConfigurationContext.currency_rate,
-        displayOutOfStock: dataServicesStoreConfigurationContext.display_out_of_stock,
-        allowAllProducts: dataServicesStoreConfigurationContext.allow_all_products,
+        displayOutOfStock:
+          dataServicesStoreConfigurationContext.display_out_of_stock,
+        allowAllProducts:
+          dataServicesStoreConfigurationContext.allow_all_products,
       },
       context: {
         customerGroup: dataServicesStorefrontInstanceContext.customer_group,
@@ -263,7 +294,7 @@ class SearchBar {
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });
-    // mse.context.setShopper({ shopperId: "logged-in" }); // TODO:
+
     mse.context.setPage({
       pageType: "pdp",
       maxXOffset: 0,
@@ -276,7 +307,6 @@ class SearchBar {
 
     mse.context.setStorefrontInstance({
       environmentId: environment_id,
-      //  instanceId, // TODO:
       environment: environment,
       storeUrl: store_url,
       websiteId: website_id,
