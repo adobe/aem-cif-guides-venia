@@ -62,6 +62,7 @@ const dataServicesStoreConfigurationContextQuery = `
          display_out_of_stock
          allow_all_products
          locale
+         min_query_length
        }
      }
    `;
@@ -223,7 +224,7 @@ class SearchBar {
       storeViewCode: dataServicesStorefrontInstanceContext.store_view_code,
       config: {
         pageSize: dataServicesStoreConfigurationContext.page_size,
-        minQueryLength: "2",
+        minQueryLength: dataServicesStoreConfigurationContext.min_query_length,
         currencySymbol: dataServicesStoreConfigurationContext.currency_symbol,
         currencyRate: dataServicesStoreConfigurationContext.currency_rate,
         displayOutOfStock:
