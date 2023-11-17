@@ -193,8 +193,7 @@ class SearchBar {
     ]);
     if (!window.LiveSearchAutocomplete) {
       const liveSearchSrc =
-        "https://searchautocompleteqa.magento-datasolutions.com/v0/LiveSearchAutocomplete.js";
-        // TODO: Revert back to PROD
+        "https://livesearch-autocomplete.magento-ds.com/v0/LiveSearchAutocomplete.js";
 
       this._injectStoreScript(liveSearchSrc);
       // wait until script is loaded
