@@ -66,7 +66,8 @@ class ProductList {
   async _initWidgetPLP() {
     if (!window.LiveSearchPLP) {
       const liveSearchPlpSrc =
-        "https://plp-widgets-ui.magento-ds.com/v1/search.js";
+        "https://plp-widgets-ui-qa.magento-datasolutions.com/v1/search.js";
+        // TODO: Revert back to PROD
       this._injectStoreScript(liveSearchPlpSrc);
       // wait until script is loaded
       await new Promise((resolve) => {
