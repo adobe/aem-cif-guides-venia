@@ -128,9 +128,10 @@ class ProductList {
       },
       searchQuery: "search_query",
     };
+
     setTimeout(() => {
-      console.log("init PLP");
       window.LiveSearchPLP({ storeDetails, root });
+      console.log("LiveSearchPLP loaded");
     }, 0);
   }
 }
