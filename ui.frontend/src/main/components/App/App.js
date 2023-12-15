@@ -44,6 +44,7 @@ import AccountInformationPage from '../AccountInformationPage';
 
 import loadLocaleData from './i18n';
 
+import '@adobe/magento-storefront-event-collector';
 import '../../site/main.scss';
 const App = props => {
     const { mountingPoints, pagePaths, storeView } = config;

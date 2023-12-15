@@ -215,7 +215,6 @@ class SearchBar {
       console.log("no dataServicesStorefrontInstanceContext");
       return;
     }
-
     // initialize live-search
     new window.LiveSearchAutocomplete({
       environmentId: dataServicesStorefrontInstanceContext.environment_id,
@@ -245,6 +244,7 @@ class SearchBar {
         query: "search_query",
       },
     });
+    console.log("LiveSearch loaded");
 
     const formEle = document.getElementById("search_mini_form");
 
@@ -291,7 +291,7 @@ class SearchBar {
       website_name,
     } = dataServicesStorefrontInstanceContext;
 
-    console.log("initializing magento extension");
+    console.log("magento extension loaded");
     mse.context.setMagentoExtension({
       magentoExtensionVersion: this._state.magentoExtensionVersion,
     });

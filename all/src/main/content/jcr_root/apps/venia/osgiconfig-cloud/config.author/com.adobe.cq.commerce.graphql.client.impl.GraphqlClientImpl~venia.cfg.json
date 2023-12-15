@@ -8,7 +8,7 @@
   "maxHttpConnections": 20,
   "connectionTimeout": 5000,
   "requestPoolTimeout": 2000,
-  "socketTimeout": 5000,
+  "socketTimeout": 15000,
   "cacheConfigurations": [
     "venia/components/commerce/navigation:true:5:300",
     "com.adobe.cq.commerce.core.search.services.SearchFilterService:true:10:300",

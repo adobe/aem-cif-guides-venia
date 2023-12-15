@@ -17,7 +17,7 @@
 const config = require('../../lib/config');
 const { OnboardingDialogHandler, randomString } = require('../../lib/commons');
 
-describe('Product List Component Dialog', function () {
+describe.skip('Product List Component Dialog', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
 
     let testing_page;

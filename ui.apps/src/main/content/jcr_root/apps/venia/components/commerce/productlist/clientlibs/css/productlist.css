@@ -1,0 +1,22 @@
+/* #search-plp-root */
+
+html {
+  font-size: 62.5% !important;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+.root.container {
+  max-width: inherit;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.ds-sdk-sort-dropdown {
+  z-index: 9;
+}
