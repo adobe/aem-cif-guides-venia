@@ -19,7 +19,7 @@
                     sling:resourceType="venia/components/container" 
                     layout="responsiveGrid">
                     <searchresults jcr:primaryType="nt:unstructured" 
-                        sling:resourceType="venia/components/commerce/searchresults"
+                        sling:resourceType="venia/components/commerce/productlist"
                         defaultSortField="relevance"
                         defaultSortOrder="desc"/>
                 </container>
