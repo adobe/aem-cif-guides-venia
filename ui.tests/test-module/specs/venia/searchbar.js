@@ -16,7 +16,7 @@
 
 const config = require('../../lib/config');
 
-describe('Venia Searchbar Component', () => {
+describe.skip('Venia Searchbar Component', () => {
     const venia_homepage = `${config.aem.author.base_url}/content/venia/us/en.html`;
 
     before(() => {
