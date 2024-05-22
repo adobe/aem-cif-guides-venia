@@ -53,6 +53,7 @@ public class MySearchResultsImplTest {
     private final AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
 
     private MySearchResultsImpl underTest;
+    private HashMap<String, Object> dataLayerConfigMap;
 
     @BeforeEach
     void beforeEach() {
@@ -84,9 +85,8 @@ public class MySearchResultsImplTest {
 
         ConfigurationBuilder configurationBuilder = mock(ConfigurationBuilder.class);
         when(configurationBuilder.name("com.adobe.cq.wcm.core.components.internal.DataLayerConfig")).thenReturn(configurationBuilder);
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("enabled", true);
-        when(configurationBuilder.asValueMap()).thenReturn(new ValueMapDecorator(map));
+        dataLayerConfigMap = new HashMap<>();
+        when(configurationBuilder.asValueMap()).thenReturn(new ValueMapDecorator(dataLayerConfigMap));
         context.registerAdapter(Resource.class, ConfigurationBuilder.class, configurationBuilder);
 
         MockSlingHttpServletRequest request = context.request();
@@ -107,15 +107,24 @@ public class MySearchResultsImplTest {
         underTest.getAppliedCssClasses();
         assertEquals("venia/components/commerce/searchresults", underTest.getExportedType());
         ComponentData componentData = underTest.getData();
-        assertNotNull(componentData);
-        assertEquals("venia/components/commerce/searchresults", componentData.getType());
-        assertEquals("searchresults-50df7e8869", componentData.getId());
+        assertNull(componentData);
         assertEquals("searchresults-50df7e8869", underTest.getId());
 
         underTest.extendProductQueryWith(p-> p.color());
         underTest.extendProductFilterWith(f -> f.setName(new FilterMatchTypeInput().setMatch("winter")));
         assertNotNull(underTest.getProducts());
     }
+
+    @Test
+    void testComponentData() {
+        dataLayerConfigMap.put("enabled", true);
+
+        ComponentData componentData = underTest.getData();
+        assertNotNull(componentData);
+        assertEquals("venia/components/commerce/searchresults", componentData.getType());
+        assertEquals("searchresults-50df7e8869", componentData.getId());
+    }
+
 
     @Test
     void testSorterKeys() {
