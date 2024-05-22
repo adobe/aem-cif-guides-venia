@@ -19,6 +19,7 @@ import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
 import com.adobe.cq.commerce.core.search.models.Sorter;
 import com.adobe.cq.commerce.core.search.models.SorterKey;
 import com.adobe.cq.commerce.core.search.services.SearchResultsService;
+import com.adobe.cq.commerce.magento.graphql.FilterMatchTypeInput;
 import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
 import com.day.cq.wcm.api.Page;
 import io.wcm.testing.mock.aem.junit5.AemContext;
@@ -38,8 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,7 +49,7 @@ public class MySearchResultsImplTest {
     private static final String PAGE = "/content/page";
     private final AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
 
-    private SearchResults underTest;
+    private MySearchResultsImpl underTest;
 
     @BeforeEach
     void beforeEach() {
@@ -84,6 +84,24 @@ public class MySearchResultsImplTest {
 
         underTest = request.adaptTo(MySearchResultsImpl.class);
         Assertions.assertNotNull(underTest);
+    }
+
+    @Test
+    void testInstance() {
+        assertEquals("paginationbar", underTest.getPaginationType());
+        assertFalse(underTest.isAddToCartEnabled());
+        assertFalse(underTest.isAddToWishListEnabled());
+        assertTrue(underTest.loadClientPrice());
+        assertNotNull(underTest.getSearchResultsStorefrontContext());
+        assertNotNull(underTest.getSearchStorefrontContext());
+        underTest.getAppliedCssClasses();
+        assertEquals("venia/components/commerce/searchresults", underTest.getExportedType());
+        assertNull(underTest.getData());
+        assertEquals("searchresults-50df7e8869", underTest.getId());
+
+        underTest.extendProductQueryWith(p-> p.color());
+        underTest.extendProductFilterWith(f -> f.setName(new FilterMatchTypeInput().setMatch("winter")));
+        assertNotNull(underTest.getProducts());
     }
 
     @Test
