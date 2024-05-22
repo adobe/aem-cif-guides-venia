@@ -13,7 +13,6 @@
  ******************************************************************************/
 package com.venia.core.models.commerce;
 
-import com.adobe.cq.commerce.core.components.models.searchresults.SearchResults;
 import com.adobe.cq.commerce.core.components.services.urls.UrlProvider;
 import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
 import com.adobe.cq.commerce.core.search.models.Sorter;
@@ -21,9 +20,13 @@ import com.adobe.cq.commerce.core.search.models.SorterKey;
 import com.adobe.cq.commerce.core.search.services.SearchResultsService;
 import com.adobe.cq.commerce.magento.graphql.FilterMatchTypeInput;
 import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
+import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import com.day.cq.wcm.api.Page;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.jupiter.api.Assertions;
@@ -79,6 +82,13 @@ public class MySearchResultsImplTest {
         context.registerService(UrlProvider.class, mock(UrlProvider.class));
         context.addModelsForClasses(MySearchResultsImpl.class);
 
+        ConfigurationBuilder configurationBuilder = mock(ConfigurationBuilder.class);
+        when(configurationBuilder.name("com.adobe.cq.wcm.core.components.internal.DataLayerConfig")).thenReturn(configurationBuilder);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("enabled", true);
+        when(configurationBuilder.asValueMap()).thenReturn(new ValueMapDecorator(map));
+        context.registerAdapter(Resource.class, ConfigurationBuilder.class, configurationBuilder);
+
         MockSlingHttpServletRequest request = context.request();
         request.addRequestParameter("search_query", "test");
 
@@ -96,7 +106,10 @@ public class MySearchResultsImplTest {
         assertNotNull(underTest.getSearchStorefrontContext());
         underTest.getAppliedCssClasses();
         assertEquals("venia/components/commerce/searchresults", underTest.getExportedType());
-        assertNull(underTest.getData());
+        ComponentData componentData = underTest.getData();
+        assertNotNull(componentData);
+        assertEquals("venia/components/commerce/searchresults", componentData.getType());
+        assertEquals("searchresults-50df7e8869", componentData.getId());
         assertEquals("searchresults-50df7e8869", underTest.getId());
 
         underTest.extendProductQueryWith(p-> p.color());
