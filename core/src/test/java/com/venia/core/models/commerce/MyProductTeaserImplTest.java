@@ -282,4 +282,10 @@ class MyProductTeaserImplTest {
 
         Assertions.assertEquals(dataLayerJson, underTest.getData().getJson());
     }
+
+    @Test
+    void testGetProductRetriever() throws Exception {
+        setup(PRODUCTTEASER_NO_BADGE);
+        Assertions.assertNotNull(underTest.getProductRetriever());
+    }
 }
