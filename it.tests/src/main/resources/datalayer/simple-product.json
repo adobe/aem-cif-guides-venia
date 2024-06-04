@@ -1,62 +1,58 @@
 {
-    "product-dc59ad50df": {
-        "xdm:listPrice": 78.0,
-        "xdm:SKU": "VP05",
-        "xdm:assets": [
-            {
-                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_main_4.jpg",
-                "repo:id": "image-73439b9cf3",
-                "@type": "image"
-            },
-            {
-                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_alt_2.jpg",
-                "repo:id": "image-2e75bb2439",
-                "@type": "image"
-            },
-            {
-                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05-rn_back_2.jpg",
-                "repo:id": "image-40bcf141f9",
-                "@type": "image"
-            },
-            {
-                "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/product/cache/8735dd21982cf027014173d1affcf80c/v/p/vp05_look_2.jpg",
-                "repo:id": "image-e049cce860",
-                "@type": "image"
-            }
-        ],
-        "xdm:categories": [
-            {
-                "repo:id": "category-cf9d757f29",
-                "xdm:name": "Bottoms",
-                "xdm:asset": {
-                    "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/minimalist.jpg",
-                    "repo:id": "image-74c855fbf3",
-                    "@type": "image"
-                }
-            },
-            {
-                "repo:id": "category-6e60cf4797",
-                "xdm:name": "Pants & Shorts",
-                "xdm:asset": null
-            },
-            {
-                "repo:id": "category-b8a3caa888",
-                "xdm:name": "Shop The Look",
-                "xdm:asset": {
-                    "repo:path": "https://mystage1-amspro120.amscommerce.cloud/media/catalog/category/beachy.jpg",
-                    "repo:id": "image-8a0806aaab",
-                    "@type": "image"
-                }
-            },
-            {
-                "repo:id": "category-df146c27a3",
-                "xdm:name": "Minimalist Sensibility",
-                "xdm:asset": null
-            }
-        ],
-        "xdm:currencyCode": "USD",
-        "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&#34; inseam</li><li>Machine wash, line dry</li></ul>",
-        "dc:title": "Honora Wide Leg Pants",
-        "@type": "venia/components/commerce/product"
-    }
+  "product-dc59ad50df": {
+    "xdm:listPrice": 78.0,
+    "xdm:SKU": "VP05",
+    "xdm:assets": [
+      {
+        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
+        "repo:id": "image-2ea11abe0a",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
+        "repo:id": "image-35c39a6a6b",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
+        "repo:id": "image-7ed6d7593b",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
+        "repo:id": "image-3b4d560585",
+        "@type": "image"
+      }
+    ],
+    "xdm:categories": [
+      {
+        "repo:id": "category-2212426126",
+        "xdm:name": "Bottoms",
+        "xdm:asset": {
+          "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/category/minimalist.jpg",
+          "repo:id": "image-9d427bd572",
+          "@type": "image"
+        }
+      },
+      {
+        "repo:id": "category-3c1d5daf00",
+        "xdm:name": "Pants & Shorts",
+        "xdm:asset": null
+      },
+      {
+        "repo:id": "category-77640b4209",
+        "xdm:name": "Shop The Look",
+        "xdm:asset": null
+      },
+      {
+        "repo:id": "category-077469fda4",
+        "xdm:name": "Minimalist Sensibility",
+        "xdm:asset": null
+      }
+    ],
+    "xdm:currencyCode": "USD",
+    "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&#34; inseam</li><li>Machine wash, line dry</li></ul>",
+    "dc:title": "Honora Wide Leg Pants",
+    "@type": "venia/components/commerce/product"
+  }
 }

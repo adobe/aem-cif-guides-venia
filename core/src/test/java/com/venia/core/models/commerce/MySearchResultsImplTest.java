@@ -13,16 +13,20 @@
  ******************************************************************************/
 package com.venia.core.models.commerce;
 
-import com.adobe.cq.commerce.core.components.models.searchresults.SearchResults;
 import com.adobe.cq.commerce.core.components.services.urls.UrlProvider;
 import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
 import com.adobe.cq.commerce.core.search.models.Sorter;
 import com.adobe.cq.commerce.core.search.models.SorterKey;
 import com.adobe.cq.commerce.core.search.services.SearchResultsService;
+import com.adobe.cq.commerce.magento.graphql.FilterMatchTypeInput;
 import com.adobe.cq.commerce.magento.graphql.ProductAttributeFilterInput;
+import com.adobe.cq.wcm.core.components.models.datalayer.ComponentData;
 import com.day.cq.wcm.api.Page;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.apache.sling.caconfig.ConfigurationBuilder;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.jupiter.api.Assertions;
@@ -38,8 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,7 +52,8 @@ public class MySearchResultsImplTest {
     private static final String PAGE = "/content/page";
     private final AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
 
-    private SearchResults underTest;
+    private MySearchResultsImpl underTest;
+    private HashMap<String, Object> dataLayerConfigMap;
 
     @BeforeEach
     void beforeEach() {
@@ -79,12 +83,48 @@ public class MySearchResultsImplTest {
         context.registerService(UrlProvider.class, mock(UrlProvider.class));
         context.addModelsForClasses(MySearchResultsImpl.class);
 
+        ConfigurationBuilder configurationBuilder = mock(ConfigurationBuilder.class);
+        when(configurationBuilder.name("com.adobe.cq.wcm.core.components.internal.DataLayerConfig")).thenReturn(configurationBuilder);
+        dataLayerConfigMap = new HashMap<>();
+        when(configurationBuilder.asValueMap()).thenReturn(new ValueMapDecorator(dataLayerConfigMap));
+        context.registerAdapter(Resource.class, ConfigurationBuilder.class, configurationBuilder);
+
         MockSlingHttpServletRequest request = context.request();
         request.addRequestParameter("search_query", "test");
 
         underTest = request.adaptTo(MySearchResultsImpl.class);
         Assertions.assertNotNull(underTest);
     }
+
+    @Test
+    void testInstance() {
+        assertEquals("paginationbar", underTest.getPaginationType());
+        assertFalse(underTest.isAddToCartEnabled());
+        assertFalse(underTest.isAddToWishListEnabled());
+        assertTrue(underTest.loadClientPrice());
+        assertNotNull(underTest.getSearchResultsStorefrontContext());
+        assertNotNull(underTest.getSearchStorefrontContext());
+        underTest.getAppliedCssClasses();
+        assertEquals("venia/components/commerce/searchresults", underTest.getExportedType());
+        ComponentData componentData = underTest.getData();
+        assertNull(componentData);
+        assertEquals("searchresults-50df7e8869", underTest.getId());
+
+        underTest.extendProductQueryWith(p-> p.color());
+        underTest.extendProductFilterWith(f -> f.setName(new FilterMatchTypeInput().setMatch("winter")));
+        assertNotNull(underTest.getProducts());
+    }
+
+    @Test
+    void testComponentData() {
+        dataLayerConfigMap.put("enabled", true);
+
+        ComponentData componentData = underTest.getData();
+        assertNotNull(componentData);
+        assertEquals("venia/components/commerce/searchresults", componentData.getType());
+        assertEquals("searchresults-50df7e8869", componentData.getId());
+    }
+
 
     @Test
     void testSorterKeys() {
