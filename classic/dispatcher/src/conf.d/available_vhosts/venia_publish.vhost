@@ -64,4 +64,5 @@ PassEnv DISP_ID
 	</IfModule>
 
 	ErrorDocument 404 ${404_PAGE}
+	ErrorDocument 503 ${503_PAGE}
 </VirtualHost>
