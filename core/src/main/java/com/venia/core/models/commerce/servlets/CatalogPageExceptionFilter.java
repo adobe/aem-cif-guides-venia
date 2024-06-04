@@ -95,7 +95,7 @@ public class CatalogPageExceptionFilter implements Filter {
                                 categoryRetriever.fetchCategory() == null && categoryRetriever.hasErrors() ||
                                 // force GraphQL query execution for products
                                 productList.getSearchResultsSet().hasErrors())) {
-                            slingResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Commerce application not reachable");
+                            slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
                             return;
                         }
                     }
