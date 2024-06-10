@@ -42,7 +42,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.util.reflection.FieldReader;
-import org.mockito.internal.util.reflection.FieldSetter;
+import java.lang.reflect.Field;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -122,8 +122,8 @@ class MyProductTeaserImplTest {
 
         Class<? extends MyProductTeaser> clazz = underTest.getClass();
         productTeaser = Mockito.spy((ProductTeaser)(new FieldReader(underTest, clazz.getDeclaredField("productTeaser")).read()));
-        FieldSetter.setField(underTest, clazz.getDeclaredField("productTeaser"), productTeaser);
-        FieldSetter.setField(underTest, clazz.getDeclaredField("productRetriever"), productRetriever);
+        setField(underTest, clazz.getDeclaredField("productTeaser"), productTeaser);
+        setField(underTest, clazz.getDeclaredField("productRetriever"), productRetriever);
     }
 
     @ParameterizedTest
@@ -287,5 +287,25 @@ class MyProductTeaserImplTest {
     void testGetProductRetriever() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Assertions.assertNotNull(underTest.getProductRetriever());
+    }
+
+    public static void setField(Object object, String fieldName, Object value) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to set " + fieldName + " of object", e);
+        }
+    }
+
+    public static void setField(Object object, Field fld, Object value) {
+        try {
+            fld.setAccessible(true);
+            fld.set(object, value);
+        } catch (IllegalAccessException e) {
+            String fieldName = null == fld ? "n/a" : fld.getName();
+            throw new RuntimeException("Failed to set " + fieldName + " of object", e);
+        }
     }
 }
