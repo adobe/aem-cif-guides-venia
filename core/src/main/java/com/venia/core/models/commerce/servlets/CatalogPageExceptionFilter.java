@@ -77,8 +77,7 @@ public class CatalogPageExceptionFilter implements Filter {
                     if (product != null) {
                         AbstractProductRetriever productRetriever = product.getProductRetriever();
                         // force GraphQL query execution
-                        product.getFound();
-                        if (productRetriever == null || productRetriever.hasErrors()) {
+                        if (productRetriever != null && !product.getFound() && productRetriever.hasErrors()) {
                             slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
                             return;
                         }
@@ -90,11 +89,11 @@ public class CatalogPageExceptionFilter implements Filter {
                     if (productList != null) {
                         // Get the AbstractCategoryRetriever model
                         AbstractCategoryRetriever categoryRetriever = productList.getCategoryRetriever();
-                        if ((categoryRetriever == null ||
+                        if ((categoryRetriever != null &&
                                 // force GraphQL query execution for category
-                                categoryRetriever.fetchCategory() == null && categoryRetriever.hasErrors() ||
+                                categoryRetriever.fetchCategory() == null && categoryRetriever.hasErrors()) ||
                                 // force GraphQL query execution for products
-                                productList.getSearchResultsSet().hasErrors())) {
+                                productList.getSearchResultsSet().hasErrors()) {
                             slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
                             return;
                         }
