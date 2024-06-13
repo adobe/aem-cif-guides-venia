@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
-import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,9 +32,6 @@ class CommerceComponentModelFinderTest {
 
     @Mock
     private MockSlingHttpServletRequest request;
-
-    @Mock
-    private Product mockProduct;
 
 
     private final AemContext context = new AemContext();
@@ -57,6 +53,7 @@ class CommerceComponentModelFinderTest {
     void findProductComponentModelReturnsProductWhenProductComponentExists() {
 
         Resource mockChildResource = mock(Resource.class);
+        Product mockProduct = mock(Product.class);
 
         when(request.getResource()).thenReturn(resource);
         when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
@@ -76,6 +73,7 @@ class CommerceComponentModelFinderTest {
     @Test
     void findProductComponentModelWithResourceReturnsProductWhenProductComponentExists() {
         Resource mockChildResource = mock(Resource.class);
+        Product mockProduct = mock(Product.class);
         when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
         when(mockChildResource.isResourceType(anyString())).thenReturn(true);
         when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(Product.class))).thenReturn(mockProduct);
@@ -118,14 +116,109 @@ class CommerceComponentModelFinderTest {
         ProductList mockProductList = mock(ProductList.class);
         Resource mockChildResource = mock(Resource.class);
 
-        // Create a list of mock resource types
-        //List<String> mockResourceTypes = Arrays.asList("mockResourceType1", "mockResourceType2");
         when(request.getResource()).thenReturn(resource);
         when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
         when(mockChildResource.isResourceType(anyString())).thenReturn(true);
         when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(ProductList.class))).thenReturn(mockProductList);
 
         ProductList productList = finder.findProductListComponentModel(request);
+        assertNotNull(productList);
+        assertEquals(mockProductList, productList);
+    }
+
+    @Test
+    void findComponentModelReturnsProductWhenProductAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        Product mockProduct = mock(Product.class);
+
+        List<String> mockResourceTypes = Arrays.asList("mockResourceType1", "mockResourceType2");
+
+        when(request.getResource()).thenReturn(resource);
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(Product.class))).thenReturn(mockProduct);
+
+        Product product = finder.findComponentModel(request, mockResourceTypes, Product.class);
+        assertNotNull(product);
+        assertEquals(mockProduct, product);
+    }
+
+    @Test
+    void findComponentModelReturnsProductListWhenProductListAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        ProductList mockProductList = mock(ProductList.class);
+
+        List<String> mockResourceTypes = Arrays.asList("mockResourceType1", "mockResourceType2");
+
+        when(request.getResource()).thenReturn(resource);
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(ProductList.class))).thenReturn(mockProductList);
+
+        ProductList productList = finder.findComponentModel(request, mockResourceTypes, ProductList.class);
+        assertNotNull(productList);
+        assertEquals(mockProductList, productList);
+    }
+
+    void findComponentModelWithResourceTypeStringReturnsProductWhenProductAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        Product mockProduct = mock(Product.class);
+
+        String mockResourceType = "mockResourceType1";
+
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(Product.class))).thenReturn(mockProduct);
+
+        Product product = finder.findComponentModel(request, resource, mockResourceType, Product.class);
+        assertNotNull(product);
+        assertEquals(mockProduct, product);
+    }
+
+    @Test
+    void findComponentModelWithResourceTypeStringReturnsProductListWhenProductListAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        ProductList mockProductList = mock(ProductList.class);
+
+        String mockResourceType = "mockResourceType1";
+
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(ProductList.class))).thenReturn(mockProductList);
+
+        ProductList productList = finder.findComponentModel(request, resource, mockResourceType, ProductList.class);
+        assertNotNull(productList);
+        assertEquals(mockProductList, productList);
+    }
+
+    @Test
+    void findComponentModelWithResourceReturnsProductWhenProductAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        Product mockProduct = mock(Product.class);
+
+        List<String> mockResourceTypes = Arrays.asList("mockResourceType1", "mockResourceType2");
+
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(Product.class))).thenReturn(mockProduct);
+
+        Product product = finder.findComponentModel(request, resource, mockResourceTypes, Product.class);
+        assertNotNull(product);
+        assertEquals(mockProduct, product);
+    }
+
+    @Test
+    void findComponentModelWithResourceReturnsProductListWhenProductListAdapterType() {
+        Resource mockChildResource = mock(Resource.class);
+        ProductList mockProductList = mock(ProductList.class);
+
+        List<String> mockResourceTypes = Arrays.asList("mockResourceType1", "mockResourceType2");
+
+        when(resource.getChildren()).thenReturn(Collections.singletonList(mockChildResource));
+        when(mockChildResource.isResourceType(anyString())).thenReturn(true);
+        when(modelFactory.getModelFromWrappedRequest(any(), any(), eq(ProductList.class))).thenReturn(mockProductList);
+
+        ProductList productList = finder.findComponentModel(request, resource, mockResourceTypes, ProductList.class);
         assertNotNull(productList);
         assertEquals(mockProductList, productList);
     }
