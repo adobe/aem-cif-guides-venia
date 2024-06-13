@@ -20,6 +20,7 @@ import com.adobe.cq.commerce.core.components.models.product.Product;
 import com.adobe.cq.commerce.core.components.models.productlist.CategoryRetriever;
 import com.adobe.cq.commerce.core.components.models.productlist.ProductList;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
+import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.PageManagerFactory;
@@ -69,7 +70,6 @@ public class CatalogPageExceptionFilterTest {
     @Mock
     private BundleContext bundleContext;
 
-
     @Mock
     private MockSlingHttpServletRequest slingRequest;
 
@@ -84,17 +84,57 @@ public class CatalogPageExceptionFilterTest {
     @BeforeEach
     void setUp() {
         filterChain = mock(FilterChain.class);
+        when(pageManagerFactory.getPageManager(any())).thenReturn(pageManager);
+        when(pageManager.getContainingPage(slingRequest.getResource())).thenReturn(currentPage);
     }
 
     @Test
-    void testDoFilter() throws IOException, ServletException {
+    void doFilterWhenCurrentPageNull() throws IOException, ServletException {
+        when(pageManager.getContainingPage(slingRequest.getResource())).thenReturn(null);
+
+        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        verify(filterChain).doFilter(slingRequest, slingResponse);
+
+    }
+
+    @Test
+    void doFilterWhenProductNull() throws IOException, ServletException {
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        SiteStructure siteStructure = mock(SiteStructure.class);
+
+        when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
+        when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
+        when(siteStructure.isProductPage(any())).thenReturn(true);
+        when(commerceModelFinder.findProductComponentModel(any(), any())).thenReturn(null);
+
+        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+
+        verify(filterChain).doFilter(slingRequest, slingResponse);
+    }
+
+    @Test
+    void doFilterWhenProductRetrieverNull() throws IOException, ServletException {
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        SiteStructure siteStructure = mock(SiteStructure.class);
+        Product product = mock(Product.class);
+
+
+        when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
+        when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
+        when(siteStructure.isProductPage(any())).thenReturn(true);
+        when(commerceModelFinder.findProductComponentModel(any(), any())).thenReturn(product);
+        when(product.getProductRetriever()).thenReturn(null);
+        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        verify(filterChain).doFilter(slingRequest, slingResponse);
+    }
+
+    @Test
+    void doFilterWhenProductRetrieverHasErrors() throws IOException, ServletException {
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
         SiteStructure siteStructure = mock(SiteStructure.class);
         Product product = mock(Product.class);
         AbstractProductRetriever productRetriever = mock(AbstractProductRetriever.class);
 
-        when(pageManagerFactory.getPageManager(any())).thenReturn(pageManager);
-        when(pageManager.getContainingPage(slingRequest.getResource())).thenReturn(currentPage);
         when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
         when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
         when(siteStructure.isProductPage(any())).thenReturn(true);
@@ -103,12 +143,49 @@ public class CatalogPageExceptionFilterTest {
         when(productRetriever.hasErrors()).thenReturn(true);
 
         catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
-
-        verify(slingResponse).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
+        verify(slingResponse).sendError(
+                HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                "Commerce application not reachable"
+        );
+        verify(filterChain, never()).doFilter(slingRequest, slingResponse);
     }
 
     @Test
-    void testDoFilterWithCategoryPage() throws IOException, ServletException {
+    void doFilterWithCategoryPageWhenProductListNull() throws IOException, ServletException {
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        SiteStructure siteStructure = mock(SiteStructure.class);
+
+        when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
+        when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
+        when(siteStructure.isCategoryPage(any())).thenReturn(true);
+        when(commerceModelFinder.findProductListComponentModel(any(), any())).thenReturn(null);
+        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+
+        verify(filterChain).doFilter(slingRequest, slingResponse);
+    }
+
+    @Test
+    void doFilterWithCategoryPageWhenCategoryRetrieverNullAndSearchResultErrorEmpty() throws IOException, ServletException {
+        PageManager pageManager = mock(PageManager.class);
+        Page currentPage = mock(Page.class);
+        ResourceResolver resourceResolver = mock(ResourceResolver.class);
+        SiteStructure siteStructure = mock(SiteStructure.class);
+        ProductList productList = mock(ProductList.class);
+        SearchResultsSet searchResultsSet = mock(SearchResultsSet.class);
+
+        when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
+        when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
+        when(siteStructure.isCategoryPage(any())).thenReturn(true);
+        when(commerceModelFinder.findProductListComponentModel(any(), any())).thenReturn(productList);
+        when(productList.getCategoryRetriever()).thenReturn(null);
+        when(productList.getSearchResultsSet()).thenReturn(searchResultsSet);
+        when(searchResultsSet.hasErrors()).thenReturn(false);
+        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        verify(filterChain).doFilter(slingRequest, slingResponse);
+    }
+
+    @Test
+    void doFilterWithCategoryPageHasErrors() throws IOException, ServletException {
         PageManager pageManager = mock(PageManager.class);
         Page currentPage = mock(Page.class);
         ResourceResolver resourceResolver = mock(ResourceResolver.class);
@@ -116,8 +193,6 @@ public class CatalogPageExceptionFilterTest {
         ProductList productList = mock(ProductList.class);
         CategoryRetriever categoryRetriever = mock(CategoryRetriever.class);
 
-        when(pageManagerFactory.getPageManager(any())).thenReturn(pageManager);
-        when(pageManager.getContainingPage(slingRequest.getResource())).thenReturn(currentPage);
         when(slingRequest.getResourceResolver()).thenReturn(resourceResolver);
         when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
         when(siteStructure.isCategoryPage(any())).thenReturn(true);
@@ -128,7 +203,11 @@ public class CatalogPageExceptionFilterTest {
 
         catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
 
-        verify(slingResponse).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
+        verify(slingResponse).sendError(
+                HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                "Commerce application not reachable"
+        );
+        verify(filterChain, never()).doFilter(slingRequest, slingResponse);
     }
 
 }
