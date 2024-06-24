@@ -41,7 +41,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import java.lang.reflect.Field;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.time.LocalDateTime;
@@ -128,7 +127,6 @@ class MyProductTeaserImplTest {
         ));
         FieldUtils.writeField(underTest, "productTeaser", productTeaser, true);
         FieldUtils.writeField(underTest, "productRetriever", productRetriever, true);
-
     }
 
     @ParameterizedTest
@@ -293,5 +291,4 @@ class MyProductTeaserImplTest {
         setup(PRODUCTTEASER_NO_BADGE);
         Assertions.assertNotNull(underTest.getProductRetriever());
     }
-    
 }
