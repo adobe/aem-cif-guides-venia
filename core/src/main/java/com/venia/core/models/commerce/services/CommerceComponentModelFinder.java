@@ -49,38 +49,13 @@ public class CommerceComponentModelFinder {
     private ModelFactory modelFactory;
 
     @Nullable
-    public Product findProductComponentModel(SlingHttpServletRequest request) {
-        return findComponentModel(request, PRODUCT_RTS, Product.class);
-    }
-
-    @Nullable
     public Product findProductComponentModel(SlingHttpServletRequest request, Resource root) {
         return findComponentModel(request, root, PRODUCT_RTS, Product.class);
     }
 
     @Nullable
-    public ProductList findProductListComponentModel(SlingHttpServletRequest request) {
-        return findComponentModel(request, PRODUCT_LIST_RTS, ProductList.class);
-    }
-
-    @Nullable
     public ProductList findProductListComponentModel(SlingHttpServletRequest request, Resource root) {
         return findComponentModel(request, root, PRODUCT_LIST_RTS, ProductList.class);
-    }
-
-    @Nullable
-    public <T> T findComponentModel(SlingHttpServletRequest request, String resourceType, Class<T> adapterType) {
-        return findComponentModel(request, Collections.singletonList(resourceType), adapterType);
-    }
-
-    @Nullable
-    public <T> T findComponentModel(SlingHttpServletRequest request, Collection<String> resourceTypes, Class<T> adapterType) {
-        return findComponentModel(request, request.getResource(), resourceTypes, adapterType);
-    }
-
-    @Nullable
-    public <T> T findComponentModel(SlingHttpServletRequest request, Resource root, String resourceType, Class<T> adapterType) {
-        return findComponentModel(request, root, Collections.singletonList(resourceType), adapterType);
     }
 
     @Nullable

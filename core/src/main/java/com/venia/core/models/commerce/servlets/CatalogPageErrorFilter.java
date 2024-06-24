@@ -38,8 +38,8 @@ import java.io.IOException;
                 "sling.filter.resource.pattern=/content(/.+)?",
                 "service.ranking:Integer=-4000"
         })
-public class CatalogPageExceptionFilter implements Filter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(com.venia.core.models.commerce.servlets.CatalogPageExceptionFilter.class);
+public class CatalogPageErrorFilter implements Filter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogPageErrorFilter.class);
 
     @Reference
     private PageManagerFactory pageManagerFactory;
@@ -47,7 +47,7 @@ public class CatalogPageExceptionFilter implements Filter {
     @Reference
     private CommerceComponentModelFinder commerceModelFinder;
 
-    public CatalogPageExceptionFilter() {
+    public CatalogPageErrorFilter() {
     }
 
     private BundleContext bundleContext;

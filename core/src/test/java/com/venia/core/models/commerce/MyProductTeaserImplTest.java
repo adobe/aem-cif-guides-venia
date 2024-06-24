@@ -41,8 +41,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.util.reflection.FieldReader;
 import java.lang.reflect.Field;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -120,10 +120,15 @@ class MyProductTeaserImplTest {
         underTest = context.request().adaptTo(MyProductTeaser.class);
         Assertions.assertNotNull(underTest);
 
-        Class<? extends MyProductTeaser> clazz = underTest.getClass();
-        productTeaser = Mockito.spy((ProductTeaser)(new FieldReader(underTest, clazz.getDeclaredField("productTeaser")).read()));
-        setField(underTest, clazz.getDeclaredField("productTeaser"), productTeaser);
-        setField(underTest, clazz.getDeclaredField("productRetriever"), productRetriever);
+        // Use FieldUtils to get the private fields (if needed)
+        productTeaser = Mockito.spy((ProductTeaser) FieldUtils.readField(
+                underTest,
+                "productTeaser",
+                true
+        ));
+        FieldUtils.writeField(underTest, "productTeaser", productTeaser, true);
+        FieldUtils.writeField(underTest, "productRetriever", productRetriever, true);
+
     }
 
     @ParameterizedTest
@@ -288,24 +293,5 @@ class MyProductTeaserImplTest {
         setup(PRODUCTTEASER_NO_BADGE);
         Assertions.assertNotNull(underTest.getProductRetriever());
     }
-
-    public static void setField(Object object, String fieldName, Object value) {
-        try {
-            Field field = object.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(object, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to set " + fieldName + " of object", e);
-        }
-    }
-
-    public static void setField(Object object, Field fld, Object value) {
-        try {
-            fld.setAccessible(true);
-            fld.set(object, value);
-        } catch (IllegalAccessException e) {
-            String fieldName = null == fld ? "n/a" : fld.getName();
-            throw new RuntimeException("Failed to set " + fieldName + " of object", e);
-        }
-    }
+    
 }

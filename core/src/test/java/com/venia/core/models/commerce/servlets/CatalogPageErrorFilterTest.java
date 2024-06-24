@@ -48,7 +48,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({AemContextExtension.class, MockitoExtension.class})
-public class CatalogPageExceptionFilterTest {
+public class CatalogPageErrorFilterTest {
 
     private final AemContext aemContext = new AemContext();
 
@@ -77,7 +77,7 @@ public class CatalogPageExceptionFilterTest {
     private MockSlingHttpServletResponse slingResponse;
 
     @InjectMocks
-    private CatalogPageExceptionFilter catalogPageExceptionFilter;
+    private CatalogPageErrorFilter catalogPageErrorFilter;
 
     private FilterChain filterChain;
 
@@ -92,7 +92,7 @@ public class CatalogPageExceptionFilterTest {
     void doFilterWhenCurrentPageNull() throws IOException, ServletException {
         when(pageManager.getContainingPage(slingRequest.getResource())).thenReturn(null);
 
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
         verify(filterChain).doFilter(slingRequest, slingResponse);
 
     }
@@ -107,7 +107,7 @@ public class CatalogPageExceptionFilterTest {
         when(siteStructure.isProductPage(any())).thenReturn(true);
         when(commerceModelFinder.findProductComponentModel(any(), any())).thenReturn(null);
 
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
 
         verify(filterChain).doFilter(slingRequest, slingResponse);
     }
@@ -124,7 +124,7 @@ public class CatalogPageExceptionFilterTest {
         when(siteStructure.isProductPage(any())).thenReturn(true);
         when(commerceModelFinder.findProductComponentModel(any(), any())).thenReturn(product);
         when(product.getProductRetriever()).thenReturn(null);
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
         verify(filterChain).doFilter(slingRequest, slingResponse);
     }
 
@@ -142,7 +142,7 @@ public class CatalogPageExceptionFilterTest {
         when(product.getProductRetriever()).thenReturn(productRetriever);
         when(productRetriever.hasErrors()).thenReturn(true);
 
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
         verify(slingResponse).sendError(
                 HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                 "Commerce application not reachable"
@@ -159,7 +159,7 @@ public class CatalogPageExceptionFilterTest {
         when(slingRequest.adaptTo(SiteStructure.class)).thenReturn(siteStructure);
         when(siteStructure.isCategoryPage(any())).thenReturn(true);
         when(commerceModelFinder.findProductListComponentModel(any(), any())).thenReturn(null);
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
 
         verify(filterChain).doFilter(slingRequest, slingResponse);
     }
@@ -180,7 +180,7 @@ public class CatalogPageExceptionFilterTest {
         when(productList.getCategoryRetriever()).thenReturn(null);
         when(productList.getSearchResultsSet()).thenReturn(searchResultsSet);
         when(searchResultsSet.hasErrors()).thenReturn(false);
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
         verify(filterChain).doFilter(slingRequest, slingResponse);
     }
 
@@ -201,7 +201,7 @@ public class CatalogPageExceptionFilterTest {
         when(categoryRetriever.fetchCategory()).thenReturn(null);
         when(categoryRetriever.hasErrors()).thenReturn(true);
 
-        catalogPageExceptionFilter.doFilter(slingRequest, slingResponse, filterChain);
+        catalogPageErrorFilter.doFilter(slingRequest, slingResponse, filterChain);
 
         verify(slingResponse).sendError(
                 HttpServletResponse.SC_SERVICE_UNAVAILABLE,
