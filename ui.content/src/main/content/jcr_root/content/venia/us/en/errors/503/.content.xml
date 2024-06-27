@@ -11,7 +11,7 @@
         jcr:isCheckedOut="{Boolean}true"
         jcr:mixinTypes="[cq:LiveRelationship,mix:versionable]"
         jcr:primaryType="cq:PageContent"
-        jcr:title="Service unavailable"
+        jcr:title="Service Unavailable"
         jcr:uuid="79995388-8a07-41de-aa5c-17b262989be0"
         sling:resourceType="venia/components/page"
         pwaCachestrategy="staleWhileRevalidate"
