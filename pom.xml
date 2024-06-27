@@ -93,7 +93,7 @@
         <bnd.version>5.1.2</bnd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <uber.jar.version>6.5.0</uber.jar.version>
+        <uber.jar.version>6.5.8</uber.jar.version>
         <jacoco.version>0.8.7</jacoco.version>
         <aem.sdk.api>2020.9.4277.20200929T030741Z-200924</aem.sdk.api>
         <aem.cif.sdk.api>2022.08.02.00</aem.cif.sdk.api>
@@ -153,8 +153,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <!-- Sonatype staging plugin -->
@@ -807,7 +807,7 @@ Bundle-DocURL:
             <dependency>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.api</artifactId>
-                <version>2.16.4</version>
+                <version>2.27.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.sling</groupId>

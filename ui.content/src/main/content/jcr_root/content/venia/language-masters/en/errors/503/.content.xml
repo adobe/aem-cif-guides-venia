@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:allowedTemplates="[/conf/venia/settings/wcm/templates/page-content]"
+        cq:lastModified="{Date}2024-06-04T18:29:41.772+05:30"
+        cq:lastModifiedBy="admin"
+        cq:lastRolledoutBy="admin"
+        cq:robotsTags="[noindex]"
+        cq:template="/conf/venia/settings/wcm/templates/page-content"
+        jcr:isCheckedOut="{Boolean}true"
+        jcr:mixinTypes="[cq:LiveRelationship,mix:versionable]"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Service Unavailable"
+        jcr:uuid="79995388-8a07-41de-aa5c-17b262989be0"
+        sling:resourceType="venia/components/page"
+        pwaCachestrategy="staleWhileRevalidate"
+        pwaDisplay="standalone"
+        pwaOrientation="any">
+        <root
+            cq:lastRolledout="{Date}2021-10-15T11:13:25.907+02:00"
+            cq:lastRolledoutBy="admin"
+            jcr:mixinTypes="[cq:LiveRelationship]"
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="venia/components/container">
+            <container
+                cq:lastRolledout="{Date}2021-10-15T11:13:25.915+02:00"
+                cq:lastRolledoutBy="admin"
+                jcr:mixinTypes="[cq:LiveRelationship]"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="venia/components/container">
+                <title
+                    cq:lastRolledout="{Date}2021-10-15T11:13:25.920+02:00"
+                    cq:lastRolledoutBy="admin"
+                    jcr:mixinTypes="[cq:LiveRelationship]"
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/title"/>
+                <container
+                    cq:lastRolledout="{Date}2021-10-15T11:13:25.925+02:00"
+                    cq:lastRolledoutBy="admin"
+                    jcr:mixinTypes="[cq:LiveRelationship]"
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="venia/components/container"
+                    layout="responsiveGrid">
+                    <text
+                        jcr:lastModified="{Date}2024-06-04T18:29:41.763+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="venia/components/text"
+                        text="&lt;p>&amp;nbsp;&lt;/p>&#xa;&lt;h1>Ruh-Roh! Service Unavailable&lt;/h1>&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xa;&lt;p>We're sorry, we are unable to fetch this page!&lt;/p>&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xa;&lt;p>&amp;nbsp;&lt;/p>&#xa;"
+                        textIsRich="true"/>
+                </container>
+            </container>
+        </root>
+    </jcr:content>
+</jcr:root>
