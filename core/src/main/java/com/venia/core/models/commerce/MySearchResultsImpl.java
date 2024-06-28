@@ -121,6 +121,10 @@ public class MySearchResultsImpl implements SearchResults , Component {
     @Override
     public ComponentData getData() {
         final ComponentData data = ((Component) searchResults).getData();
+        if (data == null) {
+            return null;
+        }
+
         final AtomicReference<ComponentData> dataRef = new AtomicReference<>();
         ComponentData componentData = (ComponentData) Proxy.newProxyInstance(this.getClass().getClassLoader(),
                 new Class[]{ComponentData.class}, (proxy, method, args) -> {

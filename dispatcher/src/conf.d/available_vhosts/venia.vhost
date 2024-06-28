@@ -64,4 +64,5 @@ Include conf.d/variables/custom.vars
 
 	# Customizations made to the vhost compared to default
 	ErrorDocument 404 ${404_PAGE}
+	ErrorDocument 503 ${503_PAGE}
 </VirtualHost>
