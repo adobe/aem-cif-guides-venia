@@ -1,0 +1,5 @@
+{
+  "modelConfiguration": [
+    "venia/components/commerce/productteaser=com.venia.core.models.commerce.MyProductTeaser"
+  ]
+}
