@@ -8,7 +8,8 @@ common:
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - restore_cache:
           keys:
             - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
