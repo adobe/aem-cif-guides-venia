@@ -2,14 +2,14 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.1.1
-  browser-tools: circleci/browser-tools@1.4.4
+  browser-tools: circleci/browser-tools@1.4.8
 
 common:
   integration_test_steps: &integration_test_steps
     steps:
       - checkout
-      - browser-tools/install-browser-tools:
-          chrome-version: 116.0.5845.96 # TODO: remove -> https://github.com/CircleCI-Public/browser-tools-orb/issues/75
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - restore_cache:
           keys:
             - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
