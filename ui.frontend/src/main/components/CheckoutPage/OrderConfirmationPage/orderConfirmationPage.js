@@ -65,7 +65,7 @@ const OrderConfirmationPage = props => {
                 <div className={classes.orderNumber}>
                     <FormattedMessage
                         id={'checkoutPage.orderNumber'}
-                        defaultMessage={'Order Number'}
+                        defaultMessage={'Order Number: {orderNumber}'}
                         values={{ orderNumber }}
                     />
                 </div>
