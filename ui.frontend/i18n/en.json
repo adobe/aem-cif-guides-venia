@@ -124,7 +124,11 @@
   "checkoutPage.orderNumber": [
     {
       "type": 0,
-      "value": "Order Number"
+      "value": "Order Number: "
+    },
+    {
+      "type": 1,
+      "value": "orderNumber"
     }
   ],
   "checkoutPage.orderSummary": [
