@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
         <artifactId>aem-cif-guides-venia</artifactId>
-        <version>2024.07.19-SNAPSHOT</version>
+        <version>2024.09.05</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
