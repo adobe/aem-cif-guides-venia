@@ -21,6 +21,8 @@ UI Testing module for your AEM application
 * Chrome and/or Firefox browser installed locally in default location
 * An AEM author instance running at http://localhost:4502
 
+## Notes
+* We shouldn't update the @wdio/mocha-framework as @wdio/sync will not be compactible. Use 7.7.2 version only.
 
 ## Run Tests
 

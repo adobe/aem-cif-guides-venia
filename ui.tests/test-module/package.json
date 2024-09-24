@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Sample Tests Project",
   "author": "catalan@adobe.com",
+  "extra": {
+    "note": "DON'T UPGRADE wdio/mocha-framework(use 7.7.2) ELSE SYNC MODE WILL NOT WORK"
+  },
   "keywords": [
     "aem",
     "cloud",
