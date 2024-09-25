@@ -49,7 +49,7 @@ describe('Catalog Page Component Dialog', function () {
         browser.url(`${page_properties}?item=${encodeURIComponent(`${catalog_page}`)}`);
 
         // Open Commerce tab
-        let commerceTab = $('coral-tab-label=Commerce');
+        let commerceTab = $('coral-tab-label=Commerce123');
         expect(commerceTab).toBeDisplayed();
         commerceTab.click();
 
