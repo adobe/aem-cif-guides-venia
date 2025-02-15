@@ -79,6 +79,8 @@ jobs:
     executor: cif_executor
     working_directory: /home/circleci/build
     steps:
+      - node/install:
+          node-version: '12.14.1'
       - browser-tools/install-browser-tools
       - checkout
       - restore_cache:
