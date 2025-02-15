@@ -60,7 +60,7 @@ common:
 executors:
   cif_executor:
     docker:
-      - image: cimg/openjdk:15.0-browsers
+      - image: circleci/openjdk:11-stretch-node-browsers
   test_executor_cloudready:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
@@ -79,7 +79,6 @@ jobs:
     executor: cif_executor
     working_directory: /home/circleci/build
     steps:
-      - browser-tools/install-browser-tools
       - checkout
       - restore_cache:
           keys:
