@@ -82,7 +82,6 @@ jobs:
     steps:
       - node/install:
           node-version: '12.14.1'
-      - browser-tools/install-browser-tools
       - checkout
       - restore_cache:
           keys:
