@@ -51,9 +51,9 @@
                     <group>com.adobe.aem.guides</group>
                     <name>aem-cif-guides-venia.all</name>
                     <packageType>container</packageType>
+                    <allowIndexDefinitions>true</allowIndexDefinitions>
                     <properties>
                         <cloudManagerTarget>all</cloudManagerTarget>
-                        <allowIndexDefinitions>true</allowIndexDefinitions>
                     </properties>
                     <embeddeds>
                         <embedded>
