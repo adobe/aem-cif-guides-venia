@@ -53,6 +53,7 @@
                     <packageType>container</packageType>
                     <properties>
                         <cloudManagerTarget>all</cloudManagerTarget>
+                        <allowIndexDefinitions>true</allowIndexDefinitions>
                     </properties>
                     <embeddeds>
                         <embedded>
