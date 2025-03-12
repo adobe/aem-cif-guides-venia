@@ -3,4 +3,7 @@
     <filter root="/apps/venia/clientlibs"/>
     <filter root="/apps/venia/components"/>
     <filter root="/apps/venia/i18n"/>
+
+    <!-- Index for cif cache -->
+    <filter root="/oak:index/cifCacheInvalidationSupport" />
 </workspaceFilter>
