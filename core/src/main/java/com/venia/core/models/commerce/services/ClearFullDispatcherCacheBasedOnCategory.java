@@ -16,15 +16,15 @@ package com.venia.core.models.commerce.services;
 
 import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
 import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationStrategy;
-import com.adobe.cq.commerce.graphql.client.GraphqlClient;
-import com.adobe.cq.commerce.graphql.client.GraphqlRequest;
+import com.adobe.cq.commerce.core.components.client.MagentoGraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.magento.graphql.*;
-import com.google.gson.reflect.TypeToken;
+import com.adobe.cq.commerce.magento.graphql.gson.Error;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
-import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.sling.api.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  * This service invalidates the entire store cache when category changes affect the navigation structure.
  */
 @Component(
-    service = DispatcherCacheInvalidationStrategy.class,
-    property = {"invalidateRequestParameter=categoryUids" })
+    service = DispatcherCacheInvalidationStrategy.class)
 public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheInvalidationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClearFullDispatcherCacheBasedOnCategory.class);
@@ -44,9 +43,7 @@ public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheI
     private static final String HEADER_FRAGMENT_PATH = "/content/experience-fragments/venia/us/en/site/header/master";
     private static final String NAVIGATION_NODE_PATH = "jcr:content/root/navigation";
     private static final String STRUCTURE_DEPTH_PROPERTY = "structureDepth";
-    private static final String CATEGORY_LIST_KEY = "categoryList";
     private static final String LEVEL_KEY = "level";
-    private static final String ITEMS_KEY = "items";
 
     @Override
     public String getPattern() {
@@ -54,35 +51,40 @@ public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheI
     }
 
     @Override
-    public String[] getPathsToInvalidate(DispatcherCacheInvalidationContext context) {
+    public String getInvalidationRequestType() {
+        return "categoryUids";
+    }
+
+    @Override
+    public List<String> getPathsToInvalidate(DispatcherCacheInvalidationContext context) {
         if (context == null) {
             LOGGER.warn("Context is null when getting paths to invalidate");
-            return new String[0];
+            return Collections.emptyList();
         }
 
         // Get navigation structure depth from configuration
         Integer navigationStructureDepth = getNavigationStructureDepth(context.getResourceResolver());
         if (navigationStructureDepth == null) {
-            return new String[0];
+            return Collections.emptyList();
         }
 
         // Extract and validate category UIDs
         String[] categoryUids = extractCategoryUidsFromContext(context);
         if (!isValidCategoryUids(categoryUids)) {
-            return new String[0];
+            return Collections.emptyList();
         }
 
         // Fetch category data and determine if cache invalidation is needed
         List<Map<String, Object>> categories = fetchCategoryData(context, categoryUids);
         if (categories.isEmpty()) {
-            return new String[0];
+            return Collections.emptyList();
         }
-        
+
         if (shouldInvalidateFullCache(categories, navigationStructureDepth)) {
-            return new String[] { context.getStorePath() };
+            return Collections.singletonList(context.getStorePath());
         }
-        
-        return new String[0];
+
+        return Collections.emptyList();
     }
 
     /**
@@ -97,8 +99,8 @@ public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheI
             return new String[0];
         }
 
-        Map.Entry<String, String[]> attributeData = context.getAttributeData();
-        return attributeData != null ? attributeData.getValue() : new String[0];
+        List<String> attributeData = context.getAttributeData();
+        return attributeData != null ? attributeData.toArray(new String[0]) : new String[0];
     }
 
     /**
@@ -120,56 +122,39 @@ public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheI
             return Collections.emptyList();
         }
 
-        Map<String, Object> responseData = executeGraphqlQuery(context.getGraphqlClient(), query);
-        List<Map<String, Object>> categories = extractCategoriesFromResponse(responseData);
-
-        if (categories.isEmpty()) {
-            LOGGER.debug("No categories found for UIDs: {}", (Object) categoryUids);
+        Query data = getGraphqlResponseData(context.getGraphqlClient(), query);
+        if (data == null) {
+            return Collections.emptyList();
         }
 
-        return categories;
+        List<CategoryTree> categories = data.getCategoryList();
+        if (categories == null || categories.isEmpty()) {
+            LOGGER.debug("No categories found for UIDs: {}", (Object) categoryUids);
+            return Collections.emptyList();
+        }
+
+        return categories.stream()
+                .map(category -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("uid", category.getUid());
+                    map.put(LEVEL_KEY, category.getLevel());
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Executes a GraphQL query and returns the response data.
-     *
-     * @param client The GraphQL client
-     * @param query The GraphQL query to execute
-     * @return The response data as a map
-     */
-    private Map<String, Object> executeGraphqlQuery(GraphqlClient client, String query) {
+    protected Query getGraphqlResponseData(MagentoGraphqlClient client, String query) {
         if (client == null || query == null) {
-            LOGGER.warn("Invalid parameters for executing GraphQL query");
-            return Collections.emptyMap();
+            return null;
         }
 
-        try {
-            GraphqlRequest request = new GraphqlRequest(query);
-            Type typeOfT = new TypeToken<Map<String, Object>>() {}.getType();
-            Type typeOfU = new TypeToken<Map<String, Object>>() {}.getType();
-            GraphqlResponse<Map<String, Object>, Map<String, Object>> response = client.execute(request, typeOfT, typeOfU);
+        GraphqlResponse<com.adobe.cq.commerce.magento.graphql.Query, Error> response = client.execute(query);
 
-            if (response == null) {
-                LOGGER.warn("Null response received from GraphQL query");
-                return Collections.emptyMap();
-            }
-
-            if (response.getErrors() != null && !response.getErrors().isEmpty()) {
-                LOGGER.warn("GraphQL query returned errors: {}", response.getErrors());
-                return Collections.emptyMap();
-            }
-
-            Map<String, Object> data = response.getData();
-            if (data == null) {
-                LOGGER.warn("No data received from GraphQL query");
-                return Collections.emptyMap();
-            }
-
-            return data;
-        } catch (Exception e) {
-            LOGGER.error("Error executing GraphQL query", e);
-            return Collections.emptyMap();
+        if (response == null || (response.getErrors() != null && !response.getErrors().isEmpty()) || response.getData() == null) {
+            return null;
         }
+
+        return response.getData();
     }
 
     /**
@@ -198,29 +183,6 @@ public class ClearFullDispatcherCacheBasedOnCategory implements DispatcherCacheI
             LOGGER.error("Error building category query", e);
             return null;
         }
-    }
-
-    /**
-     * Extracts categories from the GraphQL response data.
-     *
-     * @param responseData The GraphQL response data
-     * @return List of category data maps
-     */
-    private List<Map<String, Object>> extractCategoriesFromResponse(Map<String, Object> responseData) {
-        if (responseData == null) {
-            return Collections.emptyList();
-        }
-
-        List<Map<String, Object>> items = Optional.ofNullable(responseData)
-                .map(cd -> (List<Map<String, Object>>) cd.get(CATEGORY_LIST_KEY))
-                .filter(list -> list != null && !list.isEmpty())
-                .orElse(Collections.emptyList());
-        if (items.isEmpty()) {
-            LOGGER.debug("No categories found");
-            return Collections.emptyList();
-        }
-
-        return items;
     }
 
     /**
