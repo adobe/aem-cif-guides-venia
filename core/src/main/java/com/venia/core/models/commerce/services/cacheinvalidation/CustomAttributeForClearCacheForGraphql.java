@@ -12,35 +12,25 @@
  *
  ******************************************************************************/
 
-package com.venia.core.models.commerce.services;
+package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationStrategy;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationStrategy;
 import org.osgi.service.component.annotations.Component;
-import java.util.*;
 
 /**
- * Strategy implementation for clearing the dispatcher cache based on custom attribute.
+ * Strategy implementation for clearing the graphql cache based on custom attribute.
  */
 @Component(
-        service = DispatcherCacheInvalidationStrategy.class)
-public class CustomAttributeForClearCache implements DispatcherCacheInvalidationStrategy {
+        service = CacheInvalidationStrategy.class)
+public class CustomAttributeForClearCacheForGraphql implements CacheInvalidationStrategy {
 
     @Override
     public String getPattern() {
-        return "\"sku\":\\s*\"";
+        return "\"uid\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
     }
 
     @Override
     public String getInvalidationRequestType() {
-        return "customProductSkus";
+        return "customCategoryUids";
     }
-
-    @Override
-    public List<String> getPathsToInvalidate(DispatcherCacheInvalidationContext context) {
-
-        // Add you custom logic to get the corresponding paths to be invalidated
-        return Collections.emptyList();
-    }
-
 }
