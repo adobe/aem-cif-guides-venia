@@ -2,7 +2,8 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.1.1
-  browser-tools: circleci/browser-tools@1.4.8
+  browser-tools: circleci/browser-tools@1.5.2
+  node: circleci/node@5.0.2
 
 common:
   integration_test_steps: &integration_test_steps
@@ -60,7 +61,7 @@ common:
 executors:
   cif_executor:
     docker:
-      - image: circleci/openjdk:11-stretch-node-browsers
+      - image: cimg/openjdk:11.0-browsers
   test_executor_cloudready:
     docker:
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
@@ -79,6 +80,8 @@ jobs:
     executor: cif_executor
     working_directory: /home/circleci/build
     steps:
+      - node/install:
+          node-version: '12.14.1'
       - checkout
       - restore_cache:
           keys:
