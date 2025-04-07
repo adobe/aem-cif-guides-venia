@@ -31,7 +31,7 @@ import java.util.List;
  * }
  * </pre>
  * 
- * <p>This will invalidate cache entries containing any of the specified UIDs in their "uids" field.</p>
+ * <p>This will invalidate cache entries containing the specified category UIDs.</p>
  */
 @Component(
         service = CacheInvalidationStrategy.class)
