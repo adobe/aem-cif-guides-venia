@@ -106,7 +106,7 @@ describe('Product List Component Dialog', function () {
         expect(fields[6].$('coral-multifield[data-granite-coral-multifield-name="./fragments"]')).toExist();
 
         // close the dialog
-        dialog.$('button.cq-dialog-cancel[icon="close"]').click();
+        dialog.$('button.cq-dialog-cancel').click();
         expect(dialog.isExisting()).toBe(false);
     });
 });

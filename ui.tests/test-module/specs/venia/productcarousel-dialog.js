@@ -153,7 +153,7 @@ describe('Product Carousel Component Dialog', function () {
         expect(fields[7].$('label')).not.toBeDisplayed();
 
         // close the dialog
-        dialog.$('button.cq-dialog-cancel[icon="close"]').click();
+        dialog.$('button.cq-dialog-cancel').click();
         expect(dialog.isExisting()).toBe(false);
     });
 });
