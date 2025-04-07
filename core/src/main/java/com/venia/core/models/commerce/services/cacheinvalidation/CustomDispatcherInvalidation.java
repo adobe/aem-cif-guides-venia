@@ -14,38 +14,46 @@
 
 package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationStrategy;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationContext;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationStrategy;
 import org.osgi.service.component.annotations.Component;
-
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
- * Strategy implementation for clearing the graphql cache based on custom attribute.
+ * Strategy implementation for clearing the dispatcher & graphql cache based on custom attribute.
  * 
  * <p>Example request JSON for cache invalidation:</p>
  * <pre>
  * {
  *   "storePath": "/content/venia/us/en",
- *   "customCategoryUids": ["categoryUid-1", "categoryUid-2", "categoryUid-3"]
+ *   "customProductSkus": ["sku1", "sku2", "sku3"]
  * }
  * </pre>
  * 
- * <p>This will invalidate cache entries containing the specified category UIDs.</p>
+ * <p>This will invalidate the cache for products with the specified SKUs.</p>
  */
 @Component(
-        service = CacheInvalidationStrategy.class)
-public class CustomInvalidateType implements CacheInvalidationStrategy {
+        service = DispatcherCacheInvalidationStrategy.class)
+public class CustomDispatcherInvalidation implements DispatcherCacheInvalidationStrategy {
 
+    // Note: If we are passing null value then it will not clear graphql cache
     @Override
     public List<String> getPatterns(String[] invalidationParameters) {
-        String pattern = "\"uids\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
+        String pattern = "\"sku\":\\s*\"";
         String invalidationParametersString = String.join("|", invalidationParameters);
         return Collections.singletonList(pattern + "(" + invalidationParametersString + ")");
     }
 
     @Override
     public String getInvalidationRequestType() {
-        return "customCategoryUids";
+        return "customProductSkus";
     }
-} 
+
+    @Override
+    public List<String> getPathsToInvalidate(CacheInvalidationContext context) {
+
+        // Add you custom logic to get the corresponding paths to be invalidated
+        return Collections.emptyList();
+    }
+
+}

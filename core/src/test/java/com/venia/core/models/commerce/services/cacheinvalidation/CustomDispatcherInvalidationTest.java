@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class CustomDispatcherInvalidationTest {
 
-    private CustomInvalidation cacheInvalidationStrategy;
+    private CustomDispatcherInvalidation cacheInvalidationStrategy;
 
     @Mock
     private CacheInvalidationContext context;
 
     @BeforeEach
     void setUp() {
-        cacheInvalidationStrategy = new CustomInvalidation();
+        cacheInvalidationStrategy = new CustomDispatcherInvalidation();
     }
 
     @Test
