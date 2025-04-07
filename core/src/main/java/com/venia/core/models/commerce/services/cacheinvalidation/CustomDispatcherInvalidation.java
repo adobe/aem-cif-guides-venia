@@ -45,7 +45,7 @@ public class CustomDispatcherInvalidation implements DispatcherCacheInvalidation
     }
 
     @Override
-    public String getInvalidationRequestType() {
+    public String getInvalidationType() {
         return "customProductSkus";
     }
 

@@ -31,7 +31,7 @@ class CustomDispatcherInvalidationTest {
 
     @Test
     void testGetInvalidationRequestType() {
-        assertEquals("customProductSkus", cacheInvalidationStrategy.getInvalidationRequestType());
+        assertEquals("customProductSkus", cacheInvalidationStrategy.getInvalidationType());
     }
 
     @Test

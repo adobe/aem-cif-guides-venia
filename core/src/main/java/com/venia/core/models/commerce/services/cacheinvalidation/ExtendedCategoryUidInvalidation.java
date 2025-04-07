@@ -51,7 +51,7 @@ public class ExtendedCategoryUidInvalidation implements DispatcherCacheInvalidat
     }
 
     @Override
-    public String getInvalidationRequestType() {
+    public String getInvalidationType() {
         return "categoryUids";
     }
 
