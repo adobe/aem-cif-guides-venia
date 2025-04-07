@@ -14,7 +14,7 @@
 
 package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationContext;
 import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationStrategy;
 import com.adobe.cq.commerce.core.components.client.MagentoGraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
@@ -32,7 +32,7 @@ import org.apache.sling.api.resource.Resource;
  */
 @Component(
     service = DispatcherCacheInvalidationStrategy.class)
-public class ClearFullDispatcherCacheBasedOnExistingCategoryAttribute implements DispatcherCacheInvalidationStrategy {
+public class ExtendsCategoryUidInvalidateType implements DispatcherCacheInvalidationStrategy {
 
     // Constants for navigation structure
     private static final String HEADER_FRAGMENT_PATH = "/content/experience-fragments/venia/us/en/site/header/master";
@@ -40,8 +40,10 @@ public class ClearFullDispatcherCacheBasedOnExistingCategoryAttribute implements
     private static final String STRUCTURE_DEPTH_PROPERTY = "structureDepth";
 
     @Override
-    public String getPattern() {
-        return null;
+    public List<String> getPatterns(String[] parameters) {
+        String pattern = "\"uids\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
+        String invalidateDataString = String.join("|", parameters);
+        return Collections.singletonList(pattern + "(" + invalidateDataString + ")");
     }
 
     @Override
@@ -50,9 +52,9 @@ public class ClearFullDispatcherCacheBasedOnExistingCategoryAttribute implements
     }
 
     @Override
-    public List<String> getPathsToInvalidate(DispatcherCacheInvalidationContext context) {
+    public List<String> getPathsToInvalidate(CacheInvalidationContext context) {
         // Extract and validate category UIDs
-        List<String> categoryUids = context.getAttributeData();
+        List<String> categoryUids = context.getInvalidateTypeData();
         if (categoryUids == null || categoryUids.isEmpty()) {
             return Collections.emptyList();
         }
@@ -81,7 +83,7 @@ public class ClearFullDispatcherCacheBasedOnExistingCategoryAttribute implements
      * @param navigationStructureDepth The navigation structure depth
      * @return true if cache should be invalidated, false otherwise
      */
-    private boolean shouldInvalidateFullCache(DispatcherCacheInvalidationContext context, String[] categoryUids, int navigationStructureDepth) {
+    private boolean shouldInvalidateFullCache(CacheInvalidationContext context, String[] categoryUids, int navigationStructureDepth) {
         String query = buildCategoryQuery(categoryUids);
         Query data = getGraphqlResponseData(context.getGraphqlClient(), query);
         if (data == null || data.getCategoryList() == null) {

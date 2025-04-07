@@ -1,6 +1,6 @@
 package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationContext;
 import com.adobe.cq.commerce.core.components.client.MagentoGraphqlClient;
 import com.adobe.cq.commerce.graphql.client.GraphqlResponse;
 import com.adobe.cq.commerce.magento.graphql.*;
@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -25,12 +23,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ClearFullDispatcherCacheBasedOnExistingCategoryAttributeTest {
+class ExtendsCategoryUidInvalidateTypeTest {
 
     private static final String TEST_STORE_PATH = "/content/venia/us/en";
     private static final String HEADER_FRAGMENT_PATH = "/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/navigation";
 
-    @Mock private DispatcherCacheInvalidationContext context;
+    @Mock private CacheInvalidationContext context;
     @Mock private MagentoGraphqlClient graphqlClient;
     @Mock private Page page;
 
@@ -44,17 +42,17 @@ class ClearFullDispatcherCacheBasedOnExistingCategoryAttributeTest {
     @Mock private CategoryTree categoryTree;
     @Mock private CategoryTree categoryTree2;
 
-    private ClearFullDispatcherCacheBasedOnExistingCategoryAttribute strategy;
+    private ExtendsCategoryUidInvalidateType strategy;
 
     @BeforeEach
     void setUp() {
-        strategy = new ClearFullDispatcherCacheBasedOnExistingCategoryAttribute();
+        strategy = new ExtendsCategoryUidInvalidateType();
     }
 
     private void mockRequiredStuffs() {
         when(context.getResourceResolver()).thenReturn(resourceResolver);
         when(context.getGraphqlClient()).thenReturn(graphqlClient);
-        when(context.getAttributeData()).thenReturn(Collections.singletonList("category1"));
+        when(context.getInvalidateTypeData()).thenReturn(Collections.singletonList("category1"));
         when(resourceResolver.getResource(HEADER_FRAGMENT_PATH)).thenReturn(headerResource);
         when(headerResource.getValueMap()).thenReturn(valueMap);
         when(valueMap.get("structureDepth", Integer.class)).thenReturn(2);
@@ -62,7 +60,7 @@ class ClearFullDispatcherCacheBasedOnExistingCategoryAttributeTest {
 
     @Test
     void shouldHandleInvalidScenarios() {
-        when(context.getAttributeData()).thenReturn(Collections.emptyList());
+        when(context.getInvalidateTypeData()).thenReturn(Collections.emptyList());
         List<String> result = strategy.getPathsToInvalidate(context);
         assertEquals(0, result.size());
     }
@@ -71,7 +69,7 @@ class ClearFullDispatcherCacheBasedOnExistingCategoryAttributeTest {
     void navigationStructureDepthBeenNotSet() {
         when(context.getResourceResolver()).thenReturn(resourceResolver);
         when(resourceResolver.getResource(HEADER_FRAGMENT_PATH)).thenReturn(null);
-        when(context.getAttributeData()).thenReturn(Collections.singletonList("category1"));
+        when(context.getInvalidateTypeData()).thenReturn(Collections.singletonList("category1"));
         List<String> result = strategy.getPathsToInvalidate(context);
         assertEquals(0, result.size());
     }

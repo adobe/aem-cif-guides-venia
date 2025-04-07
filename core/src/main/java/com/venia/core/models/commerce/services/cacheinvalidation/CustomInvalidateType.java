@@ -17,20 +17,25 @@ package com.venia.core.models.commerce.services.cacheinvalidation;
 import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationStrategy;
 import org.osgi.service.component.annotations.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Strategy implementation for clearing the graphql cache based on custom attribute.
  */
 @Component(
         service = CacheInvalidationStrategy.class)
-public class CustomAttributeForClearCacheForGraphql implements CacheInvalidationStrategy {
+public class CustomInvalidateType implements CacheInvalidationStrategy {
 
     @Override
-    public String getPattern() {
-        return "\"uid\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
+    public List<String> getPatterns(String[] parameters) {
+        String pattern = "\"uids\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
+        String invalidateDataString = String.join("|", parameters);
+        return Collections.singletonList(pattern + "(" + invalidateDataString + ")");
     }
 
     @Override
     public String getInvalidationRequestType() {
         return "customCategoryUids";
     }
-}
+} 

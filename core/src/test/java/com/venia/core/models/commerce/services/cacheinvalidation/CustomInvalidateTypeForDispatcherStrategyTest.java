@@ -1,6 +1,6 @@
 package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,21 +12,21 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class CustomAttributeForClearCacheForGraphqlAndDispatcherTest {
+class CustomInvalidateTypeForDispatcherStrategyTest {
 
-    private CustomAttributeForClearCacheForGraphqlAndDispatcher cacheInvalidationStrategy;
+    private CustomInvalidateTypeForDispatcherStrategy cacheInvalidationStrategy;
 
     @Mock
-    private DispatcherCacheInvalidationContext context;
+    private CacheInvalidationContext context;
 
     @BeforeEach
     void setUp() {
-        cacheInvalidationStrategy = new CustomAttributeForClearCacheForGraphqlAndDispatcher();
+        cacheInvalidationStrategy = new CustomInvalidateTypeForDispatcherStrategy();
     }
 
     @Test
     void testGetPattern() {
-        assertEquals("\"sku\":\\s*\"", cacheInvalidationStrategy.getPattern());
+        assertEquals("\"sku\":\\s*\"(sku1)", cacheInvalidationStrategy.getPatterns(new String[]{"sku1"}).get(0));
     }
 
     @Test

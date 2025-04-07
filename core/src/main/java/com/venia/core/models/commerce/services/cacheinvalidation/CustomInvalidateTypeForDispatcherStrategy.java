@@ -14,7 +14,7 @@
 
 package com.venia.core.models.commerce.services.cacheinvalidation;
 
-import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationContext;
+import com.adobe.cq.commerce.core.cacheinvalidation.spi.CacheInvalidationContext;
 import com.adobe.cq.commerce.core.cacheinvalidation.spi.DispatcherCacheInvalidationStrategy;
 import org.osgi.service.component.annotations.Component;
 import java.util.*;
@@ -24,12 +24,14 @@ import java.util.*;
  */
 @Component(
         service = DispatcherCacheInvalidationStrategy.class)
-public class CustomAttributeForClearCacheForGraphqlAndDispatcher implements DispatcherCacheInvalidationStrategy {
+public class CustomInvalidateTypeForDispatcherStrategy implements DispatcherCacheInvalidationStrategy {
 
     // Note: If we are passing null value then it will not clear graphql cache
     @Override
-    public String getPattern() {
-        return "\"sku\":\\s*\"";
+    public List<String> getPatterns(String[] parameters) {
+        String pattern = "\"sku\":\\s*\"";
+        String invalidateTypeString = String.join("|", parameters);
+        return Collections.singletonList(pattern + "(" + invalidateTypeString + ")");
     }
 
     @Override
@@ -38,7 +40,7 @@ public class CustomAttributeForClearCacheForGraphqlAndDispatcher implements Disp
     }
 
     @Override
-    public List<String> getPathsToInvalidate(DispatcherCacheInvalidationContext context) {
+    public List<String> getPathsToInvalidate(CacheInvalidationContext context) {
 
         // Add you custom logic to get the corresponding paths to be invalidated
         return Collections.emptyList();
