@@ -27,12 +27,16 @@ import java.util.*;
 import org.apache.sling.api.resource.Resource;
 
 /**
- * Strategy implementation for clearing the dispatcher cache based on category changes.
- * This service invalidates the entire store cache when category changes affect the navigation structure.
+ * Extended implementation of the categoryUids cache invalidation strategy that builds upon the out-of-the-box functionality.
+ * This service extends the standard category invalidation by:
+ * - Adding support for navigation structure depth-based invalidation
+ * - Apart from the existing categoryUids invalidation, this service will invalidates the entire store cache when category falls under the navigation structure depth.
+ * 
+ * The service invalidates the entire store cache when category falls under the navigation structure depth.
  */
 @Component(
     service = DispatcherCacheInvalidationStrategy.class)
-public class ExtendsCategoryUidInvalidateType implements DispatcherCacheInvalidationStrategy {
+public class ExtendedCategoryUidInvalidation implements DispatcherCacheInvalidationStrategy {
 
     // Constants for navigation structure
     private static final String HEADER_FRAGMENT_PATH = "/content/experience-fragments/venia/us/en/site/header/master";
@@ -40,10 +44,10 @@ public class ExtendsCategoryUidInvalidateType implements DispatcherCacheInvalida
     private static final String STRUCTURE_DEPTH_PROPERTY = "structureDepth";
 
     @Override
-    public List<String> getPatterns(String[] parameters) {
+    public List<String> getPatterns(String[] invalidationParameters) {
         String pattern = "\"uids\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
-        String invalidateDataString = String.join("|", parameters);
-        return Collections.singletonList(pattern + "(" + invalidateDataString + ")");
+        String invalidationParametersString = String.join("|", invalidationParameters);
+        return Collections.singletonList(pattern + "(" + invalidationParametersString + ")");
     }
 
     @Override
@@ -54,7 +58,7 @@ public class ExtendsCategoryUidInvalidateType implements DispatcherCacheInvalida
     @Override
     public List<String> getPathsToInvalidate(CacheInvalidationContext context) {
         // Extract and validate category UIDs
-        List<String> categoryUids = context.getInvalidateTypeData();
+        List<String> categoryUids = context.getInvalidationParameters();
         if (categoryUids == null || categoryUids.isEmpty()) {
             return Collections.emptyList();
         }

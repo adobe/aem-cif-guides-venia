@@ -22,16 +22,26 @@ import java.util.List;
 
 /**
  * Strategy implementation for clearing the graphql cache based on custom attribute.
+ * 
+ * <p>Example request JSON for cache invalidation:</p>
+ * <pre>
+ * {
+ *   "storePath": "/content/venia/us/en",
+ *   "customCategoryUids": ["categoryUid-1", "categoryUid-2", "categoryUid-3"]
+ * }
+ * </pre>
+ * 
+ * <p>This will invalidate cache entries containing any of the specified UIDs in their "uids" field.</p>
  */
 @Component(
         service = CacheInvalidationStrategy.class)
 public class CustomInvalidateType implements CacheInvalidationStrategy {
 
     @Override
-    public List<String> getPatterns(String[] parameters) {
+    public List<String> getPatterns(String[] invalidationParameters) {
         String pattern = "\"uids\"\\s*:\\s*\\{\"id\"\\s*:\\s*\"";
-        String invalidateDataString = String.join("|", parameters);
-        return Collections.singletonList(pattern + "(" + invalidateDataString + ")");
+        String invalidationParametersString = String.join("|", invalidationParameters);
+        return Collections.singletonList(pattern + "(" + invalidationParametersString + ")");
     }
 
     @Override

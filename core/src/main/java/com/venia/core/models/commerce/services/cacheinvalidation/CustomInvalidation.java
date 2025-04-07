@@ -21,17 +21,27 @@ import java.util.*;
 
 /**
  * Strategy implementation for clearing the dispatcher & graphql cache based on custom attribute.
+ * 
+ * <p>Example request JSON for cache invalidation:</p>
+ * <pre>
+ * {
+ *   "storePath": "/content/venia/us/en",
+ *   "customProductSkus": ["sku1", "sku2", "sku3"]
+ * }
+ * </pre>
+ * 
+ * <p>This will invalidate the cache for products with the specified SKUs.</p>
  */
 @Component(
         service = DispatcherCacheInvalidationStrategy.class)
-public class CustomInvalidateTypeForDispatcherStrategy implements DispatcherCacheInvalidationStrategy {
+public class CustomInvalidation implements DispatcherCacheInvalidationStrategy {
 
     // Note: If we are passing null value then it will not clear graphql cache
     @Override
-    public List<String> getPatterns(String[] parameters) {
+    public List<String> getPatterns(String[] invalidationParameters) {
         String pattern = "\"sku\":\\s*\"";
-        String invalidateTypeString = String.join("|", parameters);
-        return Collections.singletonList(pattern + "(" + invalidateTypeString + ")");
+        String invalidationParametersString = String.join("|", invalidationParameters);
+        return Collections.singletonList(pattern + "(" + invalidationParametersString + ")");
     }
 
     @Override

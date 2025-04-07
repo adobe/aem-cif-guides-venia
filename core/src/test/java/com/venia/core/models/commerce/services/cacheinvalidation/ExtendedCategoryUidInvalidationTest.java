@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ExtendsCategoryUidInvalidateTypeTest {
+class ExtendedCategoryUidInvalidationTest {
 
     private static final String TEST_STORE_PATH = "/content/venia/us/en";
     private static final String HEADER_FRAGMENT_PATH = "/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/navigation";
@@ -42,17 +42,17 @@ class ExtendsCategoryUidInvalidateTypeTest {
     @Mock private CategoryTree categoryTree;
     @Mock private CategoryTree categoryTree2;
 
-    private ExtendsCategoryUidInvalidateType strategy;
+    private ExtendedCategoryUidInvalidation strategy;
 
     @BeforeEach
     void setUp() {
-        strategy = new ExtendsCategoryUidInvalidateType();
+        strategy = new ExtendedCategoryUidInvalidation();
     }
 
     private void mockRequiredStuffs() {
         when(context.getResourceResolver()).thenReturn(resourceResolver);
         when(context.getGraphqlClient()).thenReturn(graphqlClient);
-        when(context.getInvalidateTypeData()).thenReturn(Collections.singletonList("category1"));
+        when(context.getInvalidationParameters()).thenReturn(Collections.singletonList("category1"));
         when(resourceResolver.getResource(HEADER_FRAGMENT_PATH)).thenReturn(headerResource);
         when(headerResource.getValueMap()).thenReturn(valueMap);
         when(valueMap.get("structureDepth", Integer.class)).thenReturn(2);
@@ -60,7 +60,7 @@ class ExtendsCategoryUidInvalidateTypeTest {
 
     @Test
     void shouldHandleInvalidScenarios() {
-        when(context.getInvalidateTypeData()).thenReturn(Collections.emptyList());
+        when(context.getInvalidationParameters()).thenReturn(Collections.emptyList());
         List<String> result = strategy.getPathsToInvalidate(context);
         assertEquals(0, result.size());
     }
@@ -69,7 +69,7 @@ class ExtendsCategoryUidInvalidateTypeTest {
     void navigationStructureDepthBeenNotSet() {
         when(context.getResourceResolver()).thenReturn(resourceResolver);
         when(resourceResolver.getResource(HEADER_FRAGMENT_PATH)).thenReturn(null);
-        when(context.getInvalidateTypeData()).thenReturn(Collections.singletonList("category1"));
+        when(context.getInvalidationParameters()).thenReturn(Collections.singletonList("category1"));
         List<String> result = strategy.getPathsToInvalidate(context);
         assertEquals(0, result.size());
     }

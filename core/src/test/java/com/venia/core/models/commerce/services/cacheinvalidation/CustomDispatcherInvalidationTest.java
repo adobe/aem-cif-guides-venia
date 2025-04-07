@@ -12,16 +12,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class CustomInvalidateTypeForDispatcherStrategyTest {
+class CustomDispatcherInvalidationTest {
 
-    private CustomInvalidateTypeForDispatcherStrategy cacheInvalidationStrategy;
+    private CustomInvalidation cacheInvalidationStrategy;
 
     @Mock
     private CacheInvalidationContext context;
 
     @BeforeEach
     void setUp() {
-        cacheInvalidationStrategy = new CustomInvalidateTypeForDispatcherStrategy();
+        cacheInvalidationStrategy = new CustomInvalidation();
     }
 
     @Test
