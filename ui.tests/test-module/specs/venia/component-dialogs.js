@@ -158,6 +158,9 @@ describe('Component Dialogs', function () {
 
     it('opens the releated products dialog', () => {
         addComponentToPage('Related Products');
+        browser.pause(2000); // Wait for 2 seconds (adjust as needed)
+        browser.refresh();
+        browser.AEMEditorLoaded(); // Ensure the editor is fully loaded after refresh
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
         expect(
