@@ -88,7 +88,6 @@ describe('Component Dialogs', function () {
         expect(carouselCmp).toBeDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         carouselCmp.dragAndDrop(dropTarget, 1000);
-        browser.saveScreenshot(path.join(screenshotFolder, 'after-dragging-componentasd.png'));
     };
 
     const openComponentDialog = (node, trackingId) => {
