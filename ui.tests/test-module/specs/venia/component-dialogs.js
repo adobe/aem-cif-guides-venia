@@ -86,6 +86,7 @@ describe('Component Dialogs', function () {
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
         expect(carouselCmp).toBeDisplayed();
+        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         carouselCmp.dragAndDrop(dropTarget, 1000);
         browser.saveScreenshot(path.join(screenshotFolder, 'after-dragging-componentasd.png'));
     };
