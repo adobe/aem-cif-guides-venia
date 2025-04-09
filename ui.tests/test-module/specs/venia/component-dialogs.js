@@ -83,30 +83,23 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        // Check if we need to search for the component (only for 'Related Products' or 'Search Results')
-        let searchQuery = '';
-
         if (name === 'Related Products') {
-            searchQuery = 'related'; // Search for "related" if the component is Related Products
-        } else if (name === 'Search Results') {
-            searchQuery = 'search'; // Search for "search" if the component is Search Results
-        }
+            const scrollablePanel = $('div.content-panel.editor-SidePanel-results');
 
-        // If search query is defined, search in the search bar
-        if (searchQuery) {
-            const searchInput = $('input[data-editor-searchfilter-search]');
-            searchInput.setValue(searchQuery); // Type the specific search term ("related" or "search")
-            browser.pause(500); // Wait for the search to process
+            // Scroll the component list until the bottom
+            browser.execute(function (element) {
+                element.scrollTop = element.scrollHeight;
+            }, scrollablePanel);
 
-            // Optionally, you can take a screenshot to verify the search results
-            browser.saveScreenshot('./reports/screenshots/filtered-components.png');
+            // Save a screenshot after scrolling
+            browser.saveScreenshot(path.join(screenshotFolder, 'filtered-components.png'));
+
+            browser.pause(1000); // Wait for a second to ensure the scroll completes
         }
 
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
-        if (name === 'Related Products' || name === 'Search Results') {
-            browser.saveScreenshot('./reports/screenshots/drag-component.png');
-        }
+
         expect(carouselCmp).toBeDisplayed();
 
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
@@ -114,17 +107,6 @@ describe('Component Dialogs', function () {
     };
 
     const openComponentDialog = (node, trackingId) => {
-        browser.pause(3000);
-
-        // Take a screenshot only if the trackingId matches "Related Products" or "Search Results"
-        if (
-            trackingId === 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1' ||
-            trackingId === 'aem:sites:components:dialogs:cif-core-components:searchresults:v2'
-        ) {
-            browser.saveScreenshot('./reports/screenshots/crx-de-verification.png');
-        }
-        // Log the CRX/DE path for debugging
-        // Open component dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
         cmpPlaceholder.click();
