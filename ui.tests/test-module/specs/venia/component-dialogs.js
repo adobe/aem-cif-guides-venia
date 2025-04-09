@@ -85,8 +85,11 @@ describe('Component Dialogs', function () {
 
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
-        browser.saveScreenshot('./reports/screenshots/drag-component.png');
+        if (name === 'Related Products' || name === 'Search Results') {
+            browser.saveScreenshot('./reports/screenshots/drag-component.png');
+        }
         expect(carouselCmp).toBeDisplayed();
+
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         carouselCmp.dragAndDrop(dropTarget, 1000);
     };
@@ -94,9 +97,13 @@ describe('Component Dialogs', function () {
     const openComponentDialog = (node, trackingId) => {
         browser.pause(3000);
 
-        // Take a screenshot for verification
-        browser.saveScreenshot('./reports/screenshots/crx-de-verification.png');
-
+        // Take a screenshot only if the trackingId matches "Related Products" or "Search Results"
+        if (
+            trackingId === 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1' ||
+            trackingId === 'aem:sites:components:dialogs:cif-core-components:searchresults:v2'
+        ) {
+            browser.saveScreenshot('./reports/screenshots/crx-de-verification.png');
+        }
         // Log the CRX/DE path for debugging
         // Open component dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
