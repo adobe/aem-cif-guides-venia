@@ -166,7 +166,7 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    const addRelatedProductsComponent = () => {
+    const addComponentsToPage = componentName => {
         // Open the page editor
         browser.url(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
@@ -183,9 +183,8 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        const name = 'Related Products';
-        const relatedProductsCmp = $(`div[data-title="${name}"]`); // Use backticks for template literals
-        // Scroll the component into view
+        // Use the passed component name (instead of hardcoding "Related Products")
+        const relatedProductsCmp = $(`div[data-title="${componentName}"]`); // Use template literal with the dynamic name
         relatedProductsCmp.scrollIntoView();
 
         // Pause briefly to ensure that scrolling completes
@@ -193,22 +192,21 @@ describe('Component Dialogs', function () {
 
         // Check if the component is displayed after scrolling
         expect(relatedProductsCmp).toBeDisplayed();
-        // Find the "Related Products" component
 
+        // Take a screenshot of the component list
         browser.saveScreenshot('./reports/screenshots/filtered-components.png');
 
         // Scroll the component list if necessary
-
         browser.pause(1000); // Wait for scroll
 
-        // Ensure the "Related Products" component is visible and drag it to the page
+        // Ensure the selected component is visible and drag it to the page
         relatedProductsCmp.waitForDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         relatedProductsCmp.dragAndDrop(dropTarget, 1000);
     };
 
     it('opens the releated products dialog', () => {
-        addRelatedProductsComponent();
+        addComponentsToPage('Related Products');
 
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
@@ -248,7 +246,7 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the searchresults dialog', () => {
-        addComponentToPage('Search Results');
+        addComponentsToPage('Search Results');
         openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
