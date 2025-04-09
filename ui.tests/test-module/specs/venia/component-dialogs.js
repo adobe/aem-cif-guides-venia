@@ -166,7 +166,7 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    const addRelatedProductsComponent = () => {
+    const addRelatedProductsComponent = (name) => {
         // Open the page editor
         browser.url(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
@@ -183,7 +183,7 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value='Venia - Commerce']`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText('Venia - Commerce');
 
-        const relatedProductsCmp = $('div[data-title="Related Products"]');
+        const relatedProductsCmp = $(`div[data-title="${name}"]`);
         // Scroll the component into view
         relatedProductsCmp.scrollIntoView();
 
@@ -207,7 +207,7 @@ describe('Component Dialogs', function () {
     };
 
     it('opens the releated products dialog', () => {
-        addRelatedProductsComponent();
+        addRelatedProductsComponent('Related Products');
 
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
