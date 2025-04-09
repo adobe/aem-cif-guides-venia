@@ -183,8 +183,7 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value='Venia - Commerce']`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText('Venia - Commerce');
 
-        const relatedProductsCmp = $('div[data-title='Related Products']');
-
+        const relatedProductsCmp = $('div[data-title="Related Products"]');
         // Scroll the component into view
         relatedProductsCmp.scrollIntoView();
 
