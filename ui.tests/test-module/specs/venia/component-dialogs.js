@@ -92,43 +92,6 @@ describe('Component Dialogs', function () {
         carouselCmp.dragAndDrop(dropTarget, 1000);
     };
 
-    const addRelatedProductsComponent = () => {
-        // Open the page editor
-        browser.url(`${editor_page}${testing_page}.html`);
-        browser.AEMEditorLoaded();
-        browser.EditorOpenSidePanel();
-
-        // Open the Components tab
-        $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
-
-        // Filter for Commerce components
-        $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
-
-        // Wait for and select "Venia - Commerce" group
-        $(`coral-selectlist-item[value="Venia - Commerce"]`).waitAndClick();
-        expect($('#components-filter coral-select [handle=label]')).toHaveText('Venia - Commerce');
-
-        // Find the "Related Products" component
-        const relatedProductsCmp = $(
-            `div[data-path="/apps/venia/components/commerce/relatedproducts"][data-title="Related Products"]`
-        );
-        expect(relatedProductsCmp).toBeDisplayed();
-
-        // Scroll the component list if necessary
-        const scrollablePanel = $('div.content-panel.editor-SidePanel-results');
-        browser.execute(function (element) {
-            element.scrollTop = element.scrollHeight;
-        }, scrollablePanel);
-
-        browser.pause(1000); // Wait for scroll
-
-        // Ensure the "Related Products" component is visible and drag it to the page
-        relatedProductsCmp.waitForDisplayed();
-        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        relatedProductsCmp.dragAndDrop(dropTarget, 1000);
-    };
-
     const openComponentDialog = (node, trackingId) => {
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
@@ -204,7 +167,8 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the releated products dialog', () => {
-        addRelatedProductsComponent();
+        addComponentToPage('Related Products');
+
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
         expect(
