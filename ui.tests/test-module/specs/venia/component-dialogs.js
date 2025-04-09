@@ -83,20 +83,6 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        if (name === 'Related Products') {
-            const scrollablePanel = $('div.content-panel.editor-SidePanel-results');
-
-            // Scroll the component list until the bottom
-            browser.execute(function (element) {
-                element.scrollTop = element.scrollHeight;
-            }, scrollablePanel);
-
-            // Save a screenshot after scrolling
-            browser.saveScreenshot(path.join(screenshotFolder, 'filtered-components.png'));
-
-            browser.pause(1000); // Wait for a second to ensure the scroll completes
-        }
-
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
 
@@ -104,6 +90,43 @@ describe('Component Dialogs', function () {
 
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         carouselCmp.dragAndDrop(dropTarget, 1000);
+    };
+
+    const addRelatedProductsComponent = () => {
+        // Open the page editor
+        browser.url(`${editor_page}${testing_page}.html`);
+        browser.AEMEditorLoaded();
+        browser.EditorOpenSidePanel();
+
+        // Open the Components tab
+        $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
+
+        // Filter for Commerce components
+        $('#components-filter coral-select button').waitAndClick();
+        browser.pause(200);
+
+        // Wait for and select "Venia - Commerce" group
+        $(`coral-selectlist-item[value="Venia - Commerce"]`).waitAndClick();
+        expect($('#components-filter coral-select [handle=label]')).toHaveText('Venia - Commerce');
+
+        // Find the "Related Products" component
+        const relatedProductsCmp = $(
+            `div[data-path="/apps/venia/components/commerce/relatedproducts"][data-title="Related Products"]`
+        );
+        expect(relatedProductsCmp).toBeDisplayed();
+
+        // Scroll the component list if necessary
+        const scrollablePanel = $('div.content-panel.editor-SidePanel-results');
+        browser.execute(function (element) {
+            element.scrollTop = element.scrollHeight;
+        }, scrollablePanel);
+
+        browser.pause(1000); // Wait for scroll
+
+        // Ensure the "Related Products" component is visible and drag it to the page
+        relatedProductsCmp.waitForDisplayed();
+        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
+        relatedProductsCmp.dragAndDrop(dropTarget, 1000);
     };
 
     const openComponentDialog = (node, trackingId) => {
@@ -181,10 +204,7 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the releated products dialog', () => {
-        addComponentToPage('Related Products');
-        browser.pause(2000); // Wait for 2 seconds (adjust as needed)
-        browser.refresh();
-        browser.AEMEditorLoaded(); // Ensure the editor is fully loaded after refresh
+        addRelatedProductsComponent();
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
         expect(
