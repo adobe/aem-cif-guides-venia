@@ -166,7 +166,7 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    const addRelatedProductsComponent = (name) => {
+    const addRelatedProductsComponent = (name, group = 'Venia - Commerce') => {
         // Open the page editor
         browser.url(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
@@ -179,9 +179,8 @@ describe('Component Dialogs', function () {
         $('#components-filter coral-select button').waitAndClick();
         browser.pause(200);
 
-        // Wait for and select "Venia - Commerce" group
-        $('coral-selectlist-item[value='Venia - Commerce']').waitAndClick();
-        expect($('#components-filter coral-select [handle=label]')).toHaveText('Venia - Commerce');
+        $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
+        expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
         const relatedProductsCmp = $('div[data-title="${name}"]');
         // Scroll the component into view
