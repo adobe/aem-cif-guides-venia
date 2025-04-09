@@ -85,19 +85,13 @@ describe('Component Dialogs', function () {
 
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
+        browser.saveScreenshot('./reports/screenshots/drag-component.png');
         expect(carouselCmp).toBeDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
         carouselCmp.dragAndDrop(dropTarget, 1000);
     };
 
     const openComponentDialog = (node, trackingId) => {
-        // Define the CRX/DE path dynamically
-        const crxPath = `${testing_page}/jcr:content/root/container/container/${node}`;
-
-        // Navigate to the CRX/DE path
-        browser.url(`${config.aem.author.base_url}/crx/de/index.jsp#${crxPath}`);
-
-        // Wait for CRX/DE to load
         browser.pause(3000);
 
         // Take a screenshot for verification
