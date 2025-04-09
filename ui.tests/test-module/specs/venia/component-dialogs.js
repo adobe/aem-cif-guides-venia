@@ -182,6 +182,7 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
+        const name = 'Related Products';
         const relatedProductsCmp = $('div[data-title="${name}"]');
         // Scroll the component into view
         relatedProductsCmp.scrollIntoView();
