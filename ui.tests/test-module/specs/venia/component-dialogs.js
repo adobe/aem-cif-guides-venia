@@ -16,16 +16,7 @@
 
 const config = require('../../lib/config');
 const { OnboardingDialogHandler, randomString } = require('../../lib/commons');
-const fs = require('fs');
-const path = require('path');
 
-// Define the folder path for screenshots
-const screenshotFolder = path.join(__dirname, '../../reports/screenshots');
-
-// Ensure the folder exists
-if (!fs.existsSync(screenshotFolder)) {
-    fs.mkdirSync(screenshotFolder, { recursive: true });
-}
 describe('Component Dialogs', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
 
