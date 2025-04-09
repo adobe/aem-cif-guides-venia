@@ -83,6 +83,25 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
+        // Check if we need to search for the component (only for 'Related Products' or 'Search Results')
+        let searchQuery = '';
+
+        if (name === 'Related Products') {
+            searchQuery = 'related'; // Search for "related" if the component is Related Products
+        } else if (name === 'Search Results') {
+            searchQuery = 'search'; // Search for "search" if the component is Search Results
+        }
+
+        // If search query is defined, search in the search bar
+        if (searchQuery) {
+            const searchInput = $('input[data-editor-searchfilter-search]');
+            searchInput.setValue(searchQuery); // Type the specific search term ("related" or "search")
+            browser.pause(500); // Wait for the search to process
+
+            // Optionally, you can take a screenshot to verify the search results
+            browser.saveScreenshot('./reports/screenshots/filtered-components.png');
+        }
+
         // Drag category carousel component on page
         const carouselCmp = $(`div[data-title="${name}"]`);
         if (name === 'Related Products' || name === 'Search Results') {
