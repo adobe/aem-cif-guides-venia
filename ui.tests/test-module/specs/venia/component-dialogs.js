@@ -16,16 +16,7 @@
 
 const config = require('../../lib/config');
 const { OnboardingDialogHandler, randomString } = require('../../lib/commons');
-const fs = require('fs');
-const path = require('path');
 
-// Define the folder path for screenshots
-const screenshotFolder = path.join(__dirname, '../../reports/screenshots');
-
-// Ensure the folder exists
-if (!fs.existsSync(screenshotFolder)) {
-    fs.mkdirSync(screenshotFolder, { recursive: true });
-}
 describe('Component Dialogs', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
 
@@ -188,16 +179,10 @@ describe('Component Dialogs', function () {
         relatedProductsCmp.scrollIntoView();
 
         // Pause briefly to ensure that scrolling completes
-        browser.pause(1000);
+        browser.pause(2000);
 
         // Check if the component is displayed after scrolling
         expect(relatedProductsCmp).toBeDisplayed();
-
-        // Take a screenshot of the component list
-        browser.saveScreenshot('./reports/screenshots/filtered-components.png');
-
-        // Scroll the component list if necessary
-        browser.pause(1000); // Wait for scroll
 
         // Ensure the selected component is visible and drag it to the page
         relatedProductsCmp.waitForDisplayed();
