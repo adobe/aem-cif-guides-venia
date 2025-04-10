@@ -61,6 +61,7 @@ describe('Component Dialogs', function () {
     });
 
     const addComponentToPage = (name, group = 'Venia - Commerce') => {
+        // Open the page editor
         browser.url(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
         browser.EditorOpenSidePanel();
@@ -70,17 +71,25 @@ describe('Component Dialogs', function () {
 
         // Filter for Commerce components
         $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
+        browser.pause(2000);
+
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        // Drag category carousel component on page
-        const carouselCmp = $(`div[data-title="${name}"]`);
+        // Use the passed component name (instead of hardcoding "Related Products")
+        const component = $(`div[data-title="${name}"]`); // Use template literal with the dynamic name
+        component.scrollIntoView();
 
-        expect(carouselCmp).toBeDisplayed();
+        // Pause briefly to ensure that scrolling completes
+        browser.pause(2000);
 
+        // Check if the component is displayed after scrolling
+        expect(component).toBeDisplayed();
+
+        // Ensure the selected component is visible and drag it to the page
+        component.waitForDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        carouselCmp.dragAndDrop(dropTarget, 1000);
+        component.dragAndDrop(dropTarget, 1000);
     };
 
     const openComponentDialog = (node, trackingId) => {
@@ -157,41 +166,8 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    const addComponentsToPage = componentName => {
-        // Open the page editor
-        browser.url(`${editor_page}${testing_page}.html`);
-        browser.AEMEditorLoaded();
-        browser.EditorOpenSidePanel();
-
-        // Open the Components tab
-        $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
-
-        // Filter for Commerce components
-        $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
-
-        const group = 'Venia - Commerce';
-        $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
-        expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
-
-        // Use the passed component name (instead of hardcoding "Related Products")
-        const relatedProductsCmp = $(`div[data-title="${componentName}"]`); // Use template literal with the dynamic name
-        relatedProductsCmp.scrollIntoView();
-
-        // Pause briefly to ensure that scrolling completes
-        browser.pause(2000);
-
-        // Check if the component is displayed after scrolling
-        expect(relatedProductsCmp).toBeDisplayed();
-
-        // Ensure the selected component is visible and drag it to the page
-        relatedProductsCmp.waitForDisplayed();
-        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        relatedProductsCmp.dragAndDrop(dropTarget, 1000);
-    };
-
     it('opens the releated products dialog', () => {
-        addComponentsToPage('Related Products');
+        addComponentToPage('Related Products');
 
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
@@ -231,7 +207,7 @@ describe('Component Dialogs', function () {
     });
 
     it('opens the searchresults dialog', () => {
-        addComponentsToPage('Search Results');
+        addComponentToPage('Search Results');
         openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
