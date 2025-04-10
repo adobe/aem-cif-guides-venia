@@ -76,11 +76,9 @@ describe('Component Dialogs', function () {
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        // Use the passed component name (instead of hardcoding "Related Products")
-        const component = $(`div[data-title="${name}"]`); // Use template literal with the dynamic name
+        const component = $(`div[data-title="${name}"]`);
         component.scrollIntoView();
 
-        // Pause briefly to ensure that scrolling completes
         browser.pause(2000);
 
         // Check if the component is displayed after scrolling
