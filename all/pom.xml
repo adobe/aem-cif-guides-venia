@@ -50,7 +50,8 @@
                 <configuration>
                     <group>com.adobe.aem.guides</group>
                     <name>aem-cif-guides-venia.all</name>
-                    <packageType>container</packageType>
+                    <packageType>mixed</packageType>
+                    <allowIndexDefinitions>true</allowIndexDefinitions>
                     <properties>
                         <cloudManagerTarget>all</cloudManagerTarget>
                     </properties>
