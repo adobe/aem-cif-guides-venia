@@ -1,0 +1,11 @@
+{
+  "enableDispatcherCacheInvalidation": true,
+  "dispatcherBasePathConfiguration": "/content/venia/([a-z]{2})/([a-z]{2}):/content/venia/$1/$2",
+  "dispatcherUrlPathConfiguration": [
+    "productUrlPath:/products/product-page.html/(.+):/p/$1",
+    "categoryUrlPath:/products/category-page.html/(.+):/c/$1",
+    "productUrlPath-1:/products/product-page.html/(.+):/pp/$1",
+    "categoryUrlPath-1:/products/category-page.html/(.+):/cc/$1"
+  ],
+  "dispatcherBaseUrl": "http://localhost:80"
+}
