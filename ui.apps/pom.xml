@@ -23,7 +23,7 @@
     <parent>
         <groupId>com.adobe.aem.guides</groupId>
         <artifactId>aem-cif-guides-venia</artifactId>
-        <version>2024.10.08-SNAPSHOT</version>
+        <version>2025.04.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -47,10 +47,12 @@
             <plugin>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
+                <version>1.3.2</version>
                 <configuration>
                     <group>com.adobe.aem.guides</group>
                     <name>aem-cif-guides-venia.ui.apps</name>
-                    <packageType>application</packageType>
+                    <packageType>mixed</packageType>
+                    <allowIndexDefinitions>true</allowIndexDefinitions>
                     <repositoryStructurePackages>
                         <repositoryStructurePackage>
                             <groupId>com.adobe.aem.guides</groupId>
