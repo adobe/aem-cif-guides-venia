@@ -152,7 +152,7 @@ describe('Product Carousel Component Dialog', function () {
         expect(fields[6].$('label')).not.toBeDisplayed();
         expect(fields[7].$('label')).not.toBeDisplayed();
 
-        // close the dialog
+        // close the dialog using cancel button
         dialog.$('button.cq-dialog-cancel').click();
         expect(dialog.isExisting()).toBe(false);
     });

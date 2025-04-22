@@ -105,7 +105,7 @@ describe('Product List Component Dialog', function () {
         expect(fields[6].$('label')).toHaveText('Experince Fragment placeholders');
         expect(fields[6].$('coral-multifield[data-granite-coral-multifield-name="./fragments"]')).toExist();
 
-        // close the dialog
+        // close the dialog using cancel button
         dialog.$('button.cq-dialog-cancel').click();
         expect(dialog.isExisting()).toBe(false);
     });
