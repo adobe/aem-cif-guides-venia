@@ -4,22 +4,22 @@
     "xdm:SKU": "VP05",
     "xdm:assets": [
       {
-        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
         "repo:id": "image-2ea11abe0a",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
         "repo:id": "image-35c39a6a6b",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
         "repo:id": "image-7ed6d7593b",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
         "repo:id": "image-3b4d560585",
         "@type": "image"
       }
@@ -29,7 +29,7 @@
         "repo:id": "category-2212426126",
         "xdm:name": "Bottoms",
         "xdm:asset": {
-          "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/category/minimalist.jpg",
+          "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/category/minimalist.jpg",
           "repo:id": "image-9d427bd572",
           "@type": "image"
         }
