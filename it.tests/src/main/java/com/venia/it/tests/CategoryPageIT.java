@@ -50,26 +50,26 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Verify category name
         Elements elements = doc.select(PRODUCTLIST_TITLE_SELECTOR);
-        assertEquals("Pants &amp; Shorts", elements.first().html());
+        assertEquals("Expected category name 'Pants &amp; Shorts', but found: " + elements.first().html(), "Pants &amp; Shorts", elements.first().html());
 
         // Check that search filters are displayed
         elements = doc.select(PRODUCTLIST_SELECTOR + SEARCH_FILTERS_SELECTOR);
-        assertEquals(1, elements.size());
+        assertEquals("Expected 1 search filter element, but found: " + elements.size(), 1, elements.size());
 
         // Check that the 6 products are displayed on the first page
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
-        assertEquals(6, elements.size());
+        assertEquals("Expected 6 products, but found: " + elements.size(), 6, elements.size());
 
         // Verify breadcrumb: Home > Outdoor > Collection
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(3, elements.size());
+        assertEquals("Expected 3 breadcrumb items, but found: " + elements.size(), 3, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        assertEquals(6, elements.size());
+        assertEquals("Expected 6 navigation items, but found: " + elements.size(), 6, elements.size());
 
         // Check the meta data
-        assertEquals("Pants &amp; Shorts", doc.select("title").first().html());
+        assertEquals("Expected title 'Pants &amp; Shorts', but found: " + doc.select("title").first().html(), "Pants &amp; Shorts", doc.select("title").first().html());
         // when Sites SEO is available and no mapping exists this is only the path
         // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
         assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
@@ -78,7 +78,7 @@ public class CategoryPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCTLIST_GALLERY_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-gallery.json"));
-        assertEquals(expected, result);
+        assertEquals("Expected category gallery datalayer to match sample data, but found differences", expected, result);
 
         // Verify product items datalayer attributes
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
@@ -87,7 +87,7 @@ public class CategoryPageIT extends CommerceTestBase {
             .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-items.json"));
-        assertEquals(expected, result);
+        assertEquals("Expected product items datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -97,25 +97,25 @@ public class CategoryPageIT extends CommerceTestBase {
 
         // Verify category name
         Elements elements = doc.select(PRODUCTLIST_TITLE_SELECTOR);
-        assertEquals("Category name", elements.first().html());
+        assertEquals("Expected category name 'Category name', but found: " + elements.first().html(), "Category name", elements.first().html());
 
         // Check that search filters are NOT displayed
         elements = doc.select(PRODUCTLIST_SELECTOR + SEARCH_FILTERS_SELECTOR);
-        Assert.assertTrue(elements.isEmpty());
+        assertTrue("Expected search filters to be empty, but found: " + elements.size() + " elements", elements.isEmpty());
 
         // Check that the 6 products are displayed on the first page
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
-        assertEquals(6, elements.size());
+        assertEquals("Expected 6 products, but found: " + elements.size(), 6, elements.size());
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(1, elements.size());
+        assertEquals("Expected 1 breadcrumb item, but found: " + elements.size(), 1, elements.size());
 
         // Verify category gallery datalayer
         elements = doc.select(PRODUCTLIST_GALLERY_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-category-gallery.json"));
-        assertEquals(expected, result);
+        assertEquals("Expected category gallery datalayer to match sample data, but found differences", expected, result);
 
         // Verify product items datalayer attributes
         elements = doc.select(PRODUCTLIST_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
@@ -124,7 +124,7 @@ public class CategoryPageIT extends CommerceTestBase {
             .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/placeholder-category-items.json"));
-        assertEquals(expected, result);
+        assertEquals("Expected product items datalayer to match placeholder data, but found differences", expected, result);
     }
 
     @Test
