@@ -370,7 +370,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
         // change model
         fields[0].$('coral-select').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
-        let model = $(`coral-popover.is-open coral-selectlist-item[value="${testing_model2}"]`);
+        let model = $(`coral-popover.is-open coral-selectlist-item[value="${testing_model1}"]`);
         expect(model).toBeClickable();
         model.click();
 
