@@ -101,159 +101,58 @@ describe('Component Dialogs', function () {
         expect(dialog).toBeDisplayed();
     };
 
-    // Helper function to extract label from a field
-    const extractFieldLabel = function (field) {
-        // Try direct label selectors
-        const selectors = ['label', 'coral-checkbox-label'];
-        for (let i = 0; i < selectors.length; i++) {
-            const selector = selectors[i];
-            const el = field.$(selector);
-            if (el.isExisting()) {
-                try {
-                    const text = el.getText();
-                    if (text && text.trim()) {
-                        return text.trim();
-                    }
-                } catch (e) {
-                    // Ignore errors if getText fails
-                }
-                try {
-                    const html = el.getHTML();
-                    const text = html
-                        .replace(/<[^>]*>/g, '')
-                        .replace(/&nbsp;/g, ' ')
-                        .replace(/&amp;/g, '&')
-                        .trim();
-                    if (text) return text;
-                } catch (e) {
-                    // Ignore errors if getHTML fails
-                }
-            }
-        }
-        // Fallback: regex search in field HTML for all possible label tags
-        try {
-            const html = field.getHTML();
-            const regexes = [
-                /<label[^>]*>([\s\S]*?)<\/label>/,
-                /<coral-checkbox-label[^>]*>([\s\S]*?)<\/coral-checkbox-label>/
-            ];
-            for (let j = 0; j < regexes.length; j++) {
-                const regex = regexes[j];
-                const match = html.match(regex);
-                if (match && match[1]) {
-                    const text = match[1]
-                        .replace(/<[^>]*>/g, '')
-                        .replace(/&nbsp;/g, ' ')
-                        .replace(/&amp;/g, '&')
-                        .trim();
-                    if (text) return text;
-                }
-            }
-        } catch (e) {
-            // Ignore errors if field.getHTML fails
-        }
-        return 'No label';
-    };
+    it('opens the category carousel dialog', () => {
+        addComponentToPage('Category Carousel');
+        openComponentDialog('categorycarousel', 'aem:sites:components:dialogs:cif-core-components:categorycarousel:v1');
 
-    // it('opens the category carousel dialog', () => {
-    //     addComponentToPage('Category Carousel');
-    //     openComponentDialog('categorycarousel', 'aem:sites:components:dialogs:cif-core-components:categorycarousel:v1');
-    //
-    //     let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-    //     expect(fields.length).toEqual(5);
-    //     expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
-    //     expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-    //     expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
-    //     expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
-    //     expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
-    //
-    //     $('coral-multifield button').click();
-    //     expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
-    // });
-    //
-    // it('opens the commerce experience fragment dialog', () => {
-    //     addComponentToPage('Commerce Experience Fragment');
-    //     openComponentDialog(
-    //         'experiencefragment',
-    //         'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1'
-    //     );
-    //
-    //     expect($('label=Experience fragment location name.')).toBeDisplayed();
-    // });
-    //
-    // it('opens the featured categories dialog', () => {
-    //     addComponentToPage('Featured Categories');
-    //     openComponentDialog(
-    //         'featuredcategorylist',
-    //         'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1'
-    //     );
-    //
-    //     let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-    //     expect(fields.length).toEqual(5);
-    //     expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
-    //     expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-    //     expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
-    //     expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
-    //     expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
-    //
-    //     $('coral-multifield button').click();
-    //     expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
-    // });
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
+
+        $('coral-multifield button').click();
+        expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
+    });
+
+    it('opens the commerce experience fragment dialog', () => {
+        addComponentToPage('Commerce Experience Fragment');
+        openComponentDialog(
+            'experiencefragment',
+            'aem:sites:components:dialogs:cif-core-components:experiencefragment:v1'
+        );
+
+        expect($('label=Experience fragment location name.')).toBeDisplayed();
+    });
+
+    it('opens the featured categories dialog', () => {
+        addComponentToPage('Featured Categories');
+        openComponentDialog(
+            'featuredcategorylist',
+            'aem:sites:components:dialogs:cif-core-components:featuredcategorylist:v1'
+        );
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(5);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-multifield[data-granite-coral-multifield-name="./items"]')).toBeDisplayed();
+        expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
+
+        $('coral-multifield button').click();
+        expect($('coral-multifield-item').$('label=Category')).toBeDisplayed();
+    });
 
     it('opens the product teaser dialog', () => {
         addComponentToPage('Product Teaser');
         openComponentDialog('productteaser', 'aem:sites:components:dialogs:cif-core-components:productteaser:v1');
 
+        expect($('label=Select Product')).toBeDisplayed();
+
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-
-        console.log('Total fields found:', fields.length);
-
-        // Print all coral-panel-content HTML elements
-        const panelContents = $$('.cq-dialog-content coral-panel-content');
-        console.log(`Found ${panelContents.length} coral-panel-content elements`);
-
-        panelContents.forEach((panel, index) => {
-            console.log(`=== CORAL PANEL CONTENT ${index + 1} ===`);
-            console.log(panel.getHTML());
-            console.log(`=== END CORAL PANEL CONTENT ${index + 1} ===`);
-        });
-
-        // Print more detailed information about each field
-        fields.forEach((field, index) => {
-            const labelText = extractFieldLabel(field);
-            console.log(`Field ${index}:`, {
-                label: labelText,
-                hasInput: field.$('input').isExisting(),
-                hasSelect: field.$('coral-select').isExisting(),
-                hasRadio: field.$('coral-radio').isExisting(),
-                hasCheckbox: field.$('coral-checkbox').isExisting()
-            });
-
-            // Debug fields that show "No label"
-            if (labelText === 'No label') {
-                console.log(`\n=== DEBUGGING FIELD ${index} ===`);
-                try {
-                    console.log('HTML:', field.getHTML());
-
-                    // Try to find any text that might be a label
-                    const allElements = field.$$('*');
-                    console.log('All elements with text:');
-                    allElements.forEach((element, elemIndex) => {
-                        try {
-                            const text = element.getText();
-                            if (text && text.trim()) {
-                                console.log(`  Element ${elemIndex}: "${text.trim()}"`);
-                            }
-                        } catch (e) {
-                            // Ignore errors for individual elements
-                        }
-                    });
-                } catch (e) {
-                    console.log(`Cannot get HTML for field ${index}:`, e.message);
-                }
-                console.log('=== END DEBUG ===\n');
-            }
-        });
         expect(fields.length).toEqual(8);
 
         // fields of the OOTB component
@@ -265,99 +164,99 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    // it('opens the releated products dialog', () => {
-    //     addComponentToPage('Related Products');
-    //
-    //     openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
-    //
-    //     expect(
-    //         $('label=Base product - Leave empty to use the current product of the generic product page.')
-    //     ).toBeDisplayed();
-    //
-    //     let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-    //     expect(fields.length).toEqual(8);
-    //     expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
-    //     expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
-    //     expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
-    //     expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Cart');
-    //     expect(fields[3].$('input[name="./enableAddToCart"]')).toExist();
-    //     expect(fields[4].$('coral-checkbox-label')).toHaveText('Add to Wish List');
-    //     expect(fields[4].$('input[name="./enableAddToWishList"]')).toExist();
-    //     expect(fields[5].$('product-field')).toBeDisplayed();
-    //     expect(fields[5].$('input[name="./product"]')).toBeDefined();
-    //     expect(fields[6].$('coral-select[name="./relationType"]')).toBeDisplayed();
-    //     expect(fields[7].$('input[name="./id"]')).toBeDisplayed();
-    // });
-    //
-    // it('opens the product recommendations dialog', () => {
-    //     addComponentToPage('Product Recommendations');
-    //     openComponentDialog(
-    //         'productrecommendatio',
-    //         'aem:sites:components:dialogs:cif-core-components:productrecommendations:v1'
-    //     );
-    //
-    //     expect($('coral-checkbox-label=Use preconfigured recommendation')).toBeDisplayed();
-    //
-    //     // Verify that corresponding React component is rendered on the page. If no Commerce endpoint is provided or the
-    //     // endpoint does not have the product recommendations extension installed, the component will not render any
-    //     // products. So the test just checks for the existence of the div element rendered by the React component.
-    //     browser.url(`${config.aem.author.base_url}${testing_page}.html`);
-    //     expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
-    // });
-    //
-    // it('opens the searchresults dialog', () => {
-    //     addComponentToPage('Search Results');
-    //     openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
-    //
-    //     let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-    //
-    //     // check fields
-    //     expect(fields.length).toEqual(3);
-    //     expect(fields[0].$('label')).toHaveText('Page Size');
-    //     expect(fields[0].$('input[name="./pageSize"]')).toExist();
-    //     expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
-    //     expect(fields[0].nextElement().$('input[name="./defaultSortField"]')).toExist();
-    //     expect(fields[0].nextElement().$('input[name="./defaultSortOrder"]')).toExist();
-    //     expect(fields[2].$('label')).toHaveText('ID');
-    //     expect(fields[2].$('input[name="./id"]')).toExist();
-    // });
-    //
-    // it('opens the commerce list dialog', () => {
-    //     addComponentToPage('List', 'Venia - Content');
-    //     openComponentDialog('list', 'aem:sites:components:dialogs:cif-core-components:list:v1');
-    //
-    //     let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-    //
-    //     expect(fields[9].$('product-field')).toExist();
-    //     expect(fields[9].$('product-field')).not.toBeDisplayed();
-    //     expect(fields[10].$('category-field')).toExist();
-    //     expect(fields[10].$('category-field')).not.toBeDisplayed();
-    //
-    //     // check fields
-    //     expect(fields[0].$('coral-select')).toHaveAttribute('name', './listFrom');
-    //     let selectItems = fields[0].$$('coral-select coral-select-item');
-    //
-    //     expect(selectItems.length).toEqual(6);
-    //     expect(selectItems[4]).toHaveValue('productAssociation');
-    //     expect(selectItems[5]).toHaveValue('categoryAssociation');
-    //
-    //     fields[0].$('coral-select').click();
-    //
-    //     let itemsSelector =
-    //         config.aem.type === 'classic'
-    //             ? 'coral-overlay.is-open coral-selectlist-item[value="productAssociation"]'
-    //             : 'coral-popover-content coral-selectlist-item[value="productAssociation"]';
-    //     $(itemsSelector).click();
-    //     expect(fields[9].$('product-field')).toBeDisplayed();
-    //     expect(fields[10].$('category-field')).not.toBeDisplayed();
-    //
-    //     fields[0].$('coral-select').click();
-    //     itemsSelector =
-    //         config.aem.type === 'classic'
-    //             ? 'coral-overlay.is-open coral-selectlist-item[value="categoryAssociation"]'
-    //             : 'coral-popover-content coral-selectlist-item[value="categoryAssociation"]';
-    //     $(itemsSelector).click();
-    //     expect(fields[9].$('product-field')).not.toBeDisplayed();
-    //     expect(fields[10].$('category-field')).toBeDisplayed();
-    // });
+    it('opens the releated products dialog', () => {
+        addComponentToPage('Related Products');
+
+        openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
+
+        expect(
+            $('label=Base product - Leave empty to use the current product of the generic product page.')
+        ).toBeDisplayed();
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+        expect(fields.length).toEqual(8);
+        expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
+        expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
+        expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
+        expect(fields[3].$('coral-checkbox-label')).toHaveText('Add to Cart');
+        expect(fields[3].$('input[name="./enableAddToCart"]')).toExist();
+        expect(fields[4].$('coral-checkbox-label')).toHaveText('Add to Wish List');
+        expect(fields[4].$('input[name="./enableAddToWishList"]')).toExist();
+        expect(fields[5].$('product-field')).toBeDisplayed();
+        expect(fields[5].$('input[name="./product"]')).toBeDefined();
+        expect(fields[6].$('coral-select[name="./relationType"]')).toBeDisplayed();
+        expect(fields[7].$('input[name="./id"]')).toBeDisplayed();
+    });
+
+    it('opens the product recommendations dialog', () => {
+        addComponentToPage('Product Recommendations');
+        openComponentDialog(
+            'productrecommendatio',
+            'aem:sites:components:dialogs:cif-core-components:productrecommendations:v1'
+        );
+
+        expect($('coral-checkbox-label=Use preconfigured recommendation')).toBeDisplayed();
+
+        // Verify that corresponding React component is rendered on the page. If no Commerce endpoint is provided or the
+        // endpoint does not have the product recommendations extension installed, the component will not render any
+        // products. So the test just checks for the existence of the div element rendered by the React component.
+        browser.url(`${config.aem.author.base_url}${testing_page}.html`);
+        expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
+    });
+
+    it('opens the searchresults dialog', () => {
+        addComponentToPage('Search Results');
+        openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        // check fields
+        expect(fields.length).toEqual(3);
+        expect(fields[0].$('label')).toHaveText('Page Size');
+        expect(fields[0].$('input[name="./pageSize"]')).toExist();
+        expect(fields[0].nextElement()).toHaveElementClass('coral-Well');
+        expect(fields[0].nextElement().$('input[name="./defaultSortField"]')).toExist();
+        expect(fields[0].nextElement().$('input[name="./defaultSortOrder"]')).toExist();
+        expect(fields[2].$('label')).toHaveText('ID');
+        expect(fields[2].$('input[name="./id"]')).toExist();
+    });
+
+    it('opens the commerce list dialog', () => {
+        addComponentToPage('List', 'Venia - Content');
+        openComponentDialog('list', 'aem:sites:components:dialogs:cif-core-components:list:v1');
+
+        let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
+
+        expect(fields[9].$('product-field')).toExist();
+        expect(fields[9].$('product-field')).not.toBeDisplayed();
+        expect(fields[10].$('category-field')).toExist();
+        expect(fields[10].$('category-field')).not.toBeDisplayed();
+
+        // check fields
+        expect(fields[0].$('coral-select')).toHaveAttribute('name', './listFrom');
+        let selectItems = fields[0].$$('coral-select coral-select-item');
+
+        expect(selectItems.length).toEqual(6);
+        expect(selectItems[4]).toHaveValue('productAssociation');
+        expect(selectItems[5]).toHaveValue('categoryAssociation');
+
+        fields[0].$('coral-select').click();
+
+        let itemsSelector =
+            config.aem.type === 'classic'
+                ? 'coral-overlay.is-open coral-selectlist-item[value="productAssociation"]'
+                : 'coral-popover-content coral-selectlist-item[value="productAssociation"]';
+        $(itemsSelector).click();
+        expect(fields[9].$('product-field')).toBeDisplayed();
+        expect(fields[10].$('category-field')).not.toBeDisplayed();
+
+        fields[0].$('coral-select').click();
+        itemsSelector =
+            config.aem.type === 'classic'
+                ? 'coral-overlay.is-open coral-selectlist-item[value="categoryAssociation"]'
+                : 'coral-popover-content coral-selectlist-item[value="categoryAssociation"]';
+        $(itemsSelector).click();
+        expect(fields[9].$('product-field')).not.toBeDisplayed();
+        expect(fields[10].$('category-field')).toBeDisplayed();
+    });
 });
