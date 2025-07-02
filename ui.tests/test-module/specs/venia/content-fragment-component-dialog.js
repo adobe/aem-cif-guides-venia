@@ -196,6 +196,12 @@ describe('Commerce Content Fragment Component Dialog', function () {
         configureButton.click();
         const dialog = $(`coral-dialog[trackingfeature="${trackingId}"]`);
         expect(dialog).toBeDisplayed();
+
+        // Fix the problem where the second tab opens by default
+        let tabs = dialog.$$('coral-tab');
+        expect(tabs.length).toEqual(2);
+        tabs[0].click();
+
         return dialog;
     };
 
