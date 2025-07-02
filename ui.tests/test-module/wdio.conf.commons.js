@@ -27,7 +27,7 @@ exports.config = {
     runner: 'local',
 
     // Tests
-    specs: ['./specs/**/content-fragment-component-dialog.js'],
+    specs: ['./specs/**/*.js'],
 
     logLevel: 'debug',
 
