@@ -234,7 +234,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
         expect(tabs[1]).toHaveText('Paragraph Control');
         tabs[1].click();
         fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-        expect(fields.length).toBe(2);
+        expect(fields.length).toBe(3);
         expect(fields[0].$('coral-radio[checked] input')).toHaveValue('all');
         expect(fields[1].$('input[name="./paragraphRange"]')).toBeDisabled();
         expect(dialog.$('coral-panel[selected] input[name="./paragraphHeadings"]')).toBeDisabled();
