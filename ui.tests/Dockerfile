@@ -38,7 +38,10 @@ ENV AEM_PUBLISH_PASSWORD admin
 # ENV SHARED_FOLDER
 # ENV UPLOAD_URL
 
-## Install dependencies for wait_for_grid script
+RUN sed -i 's|deb.debian.org|archive.debian.org|g; s|security.debian.org|archive.debian.org|g' /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid \
+    && apt-get -o Acquire::Check-Valid-Until=false update
+
 RUN apt -qqy update \
     # Generic dependencies
     && apt -qqy --no-install-recommends install \
