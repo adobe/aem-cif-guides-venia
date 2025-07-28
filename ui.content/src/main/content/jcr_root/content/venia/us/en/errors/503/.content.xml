@@ -12,7 +12,7 @@
         jcr:mixinTypes="[cq:LiveRelationship,mix:versionable]"
         jcr:primaryType="cq:PageContent"
         jcr:title="Service Unavailable"
-        jcr:uuid="79995388-8a07-41de-aa5c-17b262989be0"
+        jcr:uuid="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
         sling:resourceType="venia/components/page"
         pwaCachestrategy="staleWhileRevalidate"
         pwaDisplay="standalone"

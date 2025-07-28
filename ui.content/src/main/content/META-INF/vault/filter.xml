@@ -3,6 +3,6 @@
     <filter root="/conf/venia" mode="update"/>
     <filter root="/content/venia" mode="merge"/>
     <filter root="/content/dam/venia" mode="merge"/>
-    <filter root="/content/experience-fragments/venia" mode="merge"/>
+    <filter root="/content/experience-fragments/venia" mode="update_properties"/>
     <filter root="/etc/map.publish" mode="merge"/>
 </workspaceFilter>

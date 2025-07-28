@@ -47,7 +47,7 @@
             <plugin>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>filevault-package-maven-plugin</artifactId>
-                <version>1.3.2</version>
+                <version>1.4.0</version>
                 <configuration>
                     <group>com.adobe.aem.guides</group>
                     <name>aem-cif-guides-venia.ui.apps</name>
