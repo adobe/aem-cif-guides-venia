@@ -1,0 +1,7 @@
+{
+  "identifier": "catalog-service",
+  "url": "$[env:CCS_ENDPOINT;default=]",
+  "httpHeaders": [
+    "$[secret:CCS_AUTH_HEADER;default=]"
+  ]
+}
