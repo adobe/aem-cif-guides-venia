@@ -27,11 +27,11 @@ import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
+import static org.junit.Assert.assertEquals;
 
 public class SearchPageIT extends CommerceTestBase {
 
@@ -49,25 +49,25 @@ public class SearchPageIT extends CommerceTestBase {
 
         // Check that search filters are displayed
         Elements elements = doc.select(SEARCHRESULTS_SELECTOR + SEARCH_FILTERS_SELECTOR);
-        Assert.assertEquals(1, elements.size());
+        assertEquals("Expected 1 search filter element, but found: " + elements.size(), 1, elements.size());
 
         // Check that the 6 products are displayed on the first page
         elements = doc.select(SEARCHRESULTS_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
-        Assert.assertEquals(6, elements.size());
+        assertEquals("Expected 6 products, but found: " + elements.size(), 6, elements.size());
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        Assert.assertEquals(1, elements.size());
+        assertEquals("Expected 1 breadcrumb item, but found: " + elements.size(), 1, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        Assert.assertEquals(6, elements.size());
+        assertEquals("Expected 6 navigation items, but found: " + elements.size(), 6, elements.size());
 
         // Verify search result gallery datalayer
         elements = doc.select(SEARCHRESULTS_SEARCH_ROOT_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-searchresult-gallery.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals("Expected search result gallery datalayer to match sample data, but found differences", expected, result);
 
         // Verify product items datalayer attributes
         elements = doc.select(SEARCHRESULTS_SELECTOR + PRODUCTCOLLECTION_GALLERY_ITEMS_SELECTOR);
@@ -76,7 +76,7 @@ public class SearchPageIT extends CommerceTestBase {
             .map(e -> e.replaceAll(",\\s*\"repo:modifyDate\":\\s*\"[\\d\\w:-]+\"", ""))
             .collect(Collectors.joining(",", "[", "]")));
         expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/sample-searchresult-items.json"));
-        Assert.assertEquals(expected, result);
+        assertEquals("Expected search result items datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -86,6 +86,6 @@ public class SearchPageIT extends CommerceTestBase {
 
         // Check that the search doesn't display any product
         Elements elements = doc.select(SEARCHRESULTS_SELECTOR + ".searchresults_root p");
-        Assert.assertEquals("No products to display.", elements.first().html());
+        assertEquals("Expected 'No products to display.' message, but found: " + elements.first().html(), "No products to display.", elements.first().html());
     }
 }

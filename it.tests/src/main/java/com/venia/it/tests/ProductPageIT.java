@@ -63,21 +63,21 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Honora Wide Leg Pants", elements.first().html());
+        assertEquals("Expected product name 'Honora Wide Leg Pants', but found: " + elements.first().html(), "Honora Wide Leg Pants", elements.first().html());
 
         // Verify that the section for GroupedProduct is NOT displayed
-        assertEquals(0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
+        assertEquals("Expected 0 grouped product sections, but found: " + doc.select(GROUPED_PRODUCTS_SELECTOR).size(), 0, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
         // Verify breadcrumb: Home > Bottoms > Pants & Shorts > Honora Wide Leg Pants
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(4, elements.size());
+        assertEquals("Expected 4 breadcrumb items, but found: " + elements.size(), 4, elements.size());
 
         // Check the number of root elements in the navigation menu
         elements = doc.select(NAVIGATION_ITEM_SELECTOR);
-        assertEquals(6, elements.size());
+        assertEquals("Expected 6 navigation items, but found: " + elements.size(), 6, elements.size());
 
         // Check the meta data
-        assertEquals("Honora Wide Leg Pants", doc.select("title").first().html());
+        assertEquals("Expected title 'Honora Wide Leg Pants', but found: " + doc.select("title").first().html(), "Honora Wide Leg Pants", doc.select("title").first().html());
         // when Sites SEO is available and no mapping exists this is only the path
         // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
         assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
@@ -86,7 +86,7 @@ public class ProductPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals(expected, result);
+        assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -107,16 +107,16 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Augusta Trio", elements.first().html());
+        assertEquals("Expected product name 'Augusta Trio', but found: " + elements.first().html(), "Augusta Trio", elements.first().html());
 
         // Verify that the section for GroupedProduct is displayed
-        assertEquals(1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
+        assertEquals("Expected 1 grouped product section, but found: " + doc.select(GROUPED_PRODUCTS_SELECTOR).size(), 1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals(expected, result);
+        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -126,17 +126,17 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify product name
         Elements elements = doc.select(PRODUCT_NAME_SELECTOR);
-        assertEquals("Product name", elements.first().html());
+        assertEquals("Expected product name 'Product name', but found: " + elements.first().html(), "Product name", elements.first().html());
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals(1, elements.size());
+        assertEquals("Expected 1 breadcrumb item, but found: " + elements.size(), 1, elements.size());
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
         JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource("datalayer/placeholder-product.json"));
-        assertEquals(expected, result);
+        assertEquals("Expected placeholder product datalayer to match data, but found differences", expected, result);
     }
 
     @Test
