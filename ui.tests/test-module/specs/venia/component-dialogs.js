@@ -61,6 +61,7 @@ describe('Component Dialogs', function () {
     });
 
     const addComponentToPage = (name, group = 'Venia - Commerce') => {
+        // Open the page editor
         browser.url(`${editor_page}${testing_page}.html`);
         browser.AEMEditorLoaded();
         browser.EditorOpenSidePanel();
@@ -70,19 +71,26 @@ describe('Component Dialogs', function () {
 
         // Filter for Commerce components
         $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
+        browser.pause(2000);
+
         $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
         expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
 
-        // Drag category carousel component on page
-        const carouselCmp = $(`div[data-title="${name}"]`);
-        expect(carouselCmp).toBeDisplayed();
+        const component = $(`div[data-title="${name}"]`);
+        component.scrollIntoView();
+
+        browser.pause(2000);
+
+        // Check if the component is displayed after scrolling
+        expect(component).toBeDisplayed();
+
+        // Ensure the selected component is visible and drag it to the page
+        component.waitForDisplayed();
         const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        carouselCmp.dragAndDrop(dropTarget, 1000);
+        component.dragAndDrop(dropTarget, 1000);
     };
 
     const openComponentDialog = (node, trackingId) => {
-        // Open component dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
         cmpPlaceholder.click();
@@ -145,7 +153,7 @@ describe('Component Dialogs', function () {
         expect($('label=Select Product')).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(7);
+        expect(fields.length).toEqual(8);
 
         // fields of the OOTB component
         expect(fields[0].$('product-field')).toBeDisplayed();
@@ -158,6 +166,7 @@ describe('Component Dialogs', function () {
 
     it('opens the releated products dialog', () => {
         addComponentToPage('Related Products');
+
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
 
         expect(

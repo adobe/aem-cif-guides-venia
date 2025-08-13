@@ -4,8 +4,8 @@
     "xdm:SKU": "VA23",
     "xdm:assets": [
       {
-        "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/a/va23_main.jpg",
-        "repo:id": "image-daa709cd50",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/a/va23_main.jpg",
+        "repo:id": "image-6dac8adfd8",
         "@type": "image"
       }
     ],
@@ -14,8 +14,8 @@
         "repo:id": "category-4c0609820d",
         "xdm:name": "Accessories",
         "xdm:asset": {
-          "repo:path": "https://mcprod.catalogservice4commerce.fun/media/catalog/category/carefree.jpg",
-          "repo:id": "image-11a31da9a5",
+          "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/category/carefree.jpg",
+          "repo:id": "image-892cadec60",
           "@type": "image"
         }
       },
