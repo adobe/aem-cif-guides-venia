@@ -20,7 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import java.util.*;
 
 /**
- * Strategy implementation for clearing the dispatcher & graphql cache based on custom attribute.
+ * Strategy implementation for clearing the dispatcher and graphql cache based on custom attribute.
  * 
  * <p>Example request JSON for cache invalidation:</p>
  * <pre>
