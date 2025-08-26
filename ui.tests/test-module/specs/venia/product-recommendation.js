@@ -188,6 +188,12 @@ describe('Product recommendation', function () {
         const productPageUrl = `${config.aem.author.base_url}/content/venia/us/en/products/product-page.html/venia-tops/venia-blouses/jillian-top.html?wcmmode=disabled`;
         browser.url(productPageUrl);
 
+        // Scroll down to ensure component is fully visible
+        browser.execute(() => {
+            /* eslint-disable-next-line no-undef */
+            window.scrollTo(0, document.body.scrollHeight * 0.6);
+        });
+
         // Wait for component to load using timeout
         const titleElement = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
         titleElement.waitForDisplayed({ timeout: 20000 });
@@ -283,6 +289,12 @@ describe('Product recommendation', function () {
             // Verify product recommendations component is present and shows data
             const recommendationsComponent = $('[data-is-product-recs]');
             expect(recommendationsComponent).toBeDisplayed();
+
+            // Scroll down to ensure recommendations component is visible
+            browser.execute(() => {
+                /* eslint-disable-next-line no-undef */
+                window.scrollTo(0, document.body.scrollHeight * 0.7);
+            });
 
             // Verify custom title is displayed
             const recommendationsTitle = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
