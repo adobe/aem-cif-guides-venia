@@ -217,7 +217,7 @@ describe('Product recommendation', function () {
         const call = calls[0];
         const requestData = call.body;
         const firstResult = requestData.results[0];
-        const apiTitle = firstResult.storefrontLabel;
+        const apiTitle = firstResult.storefrontLabel || firstResult.unitName;
         const apiProductNames = firstResult.products.map(product => product.name);
 
         // Validate data matches
