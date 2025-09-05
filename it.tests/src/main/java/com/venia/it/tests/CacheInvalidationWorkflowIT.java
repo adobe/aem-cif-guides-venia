@@ -125,15 +125,25 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             updateMagentoProductName(newProductName);
             LOG.info("🔄 STEP 2: Updated Magento to: '{}'", newProductName);
 
-            // Step 3: Verify AEM still shows cached data
-            Thread.sleep(3000);
+            // Step 3: Verify AEM still shows cached data (check immediately to catch cache before auto-refresh)
+            LOG.info("📋 STEP 3: AEM cache checks (should show old data) - checking immediately after Magento update");
+
+            long startTime = System.currentTimeMillis();
+            Thread.sleep(1000); // Short wait to ensure Magento update is complete
+            long check1Time = System.currentTimeMillis();
             String cachedCheck1 = getCurrentProductNameFromAEMPage();
-            Thread.sleep(2000);
+            long check1EndTime = System.currentTimeMillis();
+
+            Thread.sleep(500);   // Very short wait between checks
+            long check2Time = System.currentTimeMillis();
             String cachedCheck2 = getCurrentProductNameFromAEMPage();
+            long check2EndTime = System.currentTimeMillis();
 
             LOG.info("📋 STEP 3: AEM cache checks (should show old data)");
-            LOG.info("   Check 1: '{}'", cachedCheck1);
-            LOG.info("   Check 2: '{}'", cachedCheck2);
+            LOG.info("   Check 1 ({}ms after Magento update): '{}'", (check1Time - startTime), cachedCheck1);
+            LOG.info("   Check 1 took: {}ms", (check1EndTime - check1Time));
+            LOG.info("   Check 2 ({}ms after Magento update): '{}'", (check2Time - startTime), cachedCheck2);
+            LOG.info("   Check 2 took: {}ms", (check2EndTime - check2Time));
 
             boolean stillCached = cachedCheck1.equals(currentAemName) || cachedCheck2.equals(currentAemName);
             LOG.info("   Still showing cached data: {}", stillCached ? "✅ YES" : "❌ NO");
