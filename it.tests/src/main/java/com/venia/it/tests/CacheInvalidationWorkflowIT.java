@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2025 Adobe
+ ~ Copyright 2024 Adobe
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -49,14 +49,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration
-    private static final String MAGENTO_BASE_URL = "https://mcstaging.catalogservice-commerce.fun";
+    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
     private static final String MAGENTO_ADMIN_TOKEN = System.getenv("COMMERCE_INTEGRATION_TOKEN");
 
     // Test Configuration
-    private static final String TEST_PRODUCT_SKU = "VA21-GO-NA"; // Gold Veritas Cuff Set
-    private static final String TEST_PRODUCT_NAME = "Gold Veritas Cuff Set";
-    private static final String CATEGORY_PAGE_URL = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-jewelry.html";
+    private static final String TEST_PRODUCT_SKU = "VA10"; // Stretch Belt with Leather Clasp
+    private static final String TEST_PRODUCT_NAME = "Stretch Belt with Leather Clasp";
+    private static final String PRODUCT_PAGE_URL = "/content/venia/us/en/products/product-page.html/venia-accessories/venia-belts/stretch-belt-with-leather-clasp.html";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -75,7 +75,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
-        LOG.info("🎯 Target page: {}", CATEGORY_PAGE_URL);
+        LOG.info("🎯 Target page: {}", PRODUCT_PAGE_URL);
         LOG.info("📦 Test SKU: {} ({})", TEST_PRODUCT_SKU, TEST_PRODUCT_NAME);
         LOG.info("🔑 Using Magento token: {}***{}",
                 MAGENTO_ADMIN_TOKEN.substring(0, Math.min(8, MAGENTO_ADMIN_TOKEN.length())),
@@ -257,45 +257,48 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Get current product name from AEM category page
+     * Get current product name from AEM product page
      */
     private String getCurrentProductNameFromAEMPage() throws ClientException {
-        LOG.debug("🔍 Checking product name in AEM page: {}", CATEGORY_PAGE_URL);
+        LOG.debug("🔍 Checking product name in AEM page: {}", PRODUCT_PAGE_URL);
 
         try {
-            SlingHttpResponse response = adminAuthor.doGet(CATEGORY_PAGE_URL, 200);
+            SlingHttpResponse response = adminAuthor.doGet(PRODUCT_PAGE_URL, 200);
             String pageContent = response.getContent();
 
-            // Parse HTML to find Gold Veritas Cuff Set product name
+            // Parse HTML to find Stretch Belt product name
             Document doc = Jsoup.parse(pageContent);
 
-            // Look for various selectors where product name might appear
+            // Look for product name in product page structure
             String[] selectors = {
-                    "a[href*='" + TEST_PRODUCT_SKU + "']", // Link with SKU
-                    "[data-sku='" + TEST_PRODUCT_SKU + "'] .item__name", // Product item name
-                    ".product-item[data-sku='" + TEST_PRODUCT_SKU + "'] .product-name", // Product name
-                    "[title*='Gold Veritas Cuff']", // Title attribute
-                    "[title*='Veritas Cuff']", // Partial title
-                    "a[title*='Gold Veritas Cuff']" // Link title
+                    "span[role='name']", // Primary: <span role="name">Stretch Belt With Leather Clasp!</span>
+                    ".productFullDetail__productName span[role='name']", // Specific path
+                    ".productFullDetail__productName", // Fallback to h1
+                    "h1.productFullDetail__productName", // Direct h1
+                    "[data-sku='" + TEST_PRODUCT_SKU + "'] .product-name", // Generic product name
+                    ".product-name", // Generic fallback
+                    "h1" // Last resort h1
             };
 
             for (String selector : selectors) {
                 Elements elements = doc.select(selector);
                 if (elements.size() > 0) {
                     String name = elements.first().text();
-                    if (name != null && !name.trim().isEmpty() && (name.contains("Gold") || name.contains("Veritas") || name.contains(
-                            "Cuff"))) {
-                        LOG.debug("   Found name using selector '{}': '{}'", selector, name);
-                        return name.trim();
+                    if (name != null && !name.trim().isEmpty()) {
+                        // Check if it contains expected product keywords
+                        if (name.contains("Stretch") || name.contains("Belt") || name.contains("Leather") || name.contains("Clasp")) {
+                            LOG.debug("   Found name using selector '{}': '{}'", selector, name);
+                            return name.trim();
+                        }
                     }
                 }
             }
 
-            // Fallback: Look for Gold Veritas Cuff Set in page content using regex
+            // Fallback: Look for Stretch Belt in page content using regex
             String[] patterns = {
-                    "Gold Veritas Cuff Set[^\"<>]*",
-                    "Gold Veritas Cuff[^\"<>]*",
-                    "Veritas Cuff Set[^\"<>]*"
+                    "Stretch Belt With Leather Clasp[^\"<>]*",
+                    "Stretch Belt[^\"<>]*",
+                    "Belt With Leather Clasp[^\"<>]*"
             };
 
             for (String patternStr : patterns) {
