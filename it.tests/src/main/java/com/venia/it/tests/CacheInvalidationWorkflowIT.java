@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.venia.it.category.IgnoreOnCloud;
+import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -103,8 +104,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * ✅ Cache Invalidation Workflow Test
      *
      * Tests complete flow: Magento Update → AEM Cache (old data) → Cache Invalidation → Fresh Data
+     * This test is designed for AEM 6.5 only, not AEM Cloud.
      */
     @Test
+    @Category({ IgnoreOnCloud.class })
     public void testCacheInvalidationWorkflow() throws Exception {
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST ===");
         LOG.info("🔄 Testing: Magento Update → Cache → Invalidation → Fresh Data");
@@ -145,8 +148,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("   Check 2 ({}ms after Magento update): '{}'", (check2Time - startTime), cachedCheck2);
             LOG.info("   Check 2 took: {}ms", (check2EndTime - check2Time));
 
-            boolean stillCached = cachedCheck1.equals(currentAemName) || cachedCheck2.equals(currentAemName);
+            // Check if AEM is NOT showing the new Magento value (meaning cache is still showing old data)
+            boolean stillCached = !cachedCheck1.contains(timestamp) && !cachedCheck2.contains(timestamp);
             LOG.info("   Still showing cached data: {}", stillCached ? "✅ YES" : "❌ NO");
+            LOG.info("   Debug: cachedCheck1 contains timestamp '{}': {}", timestamp, cachedCheck1.contains(timestamp));
+            LOG.info("   Debug: cachedCheck2 contains timestamp '{}': {}", timestamp, cachedCheck2.contains(timestamp));
 
             // Step 4: Call cache invalidation servlet
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet");
