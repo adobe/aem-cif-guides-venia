@@ -1,9 +1,9 @@
 {
   "identifier": "default",
-  "productCachingTimeMinutes": 5,
-  "categoryCachingEnabled": true,
+  "productCachingTimeMinutes": 17,
+  "categoryCachingEnabled": false,
   "categoryCachingSize": 100,
   "categoryCachingTimeMinutes": 60,
-  "productCachingEnabled": true,
+  "productCachingEnabled": false,
   "productCachingSize": 1000
 }
