@@ -37,7 +37,6 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
                 -d "service.ranking=${ranking}" \
-
                 -d "cacheConfigurations=venia/components/commerce/product:true:50:1000"
     `)
 }
