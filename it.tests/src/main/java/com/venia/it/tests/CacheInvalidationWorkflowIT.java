@@ -345,7 +345,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             String payload = String.format(
                     "{\n" +
-                            "    \"productSkus\": [\"%s\"],\n" +
+                            "    \"customProductSkus\": [\"%s\"],\n" +
                             "    \"storePath\": \"%s\"\n" +
                             "}", TEST_PRODUCT_SKU, STORE_PATH);
 
