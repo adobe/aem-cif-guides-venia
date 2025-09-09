@@ -32,11 +32,12 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}"
+                -d "service.ranking=${ranking}" \
+                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000"
     `)
 }
 
