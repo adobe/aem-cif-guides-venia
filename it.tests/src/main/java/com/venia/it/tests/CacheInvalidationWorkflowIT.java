@@ -273,65 +273,45 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Get current product name from AEM product page
+     * Get current product name from AEM product page breadcrumb
      */
     private String getCurrentProductNameFromAEMPage() throws ClientException {
-        LOG.debug("🔍 Checking product name in AEM page: {}", PRODUCT_PAGE_URL);
+        LOG.debug("🔍 Checking product name in AEM page breadcrumb: {}", PRODUCT_PAGE_URL);
 
         try {
             SlingHttpResponse response = adminAuthor.doGet(PRODUCT_PAGE_URL, 200);
             String pageContent = response.getContent();
 
-            // Parse HTML to find Stretch Belt product name
+            // Parse HTML to find product name in breadcrumb
             Document doc = Jsoup.parse(pageContent);
 
-            // Look for product name in product page structure
-            String[] selectors = {
-                    "span[role='name']", // Primary: <span role="name">Stretch Belt With Leather Clasp!</span>
-                    ".productFullDetail__productName span[role='name']", // Specific path
-                    ".productFullDetail__productName", // Fallback to h1
-                    "h1.productFullDetail__productName", // Direct h1
-                    "[data-sku='" + TEST_PRODUCT_SKU + "'] .product-name", // Generic product name
-                    ".product-name", // Generic fallback
-                    "h1" // Last resort h1
-            };
-
-            for (String selector : selectors) {
-                Elements elements = doc.select(selector);
-                if (elements.size() > 0) {
-                    String name = elements.first().text();
-                    if (name != null && !name.trim().isEmpty()) {
-                        // Check if it contains expected product keywords
-                        if (name.contains("Stretch") || name.contains("Belt") || name.contains("Leather") || name.contains("Clasp")) {
-                            LOG.debug("   Found name using selector '{}': '{}'", selector, name);
-                            return name.trim();
-                        }
-                    }
+            // Look for active breadcrumb item with product name
+            Elements activeBreadcrumb = doc.select(".cmp-breadcrumb__item--active span[itemprop='name']");
+            
+            if (activeBreadcrumb.size() > 0) {
+                String name = activeBreadcrumb.first().text();
+                if (name != null && !name.trim().isEmpty()) {
+                    LOG.debug("   Found name in breadcrumb: '{}'", name);
+                    return name.trim();
                 }
             }
 
-            // Fallback: Look for Stretch Belt in page content using regex
-            String[] patterns = {
-                    "Stretch Belt With Leather Clasp[^\"<>]*",
-                    "Stretch Belt[^\"<>]*",
-                    "Belt With Leather Clasp[^\"<>]*"
-            };
-
-            for (String patternStr : patterns) {
-                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(patternStr);
-                java.util.regex.Matcher matcher = pattern.matcher(pageContent);
-                if (matcher.find()) {
-                    String foundName = matcher.group().trim();
-                    LOG.debug("   Found name using pattern '{}': '{}'", patternStr, foundName);
-                    return foundName;
+            // Fallback: Look for any breadcrumb item span with itemprop="name" 
+            Elements breadcrumbNames = doc.select(".cmp-breadcrumb__item span[itemprop='name']");
+            for (Element element : breadcrumbNames) {
+                String name = element.text();
+                if (name != null && !name.trim().isEmpty() && 
+                    (name.contains("Stretch") || name.contains("Belt") || name.contains("Leather") || name.contains("Clasp"))) {
+                    LOG.debug("   Found name in breadcrumb fallback: '{}'", name);
+                    return name.trim();
                 }
             }
 
-            LOG.warn("Could not find {} product name in page", TEST_PRODUCT_NAME);
+            LOG.warn("Could not find product name in breadcrumb for {}", TEST_PRODUCT_NAME);
             return "NOT_FOUND";
 
         } catch (Exception e) {
-            LOG.error("Error checking AEM page: {}", e.getMessage());
+            LOG.error("Error checking AEM page breadcrumb: {}", e.getMessage());
             return "ERROR";
         }
     }
