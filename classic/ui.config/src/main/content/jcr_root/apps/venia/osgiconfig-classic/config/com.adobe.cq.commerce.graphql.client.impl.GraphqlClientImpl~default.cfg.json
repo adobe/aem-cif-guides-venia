@@ -1,6 +1,5 @@
 {
   "identifier": "default",
-  "service.ranking": 5,
   "httpMethod": "GET",
   "url": "https://hostname.com/graphql",
   "connectionTimeout": 5000,
