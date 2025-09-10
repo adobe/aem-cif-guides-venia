@@ -106,15 +106,15 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * ✅ Cache Invalidation Workflow Test
-     *
-     * Tests complete flow: Magento Update → AEM Cache (old data) → Cache Invalidation → Fresh Data
-     * This test is designed for AEM 6.5 only, not AEM Cloud.
+     * ✅ Cache Invalidation Workflow Test - AEM 6.5 ONLY
+     * Tests Stretch Belt with Leather Clasp product (VA10) - runs only on AEM 6.5, ignored on Cloud
      */
     @Test
+    @Category({ IgnoreOnCloud.class })
     public void testCacheInvalidationWorkflow() throws Exception {
-        LOG.info("=== CACHE INVALIDATION WORKFLOW TEST ===");
+        LOG.info("=== CACHE INVALIDATION WORKFLOW TEST - AEM 6.5 ONLY ===");
         LOG.info("🔄 Testing: Magento Update → Cache → Invalidation → Fresh Data");
+        LOG.info("🎯 Product: Stretch Belt with Leather Clasp (VA10) - AEM 6.5 Environment");
 
         try {
             // Step 1: Get current product name from Magento and AEM
@@ -364,24 +364,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.error("❌ Cache invalidation servlet call failed: {}", e.getMessage(), e);
             return false;
         }
-    }
-
-    /**
-     * ✅ Cache Invalidation Workflow Test - AEM 6.5 ONLY
-     * Tests Ombre Infinity Scarf product (VA03) - runs only on AEM 6.5, ignored on Cloud
-     */
-    @Test
-    @Category({ IgnoreOnCloud.class })
-    public void testCacheInvalidationWorkflowAEM65Only() throws Exception {
-        LOG.info("=== CACHE INVALIDATION WORKFLOW TEST - AEM 6.5 ONLY ===");
-        LOG.info("🔄 Testing: Magento Update → Cache → Invalidation → Fresh Data");
-        LOG.info("🎯 Product: Ombre Infinity Scarf (VA03) - AEM 6.5 Environment");
-
-        runCacheInvalidationWorkflow(
-            "VA03", // SKU
-            "Ombre Infinity Scarf", // Product name
-            "/content/venia/us/en/products/product-page.html/venia-accessories/venia-scarves/ombre-infinity-scarf.html" // Product page URL
-        );
     }
 
     /**
