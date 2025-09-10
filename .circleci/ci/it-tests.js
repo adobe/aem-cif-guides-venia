@@ -62,8 +62,10 @@ try {
 
         let extras;
         if (classifier == 'classic') {
+            // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
+            let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
             // Download latest add-on for AEM 6.5 release from artifactory
-            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=LATEST -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
+            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
             extras = ` --install-file ${buildPath}/dependencies/addon-650.zip`;
 
             // The core components are already installed in the Cloud SDK
