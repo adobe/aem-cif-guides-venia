@@ -132,25 +132,33 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             updateMagentoProductName(newProductName);
             LOG.info("🔄 STEP 2: Updated Magento to: '{}'", newProductName);
 
-            // Step 3: Verify AEM still shows cached data (check immediately to catch cache before auto-refresh)
-            // Step 3: Wait 20-30 seconds and verify cache is working (AEM should show old data)
-            LOG.info("📋 STEP 3: Cache validation - waiting 25 seconds after Magento update");
-            LOG.info("⏳ Waiting 25 seconds to test cache behavior...");
-            Thread.sleep(25000); // Wait 25 seconds
-
-            LOG.info("🔍 Checking AEM page after wait - should still show OLD cached data");
-            String cachedAemName = getCurrentProductNameFromAEMPage();
-            LOG.info("   AEM Page shows: '{}'", cachedAemName);
+            // Step 3: Immediately check cache behavior (should show old data)
+            LOG.info("📋 STEP 3: Cache validation - checking immediately after Magento update");
+            LOG.info("🔍 Checking AEM page - should still show OLD cached data (first check)");
+            String firstCacheCheck = getCurrentProductNameFromAEMPage();
+            LOG.info("   First check shows: '{}'", firstCacheCheck);
+            
+            LOG.info("🔍 Second cache check - refreshing again");
+            String secondCacheCheck = getCurrentProductNameFromAEMPage();
+            LOG.info("   Second check shows: '{}'", secondCacheCheck);
             LOG.info("   Updated Magento: '{}'", newProductName);
 
             // CRITICAL ASSERTION: AEM should NOT show the updated Magento name (cache should be working)
-            boolean cacheWorking = !cachedAemName.equals(newProductName) && !cachedAemName.contains(timestamp);
-            LOG.info("   Cache is working (AEM ≠ Magento): {} {}", cacheWorking ? "✅" : "❌", cacheWorking ? "YES" : "NO");
-            LOG.info("   Debug: AEM name '{}' contains timestamp '{}': {}", cachedAemName, timestamp, cachedAemName.contains(timestamp));
+            // Both checks should show old data, not the new Magento name
+            boolean firstCheckCacheWorking = !firstCacheCheck.equals(newProductName) && !firstCacheCheck.contains(timestamp);
+            boolean secondCheckCacheWorking = !secondCacheCheck.equals(newProductName) && !secondCacheCheck.contains(timestamp);
+            boolean cacheWorking = firstCheckCacheWorking && secondCheckCacheWorking;
+            
+            LOG.info("   First check cache working (AEM ≠ Magento): {} {}", firstCheckCacheWorking ? "✅" : "❌", firstCheckCacheWorking ? "YES" : "NO");
+            LOG.info("   Second check cache working (AEM ≠ Magento): {} {}", secondCheckCacheWorking ? "✅" : "❌", secondCheckCacheWorking ? "YES" : "NO");
+            LOG.info("   Overall cache working: {} {}", cacheWorking ? "✅" : "❌", cacheWorking ? "YES" : "NO");
+            LOG.info("   Debug: First AEM name '{}' contains timestamp '{}': {}", firstCacheCheck, timestamp, firstCacheCheck.contains(timestamp));
+            LOG.info("   Debug: Second AEM name '{}' contains timestamp '{}': {}", secondCacheCheck, timestamp, secondCacheCheck.contains(timestamp));
             
             assertTrue("❌ CACHE NOT WORKING! AEM page should show OLD data, not the updated Magento name. " +
-                      "Expected AEM to show cached data, but it shows: '" + cachedAemName + "' " +
-                      "which matches updated Magento: '" + newProductName + "'", cacheWorking);
+                      "Expected AEM to show cached data, but first check shows: '" + firstCacheCheck + "' " +
+                      "and second check shows: '" + secondCacheCheck + "' " +
+                      "which should not match updated Magento: '" + newProductName + "'", cacheWorking);
 
             // Step 4: Call cache invalidation servlet
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet");
@@ -406,24 +414,33 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("✅ Magento product name updated successfully");
             LOG.info("🔄 STEP 2: Updated Magento to: '{}'", updatedProductName);
 
-            // Step 3: Wait 20-30 seconds and verify cache is working (AEM should show old data)
-            LOG.info("📋 STEP 3: Cache validation - waiting 25 seconds after Magento update");
-            LOG.info("⏳ Waiting 25 seconds to test cache behavior...");
-            Thread.sleep(25000); // Wait 25 seconds
-
-            LOG.info("🔍 Checking AEM page after wait - should still show OLD cached data");
-            String cachedAemName = getCurrentProductNameFromAEMPage(productPageUrl);
-            LOG.info("   AEM Page shows: '{}'", cachedAemName);
+            // Step 3: Immediately check cache behavior (should show old data)
+            LOG.info("📋 STEP 3: Cache validation - checking immediately after Magento update");
+            LOG.info("🔍 Checking AEM page - should still show OLD cached data (first check)");
+            String firstCacheCheck = getCurrentProductNameFromAEMPage(productPageUrl);
+            LOG.info("   First check shows: '{}'", firstCacheCheck);
+            
+            LOG.info("🔍 Second cache check - refreshing again");
+            String secondCacheCheck = getCurrentProductNameFromAEMPage(productPageUrl);
+            LOG.info("   Second check shows: '{}'", secondCacheCheck);
             LOG.info("   Updated Magento: '{}'", updatedProductName);
 
             // CRITICAL ASSERTION: AEM should NOT show the updated Magento name (cache should be working)
-            boolean cacheWorking = !cachedAemName.equals(updatedProductName) && !cachedAemName.contains(timestamp);
-            LOG.info("   Cache is working (AEM ≠ Magento): {} {}", cacheWorking ? "✅" : "❌", cacheWorking ? "YES" : "NO");
-            LOG.info("   Debug: AEM name '{}' contains timestamp '{}': {}", cachedAemName, timestamp, cachedAemName.contains(timestamp));
+            // Both checks should show old data, not the new Magento name
+            boolean firstCheckCacheWorking = !firstCacheCheck.equals(updatedProductName) && !firstCacheCheck.contains(timestamp);
+            boolean secondCheckCacheWorking = !secondCacheCheck.equals(updatedProductName) && !secondCacheCheck.contains(timestamp);
+            boolean cacheWorking = firstCheckCacheWorking && secondCheckCacheWorking;
+            
+            LOG.info("   First check cache working (AEM ≠ Magento): {} {}", firstCheckCacheWorking ? "✅" : "❌", firstCheckCacheWorking ? "YES" : "NO");
+            LOG.info("   Second check cache working (AEM ≠ Magento): {} {}", secondCheckCacheWorking ? "✅" : "❌", secondCheckCacheWorking ? "YES" : "NO");
+            LOG.info("   Overall cache working: {} {}", cacheWorking ? "✅" : "❌", cacheWorking ? "YES" : "NO");
+            LOG.info("   Debug: First AEM name '{}' contains timestamp '{}': {}", firstCacheCheck, timestamp, firstCacheCheck.contains(timestamp));
+            LOG.info("   Debug: Second AEM name '{}' contains timestamp '{}': {}", secondCacheCheck, timestamp, secondCacheCheck.contains(timestamp));
             
             assertTrue("❌ CACHE NOT WORKING! AEM page should show OLD data, not the updated Magento name. " +
-                      "Expected AEM to show cached data, but it shows: '" + cachedAemName + "' " +
-                      "which matches updated Magento: '" + updatedProductName + "'", cacheWorking);
+                      "Expected AEM to show cached data, but first check shows: '" + firstCacheCheck + "' " +
+                      "and second check shows: '" + secondCacheCheck + "' " +
+                      "which should not match updated Magento: '" + updatedProductName + "'", cacheWorking);
 
             // Step 4: Call cache invalidation servlet
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet");
