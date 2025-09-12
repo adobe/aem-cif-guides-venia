@@ -59,7 +59,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final String STORE_PATH = "/content/venia/us/en";
 
     private CloseableHttpClient httpClient;
-    
+
     // Store original names for cleanup
     private String lastProductSku = null;
     private String lastOriginalProductName = null;
@@ -71,22 +71,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
-        
-        // Validate token is available
-        if (MAGENTO_ADMIN_TOKEN == null || MAGENTO_ADMIN_TOKEN.trim().isEmpty()) {
-            throw new IllegalStateException("COMMERCE_INTEGRATION_TOKEN is required but not found. " +
-                "Set it as system property (-DCOMMERCE_INTEGRATION_TOKEN=xxx) or environment variable.");
-        }
-        LOG.info("🔑 Magento token: {}...{} (length: {})", 
-            MAGENTO_ADMIN_TOKEN.substring(0, Math.min(4, MAGENTO_ADMIN_TOKEN.length())),
-            MAGENTO_ADMIN_TOKEN.length() > 8 ? MAGENTO_ADMIN_TOKEN.substring(MAGENTO_ADMIN_TOKEN.length()-4) : "",
-            MAGENTO_ADMIN_TOKEN.length());
     }
 
     @After
     public void tearDown() throws Exception {
         LOG.info("🧹 CLEANUP: Reverting names back to original values...");
-        
+
         try {
             // Revert product name if we changed it
             if (lastProductSku != null && lastOriginalProductName != null) {
@@ -94,22 +84,22 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 updateMagentoProductName(lastProductSku, lastOriginalProductName);
                 LOG.info("   ✅ Product name reverted");
             }
-            
-            // Revert category name if we changed it  
+
+            // Revert category name if we changed it
             if (lastCategoryId != null && lastOriginalCategoryName != null) {
                 LOG.info("   🔄 Reverting category '{}' to original name: '{}'", lastCategoryId, lastOriginalCategoryName);
                 updateMagentoCategoryName(lastCategoryId, lastOriginalCategoryName);
                 LOG.info("   ✅ Category name reverted");
             }
-            
+
         } catch (Exception e) {
             LOG.error("❌ Failed to revert names during cleanup: {}", e.getMessage(), e);
         }
-        
+
         if (httpClient != null) {
             httpClient.close();
         }
-        
+
         LOG.info("🧹 Cleanup complete");
     }
 
@@ -118,20 +108,20 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     @Test
     public void testDebugHtmlParsing() throws Exception {
-        String categoryPageUrl = "/content/venia/us/en/products/category-page.html/shop-the-look/perfectly-beachy.html";
-        String productSku = "VP04";
-        
+        String categoryPageUrl = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
+        String productSku = "BLT-LEA-001";
+
         LOG.info("🔍 DEBUG: Testing HTML parsing for URL: {}", categoryPageUrl);
-        
+
         try {
             // Step 1: Load the page
             SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
             Document doc = Jsoup.parse(response.getContent());
             LOG.info("✅ Page loaded successfully, HTML length: {}", response.getContent().length());
-            
+
             // Step 2: Extract category name - EXACTLY from your HTML structure
             LOG.info("🔍 Looking for category name...");
-            
+
             // Method 1: <span class="category__title">Leather Belts</span>
             Elements categorySpans = doc.select("span.category__title");
             LOG.info("Found {} elements with span.category__title", categorySpans.size());
@@ -147,21 +137,21 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     LOG.info("Alternative category name: '{}'", h1Title.first().text());
                 }
             }
-            
-            // Step 3: Extract product name - EXACTLY from your HTML structure  
+
+            // Step 3: Extract product name - EXACTLY from your HTML structure
             LOG.info("🔍 Looking for product name with SKU '{}'...", productSku);
-            
+
             // Method 1: Find product by SKU then get title
             Elements productItems = doc.select("a.productcollection__item[data-product-sku='" + productSku + "']");
             LOG.info("Found {} product items with SKU '{}'", productItems.size(), productSku);
-            
+
             if (productItems.size() > 0) {
                 Element productItem = productItems.first();
-                
+
                 // Extract from: <div class="productcollection__item-title"><span>Black Leather Belt 8250</span></div>
                 Elements productTitleSpans = productItem.select("div.productcollection__item-title span");
                 LOG.info("Found {} title spans for product", productTitleSpans.size());
-                
+
                 if (productTitleSpans.size() > 0) {
                     String productName = productTitleSpans.first().text().trim();
                     LOG.info("✅ PRODUCT NAME FOUND: '{}'", productName);
@@ -174,11 +164,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                         LOG.info("Alternative product name: '{}'", altSpans.first().text());
                     }
                 }
-                
+
                 // Also check title attribute
                 String titleAttr = productItem.attr("title");
                 LOG.info("Product title attribute: '{}'", titleAttr);
-                
+
             } else {
                 LOG.warn("❌ No product found with SKU '{}'", productSku);
                 // Debug what products we do find
@@ -190,7 +180,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     LOG.info("  - Product SKU: '{}', Title: '{}'", sku, title);
                 }
             }
-            
+
             LOG.info("🎯 HTML Parsing Debug Complete!");
 
         } catch (Exception e) {
@@ -200,28 +190,28 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * AEM 6.5 Test - Perfectly Beachy Category with VP04 Product
+     * AEM 6.5 Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
      */
     @Test
     @Category(IgnoreOnCloud.class)
     public void testCacheInvalidationWorkflow_AEM65() throws Exception {
         runCacheInvalidationTest(
-            "VP04", // SKU
-            "/content/venia/us/en/products/category-page.html/shop-the-look/perfectly-beachy.html", // Category page
-            "AEM 6.5"
+                "BLT-LEA-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "AEM 6.5"
         );
     }
 
     /**
-     * Cloud Test - Retire Your LBD Category with VD06 Product
+     * Cloud Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
      */
     @Test
     @Category(IgnoreOn65.class)
     public void testCacheInvalidationWorkflow_Cloud() throws Exception {
         runCacheInvalidationTest(
-            "VD06", // SKU
-            "/content/venia/us/en/products/category-page.html/shop-the-look/retire-your-lbd.html", // Category page
-            "Cloud"
+                "BLT-FAB-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "Cloud"
         );
     }
 
@@ -240,13 +230,13 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("📋 STEP 1: Getting names from AEM category page");
             SlingHttpResponse categoryResponse = adminAuthor.doGet(categoryPageUrl, 200);
             Document categoryDoc = Jsoup.parse(categoryResponse.getContent());
-            
+
             // Get category name from .category__title span (EXACT from your HTML)
             String categoryName = null;
-          
+
             try {
                 LOG.debug("🔍 Looking for category name in HTML...");
-                
+
                 // Method 1: Direct from <span class="category__title">Leather Belts</span>
                 Elements titleElements = categoryDoc.select("span.category__title");
                 LOG.debug("Found {} elements with span.category__title", titleElements.size());
@@ -261,24 +251,24 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                         LOG.info("   ✅ AEM Category Name (from h1): '{}'", categoryName);
                     }
                 }
-                
+
                 // Get category ID from JSON data-cif-category-context
                 Elements categoryRoot = categoryDoc.select("article[data-cif-category-context]");
-            if (categoryRoot.size() > 0) {
-                String categoryContext = categoryRoot.first().attr("data-cif-category-context");
-                if (categoryContext != null && !categoryContext.isEmpty()) {
-                    try {
+                if (categoryRoot.size() > 0) {
+                    String categoryContext = categoryRoot.first().attr("data-cif-category-context");
+                    if (categoryContext != null && !categoryContext.isEmpty()) {
+                        try {
                             categoryContext = categoryContext.replace("&quot;", "\"");
-                        JsonNode contextJson = OBJECT_MAPPER.readTree(categoryContext);
+                            JsonNode contextJson = OBJECT_MAPPER.readTree(categoryContext);
                             if (contextJson != null && contextJson.has("urlKey")) {
                                 categoryId = contextJson.get("urlKey").asText();
                                 LOG.info("   ✅ AEM Category ID: '{}'", categoryId);
                             }
                             // Double check category name from JSON if not found above
                             if ((categoryName == null || categoryName.isEmpty()) && contextJson.has("name")) {
-                            categoryName = contextJson.get("name").asText();
+                                categoryName = contextJson.get("name").asText();
                                 LOG.info("   ✅ AEM Category Name (from JSON): '{}'", categoryName);
-                        }
+                            }
                         } catch (Exception e) {
                             LOG.warn("Could not parse category JSON: {}", e.getMessage());
                         }
@@ -289,20 +279,20 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             }
 
             // No fallback - category must be found from AEM HTML
-            
+
             // Get product name from SPECIFIC SKU item (EXACT from your HTML)
             String productName = null;
             try {
                 LOG.debug("🔍 Looking for product with SKU '{}' in HTML...", productSku);
-                
+
                 // Find the product item with matching SKU: <a class="productcollection__item" data-product-sku="BLT-LEA-001">
                 Elements productItems = categoryDoc.select(".productcollection__item[data-product-sku='" + productSku + "']");
                 LOG.debug("Found {} product items with SKU '{}'", productItems.size(), productSku);
-                
+
                 if (productItems.size() > 0) {
                     Element productItem = productItems.first();
                     LOG.debug("Found product item: {}", productItem.tagName());
-                    
+
                     // Method 1: From <div class="productcollection__item-title"><span>Black Leather Belt 8250</span></div>
                     Elements titleSpans = productItem.select("div.productcollection__item-title span");
                     LOG.debug("Found {} title spans in product item", titleSpans.size());
@@ -356,7 +346,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             } catch (Exception e) {
                 LOG.warn("Error parsing product name: {}", e.getMessage());
             }
-            
+
             // No fallback - product name must be found from AEM HTML
 
             // STEP 2: Get original names from Magento using SKU
@@ -364,11 +354,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             JsonNode productData = getMagentoProductData(productSku);
             originalProductName = productData.get("name").asText();
             LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
-            
+
             // Store for cleanup
             lastProductSku = productSku;
             lastOriginalProductName = originalProductName;
-            
+
             // Get category data from product's category assignment
             LOG.info("🔍 Looking up category data for product...");
             try {
@@ -379,17 +369,17 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     if (categoryLinks.size() > 0) {
                         String productCategoryId = categoryLinks.get(0).get("category_id").asText();
                         LOG.info("   ✓ Found category ID from category_links: '{}'", productCategoryId);
-                        
+
                         JsonNode categoryData = getMagentoCategoryData(productCategoryId);
                         originalCategoryName = categoryData.get("name").asText();
                         categoryId = productCategoryId;
                         LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-                        
+
                         // Store for cleanup
                         lastCategoryId = categoryId;
                         lastOriginalCategoryName = originalCategoryName;
                     }
-                } 
+                }
                 // Method 2: Try category_ids array
                 else if (productData.has("category_ids") && productData.get("category_ids").isArray()) {
                     JsonNode categoryIds = productData.get("category_ids");
@@ -397,12 +387,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     if (categoryIds.size() > 0) {
                         String productCategoryId = categoryIds.get(0).asText();
                         LOG.info("   ✓ Found category ID from category_ids: '{}'", productCategoryId);
-                        
+
                         JsonNode categoryData = getMagentoCategoryData(productCategoryId);
                         originalCategoryName = categoryData.get("name").asText();
                         categoryId = productCategoryId;
                         LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-                        
+
                         // Store for cleanup
                         lastCategoryId = categoryId;
                         lastOriginalCategoryName = originalCategoryName;
@@ -417,28 +407,28 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                         if (categoryLinks.size() > 0) {
                             String productCategoryId = categoryLinks.get(0).get("category_id").asText();
                             LOG.info("   ✓ Found category ID from extension_attributes: '{}'", productCategoryId);
-                            
+
                             JsonNode categoryData = getMagentoCategoryData(productCategoryId);
                             originalCategoryName = categoryData.get("name").asText();
                             categoryId = productCategoryId;
                             LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-                            
+
                             // Store for cleanup
                             lastCategoryId = categoryId;
                             lastOriginalCategoryName = originalCategoryName;
                         }
                     }
                 }
-                
+
                 // If still no category found, log warning
                 if (originalCategoryName == null) {
                     LOG.warn("   ❌ No category data found in product - tried category_links, category_ids, and extension_attributes");
                 }
-                
+
             } catch (Exception e) {
                 LOG.error("❌ Could not get category data from product: {}", e.getMessage(), e);
             }
-            
+
             // No fallback - category data must come from Magento product data only
             if (originalCategoryName == null) {
                 LOG.error("❌ FAILED: Cannot get category data from Magento product - test will fail");
@@ -448,11 +438,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             String randomNumber = String.valueOf(System.currentTimeMillis() % 10000); // Last 4 digits
             String newProductName = originalProductName + " " + randomNumber;
             String newCategoryName = (originalCategoryName != null) ? originalCategoryName + " " + randomNumber : null;
-            
+
             LOG.info("🔄 STEP 3: Updating Magento names");
             updateMagentoProductName(productSku, newProductName);
             LOG.info("   ✓ Updated Magento Product: '{}'", newProductName);
-            
+
             if (categoryId != null && originalCategoryName != null) {
                 updateMagentoCategoryName(categoryId, newCategoryName);
                 LOG.info("   ✓ Updated Magento Category: '{}'", newCategoryName);
@@ -462,12 +452,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("📋 STEP 4: Checking AEM category page still shows old data");
             String aemProductCheck = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku); // Use category page only
             String aemCategoryCheck = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-            
+
             LOG.info("   AEM Product Shows: '{}'", aemProductCheck);
             LOG.info("   AEM Category Shows: '{}'", aemCategoryCheck);
             LOG.info("   Updated Magento Product: '{}'", newProductName);
             LOG.info("   Updated Magento Category: '{}'", newCategoryName);
-            
+
             // Verify cache is working (AEM should NOT show the random number)
             boolean productCacheWorking = !aemProductCheck.contains(randomNumber);
             boolean categoryCacheWorking = !aemCategoryCheck.contains(randomNumber);
@@ -489,13 +479,13 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("🔍 STEP 7: Checking AEM category page now shows fresh data");
             String freshProductCheck = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku); // Use category page only
             String freshCategoryCheck = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-            
+
             LOG.info("   Fresh Product Check: '{}'", freshProductCheck);
             LOG.info("   Fresh Category Check: '{}'", freshCategoryCheck);
-            
+
             boolean productUpdated = freshProductCheck.contains(randomNumber);
             boolean categoryUpdated = freshCategoryCheck.contains(randomNumber);
-            
+
             LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
             LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
 
@@ -516,11 +506,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 try {
                     updateMagentoProductName(productSku, originalProductName);
                     LOG.info("🔄 Restored product name: {}", originalProductName);
-                    } catch (Exception e) {
+                } catch (Exception e) {
                     LOG.warn("Could not restore product name: {}", e.getMessage());
                 }
             }
-            
+
             if (originalCategoryName != null && categoryId != null) {
                 try {
                     updateMagentoCategoryName(categoryId, originalCategoryName);
@@ -536,7 +526,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         String url = MAGENTO_REST_URL + "/products/" + sku;
         HttpGet request = new HttpGet(url);
         request.setHeader("Authorization", "Bearer " + MAGENTO_ADMIN_TOKEN);
-        
+
         try (CloseableHttpResponse response = httpClient.execute(request)) {
             String content = EntityUtils.toString(response.getEntity());
             if (response.getStatusLine().getStatusCode() == 200) {
@@ -567,7 +557,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         HttpPut request = new HttpPut(url);
         request.setHeader("Authorization", "Bearer " + MAGENTO_ADMIN_TOKEN);
         request.setHeader("Content-Type", "application/json");
-        
+
         String payload = String.format("{\"product\":{\"name\":\"%s\"}}", newName);
         request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
 
@@ -581,14 +571,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
     private void updateMagentoCategoryName(String categoryId, String newName) throws Exception {
         LOG.info("🔄 Updating Magento category ID '{}' to name '{}'", categoryId, newName);
-        
+
         String url = MAGENTO_REST_URL + "/categories/" + categoryId;
         LOG.info("   Category update URL: {}", url);
-        
+
         HttpPut request = new HttpPut(url);
         request.setHeader("Authorization", "Bearer " + MAGENTO_ADMIN_TOKEN);
         request.setHeader("Content-Type", "application/json");
-        
+
         String payload = String.format("{\"category\":{\"name\":\"%s\"}}", newName);
         LOG.info("   Category update payload: {}", payload);
         request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
@@ -599,9 +589,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             if (response.getEntity() != null) {
                 responseBody = EntityUtils.toString(response.getEntity());
             }
-            
+
             LOG.info("   Category update response: {} - {}", statusCode, responseBody);
-            
+
             if (statusCode != 200) {
                 LOG.error("❌ Failed to update category '{}': {} - {}", categoryId, statusCode, responseBody);
                 throw new Exception("Failed to update category: " + statusCode + " - " + responseBody);
@@ -616,27 +606,27 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         try {
             SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
             Document doc = Jsoup.parse(response.getContent());
-            
+
             // Find the specific product by SKU
             Elements productItems = doc.select(".productcollection__item[data-product-sku='" + targetSku + "']");
             if (productItems.size() > 0) {
                 Element productItem = productItems.first();
-                
-                // 1. From .productcollection__item-title span  
+
+                // 1. From .productcollection__item-title span
                 Elements titleElements = productItem.select(".productcollection__item-title span");
-            if (titleElements.size() > 0) {
+                if (titleElements.size() > 0) {
                     String productName = titleElements.first().text().trim();
                     LOG.debug("Found product name from title span: '{}'", productName);
                     return productName;
                 }
-                
+
                 // 2. From title attribute
                 String titleAttr = productItem.attr("title");
                 if (titleAttr != null && !titleAttr.isEmpty()) {
                     LOG.debug("Found product name from title attr: '{}'", titleAttr);
                     return titleAttr.trim();
                 }
-                
+
                 // 3. From data layer JSON
                 String dataLayer = productItem.attr("data-cmp-data-layer");
                 if (dataLayer != null && !dataLayer.isEmpty()) {
@@ -654,7 +644,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     }
                 }
             }
-            
+
             LOG.warn("Could not find product with SKU '{}' in category page", targetSku);
             return "NOT_FOUND";
         } catch (Exception e) {
@@ -663,7 +653,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    // Keep old method for backward compatibility  
+    // Keep old method for backward compatibility
     private String getCurrentProductNameFromAEMPage(String categoryPageUrl) throws ClientException {
         return getCurrentProductNameFromAEMPage(categoryPageUrl, "BLT-LEA-001");
     }
@@ -672,19 +662,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         try {
             SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
             Document doc = Jsoup.parse(response.getContent());
-            
+
             // Look for category title
             Elements title = doc.select(".category__title");
             if (title.size() > 0) {
                 return title.first().text().trim();
             }
-            
+
             // Fallback: breadcrumb
             Elements breadcrumb = doc.select(".cmp-breadcrumb__item--active span[itemprop='name']");
             if (breadcrumb.size() > 0) {
                 return breadcrumb.first().text().trim();
             }
-            
+
             return "NOT_FOUND";
         } catch (Exception e) {
             LOG.error("Error getting category name: {}", e.getMessage());
@@ -700,19 +690,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 // Convert category ID to UID format for AEM CIF cache invalidation
                 String categoryUid = getCategoryUidFromId(categoryId);
                 payload = String.format(
-                    "{\n" +
-                    "    \"productSkus\": [\"%s\"],\n" +
-                    "    \"categoryUids\": [\"%s\"],\n" +
-                    "    \"storePath\": \"%s\"\n" +
-                    "}", productSku, categoryUid, STORE_PATH);
+                        "{\n" +
+                                "    \"productSkus\": [\"%s\"],\n" +
+                                "    \"categoryUids\": [\"%s\"],\n" +
+                                "    \"storePath\": \"%s\"\n" +
+                                "}", productSku, categoryUid, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (product + category): {}", payload);
                 LOG.info("📝 Using category ID '{}' -> UID '{}'", categoryId, categoryUid);
             } else {
                 payload = String.format(
-                    "{\n" +
-                    "    \"productSkus\": [\"%s\"],\n" +
-                    "    \"storePath\": \"%s\"\n" +
-                    "}", productSku, STORE_PATH);
+                        "{\n" +
+                                "    \"productSkus\": [\"%s\"],\n" +
+                                "    \"storePath\": \"%s\"\n" +
+                                "}", productSku, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (product only): {}", payload);
             }
 
@@ -724,9 +714,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             int statusCode = response.getStatusLine().getStatusCode();
             String responseContent = response.getContent();
-            
+
             LOG.info("📤 Response: Status={}, Content={}", statusCode, responseContent);
-            
+
             return statusCode == 200;
         } catch (Exception e) {
             LOG.error("❌ Cache invalidation failed: {}", e.getMessage(), e);
@@ -738,7 +728,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private boolean callCacheInvalidationServlet(String productSku) {
         return callCacheInvalidationServlet(productSku, null);
     }
-    
+
     /**
      * Convert Magento category ID to AEM CIF category UID format.
      * AEM CIF uses base64 encoded category IDs as UIDs for cache invalidation.
