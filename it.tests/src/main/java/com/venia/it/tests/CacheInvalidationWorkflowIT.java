@@ -54,10 +54,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    // Magento Configuration - Uses mcstaging for pipeline tests
-    private static final String MAGENTO_BASE_URL = "https://mcstaging.catalogservice-commerce.fun";
+    // Magento Configuration
+    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = "75k2m0r145nt8199749ulu4lususphlm";
+    private static final String MAGENTO_ADMIN_TOKEN = "etk0tf7974shom72dyphbxqxsqd2eqe5";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -74,7 +74,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
-        LOG.info("🔑 Using mcstaging environment");
     }
 
     @After
