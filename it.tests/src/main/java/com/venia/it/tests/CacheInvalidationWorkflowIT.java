@@ -68,9 +68,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration - Uses mcstaging for pipeline tests
-    private static final String MAGENTO_BASE_URL = "https://mcstaging.catalogservice-commerce.fun";
+    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = "75k2m0r145nt8199749ulu4lususphlm";
+    private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("magento.admin.token", 
+            System.getenv("MAGENTO_ADMIN_TOKEN") != null ? System.getenv("MAGENTO_ADMIN_TOKEN") : "etk0tf7974shom72dyphbxqxsqd2eqe5");
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -87,6 +88,15 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
+        
+        // Log token source for debugging (without exposing the actual token)
+        if (System.getenv("MAGENTO_ADMIN_TOKEN") != null) {
+            LOG.info("🔑 Using token from environment variable MAGENTO_ADMIN_TOKEN");
+        } else if (System.getProperty("magento.admin.token") != null) {
+            LOG.info("🔑 Using token from system property magento.admin.token");
+        } else {
+            LOG.info("🔑 Using default hardcoded token");
+        }
     }
 
     @After
