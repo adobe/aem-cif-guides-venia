@@ -17,6 +17,7 @@ package com.venia.it.tests;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -43,6 +44,8 @@ import com.venia.it.category.IgnoreOn65;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Random;
+
 /**
  * Simple Cache Invalidation Test - Tests both product and category cache invalidation
  */
@@ -54,7 +57,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     // Magento Configuration
     private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("COMMERCE_INTEGRATION_TOKEN", System.getenv("COMMERCE_INTEGRATION_TOKEN"));
+    private static final String MAGENTO_ADMIN_TOKEN = "etk0tf7974shom72dyphbxqxsqd2eqe5";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -190,29 +193,203 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * AEM 6.5 Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
+     * AEM 6.5 Product Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
      */
     @Test
     @Category(IgnoreOnCloud.class)
-    public void testCacheInvalidationWorkflow_AEM65() throws Exception {
-        runCacheInvalidationTest(
+    public void test65_Product_CacheInvalidation() throws Exception {
+        runProductCacheInvalidationTest(
                 "BLT-LEA-001", // SKU
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "AEM 6.5"
+                "venia-leather-belts", // URL key
+                "AEM 6.5 - Product"
         );
     }
 
     /**
-     * Cloud Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
+     * AEM 6.5 Category Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
+     */
+    @Test
+    @Category(IgnoreOnCloud.class)
+    public void test65_Category_CacheInvalidation() throws Exception {
+        runCategoryCacheInvalidationTest(
+                "BLT-LEA-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "venia-leather-belts", // URL key
+                "AEM 6.5 - Category"
+        );
+    }
+
+    /**
+     * Cloud Product Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
      */
     @Test
     @Category(IgnoreOn65.class)
-    public void testCacheInvalidationWorkflow_Cloud() throws Exception {
-        runCacheInvalidationTest(
+    public void testCloud_Product_CacheInvalidation() throws Exception {
+        runProductCacheInvalidationTest(
                 "BLT-FAB-001", // SKU
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "Cloud"
+                "venia-fabric-belts", // URL key
+                "Cloud - Product"
         );
+    }
+
+    /**
+     * Cloud Category Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
+     */
+    @Test
+    @Category(IgnoreOn65.class)
+    public void testCloud_Category_CacheInvalidation() throws Exception {
+        runCategoryCacheInvalidationTest(
+                "BLT-FAB-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "venia-fabric-belts", // URL key
+                "Cloud - Category"
+        );
+    }
+
+    private void runProductCacheInvalidationTest(String productSku, String categoryPageUrl, String categoryUrlKey, String environment) throws Exception {
+        LOG.info("=== PRODUCT CACHE INVALIDATION TEST - {} ===", environment);
+        LOG.info("🎯 SKU: {}", productSku);
+        LOG.info("📂 Category Page: {}", categoryPageUrl);
+        LOG.info("🔑 Category URL Key: {}", categoryUrlKey);
+        LOG.info("📄 Testing PRODUCT cache invalidation only");
+
+        String originalProductName = null;
+        Random random = new Random();
+        String randomSuffix = generateRandomString(6); // Generate 6-character random string
+
+        try {
+            // STEP 1: Get product name from Magento
+            LOG.info("📋 STEP 1: Getting original product name from Magento");
+            JsonNode productData = getMagentoProductData(productSku);
+            originalProductName = productData.get("name").asText();
+            LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
+
+            // STEP 2: Update product name in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating Magento product name");
+            updateMagentoProductName(productSku, updatedProductName);
+            LOG.info("   ✓ Updated Magento Product: '{}'", updatedProductName);
+
+            // STEP 3: Verify AEM still shows old data
+            LOG.info("📋 STEP 3: Checking AEM still shows cached data");
+            String aemProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   AEM Product Shows: '{}'", aemProductName);
+            LOG.info("   Updated Magento Product: '{}'", updatedProductName);
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
+
+            // STEP 4: Call cache invalidation (product only)
+            LOG.info("🚀 STEP 4: Calling cache invalidation servlet for PRODUCT only");
+            boolean cacheInvalidated = callCacheInvalidationServlet(productSku, null); // No category
+            assertTrue("Cache invalidation servlet call failed", cacheInvalidated);
+
+            // STEP 5: Wait and verify cache is cleared
+            LOG.info("⏳ STEP 5: Waiting for cache invalidation...");
+            Thread.sleep(10000); // Wait 10 seconds
+
+            LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data");
+            String freshProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   Fresh Product Check: '{}'", freshProductName);
+            boolean productUpdated = freshProductName.equals(updatedProductName);
+            LOG.info("   Product Updated: {}", productUpdated ? "✅ YES" : "❌ NO");
+
+            assertTrue("Product cache invalidation failed - AEM not showing fresh data", productUpdated);
+            LOG.info("🎉 SUCCESS: Product cache invalidation test passed!");
+
+        } finally {
+            // Restore original product name
+            if (originalProductName != null) {
+                try {
+                    updateMagentoProductName(productSku, originalProductName);
+                    LOG.info("🔄 Restored product name: {}", originalProductName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore product name: {}", e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void runCategoryCacheInvalidationTest(String productSku, String categoryPageUrl, String categoryUrlKey, String environment) throws Exception {
+        LOG.info("=== CATEGORY CACHE INVALIDATION TEST - {} ===", environment);
+        LOG.info("🎯 SKU: {}", productSku);
+        LOG.info("📂 Category Page: {}", categoryPageUrl);
+        LOG.info("🔑 Category URL Key: {}", categoryUrlKey);
+        LOG.info("📄 Testing CATEGORY cache invalidation only");
+
+        String originalCategoryName = null;
+        String categoryId = null;
+        Random random = new Random();
+        String randomSuffix = generateRandomString(6); // Generate 6-character random string
+
+        try {
+            // STEP 1: Get category name from AEM
+            LOG.info("📋 STEP 1: Getting original category name from AEM");
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   ✅ AEM Category Name: '{}'", aemCategoryName);
+
+            // STEP 2: Get category data from Magento using GraphQL
+            LOG.info("🔍 STEP 2: Getting category data from Magento GraphQL");
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            
+            // Extract category ID from UID (Base64 decode)
+            try {
+                categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+                LOG.info("   Category ID from UID: '{}'", categoryId);
+            } catch (Exception e) {
+                LOG.warn("Could not decode category UID '{}': {}", categoryUid, e.getMessage());
+                categoryId = categoryUid; // fallback
+            }
+
+            // Get original name from Magento
+            JsonNode categoryData = getMagentoCategoryData(categoryId);
+            originalCategoryName = categoryData.get("name").asText();
+            LOG.info("   ✓ Magento Category Name: '{}'", originalCategoryName);
+
+            // STEP 3: Update category name in Magento
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            LOG.info("🔄 STEP 3: Updating Magento category name");
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            LOG.info("   ✓ Updated Magento Category: '{}'", updatedCategoryName);
+
+            // STEP 4: Verify AEM still shows old data
+            LOG.info("📋 STEP 4: Checking AEM still shows cached data");
+            String currentAemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   AEM Category Shows: '{}'", currentAemCategoryName);
+            LOG.info("   Updated Magento Category: '{}'", updatedCategoryName);
+            boolean categoryCacheWorking = !currentAemCategoryName.equals(updatedCategoryName);
+            LOG.info("   Category Cache Working: {}", categoryCacheWorking ? "✅ YES" : "❌ NO");
+
+            // STEP 5: Call cache invalidation (category only)
+            LOG.info("🚀 STEP 5: Calling cache invalidation servlet for CATEGORY only");
+            boolean cacheInvalidated = callCacheInvalidationServlet(null, categoryUrlKey); // No product
+            assertTrue("Cache invalidation servlet call failed", cacheInvalidated);
+
+            // STEP 6: Wait and verify cache is cleared
+            LOG.info("⏳ STEP 6: Waiting for cache invalidation...");
+            Thread.sleep(10000); // Wait 10 seconds
+
+            LOG.info("🔍 STEP 7: Checking AEM now shows fresh category data");
+            String freshCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   Fresh Category Check: '{}'", freshCategoryName);
+            boolean categoryUpdated = freshCategoryName.equals(updatedCategoryName);
+            LOG.info("   Category Updated: {}", categoryUpdated ? "✅ YES" : "❌ NO");
+
+            assertTrue("Category cache invalidation failed - AEM not showing fresh data", categoryUpdated);
+            LOG.info("🎉 SUCCESS: Category cache invalidation test passed!");
+
+        } finally {
+            // Restore original category name
+            if (originalCategoryName != null && categoryId != null) {
+                try {
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                    LOG.info("🔄 Restored category name: {}", originalCategoryName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore category name: {}", e.getMessage());
+                }
+            }
+        }
     }
 
     private void runCacheInvalidationTest(String productSku, String categoryPageUrl, String environment) throws Exception {
@@ -682,13 +859,13 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    private boolean callCacheInvalidationServlet(String productSku, String categoryId) {
+    private boolean callCacheInvalidationServlet(String productSku, String categoryUrlKey) {
         try {
             // Build payload with both product SKU and category UID if available
             String payload;
-            if (categoryId != null && !categoryId.isEmpty()) {
-                // Convert category ID to UID format for AEM CIF cache invalidation
-                String categoryUid = getCategoryUidFromId(categoryId);
+            if (categoryUrlKey != null && !categoryUrlKey.isEmpty()) {
+                // Get category UID from Magento GraphQL using url_key
+                String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
                 payload = String.format(
                         "{\n" +
                                 "    \"productSkus\": [\"%s\"],\n" +
@@ -696,7 +873,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                                 "    \"storePath\": \"%s\"\n" +
                                 "}", productSku, categoryUid, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (product + category): {}", payload);
-                LOG.info("📝 Using category ID '{}' -> UID '{}'", categoryId, categoryUid);
+                LOG.info("📝 Using category URL key '{}' -> UID '{}'", categoryUrlKey, categoryUid);
             } else {
                 payload = String.format(
                         "{\n" +
@@ -730,19 +907,88 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Convert Magento category ID to AEM CIF category UID format.
-     * AEM CIF uses base64 encoded category IDs as UIDs for cache invalidation.
+     * Generate random string for test purposes.
      */
-    private String getCategoryUidFromId(String categoryId) {
+    private String generateRandomString(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Get category UID from Magento using GraphQL with url_key.
+     * Uses GraphQL query: categoryList(filters: {url_key: {eq: "url-key"}}) { uid }
+     */
+    private String getCategoryUidFromUrlKey(String categoryUrlKey) {
         try {
-            // AEM CIF expects category UIDs to be base64 encoded category IDs
-            String categoryUid = java.util.Base64.getEncoder().encodeToString(categoryId.getBytes("UTF-8"));
-            LOG.debug("Category ID '{}' encoded to UID '{}'", categoryId, categoryUid);
-            return categoryUid;
+            LOG.info("🔍 Getting category UID from Magento GraphQL for url_key: '{}'", categoryUrlKey);
+            
+            // Create GraphQL query
+            String graphqlQuery = String.format(
+                "{ categoryList(filters: {url_key: {eq: \"%s\"}}) { uid name url_key level path } }",
+                categoryUrlKey
+            );
+            
+            LOG.debug("GraphQL Query: {}", graphqlQuery);
+            
+            String url = MAGENTO_BASE_URL + "/graphql";
+            HttpPost request = new HttpPost(url);
+            request.setHeader("Content-Type", "application/json");
+            
+            // Use ObjectMapper to create proper JSON payload
+            com.fasterxml.jackson.databind.node.ObjectNode jsonPayload = OBJECT_MAPPER.createObjectNode();
+            jsonPayload.put("query", graphqlQuery);
+            String payload = OBJECT_MAPPER.writeValueAsString(jsonPayload);
+            LOG.debug("GraphQL Payload: {}", payload);
+            
+            request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
+            
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                String responseContent = EntityUtils.toString(response.getEntity());
+                int statusCode = response.getStatusLine().getStatusCode();
+                
+                LOG.debug("GraphQL Response Status: {}", statusCode);
+                LOG.debug("GraphQL Response Content: {}", responseContent);
+                
+                if (statusCode == 200) {
+                    JsonNode responseJson = OBJECT_MAPPER.readTree(responseContent);
+                    JsonNode data = responseJson.get("data");
+                    JsonNode categoryList = data.get("categoryList");
+                    
+                    if (categoryList != null && categoryList.isArray() && categoryList.size() > 0) {
+                        JsonNode category = categoryList.get(0);
+                        String uid = category.get("uid").asText();
+                        String name = category.get("name").asText();
+                        int level = category.get("level").asInt();
+                        String path = category.get("path").asText();
+                        
+                        LOG.info("✅ Found category via GraphQL:");
+                        LOG.info("   URL Key: '{}'", categoryUrlKey);
+                        LOG.info("   Name: '{}'", name);
+                        LOG.info("   UID: '{}'", uid);
+                        LOG.info("   Level: {}", level);
+                        LOG.info("   Path: '{}'", path);
+                        
+                        return uid;
+                    } else {
+                        LOG.error("❌ No category found for url_key: '{}'", categoryUrlKey);
+                        throw new RuntimeException("No category found for url_key: " + categoryUrlKey);
+                    }
+                } else {
+                    LOG.error("❌ GraphQL request failed with status: {}", statusCode);
+                    LOG.error("❌ GraphQL Response Content: {}", responseContent);
+                    LOG.error("❌ GraphQL Request URL: {}", url);
+                    LOG.error("❌ GraphQL Request Payload: {}", payload);
+                    throw new RuntimeException("GraphQL request failed: " + statusCode + " - " + responseContent);
+                }
+            }
         } catch (Exception e) {
-            LOG.warn("Failed to encode category ID '{}' to UID: {}", categoryId, e.getMessage());
-            // Fallback: return the ID as-is
-            return categoryId;
+            LOG.error("❌ Failed to get category UID from GraphQL for url_key '{}': {}", categoryUrlKey, e.getMessage());
+            throw new RuntimeException("Failed to get category UID from GraphQL", e);
         }
     }
 }
