@@ -1,10 +1,10 @@
 {
   "identifier": "default",
   "service.ranking": 5,
-  "url": "https://mcstaging.catalogservice-commerce.fun/graphql",
+  "url": "$[env:COMMERCE_ENDPOINT;default=]",
   "acceptSelfSignedCertificates": false,
   "httpMethod": "GET",
-  "httpHeaders": ["Authorization: Bearer 75k2m0r145nt8199749ulu4lususphlm"],
+  "httpHeaders": ["$[secret:COMMERCE_AUTH_HEADER;default=]"],
   "maxHttpConnections": 20,
   "connectionTimeout": 5000,
   "requestPoolTimeout": 2000,
