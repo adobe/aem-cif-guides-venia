@@ -18,16 +18,7 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-let { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
-
-// Force mcstaging for all PR/integration tests
-let COMMERCE_AUTH_HEADER = '';
-if (TYPE === 'integration') {
-    COMMERCE_ENDPOINT = 'https://mcstaging.catalogservice-commerce.fun/graphql';
-    COMMERCE_AUTH_HEADER = 'Authorization: Bearer 75k2m0r145nt8199749ulu4lususphlm';
-    console.log('🔧 Overriding COMMERCE_ENDPOINT for integration tests:', COMMERCE_ENDPOINT);
-    console.log('🔑 Using mcstaging authentication');
-}
+const { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
     if (!pid) {
@@ -37,7 +28,6 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
         pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
     }
 
-    let authHeaderParam = COMMERCE_AUTH_HEADER ? `-d "httpHeaders=${COMMERCE_AUTH_HEADER}"` : '';
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
                 -u "admin:admin" \
                 -d "apply=true" \
@@ -46,7 +36,6 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                ${authHeaderParam} \
                 -d "service.ranking=${ranking}"
     `)
 }
