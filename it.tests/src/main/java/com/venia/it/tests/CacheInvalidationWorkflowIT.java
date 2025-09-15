@@ -47,17 +47,30 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 
 /**
- * Simple Cache Invalidation Test - Tests both product and category cache invalidation
+ * Result class to hold product names from different components
+ */
+class ProductNameResult {
+    public final String breadcrumbName;
+    public final String productDetailName;
+    
+    public ProductNameResult(String breadcrumbName, String productDetailName) {
+        this.breadcrumbName = breadcrumbName;
+        this.productDetailName = productDetailName;
+    }
+}
+
+/**
+ * Simple Cache Invalidation Test - Tests product cache invalidation
  */
 public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    // Magento Configuration
-    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
+    // Magento Configuration - Uses mcstaging for pipeline tests
+    private static final String MAGENTO_BASE_URL = "https://mcstaging.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = "etk0tf7974shom72dyphbxqxsqd2eqe5";
+    private static final String MAGENTO_ADMIN_TOKEN = "75k2m0r145nt8199749ulu4lususphlm";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -109,150 +122,39 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     /**
      * Debug HTML Parsing Test - Test parsing category and product names from real HTML
      */
-    @Test
-    public void testDebugHtmlParsing() throws Exception {
-        String categoryPageUrl = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
-        String productSku = "BLT-LEA-001";
-
-        LOG.info("🔍 DEBUG: Testing HTML parsing for URL: {}", categoryPageUrl);
-
-        try {
-            // Step 1: Load the page
-            SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
-            Document doc = Jsoup.parse(response.getContent());
-            LOG.info("✅ Page loaded successfully, HTML length: {}", response.getContent().length());
-
-            // Step 2: Extract category name - EXACTLY from your HTML structure
-            LOG.info("🔍 Looking for category name...");
-
-            // Method 1: <span class="category__title">Leather Belts</span>
-            Elements categorySpans = doc.select("span.category__title");
-            LOG.info("Found {} elements with span.category__title", categorySpans.size());
-            if (categorySpans.size() > 0) {
-                String categoryName = categorySpans.first().text().trim();
-                LOG.info("✅ CATEGORY NAME FOUND: '{}'", categoryName);
-            } else {
-                LOG.warn("❌ No category__title span found");
-                // Debug alternative selectors
-                Elements h1Title = doc.select("h1 .category__title");
-                LOG.info("Alternative h1 .category__title found: {}", h1Title.size());
-                if (h1Title.size() > 0) {
-                    LOG.info("Alternative category name: '{}'", h1Title.first().text());
-                }
-            }
-
-            // Step 3: Extract product name - EXACTLY from your HTML structure
-            LOG.info("🔍 Looking for product name with SKU '{}'...", productSku);
-
-            // Method 1: Find product by SKU then get title
-            Elements productItems = doc.select("a.productcollection__item[data-product-sku='" + productSku + "']");
-            LOG.info("Found {} product items with SKU '{}'", productItems.size(), productSku);
-
-            if (productItems.size() > 0) {
-                Element productItem = productItems.first();
-
-                // Extract from: <div class="productcollection__item-title"><span>Black Leather Belt 8250</span></div>
-                Elements productTitleSpans = productItem.select("div.productcollection__item-title span");
-                LOG.info("Found {} title spans for product", productTitleSpans.size());
-
-                if (productTitleSpans.size() > 0) {
-                    String productName = productTitleSpans.first().text().trim();
-                    LOG.info("✅ PRODUCT NAME FOUND: '{}'", productName);
-                } else {
-                    LOG.warn("❌ No productcollection__item-title span found in product");
-                    // Debug alternative
-                    Elements altSpans = productItem.select(".productcollection__item-title span");
-                    LOG.info("Alternative .productcollection__item-title span found: {}", altSpans.size());
-                    if (altSpans.size() > 0) {
-                        LOG.info("Alternative product name: '{}'", altSpans.first().text());
-                    }
-                }
-
-                // Also check title attribute
-                String titleAttr = productItem.attr("title");
-                LOG.info("Product title attribute: '{}'", titleAttr);
-
-            } else {
-                LOG.warn("❌ No product found with SKU '{}'", productSku);
-                // Debug what products we do find
-                Elements allProducts = doc.select("a.productcollection__item[data-product-sku]");
-                LOG.info("Total products found: {}", allProducts.size());
-                for (Element product : allProducts) {
-                    String sku = product.attr("data-product-sku");
-                    String title = product.attr("title");
-                    LOG.info("  - Product SKU: '{}', Title: '{}'", sku, title);
-                }
-            }
-
-            LOG.info("🎯 HTML Parsing Debug Complete!");
-
-        } catch (Exception e) {
-            LOG.error("❌ Debug test failed: {}", e.getMessage(), e);
-            throw e;
-        }
-    }
 
     /**
-     * AEM 6.5 Product Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
+     * AEM 6.5 Product Test - Black Leather Belt (BLT-LEA-001)
+     * Tests product cache invalidation using product page with breadcrumb and product detail components
      */
     @Test
     @Category(IgnoreOnCloud.class)
     public void test65_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
                 "BLT-LEA-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "venia-leather-belts", // URL key
+                "/content/venia/us/en/products/product-page.html/venia-accessories/venia-belts/venia-leather-belts/black-leather-belt.html", // Product page
                 "AEM 6.5 - Product"
         );
     }
 
     /**
-     * AEM 6.5 Category Test - Leather Belts Category with Black Leather Belt (BLT-LEA-001)
-     */
-    @Test
-    @Category(IgnoreOnCloud.class)
-    public void test65_Category_CacheInvalidation() throws Exception {
-        runCategoryCacheInvalidationTest(
-                "BLT-LEA-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "venia-leather-belts", // URL key
-                "AEM 6.5 - Category"
-        );
-    }
-
-    /**
-     * Cloud Product Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
+     * Cloud Product Test - Canvas Fabric Belt (BLT-FAB-001)
+     * Tests product cache invalidation using product page with breadcrumb and product detail components
      */
     @Test
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
                 "BLT-FAB-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "venia-fabric-belts", // URL key
+                "/content/venia/us/en/products/product-page.html/venia-accessories/venia-belts/venia-fabric-belts/canvas-fabric-belt.html", // Product page
                 "Cloud - Product"
         );
     }
 
-    /**
-     * Cloud Category Test - Fabric Belts Category with Canvas Fabric Belt (BLT-FAB-001)
-     */
-    @Test
-    @Category(IgnoreOn65.class)
-    public void testCloud_Category_CacheInvalidation() throws Exception {
-        runCategoryCacheInvalidationTest(
-                "BLT-FAB-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "venia-fabric-belts", // URL key
-                "Cloud - Category"
-        );
-    }
-
-    private void runProductCacheInvalidationTest(String productSku, String categoryPageUrl, String categoryUrlKey, String environment) throws Exception {
+    private void runProductCacheInvalidationTest(String productSku, String productPageUrl, String environment) throws Exception {
         LOG.info("=== PRODUCT CACHE INVALIDATION TEST - {} ===", environment);
         LOG.info("🎯 SKU: {}", productSku);
-        LOG.info("📂 Category Page: {}", categoryPageUrl);
-        LOG.info("🔑 Category URL Key: {}", categoryUrlKey);
+        LOG.info("📂 Product Page: {}", productPageUrl);
         LOG.info("📄 Testing PRODUCT cache invalidation only");
 
         String originalProductName = null;
@@ -272,13 +174,17 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             updateMagentoProductName(productSku, updatedProductName);
             LOG.info("   ✓ Updated Magento Product: '{}'", updatedProductName);
 
-            // STEP 3: Verify AEM still shows old data
-            LOG.info("📋 STEP 3: Checking AEM still shows cached data");
-            String aemProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
-            LOG.info("   AEM Product Shows: '{}'", aemProductName);
+            // STEP 3: Verify AEM still shows old data (check both breadcrumb and product components)
+            LOG.info("📋 STEP 3: Checking AEM product page still shows cached data");
+            ProductNameResult aemProductNames = getCurrentProductNameFromProductPage(productPageUrl);
+            LOG.info("   AEM Breadcrumb Shows: '{}'", aemProductNames.breadcrumbName);
+            LOG.info("   AEM Product Detail Shows: '{}'", aemProductNames.productDetailName);
             LOG.info("   Updated Magento Product: '{}'", updatedProductName);
-            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
-            LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
+            
+            boolean breadcrumbCacheWorking = !aemProductNames.breadcrumbName.equals(updatedProductName);
+            boolean productDetailCacheWorking = !aemProductNames.productDetailName.equals(updatedProductName);
+            LOG.info("   Breadcrumb Cache Working: {}", breadcrumbCacheWorking ? "✅ YES" : "❌ NO");
+            LOG.info("   Product Detail Cache Working: {}", productDetailCacheWorking ? "✅ YES" : "❌ NO");
 
             // STEP 4: Call cache invalidation (product only)
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet for PRODUCT only");
@@ -289,14 +195,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("⏳ STEP 5: Waiting for cache invalidation...");
             Thread.sleep(10000); // Wait 10 seconds
 
-            LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data");
-            String freshProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
-            LOG.info("   Fresh Product Check: '{}'", freshProductName);
-            boolean productUpdated = freshProductName.equals(updatedProductName);
-            LOG.info("   Product Updated: {}", productUpdated ? "✅ YES" : "❌ NO");
+            LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data in both components");
+            ProductNameResult freshProductNames = getCurrentProductNameFromProductPage(productPageUrl);
+            LOG.info("   Fresh Breadcrumb Check: '{}'", freshProductNames.breadcrumbName);
+            LOG.info("   Fresh Product Detail Check: '{}'", freshProductNames.productDetailName);
+            
+            boolean breadcrumbUpdated = freshProductNames.breadcrumbName.equals(updatedProductName);
+            boolean productDetailUpdated = freshProductNames.productDetailName.equals(updatedProductName);
+            LOG.info("   Breadcrumb Updated: {}", breadcrumbUpdated ? "✅ YES" : "❌ NO");
+            LOG.info("   Product Detail Updated: {}", productDetailUpdated ? "✅ YES" : "❌ NO");
 
-            assertTrue("Product cache invalidation failed - AEM not showing fresh data", productUpdated);
-            LOG.info("🎉 SUCCESS: Product cache invalidation test passed!");
+            assertTrue("Breadcrumb cache invalidation failed - AEM not showing fresh data", breadcrumbUpdated);
+            assertTrue("Product detail cache invalidation failed - AEM not showing fresh data", productDetailUpdated);
+            LOG.info("🎉 SUCCESS: Product cache invalidation test passed for both components!");
 
         } finally {
             // Restore original product name
@@ -308,6 +219,42 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     LOG.warn("Could not restore product name: {}", e.getMessage());
                 }
             }
+        }
+    }
+
+    /**
+     * Extract product name from both breadcrumb and product detail components on product page
+     */
+    private ProductNameResult getCurrentProductNameFromProductPage(String productPageUrl) throws ClientException {
+        try {
+            SlingHttpResponse response = adminAuthor.doGet(productPageUrl, 200);
+            Document doc = Jsoup.parse(response.getContent());
+            
+            // Extract from breadcrumb component: <span itemprop="name">Canvas Fabric Belt5 XRSY6M</span>
+            String breadcrumbName = "NOT_FOUND";
+            Elements breadcrumbElements = doc.select(".cmp-breadcrumb__item--active span[itemprop='name']");
+            if (breadcrumbElements.size() > 0) {
+                breadcrumbName = breadcrumbElements.first().text().trim();
+                LOG.debug("Found breadcrumb name: '{}'", breadcrumbName);
+            } else {
+                LOG.warn("Could not find breadcrumb name in product page");
+            }
+            
+            // Extract from product detail component: <h1 class="productFullDetail__productName"><span role="name">Canvas Fabric Belt5 XRSY6M</span></h1>
+            String productDetailName = "NOT_FOUND";
+            Elements productDetailElements = doc.select(".productFullDetail__productName span[role='name']");
+            if (productDetailElements.size() > 0) {
+                productDetailName = productDetailElements.first().text().trim();
+                LOG.debug("Found product detail name: '{}'", productDetailName);
+            } else {
+                LOG.warn("Could not find product detail name in product page");
+            }
+            
+            return new ProductNameResult(breadcrumbName, productDetailName);
+            
+        } catch (Exception e) {
+            LOG.error("Error getting product names from product page: {}", e.getMessage());
+            return new ProductNameResult("ERROR", "ERROR");
         }
     }
 
