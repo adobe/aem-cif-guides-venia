@@ -85,9 +85,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOnCloud.class)
     public void test65_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
-                "BLT-LEA-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "AEM 6.5 - Product"
+                "BLT-FAB-001", // SKU - SWAPPED: Now using Cloud's product
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "AEM 6.5 - Product (SWAPPED)"
         );
     }
 
@@ -98,9 +98,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
-                "BLT-FAB-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "Cloud - Product"
+                "BLT-LEA-001", // SKU - SWAPPED: Now using 6.5's product
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "Cloud - Product (SWAPPED)"
         );
     }
 
@@ -111,10 +111,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOnCloud.class)
     public void test65_Category_CacheInvalidation() throws Exception {
         runCategoryCacheInvalidationTest(
-                "BLT-LEA-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "venia-leather-belts", // URL key
-                "AEM 6.5 - Category"
+                "BLT-FAB-001", // SKU - SWAPPED: Now using Cloud's product
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "venia-fabric-belts", // URL key
+                "AEM 6.5 - Category (SWAPPED)"
         );
     }
 
@@ -125,10 +125,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Category_CacheInvalidation() throws Exception {
         runCategoryCacheInvalidationTest(
-                "BLT-FAB-001", // SKU
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "venia-fabric-belts", // URL key
-                "Cloud - Category"
+                "BLT-LEA-001", // SKU - SWAPPED: Now using 6.5's product
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "venia-leather-belts", // URL key
+                "Cloud - Category (SWAPPED)"
         );
     }
 
