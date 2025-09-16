@@ -85,11 +85,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOnCloud.class)
     public void test65_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
-
-
-                "BLT-FAB-001", // SKU - TESTING: Problem product to confirm issue
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "Cloud - Product (TESTING BLT-FAB-001 - Problem Product)"
+                "BLT-LEA-001", // SKU - Back to original
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "AEM 6.5 - Product"
         );
     }
 
@@ -100,10 +98,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - Back to original
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "AEM 6.5 - Product"
-
+                "BLT-FAB-001", // SKU - Back to original
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "Cloud - Product"
         );
     }
 
@@ -114,12 +111,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOnCloud.class)
     public void test65_Category_CacheInvalidation() throws Exception {
         runCategoryCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - TESTING: Use same product that works in 6.5
+                "BLT-LEA-001", // SKU - Back to original
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
                 "venia-leather-belts", // URL key
-                "Cloud - Category (TESTING BLT-LEA-001)"
-
-
+                "AEM 6.5 - Category"
         );
     }
 
@@ -130,10 +125,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Category_CacheInvalidation() throws Exception {
         runCategoryCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - Back to original
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "venia-leather-belts", // URL key
-                "AEM 6.5 - Category"
+                "BLT-FAB-001", // SKU - Back to original
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "venia-fabric-belts", // URL key
+                "Cloud - Category"
         );
     }
 
@@ -223,7 +218,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             // STEP 2: Get category data from Magento using GraphQL
             LOG.info("🔍 STEP 2: Getting category data from Magento GraphQL");
             String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-
+            
             // Extract category ID from UID (Base64 decode)
             try {
                 categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
@@ -449,17 +444,17 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
                 payload = String.format(
                         "{\n" +
-                                "    \"categoryUids\": [\"%s\"],\n" +
-                                "    \"storePath\": \"%s\"\n" +
+                        "    \"categoryUids\": [\"%s\"],\n" +
+                        "    \"storePath\": \"%s\"\n" +
                         "}", categoryUid, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (category): {}", payload);
             } else {
                 // Product invalidation
                 payload = String.format(
                         "{\n" +
-                                "    \"productSkus\": [\"%s\"],\n" +
-                                "    \"storePath\": \"%s\"\n" +
-                                "}", productSku, STORE_PATH);
+                        "    \"productSkus\": [\"%s\"],\n" +
+                        "    \"storePath\": \"%s\"\n" +
+                        "}", productSku, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (product): {}", payload);
             }
 
