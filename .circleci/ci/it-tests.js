@@ -32,11 +32,16 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}"
+                -d "service.ranking=${ranking}" \
+                -d "cacheConfigurations=venia/components/commerce/navigation:true:5:300" \
+                -d "cacheConfigurations=com.adobe.cq.commerce.core.search.services.SearchFilterService:true:10:300" \
+                -d "cacheConfigurations=venia/components/commerce/breadcrumb:true:1000:1000" \
+                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000" \
+                -d "cacheConfigurations=venia/components/commerce/productlist:true:50:1000"
     `)
 }
 
@@ -48,6 +53,8 @@ const updateGraphqlProxyServlet = () => {
                 -d "graphQLOriginUrl=${COMMERCE_ENDPOINT}"
     `)
 }
+
+
 
 try {
     ci.stage("Integration Tests");
