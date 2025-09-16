@@ -1,4 +1,3 @@
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  ~ Copyright 2024 Adobe
  ~
@@ -25,15 +24,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.By;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.jsoup.Jsoup;
@@ -55,345 +45,103 @@ import com.venia.it.category.IgnoreOn65;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Result class to hold product names from different components
- */
-class ProductNameResult {
-    public final String breadcrumbName;
-    public final String productDetailName;
-
-    public ProductNameResult(String breadcrumbName, String productDetailName) {
-        this.breadcrumbName = breadcrumbName;
-        this.productDetailName = productDetailName;
-    }
-}
-
-/**
- * Simple Cache Invalidation Test - Tests product cache invalidation
+ * Cache Invalidation Test - Tests both product and category cache invalidation for AEM 6.5 and Cloud
  */
 public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    // Magento Configuration - Uses mcstaging for pipeline tests
+    // Magento Configuration
     private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("magento.admin.token",
-            System.getenv("MAGENTO_ADMIN_TOKEN") != null ? System.getenv("MAGENTO_ADMIN_TOKEN") : "etk0tf7974shom72dyphbxqxsqd2eqe5");
+    private static final String MAGENTO_ADMIN_TOKEN = "etk0tf7974shom72dyphbxqxsqd2eqe5";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
     private CloseableHttpClient httpClient;
-    private WebDriver webDriver;
-    private String screenshotDir = "screenshots";
-
-    // Store original names for cleanup
-    private String lastProductSku = null;
-    private String lastOriginalProductName = null;
-    private String lastCategoryId = null;
-    private String lastOriginalCategoryName = null;
 
     @Before
     public void setUp() throws Exception {
         httpClient = HttpClients.createDefault();
-        
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
-        
-        // Setup WebDriver for screenshots
-        setupWebDriver();
-        
-        // Create screenshots directory
-        createScreenshotDirectory();
-        
-        // Test WebDriver setup
-        testWebDriverSetup();
-
-        // Log token source for debugging (without exposing the actual token)
-        if (System.getenv("MAGENTO_ADMIN_TOKEN") != null) {
-            LOG.info("🔑 Using token from environment variable MAGENTO_ADMIN_TOKEN");
-        } else if (System.getProperty("magento.admin.token") != null) {
-            LOG.info("🔑 Using token from system property magento.admin.token");
-        } else {
-            LOG.info("🔑 Using default hardcoded token");
-        }
     }
 
     @After
     public void tearDown() throws Exception {
-        LOG.info("🧹 CLEANUP: Reverting names back to original values...");
-
-        try {
-            // Revert product name if we changed it
-            if (lastProductSku != null && lastOriginalProductName != null) {
-                LOG.info("   🔄 Reverting product '{}' to original name: '{}'", lastProductSku, lastOriginalProductName);
-                updateMagentoProductName(lastProductSku, lastOriginalProductName);
-                LOG.info("   ✅ Product name reverted");
-            }
-
-            // Revert category name if we changed it
-            if (lastCategoryId != null && lastOriginalCategoryName != null) {
-                LOG.info("   🔄 Reverting category '{}' to original name: '{}'", lastCategoryId, lastOriginalCategoryName);
-                updateMagentoCategoryName(lastCategoryId, lastOriginalCategoryName);
-                LOG.info("   ✅ Category name reverted");
-            }
-
-        } catch (Exception e) {
-            LOG.error("❌ Failed to revert names during cleanup: {}", e.getMessage(), e);
-        }
-
         if (httpClient != null) {
             httpClient.close();
         }
-
-        if (webDriver != null) {
-            try {
-                webDriver.quit();
-                LOG.info("   ✅ WebDriver closed");
-            } catch (Exception e) {
-                LOG.warn("Could not close WebDriver: {}", e.getMessage());
-            }
-        }
-
         LOG.info("🧹 Cleanup complete");
     }
 
     /**
-     * Test WebDriver setup and log detailed status
-     */
-    private void testWebDriverSetup() {
-        if (webDriver == null) {
-            LOG.error("🚨 WEBDRIVER STATUS: NULL - No screenshots will be taken!");
-            LOG.error("   💡 Check browser installation (Chrome or Edge required)");
-            return;
-        }
-        
-        try {
-            LOG.info("✅ WEBDRIVER STATUS: Initialized successfully");
-            LOG.info("   🔧 WebDriver Type: {}", webDriver.getClass().getSimpleName());
-            
-            // Quick test navigation  
-            webDriver.get(adminAuthor.getUrl() + "/libs/granite/core/content/login.html");
-            String title = webDriver.getTitle();
-            LOG.info("   📑 Test Navigation: SUCCESS - Page title: '{}'", title);
-            LOG.info("   📸 Screenshots will be enabled for this test");
-            
-        } catch (Exception e) {
-            LOG.error("❌ WEBDRIVER TEST FAILED: {}", e.getMessage());
-            LOG.error("   🚫 Screenshots will be disabled");
-            // Don't fail the test, just disable screenshots
-            try {
-                webDriver.quit();
-            } catch (Exception ignore) {}
-            webDriver = null;
-        }
-    }
-
-    /**
-     * Setup WebDriver for screenshots
-     */
-    private void setupWebDriver() {
-        try {
-            boolean isCI = System.getenv("CIRCLECI") != null || System.getenv("CI") != null;
-            
-            if (isCI) {
-                LOG.info("🔧 Setting up WebDriver for CI environment");
-                // In CI, use system-installed ChromeDriver
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--headless");
-                options.addArguments("--no-sandbox");
-                options.addArguments("--disable-dev-shm-usage");
-                options.addArguments("--disable-gpu");
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--remote-allow-origins=*");
-                webDriver = new ChromeDriver(options);
-                LOG.info("   ✅ Headless Chrome WebDriver initialized for CI");
-            } else {
-                LOG.info("🔧 Setting up WebDriver for local environment");
-                // For local, try Chrome first, then Edge as fallback
-                webDriver = setupLocalWebDriver();
-            }
-        } catch (Exception e) {
-            LOG.error("❌ Failed to setup WebDriver: {}. Screenshots will be disabled.", e.getMessage());
-            LOG.error("   💡 To enable screenshots, install Google Chrome browser");
-            LOG.error("   🔧 Chrome installation: https://www.google.com/chrome/");
-            webDriver = null;
-        }
-    }
-
-    /**
-     * Setup local WebDriver with fallback options
-     */
-    private WebDriver setupLocalWebDriver() {
-        // Try Chrome first
-        try {
-            LOG.info("   🔧 Attempting Chrome WebDriver setup...");
-            WebDriverManager.chromedriver().setup();
-            ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.addArguments("--headless");
-            chromeOptions.addArguments("--window-size=1920,1080");
-            WebDriver driver = new ChromeDriver(chromeOptions);
-            LOG.info("   ✅ Chrome WebDriver initialized successfully");
-            return driver;
-        } catch (Exception chromeException) {
-            LOG.warn("   ❌ Chrome WebDriver failed: {}", chromeException.getMessage());
-        }
-
-        // Try Edge as fallback
-        try {
-            LOG.info("   🔧 Attempting Edge WebDriver setup...");
-            WebDriverManager.edgedriver().setup();
-            EdgeOptions edgeOptions = new EdgeOptions();
-            edgeOptions.addArguments("--headless");
-            edgeOptions.addArguments("--window-size=1920,1080");
-            WebDriver driver = new EdgeDriver(edgeOptions);
-            LOG.info("   ✅ Edge WebDriver initialized successfully");
-            return driver;
-        } catch (Exception edgeException) {
-            LOG.warn("   ❌ Edge WebDriver failed: {}", edgeException.getMessage());
-        }
-
-        LOG.error("   ❌ No compatible browser found for screenshots");
-        LOG.error("   💡 Install one of: Google Chrome, Microsoft Edge");
-        LOG.error("   🔧 Chrome: https://www.google.com/chrome/");
-        LOG.error("   🔧 Edge: https://www.microsoft.com/edge");
-        return null;
-    }
-
-    /**
-     * Create screenshot directory
-     */
-    private void createScreenshotDirectory() {
-        try {
-            File screenshotFolder = new File(screenshotDir);
-            if (!screenshotFolder.exists()) {
-                screenshotFolder.mkdirs();
-                LOG.info("📁 Created screenshots directory: {}", screenshotFolder.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            LOG.warn("Could not create screenshot directory: {}", e.getMessage());
-        }
-    }
-
-    /**
-     * Take screenshot of the given URL with description
-     */
-    private void takeScreenshot(String url, String stepDescription, String testMethod) {
-        if (webDriver == null) {
-            LOG.warn("📸❌ WebDriver not available, skipping screenshot for: {}", stepDescription);
-            LOG.warn("   💡 Install Chrome browser to enable screenshots");
-            return;
-        }
-        
-        LOG.info("📸 Taking screenshot for: {}", stepDescription);
-
-        try {
-            // First, navigate to AEM login page and authenticate
-            webDriver.get(adminAuthor.getUrl() + "/libs/granite/core/content/login.html");
-            Thread.sleep(1000);
-            
-            // Check if we need to log in
-            try {
-                if (webDriver.getCurrentUrl().contains("login")) {
-                    LOG.info("   🔐 Logging into AEM...");
-                    webDriver.findElement(By.id("username")).sendKeys("admin");
-                    webDriver.findElement(By.id("password")).sendKeys("admin");
-                    webDriver.findElement(By.id("submit-button")).click();
-                    Thread.sleep(2000); // Wait for login to complete
-                    LOG.info("   ✅ AEM login successful");
-                }
-            } catch (Exception loginException) {
-                LOG.warn("   ⚠️ Could not perform login, trying direct URL access");
-            }
-            
-            // Now navigate to the actual page
-            LOG.info("   📄 Navigating to: {}", url);
-            webDriver.get(url);
-            Thread.sleep(5000); // Wait for page to fully load
-            
-            // Log page title to verify we're on the right page
-            String pageTitle = webDriver.getTitle();
-            LOG.info("   📑 Page Title: '{}'", pageTitle);
-            
-            // Wait a bit more if it looks like we're still loading
-            if (pageTitle.contains("Loading") || pageTitle.isEmpty()) {
-                LOG.info("   ⏳ Page still loading, waiting more...");
-                Thread.sleep(3000);
-            }
-            
-            TakesScreenshot screenshotTaker = (TakesScreenshot) webDriver;
-            byte[] screenshot = screenshotTaker.getScreenshotAs(OutputType.BYTES);
-            
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
-            String filename = String.format("%s_%s_%s_%s.png", 
-                testMethod, 
-                stepDescription.replaceAll("[^a-zA-Z0-9]", "_"), 
-                timestamp,
-                System.currentTimeMillis() % 1000);
-            
-            File screenshotFile = new File(screenshotDir, filename);
-            try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
-                fos.write(screenshot);
-            }
-            
-            LOG.info("📸 Screenshot saved: {} - {}", filename, stepDescription);
-        } catch (Exception e) {
-            LOG.warn("Failed to take screenshot for '{}': {}", stepDescription, e.getMessage());
-        }
-    }
-
-    /**
-     * Debug HTML Parsing Test - Test parsing category and product names from real HTML
-     */
-
-    /**
-     * AEM 6.5 Product Test - Black Leather Belt (BLT-LEA-001)
-     * Tests product cache invalidation using product page with breadcrumb and product detail components
+     * AEM 6.5 Product Cache Invalidation Test
      */
     @Test
     @Category(IgnoreOnCloud.class)
     public void test65_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
                 "BLT-LEA-001", // SKU
-                "/content/venia/us/en/products/product-page.html/venia-accessories/venia-belts/venia-leather-belts/black-leather-belt.html", // Product page
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
                 "AEM 6.5 - Product"
         );
     }
 
     /**
-     * Cloud Product Test - Canvas Fabric Belt (BLT-FAB-001)
-     * Tests product cache invalidation using product page with breadcrumb and product detail components
+     * Cloud Product Cache Invalidation Test
      */
     @Test
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
                 "BLT-FAB-001", // SKU
-                "/content/venia/us/en/products/product-page.html/venia-accessories/venia-belts/venia-fabric-belts/canvas-fabric-belt.html", // Product page
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
                 "Cloud - Product"
         );
     }
 
-    private void runProductCacheInvalidationTest(String productSku, String productPageUrl, String environment) throws Exception {
+    /**
+     * AEM 6.5 Category Cache Invalidation Test
+     */
+    @Test
+    @Category(IgnoreOnCloud.class)
+    public void test65_Category_CacheInvalidation() throws Exception {
+        runCategoryCacheInvalidationTest(
+                "BLT-LEA-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "venia-leather-belts", // URL key
+                "AEM 6.5 - Category"
+        );
+    }
+
+    /**
+     * Cloud Category Cache Invalidation Test
+     */
+    @Test
+    @Category(IgnoreOn65.class)
+    public void testCloud_Category_CacheInvalidation() throws Exception {
+        runCategoryCacheInvalidationTest(
+                "BLT-FAB-001", // SKU
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "venia-fabric-belts", // URL key
+                "Cloud - Category"
+        );
+    }
+
+    /**
+     * Product cache invalidation test workflow
+     */
+    private void runProductCacheInvalidationTest(String productSku, String categoryPageUrl, String environment) throws Exception {
         LOG.info("=== PRODUCT CACHE INVALIDATION TEST - {} ===", environment);
         LOG.info("🎯 SKU: {}", productSku);
-        LOG.info("📂 Product Page: {}", productPageUrl);
-        LOG.info("📄 Testing PRODUCT cache invalidation only");
+        LOG.info("📂 Category Page: {}", categoryPageUrl);
 
         String originalProductName = null;
-        Random random = new Random();
-        String randomSuffix = generateRandomString(6); // Generate 6-character random string
+        String randomSuffix = generateRandomString(6);
 
         try {
             // STEP 1: Get product name from Magento
@@ -402,85 +150,38 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             originalProductName = productData.get("name").asText();
             LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
 
-            // STEP 1.5: Take screenshot BEFORE Magento name change
-            LOG.info("📸 STEP 1.5: Taking screenshot BEFORE Magento name change");
-            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP1_Before_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
-
             // STEP 2: Update product name in Magento
             String updatedProductName = originalProductName + " " + randomSuffix;
             LOG.info("🔄 STEP 2: Updating Magento product name");
             updateMagentoProductName(productSku, updatedProductName);
             LOG.info("   ✓ Updated Magento Product: '{}'", updatedProductName);
 
-            // STEP 2.5: Take screenshot AFTER Magento name change (before cache check)
-            LOG.info("📸 STEP 2.5: Taking screenshot AFTER Magento name change");
-            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP2_After_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
-
-            // STEP 3: Verify AEM still shows old data (check both breadcrumb and product components)
-            LOG.info("📋 STEP 3: Checking AEM product page still shows cached data");
-            
-            // Take screenshot to check if AEM shows cached data
-            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP3_Cache_Status_Check", environment.replaceAll("[^a-zA-Z0-9]", "_"));
-            
-            ProductNameResult aemProductNames = getCurrentProductNameFromProductPage(productPageUrl);
-            LOG.info("   AEM Breadcrumb Shows: '{}'", aemProductNames.breadcrumbName);
-            LOG.info("   AEM Product Detail Shows: '{}'", aemProductNames.productDetailName);
+            // STEP 3: Verify AEM still shows old data (cache working)
+            LOG.info("📋 STEP 3: Checking AEM still shows cached data");
+            String aemProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   AEM Product Shows: '{}'", aemProductName);
             LOG.info("   Updated Magento Product: '{}'", updatedProductName);
-
-            boolean breadcrumbCacheWorking = !aemProductNames.breadcrumbName.equals(updatedProductName);
-            boolean productDetailCacheWorking = !aemProductNames.productDetailName.equals(updatedProductName);
-            LOG.info("   Breadcrumb Cache Working: {}", breadcrumbCacheWorking ? "✅ YES" : "❌ NO");
-            LOG.info("   Product Detail Cache Working: {}", productDetailCacheWorking ? "✅ YES" : "❌ NO");
-
-            // STEP 3.5: Check commerce browse pages (should show NEW name - no cache)
-            LOG.info("📋 STEP 3.5: Checking commerce browse pages show fresh Magento data (no cache)");
-            
-            // Determine category browse URL based on product SKU
-            String commerceBrowseUrl = getCommerceBrowseUrlForProduct(productSku);
-            if (commerceBrowseUrl != null) {
-                takeScreenshot(adminAuthor.getUrl() + commerceBrowseUrl, "STEP3_5_Commerce_Browse_Fresh", environment.replaceAll("[^a-zA-Z0-9]", "_"));
-                
-                String commerceProductName = getCurrentProductNameFromCommercePage(commerceBrowseUrl, productSku);
-                LOG.info("   Commerce Browse Shows: '{}'", commerceProductName);
-                LOG.info("   Expected Fresh Name: '{}'", updatedProductName);
-                
-                boolean commerceShowsFreshData = commerceProductName.equals(updatedProductName);
-                LOG.info("   Commerce Browse Fresh: {}", commerceShowsFreshData ? "✅ YES" : "❌ NO");
-                
-                // This validates that commerce pages don't cache (good behavior)
-                if (!commerceShowsFreshData) {
-                    LOG.warn("⚠️ Commerce browse page not showing fresh data immediately - this might indicate caching where there shouldn't be");
-                }
-            } else {
-                LOG.info("   ℹ️ Commerce browse URL not available for this product");
-            }
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
 
             // STEP 4: Call cache invalidation (product only)
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet for PRODUCT only");
-            boolean cacheInvalidated = callCacheInvalidationServlet(productSku, null); // No category
+            boolean cacheInvalidated = callCacheInvalidationServlet(productSku, null);
             assertTrue("Cache invalidation servlet call failed", cacheInvalidated);
 
-            // STEP 5: Wait and verify cache is cleared
+            // STEP 5: Wait for cache invalidation
             LOG.info("⏳ STEP 5: Waiting for cache invalidation...");
             Thread.sleep(10000); // Wait 10 seconds
 
-            LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data in both components");
-            
-            // Take screenshot to verify cache invalidation worked
-            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP6_After_Cache_Clear", environment.replaceAll("[^a-zA-Z0-9]", "_"));
-            
-            ProductNameResult freshProductNames = getCurrentProductNameFromProductPage(productPageUrl);
-            LOG.info("   Fresh Breadcrumb Check: '{}'", freshProductNames.breadcrumbName);
-            LOG.info("   Fresh Product Detail Check: '{}'", freshProductNames.productDetailName);
+            // STEP 6: Verify AEM now shows fresh product data
+            LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data");
+            String freshProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   Fresh Product Check: '{}'", freshProductName);
+            boolean productUpdated = freshProductName.equals(updatedProductName);
+            LOG.info("   Product Updated: {}", productUpdated ? "✅ YES" : "❌ NO");
 
-            boolean breadcrumbUpdated = freshProductNames.breadcrumbName.equals(updatedProductName);
-            boolean productDetailUpdated = freshProductNames.productDetailName.equals(updatedProductName);
-            LOG.info("   Breadcrumb Updated: {}", breadcrumbUpdated ? "✅ YES" : "❌ NO");
-            LOG.info("   Product Detail Updated: {}", productDetailUpdated ? "✅ YES" : "❌ NO");
-
-            assertTrue("Breadcrumb cache invalidation failed - AEM not showing fresh data", breadcrumbUpdated);
-            assertTrue("Product detail cache invalidation failed - AEM not showing fresh data", productDetailUpdated);
-            LOG.info("🎉 SUCCESS: Product cache invalidation test passed for both components!");
+            assertTrue("Product cache invalidation failed - AEM not showing fresh data", productUpdated);
+            LOG.info("🎉 SUCCESS: Product cache invalidation test passed!");
 
         } finally {
             // Restore original product name
@@ -496,63 +197,17 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Extract product name from both breadcrumb and product detail components on product page
-     * Uses cache-respecting requests instead of cache-bypassing admin requests
+     * Category cache invalidation test workflow
      */
-    private ProductNameResult getCurrentProductNameFromProductPage(String productPageUrl) throws ClientException {
-        try {
-            LOG.info("🌐 Making cache-respecting request to: {}", productPageUrl);
-            String htmlContent = makeCacheRespectingRequest(productPageUrl);
-            Document doc = Jsoup.parse(htmlContent);
-            
-            // Verify we got the right page
-            String pageTitle = doc.title();
-            LOG.debug("📄 Page title: '{}'", pageTitle);
-            
-            if (pageTitle.contains("Sign In") || pageTitle.contains("Login")) {
-                LOG.error("❌ Got login page instead of product page!");
-                throw new ClientException("Authentication failed - got login page");
-            }
-
-            // Extract from breadcrumb component: <span itemprop="name">Canvas Fabric Belt5 XRSY6M</span>
-            String breadcrumbName = "NOT_FOUND";
-            Elements breadcrumbElements = doc.select(".cmp-breadcrumb__item--active span[itemprop='name']");
-            if (breadcrumbElements.size() > 0) {
-                breadcrumbName = breadcrumbElements.first().text().trim();
-                LOG.debug("Found breadcrumb name: '{}'", breadcrumbName);
-            } else {
-                LOG.warn("Could not find breadcrumb name in product page");
-            }
-
-            // Extract from product detail component: <h1 class="productFullDetail__productName"><span role="name">Canvas Fabric Belt5 XRSY6M</span></h1>
-            String productDetailName = "NOT_FOUND";
-            Elements productDetailElements = doc.select(".productFullDetail__productName span[role='name']");
-            if (productDetailElements.size() > 0) {
-                productDetailName = productDetailElements.first().text().trim();
-                LOG.debug("Found product detail name: '{}'", productDetailName);
-            } else {
-                LOG.warn("Could not find product detail name in product page");
-            }
-
-            return new ProductNameResult(breadcrumbName, productDetailName);
-
-        } catch (Exception e) {
-            LOG.error("Error getting product names from product page: {}", e.getMessage());
-            return new ProductNameResult("ERROR", "ERROR");
-        }
-    }
-
     private void runCategoryCacheInvalidationTest(String productSku, String categoryPageUrl, String categoryUrlKey, String environment) throws Exception {
         LOG.info("=== CATEGORY CACHE INVALIDATION TEST - {} ===", environment);
         LOG.info("🎯 SKU: {}", productSku);
         LOG.info("📂 Category Page: {}", categoryPageUrl);
         LOG.info("🔑 Category URL Key: {}", categoryUrlKey);
-        LOG.info("📄 Testing CATEGORY cache invalidation only");
 
         String originalCategoryName = null;
         String categoryId = null;
-        Random random = new Random();
-        String randomSuffix = generateRandomString(6); // Generate 6-character random string
+        String randomSuffix = generateRandomString(6);
 
         try {
             // STEP 1: Get category name from AEM
@@ -563,7 +218,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             // STEP 2: Get category data from Magento using GraphQL
             LOG.info("🔍 STEP 2: Getting category data from Magento GraphQL");
             String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-
+            
             // Extract category ID from UID (Base64 decode)
             try {
                 categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
@@ -584,7 +239,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             updateMagentoCategoryName(categoryId, updatedCategoryName);
             LOG.info("   ✓ Updated Magento Category: '{}'", updatedCategoryName);
 
-            // STEP 4: Verify AEM still shows old data
+            // STEP 4: Verify AEM still shows old data (cache working)
             LOG.info("📋 STEP 4: Checking AEM still shows cached data");
             String currentAemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             LOG.info("   AEM Category Shows: '{}'", currentAemCategoryName);
@@ -594,13 +249,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 5: Call cache invalidation (category only)
             LOG.info("🚀 STEP 5: Calling cache invalidation servlet for CATEGORY only");
-            boolean cacheInvalidated = callCacheInvalidationServlet(null, categoryUrlKey); // No product
+            boolean cacheInvalidated = callCacheInvalidationServlet(null, categoryUrlKey);
             assertTrue("Cache invalidation servlet call failed", cacheInvalidated);
 
-            // STEP 6: Wait and verify cache is cleared
+            // STEP 6: Wait for cache invalidation
             LOG.info("⏳ STEP 6: Waiting for cache invalidation...");
             Thread.sleep(10000); // Wait 10 seconds
 
+            // STEP 7: Verify AEM now shows fresh category data
             LOG.info("🔍 STEP 7: Checking AEM now shows fresh category data");
             String freshCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             LOG.info("   Fresh Category Check: '{}'", freshCategoryName);
@@ -623,313 +279,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    private void runCacheInvalidationTest(String productSku, String categoryPageUrl, String environment) throws Exception {
-        LOG.info("=== CACHE INVALIDATION TEST - {} ===", environment);
-        LOG.info("🎯 SKU: {}", productSku);
-        LOG.info("📂 Category Page: {}", categoryPageUrl);
-        LOG.info("📄 Using ONLY category page - no separate product page needed");
-
-        String originalProductName = null;
-        String originalCategoryName = null;
-        String categoryId = null;
-
-        try {
-            // STEP 1: Get category name and product name from AEM category page
-            LOG.info("📋 STEP 1: Getting names from AEM category page");
-            SlingHttpResponse categoryResponse = adminAuthor.doGet(categoryPageUrl, 200);
-            Document categoryDoc = Jsoup.parse(categoryResponse.getContent());
-
-            // Get category name from .category__title span (EXACT from your HTML)
-            String categoryName = null;
-
-            try {
-                LOG.debug("🔍 Looking for category name in HTML...");
-
-                // Method 1: Direct from <span class="category__title">Leather Belts</span>
-                Elements titleElements = categoryDoc.select("span.category__title");
-                LOG.debug("Found {} elements with span.category__title", titleElements.size());
-                if (titleElements.size() > 0) {
-                    categoryName = titleElements.first().text().trim();
-                    LOG.info("   ✅ AEM Category Name (from span): '{}'", categoryName);
-                } else {
-                    // Method 2: Try h1 .category__title
-                    titleElements = categoryDoc.select("h1 .category__title");
-                    if (titleElements.size() > 0) {
-                        categoryName = titleElements.first().text().trim();
-                        LOG.info("   ✅ AEM Category Name (from h1): '{}'", categoryName);
-                    }
-                }
-
-                // Get category ID from JSON data-cif-category-context
-                Elements categoryRoot = categoryDoc.select("article[data-cif-category-context]");
-                if (categoryRoot.size() > 0) {
-                    String categoryContext = categoryRoot.first().attr("data-cif-category-context");
-                    if (categoryContext != null && !categoryContext.isEmpty()) {
-                        try {
-                            categoryContext = categoryContext.replace("&quot;", "\"");
-                            JsonNode contextJson = OBJECT_MAPPER.readTree(categoryContext);
-                            if (contextJson != null && contextJson.has("urlKey")) {
-                                categoryId = contextJson.get("urlKey").asText();
-                                LOG.info("   ✅ AEM Category ID: '{}'", categoryId);
-                            }
-                            // Double check category name from JSON if not found above
-                            if ((categoryName == null || categoryName.isEmpty()) && contextJson.has("name")) {
-                                categoryName = contextJson.get("name").asText();
-                                LOG.info("   ✅ AEM Category Name (from JSON): '{}'", categoryName);
-                            }
-                        } catch (Exception e) {
-                            LOG.warn("Could not parse category JSON: {}", e.getMessage());
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                LOG.warn("Error getting category name: {}", e.getMessage());
-            }
-
-            // No fallback - category must be found from AEM HTML
-
-            // Get product name from SPECIFIC SKU item (EXACT from your HTML)
-            String productName = null;
-            try {
-                LOG.debug("🔍 Looking for product with SKU '{}' in HTML...", productSku);
-
-                // Find the product item with matching SKU: <a class="productcollection__item" data-product-sku="BLT-LEA-001">
-                Elements productItems = categoryDoc.select(".productcollection__item[data-product-sku='" + productSku + "']");
-                LOG.debug("Found {} product items with SKU '{}'", productItems.size(), productSku);
-
-                if (productItems.size() > 0) {
-                    Element productItem = productItems.first();
-                    LOG.debug("Found product item: {}", productItem.tagName());
-
-                    // Method 1: From <div class="productcollection__item-title"><span>Black Leather Belt 8250</span></div>
-                    Elements titleSpans = productItem.select("div.productcollection__item-title span");
-                    LOG.debug("Found {} title spans in product item", titleSpans.size());
-                    if (titleSpans.size() > 0) {
-                        productName = titleSpans.first().text().trim();
-                        LOG.info("   ✅ AEM Product Name (from div span): '{}'", productName);
-                    } else {
-                        // Method 2: Try just .productcollection__item-title span
-                        titleSpans = productItem.select(".productcollection__item-title span");
-                        if (titleSpans.size() > 0) {
-                            productName = titleSpans.first().text().trim();
-                            LOG.info("   ✅ AEM Product Name (from title span): '{}'", productName);
-                        } else {
-                            // Method 3: From title attribute: title="Black Leather Belt 8250"
-                            String titleAttr = productItem.attr("title");
-                            if (titleAttr != null && !titleAttr.isEmpty()) {
-                                productName = titleAttr.trim();
-                                LOG.info("   ✅ AEM Product Name (from title attr): '{}'", productName);
-                            } else {
-                                // Method 4: From data layer JSON: "dc:title":"Black Leather Belt 8250"
-                                String dataLayer = productItem.attr("data-cmp-data-layer");
-                                if (dataLayer != null && !dataLayer.isEmpty()) {
-                                    try {
-                                        dataLayer = dataLayer.replace("&quot;", "\"");
-                                        JsonNode jsonData = OBJECT_MAPPER.readTree(dataLayer);
-                                        // Get the first (and only) key in the JSON object
-                                        if (jsonData.fields().hasNext()) {
-                                            JsonNode productData = jsonData.fields().next().getValue();
-                                            if (productData.has("dc:title")) {
-                                                productName = productData.get("dc:title").asText();
-                                                LOG.info("   ✅ AEM Product Name (from JSON): '{}'", productName);
-                                            }
-                                        }
-                                    } catch (Exception e) {
-                                        LOG.warn("Could not parse data layer JSON: {}", e.getMessage());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    LOG.warn("❌ No product found with SKU '{}' in category page", productSku);
-                    // Let's debug - show what SKUs we do find
-                    Elements allProducts = categoryDoc.select(".productcollection__item[data-product-sku]");
-                    LOG.debug("Found {} total products in page", allProducts.size());
-                    for (Element product : allProducts) {
-                        String foundSku = product.attr("data-product-sku");
-                        LOG.debug("  - Found product with SKU: '{}'", foundSku);
-                    }
-                }
-            } catch (Exception e) {
-                LOG.warn("Error parsing product name: {}", e.getMessage());
-            }
-
-            // No fallback - product name must be found from AEM HTML
-
-            // STEP 2: Get original names from Magento using SKU
-            LOG.info("📋 STEP 2: Getting original names from Magento using SKU");
-            JsonNode productData = getMagentoProductData(productSku);
-            originalProductName = productData.get("name").asText();
-            LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
-
-            // Store for cleanup
-            lastProductSku = productSku;
-            lastOriginalProductName = originalProductName;
-
-            // Get category data from product's category assignment
-            LOG.info("🔍 Looking up category data for product...");
-            try {
-                // Method 1: Try category_links (most common)
-                if (productData.has("category_links") && productData.get("category_links").isArray()) {
-                    JsonNode categoryLinks = productData.get("category_links");
-                    LOG.info("   Found {} category links for product", categoryLinks.size());
-                    if (categoryLinks.size() > 0) {
-                        String productCategoryId = categoryLinks.get(0).get("category_id").asText();
-                        LOG.info("   ✓ Found category ID from category_links: '{}'", productCategoryId);
-
-                        JsonNode categoryData = getMagentoCategoryData(productCategoryId);
-                        originalCategoryName = categoryData.get("name").asText();
-                        categoryId = productCategoryId;
-                        LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-
-                        // Store for cleanup
-                        lastCategoryId = categoryId;
-                        lastOriginalCategoryName = originalCategoryName;
-                    }
-                }
-                // Method 2: Try category_ids array
-                else if (productData.has("category_ids") && productData.get("category_ids").isArray()) {
-                    JsonNode categoryIds = productData.get("category_ids");
-                    LOG.info("   Found {} category IDs for product", categoryIds.size());
-                    if (categoryIds.size() > 0) {
-                        String productCategoryId = categoryIds.get(0).asText();
-                        LOG.info("   ✓ Found category ID from category_ids: '{}'", productCategoryId);
-
-                        JsonNode categoryData = getMagentoCategoryData(productCategoryId);
-                        originalCategoryName = categoryData.get("name").asText();
-                        categoryId = productCategoryId;
-                        LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-
-                        // Store for cleanup
-                        lastCategoryId = categoryId;
-                        lastOriginalCategoryName = originalCategoryName;
-                    }
-                }
-                // Method 3: Try extension_attributes.category_links
-                else if (productData.has("extension_attributes")) {
-                    JsonNode extAttrs = productData.get("extension_attributes");
-                    if (extAttrs.has("category_links") && extAttrs.get("category_links").isArray()) {
-                        JsonNode categoryLinks = extAttrs.get("category_links");
-                        LOG.info("   Found {} category links in extension_attributes", categoryLinks.size());
-                        if (categoryLinks.size() > 0) {
-                            String productCategoryId = categoryLinks.get(0).get("category_id").asText();
-                            LOG.info("   ✓ Found category ID from extension_attributes: '{}'", productCategoryId);
-
-                            JsonNode categoryData = getMagentoCategoryData(productCategoryId);
-                            originalCategoryName = categoryData.get("name").asText();
-                            categoryId = productCategoryId;
-                            LOG.info("   ✅ Magento Category Name: '{}'", originalCategoryName);
-
-                            // Store for cleanup
-                            lastCategoryId = categoryId;
-                            lastOriginalCategoryName = originalCategoryName;
-                        }
-                    }
-                }
-
-                // If still no category found, log warning
-                if (originalCategoryName == null) {
-                    LOG.warn("   ❌ No category data found in product - tried category_links, category_ids, and extension_attributes");
-                }
-
-            } catch (Exception e) {
-                LOG.error("❌ Could not get category data from product: {}", e.getMessage(), e);
-            }
-
-            // No fallback - category data must come from Magento product data only
-            if (originalCategoryName == null) {
-                LOG.error("❌ FAILED: Cannot get category data from Magento product - test will fail");
-            }
-
-            // STEP 3: Update product and category names in Magento (existing name + random number)
-            String randomNumber = String.valueOf(System.currentTimeMillis() % 10000); // Last 4 digits
-            String newProductName = originalProductName + " " + randomNumber;
-            String newCategoryName = (originalCategoryName != null) ? originalCategoryName + " " + randomNumber : null;
-
-            LOG.info("🔄 STEP 3: Updating Magento names");
-            updateMagentoProductName(productSku, newProductName);
-            LOG.info("   ✓ Updated Magento Product: '{}'", newProductName);
-
-            if (categoryId != null && originalCategoryName != null) {
-                updateMagentoCategoryName(categoryId, newCategoryName);
-                LOG.info("   ✓ Updated Magento Category: '{}'", newCategoryName);
-            }
-
-            // STEP 4: Verify AEM still shows OLD data (cache working) - check ONLY category page
-            LOG.info("📋 STEP 4: Checking AEM category page still shows old data");
-            String aemProductCheck = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku); // Use category page only
-            String aemCategoryCheck = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-
-            LOG.info("   AEM Product Shows: '{}'", aemProductCheck);
-            LOG.info("   AEM Category Shows: '{}'", aemCategoryCheck);
-            LOG.info("   Updated Magento Product: '{}'", newProductName);
-            LOG.info("   Updated Magento Category: '{}'", newCategoryName);
-
-            // Verify cache is working (AEM should NOT show the random number)
-            boolean productCacheWorking = !aemProductCheck.contains(randomNumber);
-            boolean categoryCacheWorking = !aemCategoryCheck.contains(randomNumber);
-            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
-            LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
-
-            assertTrue("Cache not working - AEM showing fresh data immediately", productCacheWorking);
-
-            // STEP 5: Call cache invalidation servlet for both product and category
-            LOG.info("🚀 STEP 5: Calling cache invalidation servlet for product and category");
-            boolean servletSuccess = callCacheInvalidationServlet(productSku, categoryId);
-            assertTrue("Cache invalidation servlet should succeed", servletSuccess);
-
-            // STEP 6: Wait for cache invalidation
-            LOG.info("⏳ STEP 6: Waiting for cache invalidation...");
-            Thread.sleep(10000); // Wait 10 seconds
-
-            // STEP 7: Verify AEM now shows NEW data (check ONLY category page)
-            LOG.info("🔍 STEP 7: Checking AEM category page now shows fresh data");
-            String freshProductCheck = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku); // Use category page only
-            String freshCategoryCheck = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-
-            LOG.info("   Fresh Product Check: '{}'", freshProductCheck);
-            LOG.info("   Fresh Category Check: '{}'", freshCategoryCheck);
-
-            boolean productUpdated = freshProductCheck.contains(randomNumber);
-            boolean categoryUpdated = freshCategoryCheck.contains(randomNumber);
-
-            LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
-            LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
-
-            if (!productUpdated) {
-                LOG.info("🔄 Trying one more time after extra wait...");
-                Thread.sleep(10000);
-                freshProductCheck = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku); // Use category page only
-                productUpdated = freshProductCheck.contains(randomNumber);
-                LOG.info("   Extra Product Check: '{}' - Updated: {}", freshProductCheck, productUpdated);
-            }
-
-            assertTrue("Product cache invalidation failed - AEM not showing fresh data", productUpdated);
-            LOG.info("🎉 SUCCESS: Cache invalidation test passed!");
-
-        } finally {
-            // Restore original names
-            if (originalProductName != null) {
-                try {
-                    updateMagentoProductName(productSku, originalProductName);
-                    LOG.info("🔄 Restored product name: {}", originalProductName);
-                } catch (Exception e) {
-                    LOG.warn("Could not restore product name: {}", e.getMessage());
-                }
-            }
-
-            if (originalCategoryName != null && categoryId != null) {
-                try {
-                    updateMagentoCategoryName(categoryId, originalCategoryName);
-                    LOG.info("🔄 Restored category name: {}", originalCategoryName);
-                } catch (Exception e) {
-                    LOG.warn("Could not restore category name: {}", e.getMessage());
-                }
-            }
-        }
-    }
-
+    /**
+     * Get product data from Magento REST API
+     */
     private JsonNode getMagentoProductData(String sku) throws Exception {
         String url = MAGENTO_REST_URL + "/products/" + sku;
         HttpGet request = new HttpGet(url);
@@ -945,6 +297,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
+    /**
+     * Get category data from Magento REST API
+     */
     private JsonNode getMagentoCategoryData(String categoryId) throws Exception {
         String url = MAGENTO_REST_URL + "/categories/" + categoryId;
         HttpGet request = new HttpGet(url);
@@ -960,6 +315,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
+    /**
+     * Update product name in Magento
+     */
     private void updateMagentoProductName(String sku, String newName) throws Exception {
         String url = MAGENTO_REST_URL + "/products/" + sku;
         HttpPut request = new HttpPut(url);
@@ -974,42 +332,32 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 throw new Exception("Failed to update product: " + response.getStatusLine().getStatusCode());
             }
         }
-        Thread.sleep(2000);
+        Thread.sleep(2000); // Wait for Magento to process
     }
 
+    /**
+     * Update category name in Magento
+     */
     private void updateMagentoCategoryName(String categoryId, String newName) throws Exception {
-        LOG.info("🔄 Updating Magento category ID '{}' to name '{}'", categoryId, newName);
-
         String url = MAGENTO_REST_URL + "/categories/" + categoryId;
-        LOG.info("   Category update URL: {}", url);
-
         HttpPut request = new HttpPut(url);
         request.setHeader("Authorization", "Bearer " + MAGENTO_ADMIN_TOKEN);
         request.setHeader("Content-Type", "application/json");
 
         String payload = String.format("{\"category\":{\"name\":\"%s\"}}", newName);
-        LOG.info("   Category update payload: {}", payload);
         request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpClient.execute(request)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            String responseBody = "";
-            if (response.getEntity() != null) {
-                responseBody = EntityUtils.toString(response.getEntity());
-            }
-
-            LOG.info("   Category update response: {} - {}", statusCode, responseBody);
-
-            if (statusCode != 200) {
-                LOG.error("❌ Failed to update category '{}': {} - {}", categoryId, statusCode, responseBody);
-                throw new Exception("Failed to update category: " + statusCode + " - " + responseBody);
-            } else {
-                LOG.info("   ✅ Successfully updated category '{}' to '{}'", categoryId, newName);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new Exception("Failed to update category: " + response.getStatusLine().getStatusCode());
             }
         }
-        Thread.sleep(2000);
+        Thread.sleep(2000); // Wait for Magento to process
     }
 
+    /**
+     * Extract product name from AEM category page by SKU
+     */
     private String getCurrentProductNameFromAEMPage(String categoryPageUrl, String targetSku) throws ClientException {
         try {
             SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
@@ -1020,22 +368,20 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             if (productItems.size() > 0) {
                 Element productItem = productItems.first();
 
-                // 1. From .productcollection__item-title span
+                // Try different methods to get product name
+                // Method 1: From title span
                 Elements titleElements = productItem.select(".productcollection__item-title span");
                 if (titleElements.size() > 0) {
-                    String productName = titleElements.first().text().trim();
-                    LOG.debug("Found product name from title span: '{}'", productName);
-                    return productName;
+                    return titleElements.first().text().trim();
                 }
 
-                // 2. From title attribute
+                // Method 2: From title attribute
                 String titleAttr = productItem.attr("title");
                 if (titleAttr != null && !titleAttr.isEmpty()) {
-                    LOG.debug("Found product name from title attr: '{}'", titleAttr);
                     return titleAttr.trim();
                 }
 
-                // 3. From data layer JSON
+                // Method 3: From data layer JSON
                 String dataLayer = productItem.attr("data-cmp-data-layer");
                 if (dataLayer != null && !dataLayer.isEmpty()) {
                     try {
@@ -1043,9 +389,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                         JsonNode jsonData = OBJECT_MAPPER.readTree(dataLayer);
                         JsonNode firstKey = jsonData.fields().next().getValue();
                         if (firstKey.has("dc:title")) {
-                            String productName = firstKey.get("dc:title").asText();
-                            LOG.debug("Found product name from JSON: '{}'", productName);
-                            return productName;
+                            return firstKey.get("dc:title").asText();
                         }
                     } catch (Exception e) {
                         LOG.warn("Could not parse data layer JSON: {}", e.getMessage());
@@ -1061,11 +405,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    // Keep old method for backward compatibility
-    private String getCurrentProductNameFromAEMPage(String categoryPageUrl) throws ClientException {
-        return getCurrentProductNameFromAEMPage(categoryPageUrl, "BLT-LEA-001");
-    }
-
+    /**
+     * Extract category name from AEM category page
+     */
     private String getCurrentCategoryNameFromAEMPage(String categoryPageUrl) throws ClientException {
         try {
             SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
@@ -1090,28 +432,30 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
+    /**
+     * Call AEM cache invalidation servlet
+     */
     private boolean callCacheInvalidationServlet(String productSku, String categoryUrlKey) {
         try {
-            // Build payload with both product SKU and category UID if available
             String payload;
+            
             if (categoryUrlKey != null && !categoryUrlKey.isEmpty()) {
-                // Get category UID from Magento GraphQL using url_key
+                // Category invalidation - get category UID
                 String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
                 payload = String.format(
                         "{\n" +
-                                "    \"productSkus\": [\"%s\"],\n" +
-                                "    \"categoryUids\": [\"%s\"],\n" +
-                                "    \"storePath\": \"%s\"\n" +
-                                "}", productSku, categoryUid, STORE_PATH);
-                LOG.info("📝 Cache invalidation payload (product + category): {}", payload);
-                LOG.info("📝 Using category URL key '{}' -> UID '{}'", categoryUrlKey, categoryUid);
+                        "    \"categoryUids\": [\"%s\"],\n" +
+                        "    \"storePath\": \"%s\"\n" +
+                        "}", categoryUid, STORE_PATH);
+                LOG.info("📝 Cache invalidation payload (category): {}", payload);
             } else {
+                // Product invalidation
                 payload = String.format(
                         "{\n" +
-                                "    \"productSkus\": [\"%s\"],\n" +
-                                "    \"storePath\": \"%s\"\n" +
-                                "}", productSku, STORE_PATH);
-                LOG.info("📝 Cache invalidation payload (product only): {}", payload);
+                        "    \"productSkus\": [\"%s\"],\n" +
+                        "    \"storePath\": \"%s\"\n" +
+                        "}", productSku, STORE_PATH);
+                LOG.info("📝 Cache invalidation payload (product): {}", payload);
             }
 
             SlingHttpResponse response = adminAuthor.doPost(
@@ -1122,7 +466,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             int statusCode = response.getStatusLine().getStatusCode();
             String responseContent = response.getContent();
-
             LOG.info("📤 Response: Status={}, Content={}", statusCode, responseContent);
 
             return statusCode == 200;
@@ -1132,13 +475,56 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    // Keep old method for compatibility
-    private boolean callCacheInvalidationServlet(String productSku) {
-        return callCacheInvalidationServlet(productSku, null);
+    /**
+     * Get category UID from Magento GraphQL using url_key
+     */
+    private String getCategoryUidFromUrlKey(String categoryUrlKey) {
+        try {
+            LOG.info("🔍 Getting category UID from Magento GraphQL for url_key: '{}'", categoryUrlKey);
+            
+            String graphqlQuery = String.format(
+                    "{ categoryList(filters: {url_key: {eq: \"%s\"}}) { uid name url_key } }",
+                    categoryUrlKey
+            );
+            
+            String url = MAGENTO_BASE_URL + "/graphql";
+            HttpPost request = new HttpPost(url);
+            request.setHeader("Content-Type", "application/json");
+            
+            com.fasterxml.jackson.databind.node.ObjectNode jsonPayload = OBJECT_MAPPER.createObjectNode();
+            jsonPayload.put("query", graphqlQuery);
+            String payload = OBJECT_MAPPER.writeValueAsString(jsonPayload);
+            
+            request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
+            
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                String responseContent = EntityUtils.toString(response.getEntity());
+                
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    JsonNode responseJson = OBJECT_MAPPER.readTree(responseContent);
+                    JsonNode data = responseJson.get("data");
+                    JsonNode categoryList = data.get("categoryList");
+                    
+                    if (categoryList != null && categoryList.isArray() && categoryList.size() > 0) {
+                        JsonNode category = categoryList.get(0);
+                        String uid = category.get("uid").asText();
+                        String name = category.get("name").asText();
+                        
+                        LOG.info("✅ Found category: '{}' with UID: '{}'", name, uid);
+                        return uid;
+                    }
+                }
+                
+                throw new RuntimeException("No category found for url_key: " + categoryUrlKey);
+            }
+        } catch (Exception e) {
+            LOG.error("❌ Failed to get category UID: {}", e.getMessage());
+            throw new RuntimeException("Failed to get category UID from GraphQL", e);
+        }
     }
 
     /**
-     * Generate random string for test purposes.
+     * Generate random string for test purposes
      */
     private String generateRandomString(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -1148,227 +534,5 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
-    }
-
-    /**
-     * Capture screenshot using Chrome DevTools Protocol for CI pipeline
-     */
-    private void captureScreenshot(String stepName, String url) {
-        try {
-            // Only capture screenshots in CI environment
-            boolean isCI = System.getenv("CIRCLECI") != null || System.getenv("CI") != null;
-            if (!isCI) {
-                LOG.debug("Skipping screenshot - not in CI environment");
-                return;
-            }
-
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
-            String filename = String.format("screenshot-%s-%s.html", stepName, timestamp);
-            String screenshotsDir = "target/screenshots";
-            
-            // Create screenshots directory
-            Files.createDirectories(Paths.get(screenshotsDir));
-            
-            // For now, capture the HTML content - this will be visible in CI artifacts
-            String htmlContent = makeCacheRespectingRequest(url);
-            
-            File screenshotFile = new File(screenshotsDir, filename);
-            try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
-                fos.write(htmlContent.getBytes("UTF-8"));
-            }
-            
-            LOG.info("📸 Screenshot captured: {} (HTML content)", screenshotFile.getAbsolutePath());
-            
-        } catch (Exception e) {
-            LOG.warn("Failed to capture screenshot for step '{}': {}", stepName, e.getMessage());
-        }
-    }
-
-    /**
-     * Make a cache-respecting HTTP request to AEM
-     * Uses basic authentication but not admin privileges that bypass cache
-     */
-    private String makeCacheRespectingRequest(String path) throws ClientException {
-        try {
-            // Get base URL from adminAuthor client instead of hardcoding localhost:4502
-            String baseUrl = adminAuthor.getUrl().toString();
-            String fullUrl = baseUrl + path;
-            LOG.debug("Making cache-respecting request to: {}", fullUrl);
-            
-            HttpGet request = new HttpGet(fullUrl);
-            
-            // Use basic authentication (not admin token that bypasses cache)
-            String credentials = "admin:admin"; // Basic auth for author
-            String encodedCredentials = java.util.Base64.getEncoder().encodeToString(credentials.getBytes());
-            request.setHeader("Authorization", "Basic " + encodedCredentials);
-            
-            // Add headers that respect cache behavior
-            request.setHeader("User-Agent", "Mozilla/5.0 (Cache-Test)");
-            request.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            request.setHeader("Cache-Control", "max-age=0"); // Normal cache behavior
-            
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                String content = EntityUtils.toString(response.getEntity());
-                
-                if (statusCode == 200) {
-                    LOG.debug("Cache-respecting request successful, content length: {}", content.length());
-                    return content;
-                } else if (statusCode == 401) {
-                    LOG.error("❌ Authentication failed - check AEM credentials");
-                    throw new ClientException("Authentication failed", statusCode);
-                } else if (statusCode == 404) {
-                    LOG.error("❌ Page not found: {}", path);
-                    throw new ClientException("Page not found: " + path, statusCode);
-                } else {
-                    LOG.error("❌ Request failed with status: {}", statusCode);
-                    throw new ClientException("Request failed with status: " + statusCode, statusCode);
-                }
-            }
-        } catch (ClientException ce) {
-            throw ce; // Re-throw ClientException as-is
-        } catch (Exception e) {
-            LOG.error("❌ Error making cache-respecting request to {}: {}", path, e.getMessage());
-            throw new ClientException("Failed to make cache-respecting request", e);
-        }
-    }
-
-    /**
-     * Get category UID from Magento using GraphQL with url_key.
-     * Uses GraphQL query: categoryList(filters: {url_key: {eq: "url-key"}}) { uid }
-     */
-    private String getCategoryUidFromUrlKey(String categoryUrlKey) {
-        try {
-            LOG.info("🔍 Getting category UID from Magento GraphQL for url_key: '{}'", categoryUrlKey);
-
-            // Create GraphQL query
-            String graphqlQuery = String.format(
-                    "{ categoryList(filters: {url_key: {eq: \"%s\"}}) { uid name url_key level path } }",
-                    categoryUrlKey
-            );
-
-            LOG.debug("GraphQL Query: {}", graphqlQuery);
-
-            String url = MAGENTO_BASE_URL + "/graphql";
-            HttpPost request = new HttpPost(url);
-            request.setHeader("Content-Type", "application/json");
-
-            // Use ObjectMapper to create proper JSON payload
-            com.fasterxml.jackson.databind.node.ObjectNode jsonPayload = OBJECT_MAPPER.createObjectNode();
-            jsonPayload.put("query", graphqlQuery);
-            String payload = OBJECT_MAPPER.writeValueAsString(jsonPayload);
-            LOG.debug("GraphQL Payload: {}", payload);
-
-            request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                String responseContent = EntityUtils.toString(response.getEntity());
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                LOG.debug("GraphQL Response Status: {}", statusCode);
-                LOG.debug("GraphQL Response Content: {}", responseContent);
-
-                if (statusCode == 200) {
-                    JsonNode responseJson = OBJECT_MAPPER.readTree(responseContent);
-                    JsonNode data = responseJson.get("data");
-                    JsonNode categoryList = data.get("categoryList");
-
-                    if (categoryList != null && categoryList.isArray() && categoryList.size() > 0) {
-                        JsonNode category = categoryList.get(0);
-                        String uid = category.get("uid").asText();
-                        String name = category.get("name").asText();
-                        int level = category.get("level").asInt();
-                        String path = category.get("path").asText();
-
-                        LOG.info("✅ Found category via GraphQL:");
-                        LOG.info("   URL Key: '{}'", categoryUrlKey);
-                        LOG.info("   Name: '{}'", name);
-                        LOG.info("   UID: '{}'", uid);
-                        LOG.info("   Level: {}", level);
-                        LOG.info("   Path: '{}'", path);
-
-                        return uid;
-                    } else {
-                        LOG.error("❌ No category found for url_key: '{}'", categoryUrlKey);
-                        throw new RuntimeException("No category found for url_key: " + categoryUrlKey);
-                    }
-                } else {
-                    LOG.error("❌ GraphQL request failed with status: {}", statusCode);
-                    LOG.error("❌ GraphQL Response Content: {}", responseContent);
-                    LOG.error("❌ GraphQL Request URL: {}", url);
-                    LOG.error("❌ GraphQL Request Payload: {}", payload);
-                    throw new RuntimeException("GraphQL request failed: " + statusCode + " - " + responseContent);
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("❌ Failed to get category UID from GraphQL for url_key '{}': {}", categoryUrlKey, e.getMessage());
-            throw new RuntimeException("Failed to get category UID from GraphQL", e);
-        }
-    }
-
-    /**
-     * Get the commerce browse URL for a specific product SKU
-     * Maps product SKUs to their respective category browse URLs
-     */
-    private String getCommerceBrowseUrlForProduct(String productSku) {
-        switch (productSku) {
-            case "BLT-LEA-001": // Black Leather Belt
-                return "/commerce.html/browse/venia/category/NjE%3D"; // Leather belts category
-            case "BLT-FAB-001": // Canvas Fabric Belt
-                return "/commerce.html/browse/venia/category/NjQ%3D"; // Fabric belts category
-            default:
-                LOG.warn("No commerce browse URL mapping for product SKU: {}", productSku);
-                return null;
-        }
-    }
-
-    /**
-     * Extract product name from commerce browse page
-     * This should show fresh data from Magento (no caching)
-     */
-    private String getCurrentProductNameFromCommercePage(String commerceBrowseUrl, String productSku) throws ClientException {
-        try {
-            LOG.info("🔍 Fetching commerce browse page: {}", commerceBrowseUrl);
-            SlingHttpResponse response = adminAuthor.doGet(commerceBrowseUrl, 200);
-            String htmlContent = response.getContent();
-            
-            // Look for product name in commerce browse page HTML
-            // Commerce pages typically show product names in data attributes or JSON
-            
-            // First try to find product name in various possible HTML patterns
-            String[] patterns = {
-                "data-product-name=\"([^\"]+)\".*?" + productSku,
-                "\"name\":\\s*\"([^\"]+)\"[^}]*\"sku\":\\s*\"" + productSku + "\"",
-                productSku + "[^>]*>([^<]+)<",
-                ">" + productSku + ".*?title=\"([^\"]+)\"",
-                "title=\"([^\"]+)\"[^>]*>" + productSku
-            };
-            
-            for (String pattern : patterns) {
-                Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-                Matcher matcher = regex.matcher(htmlContent);
-                if (matcher.find()) {
-                    String foundName = matcher.group(1).trim();
-                    LOG.info("✅ Found product name in commerce page: '{}'", foundName);
-                    return foundName;
-                }
-            }
-            
-            // Fallback: Look for any product name patterns
-            Pattern namePattern = Pattern.compile("([A-Za-z\\s]+Belt[^<\"]*)", Pattern.CASE_INSENSITIVE);
-            Matcher nameMatcher = namePattern.matcher(htmlContent);
-            if (nameMatcher.find()) {
-                String foundName = nameMatcher.group(1).trim();
-                LOG.info("📦 Fallback found product name: '{}'", foundName);
-                return foundName;
-            }
-            
-            LOG.warn("❌ Could not extract product name from commerce page");
-            return "Unknown Product";
-            
-        } catch (Exception e) {
-            LOG.error("Failed to get product name from commerce page: {}", e.getMessage());
-            return "Error: " + e.getMessage();
-        }
     }
 }
