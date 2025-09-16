@@ -218,7 +218,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             // STEP 2: Get category data from Magento using GraphQL
             LOG.info("🔍 STEP 2: Getting category data from Magento GraphQL");
             String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-            
+
             // Extract category ID from UID (Base64 decode)
             try {
                 categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
@@ -360,8 +360,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     private String getCurrentProductNameFromAEMPage(String categoryPageUrl, String targetSku) throws ClientException {
         try {
-            SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
-            Document doc = Jsoup.parse(response.getContent());
+            String htmlContent = makeCacheRespectingRequest(categoryPageUrl);
+            Document doc = Jsoup.parse(htmlContent);
 
             // Find the specific product by SKU
             Elements productItems = doc.select(".productcollection__item[data-product-sku='" + targetSku + "']");
@@ -410,8 +410,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     private String getCurrentCategoryNameFromAEMPage(String categoryPageUrl) throws ClientException {
         try {
-            SlingHttpResponse response = adminAuthor.doGet(categoryPageUrl, 200);
-            Document doc = Jsoup.parse(response.getContent());
+            String htmlContent = makeCacheRespectingRequest(categoryPageUrl);
+            Document doc = Jsoup.parse(htmlContent);
 
             // Look for category title
             Elements title = doc.select(".category__title");
@@ -444,17 +444,17 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
                 payload = String.format(
                         "{\n" +
-                        "    \"categoryUids\": [\"%s\"],\n" +
-                        "    \"storePath\": \"%s\"\n" +
+                                "    \"categoryUids\": [\"%s\"],\n" +
+                                "    \"storePath\": \"%s\"\n" +
                         "}", categoryUid, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (category): {}", payload);
             } else {
                 // Product invalidation
                 payload = String.format(
                         "{\n" +
-                        "    \"productSkus\": [\"%s\"],\n" +
-                        "    \"storePath\": \"%s\"\n" +
-                        "}", productSku, STORE_PATH);
+                                "    \"productSkus\": [\"%s\"],\n" +
+                                "    \"storePath\": \"%s\"\n" +
+                                "}", productSku, STORE_PATH);
                 LOG.info("📝 Cache invalidation payload (product): {}", payload);
             }
 
@@ -481,30 +481,30 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private String getCategoryUidFromUrlKey(String categoryUrlKey) {
         try {
             LOG.info("🔍 Getting category UID from Magento GraphQL for url_key: '{}'", categoryUrlKey);
-            
+
             String graphqlQuery = String.format(
                     "{ categoryList(filters: {url_key: {eq: \"%s\"}}) { uid name url_key } }",
                     categoryUrlKey
             );
-            
+
             String url = MAGENTO_BASE_URL + "/graphql";
             HttpPost request = new HttpPost(url);
             request.setHeader("Content-Type", "application/json");
-            
+
             com.fasterxml.jackson.databind.node.ObjectNode jsonPayload = OBJECT_MAPPER.createObjectNode();
             jsonPayload.put("query", graphqlQuery);
             String payload = OBJECT_MAPPER.writeValueAsString(jsonPayload);
-            
+
             request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-            
+
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 String responseContent = EntityUtils.toString(response.getEntity());
-                
+
                 if (response.getStatusLine().getStatusCode() == 200) {
                     JsonNode responseJson = OBJECT_MAPPER.readTree(responseContent);
                     JsonNode data = responseJson.get("data");
                     JsonNode categoryList = data.get("categoryList");
-                    
+
                     if (categoryList != null && categoryList.isArray() && categoryList.size() > 0) {
                         JsonNode category = categoryList.get(0);
                         String uid = category.get("uid").asText();
@@ -515,7 +515,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     }
                 }
                 
-                throw new RuntimeException("No category found for url_key: " + categoryUrlKey);
+                        throw new RuntimeException("No category found for url_key: " + categoryUrlKey);
             }
         } catch (Exception e) {
             LOG.error("❌ Failed to get category UID: {}", e.getMessage());
@@ -534,5 +534,37 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+
+    /**
+     * Make a cache-respecting request to AEM (not using admin client which bypasses cache)
+     */
+    private String makeCacheRespectingRequest(String path) throws ClientException {
+        try {
+            String baseUrl = adminAuthor.getUrl().toString();
+            String fullUrl = baseUrl + path;
+            LOG.debug("Making cache-respecting request to: {}", fullUrl);
+            
+            HttpGet request = new HttpGet(fullUrl);
+            
+            String credentials = "admin:admin";
+            String encodedCredentials = java.util.Base64.getEncoder().encodeToString(credentials.getBytes());
+            request.setHeader("Authorization", "Basic " + encodedCredentials);
+            
+            request.setHeader("Cache-Control", "max-age=0");
+            request.setHeader("User-Agent", "AEM-Cache-Test");
+            
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    return EntityUtils.toString(response.getEntity());
+                } else {
+                    throw new ClientException("Request failed with status: " + statusCode);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to make cache-respecting request: {}", e.getMessage());
+            throw new ClientException("Failed to make cache-respecting request", e);
+        }
     }
 }
