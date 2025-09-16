@@ -54,6 +54,30 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const configureCifCacheInvalidation = () => {
+    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl"
+    `)
+    
+    // 2. Enable cache invalidation listener (both author and publish)
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -d "propertylist=enableDispatcherCacheInvalidation,dispatcherBasePathConfiguration,dispatcherUrlPathConfiguration,dispatcherBaseUrl" \
+                -d "enableDispatcherCacheInvalidation=true" \
+                -d "dispatcherBasePathConfiguration=/content/venia/([a-z]{2})/([a-z]{2}):/content/venia/$1/$2" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath:/products/product-page.html/(.+):/p/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath:/products/category-page.html/(.+):/c/$1" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath-1:/products/product-page.html/(.+):/pp/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath-1:/products/category-page.html/(.+):/cc/$1" \
+                -d "dispatcherBaseUrl=http://localhost:80"
+    `)
+}
+
 
 
 try {
@@ -110,6 +134,9 @@ try {
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
+    
+    // Configure CIF Cache Invalidation
+    configureCifCacheInvalidation();
 
     // Run integration tests
     if (TYPE === 'integration') {

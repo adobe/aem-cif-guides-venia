@@ -181,8 +181,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("✅ WEBDRIVER STATUS: Initialized successfully");
             LOG.info("   🔧 WebDriver Type: {}", webDriver.getClass().getSimpleName());
             
-            // Quick test navigation
-            webDriver.get("http://localhost:4502/libs/granite/core/content/login.html");
+            // Quick test navigation  
+            webDriver.get(adminAuthor.getUrl() + "/libs/granite/core/content/login.html");
             String title = webDriver.getTitle();
             LOG.info("   📑 Test Navigation: SUCCESS - Page title: '{}'", title);
             LOG.info("   📸 Screenshots will be enabled for this test");
@@ -298,7 +298,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         try {
             // First, navigate to AEM login page and authenticate
-            webDriver.get("http://localhost:4502/libs/granite/core/content/login.html");
+            webDriver.get(adminAuthor.getUrl() + "/libs/granite/core/content/login.html");
             Thread.sleep(1000);
             
             // Check if we need to log in
@@ -402,7 +402,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 1.5: Take screenshot BEFORE Magento name change
             LOG.info("📸 STEP 1.5: Taking screenshot BEFORE Magento name change");
-            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP1_Before_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP1_Before_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
 
             // STEP 2: Update product name in Magento
             String updatedProductName = originalProductName + " " + randomSuffix;
@@ -412,13 +412,13 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 2.5: Take screenshot AFTER Magento name change (before cache check)
             LOG.info("📸 STEP 2.5: Taking screenshot AFTER Magento name change");
-            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP2_After_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP2_After_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
 
             // STEP 3: Verify AEM still shows old data (check both breadcrumb and product components)
             LOG.info("📋 STEP 3: Checking AEM product page still shows cached data");
             
             // Take screenshot to check if AEM shows cached data
-            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP3_Cache_Status_Check", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP3_Cache_Status_Check", environment.replaceAll("[^a-zA-Z0-9]", "_"));
             
             ProductNameResult aemProductNames = getCurrentProductNameFromProductPage(productPageUrl);
             LOG.info("   AEM Breadcrumb Shows: '{}'", aemProductNames.breadcrumbName);
@@ -429,6 +429,29 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             boolean productDetailCacheWorking = !aemProductNames.productDetailName.equals(updatedProductName);
             LOG.info("   Breadcrumb Cache Working: {}", breadcrumbCacheWorking ? "✅ YES" : "❌ NO");
             LOG.info("   Product Detail Cache Working: {}", productDetailCacheWorking ? "✅ YES" : "❌ NO");
+
+            // STEP 3.5: Check commerce browse pages (should show NEW name - no cache)
+            LOG.info("📋 STEP 3.5: Checking commerce browse pages show fresh Magento data (no cache)");
+            
+            // Determine category browse URL based on product SKU
+            String commerceBrowseUrl = getCommerceBrowseUrlForProduct(productSku);
+            if (commerceBrowseUrl != null) {
+                takeScreenshot(adminAuthor.getUrl() + commerceBrowseUrl, "STEP3_5_Commerce_Browse_Fresh", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+                
+                String commerceProductName = getCurrentProductNameFromCommercePage(commerceBrowseUrl, productSku);
+                LOG.info("   Commerce Browse Shows: '{}'", commerceProductName);
+                LOG.info("   Expected Fresh Name: '{}'", updatedProductName);
+                
+                boolean commerceShowsFreshData = commerceProductName.equals(updatedProductName);
+                LOG.info("   Commerce Browse Fresh: {}", commerceShowsFreshData ? "✅ YES" : "❌ NO");
+                
+                // This validates that commerce pages don't cache (good behavior)
+                if (!commerceShowsFreshData) {
+                    LOG.warn("⚠️ Commerce browse page not showing fresh data immediately - this might indicate caching where there shouldn't be");
+                }
+            } else {
+                LOG.info("   ℹ️ Commerce browse URL not available for this product");
+            }
 
             // STEP 4: Call cache invalidation (product only)
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet for PRODUCT only");
@@ -442,7 +465,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data in both components");
             
             // Take screenshot to verify cache invalidation worked
-            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP6_After_Cache_Clear", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            takeScreenshot(adminAuthor.getUrl() + productPageUrl, "STEP6_After_Cache_Clear", environment.replaceAll("[^a-zA-Z0-9]", "_"));
             
             ProductNameResult freshProductNames = getCurrentProductNameFromProductPage(productPageUrl);
             LOG.info("   Fresh Breadcrumb Check: '{}'", freshProductNames.breadcrumbName);
@@ -1165,7 +1188,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     private String makeCacheRespectingRequest(String path) throws ClientException {
         try {
-            String fullUrl = "http://localhost:4502" + path;
+            // Get base URL from adminAuthor client instead of hardcoding localhost:4502
+            String baseUrl = adminAuthor.getUrl().toString();
+            String fullUrl = baseUrl + path;
             LOG.debug("Making cache-respecting request to: {}", fullUrl);
             
             HttpGet request = new HttpGet(fullUrl);
@@ -1276,6 +1301,72 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         } catch (Exception e) {
             LOG.error("❌ Failed to get category UID from GraphQL for url_key '{}': {}", categoryUrlKey, e.getMessage());
             throw new RuntimeException("Failed to get category UID from GraphQL", e);
+        }
+    }
+
+    /**
+     * Get the commerce browse URL for a specific product SKU
+     * Maps product SKUs to their respective category browse URLs
+     */
+    private String getCommerceBrowseUrlForProduct(String productSku) {
+        switch (productSku) {
+            case "BLT-LEA-001": // Black Leather Belt
+                return "/commerce.html/browse/venia/category/NjE%3D"; // Leather belts category
+            case "BLT-FAB-001": // Canvas Fabric Belt
+                return "/commerce.html/browse/venia/category/NjQ%3D"; // Fabric belts category
+            default:
+                LOG.warn("No commerce browse URL mapping for product SKU: {}", productSku);
+                return null;
+        }
+    }
+
+    /**
+     * Extract product name from commerce browse page
+     * This should show fresh data from Magento (no caching)
+     */
+    private String getCurrentProductNameFromCommercePage(String commerceBrowseUrl, String productSku) throws ClientException {
+        try {
+            LOG.info("🔍 Fetching commerce browse page: {}", commerceBrowseUrl);
+            SlingHttpResponse response = adminAuthor.doGet(commerceBrowseUrl, 200);
+            String htmlContent = response.getContent();
+            
+            // Look for product name in commerce browse page HTML
+            // Commerce pages typically show product names in data attributes or JSON
+            
+            // First try to find product name in various possible HTML patterns
+            String[] patterns = {
+                "data-product-name=\"([^\"]+)\".*?" + productSku,
+                "\"name\":\\s*\"([^\"]+)\"[^}]*\"sku\":\\s*\"" + productSku + "\"",
+                productSku + "[^>]*>([^<]+)<",
+                ">" + productSku + ".*?title=\"([^\"]+)\"",
+                "title=\"([^\"]+)\"[^>]*>" + productSku
+            };
+            
+            for (String pattern : patterns) {
+                Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Matcher matcher = regex.matcher(htmlContent);
+                if (matcher.find()) {
+                    String foundName = matcher.group(1).trim();
+                    LOG.info("✅ Found product name in commerce page: '{}'", foundName);
+                    return foundName;
+                }
+            }
+            
+            // Fallback: Look for any product name patterns
+            Pattern namePattern = Pattern.compile("([A-Za-z\\s]+Belt[^<\"]*)", Pattern.CASE_INSENSITIVE);
+            Matcher nameMatcher = namePattern.matcher(htmlContent);
+            if (nameMatcher.find()) {
+                String foundName = nameMatcher.group(1).trim();
+                LOG.info("📦 Fallback found product name: '{}'", foundName);
+                return foundName;
+            }
+            
+            LOG.warn("❌ Could not extract product name from commerce page");
+            return "Unknown Product";
+            
+        } catch (Exception e) {
+            LOG.error("Failed to get product name from commerce page: {}", e.getMessage());
+            return "Error: " + e.getMessage();
         }
     }
 }
