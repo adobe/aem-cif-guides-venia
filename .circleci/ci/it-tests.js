@@ -54,6 +54,23 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const configureGraphqlDataService = () => {
+    // Configure GraphQL Data Service caching (needed for product caching)
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl" \
+                -d "propertylist=identifier,productCachingEnabled,productCachingSize,productCachingTimeMinutes,categoryCachingEnabled,categoryCachingSize,categoryCachingTimeMinutes" \
+                -d "identifier=default" \
+                -d "productCachingEnabled=true" \
+                -d "productCachingSize=1000" \
+                -d "productCachingTimeMinutes=10" \
+                -d "categoryCachingEnabled=true" \
+                -d "categoryCachingSize=100" \
+                -d "categoryCachingTimeMinutes=60"
+    `)
+}
+
 const configureCifCacheInvalidation = () => {
     // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
@@ -128,12 +145,15 @@ try {
         // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {
-        // update the existing default endpoint
-        updateGraphqlClientConfiguration('default');
+        // update the existing venia endpoint (Cloud environment uses ~venia PID)
+        updateGraphqlClientConfiguration('venia');
     }
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
+    
+    // Configure GraphQL Data Service caching (temporary until config files are deployed)
+    configureGraphqlDataService();
     
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
