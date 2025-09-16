@@ -25,6 +25,15 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.By;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
 import org.jsoup.Jsoup;
@@ -46,6 +55,13 @@ import com.venia.it.category.IgnoreOn65;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Result class to hold product names from different components
@@ -77,6 +93,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final String STORE_PATH = "/content/venia/us/en";
 
     private CloseableHttpClient httpClient;
+    private WebDriver webDriver;
+    private String screenshotDir = "screenshots";
 
     // Store original names for cleanup
     private String lastProductSku = null;
@@ -87,8 +105,18 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Before
     public void setUp() throws Exception {
         httpClient = HttpClients.createDefault();
+        
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
+        
+        // Setup WebDriver for screenshots
+        setupWebDriver();
+        
+        // Create screenshots directory
+        createScreenshotDirectory();
+        
+        // Test WebDriver setup
+        testWebDriverSetup();
 
         // Log token source for debugging (without exposing the actual token)
         if (System.getenv("MAGENTO_ADMIN_TOKEN") != null) {
@@ -127,7 +155,200 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             httpClient.close();
         }
 
+        if (webDriver != null) {
+            try {
+                webDriver.quit();
+                LOG.info("   ✅ WebDriver closed");
+            } catch (Exception e) {
+                LOG.warn("Could not close WebDriver: {}", e.getMessage());
+            }
+        }
+
         LOG.info("🧹 Cleanup complete");
+    }
+
+    /**
+     * Test WebDriver setup and log detailed status
+     */
+    private void testWebDriverSetup() {
+        if (webDriver == null) {
+            LOG.error("🚨 WEBDRIVER STATUS: NULL - No screenshots will be taken!");
+            LOG.error("   💡 Check browser installation (Chrome or Edge required)");
+            return;
+        }
+        
+        try {
+            LOG.info("✅ WEBDRIVER STATUS: Initialized successfully");
+            LOG.info("   🔧 WebDriver Type: {}", webDriver.getClass().getSimpleName());
+            
+            // Quick test navigation
+            webDriver.get("http://localhost:4502/libs/granite/core/content/login.html");
+            String title = webDriver.getTitle();
+            LOG.info("   📑 Test Navigation: SUCCESS - Page title: '{}'", title);
+            LOG.info("   📸 Screenshots will be enabled for this test");
+            
+        } catch (Exception e) {
+            LOG.error("❌ WEBDRIVER TEST FAILED: {}", e.getMessage());
+            LOG.error("   🚫 Screenshots will be disabled");
+            // Don't fail the test, just disable screenshots
+            try {
+                webDriver.quit();
+            } catch (Exception ignore) {}
+            webDriver = null;
+        }
+    }
+
+    /**
+     * Setup WebDriver for screenshots
+     */
+    private void setupWebDriver() {
+        try {
+            boolean isCI = System.getenv("CIRCLECI") != null || System.getenv("CI") != null;
+            
+            if (isCI) {
+                LOG.info("🔧 Setting up WebDriver for CI environment");
+                // In CI, use system-installed ChromeDriver
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--headless");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--disable-gpu");
+                options.addArguments("--window-size=1920,1080");
+                options.addArguments("--remote-allow-origins=*");
+                webDriver = new ChromeDriver(options);
+                LOG.info("   ✅ Headless Chrome WebDriver initialized for CI");
+            } else {
+                LOG.info("🔧 Setting up WebDriver for local environment");
+                // For local, try Chrome first, then Edge as fallback
+                webDriver = setupLocalWebDriver();
+            }
+        } catch (Exception e) {
+            LOG.error("❌ Failed to setup WebDriver: {}. Screenshots will be disabled.", e.getMessage());
+            LOG.error("   💡 To enable screenshots, install Google Chrome browser");
+            LOG.error("   🔧 Chrome installation: https://www.google.com/chrome/");
+            webDriver = null;
+        }
+    }
+
+    /**
+     * Setup local WebDriver with fallback options
+     */
+    private WebDriver setupLocalWebDriver() {
+        // Try Chrome first
+        try {
+            LOG.info("   🔧 Attempting Chrome WebDriver setup...");
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--window-size=1920,1080");
+            WebDriver driver = new ChromeDriver(chromeOptions);
+            LOG.info("   ✅ Chrome WebDriver initialized successfully");
+            return driver;
+        } catch (Exception chromeException) {
+            LOG.warn("   ❌ Chrome WebDriver failed: {}", chromeException.getMessage());
+        }
+
+        // Try Edge as fallback
+        try {
+            LOG.info("   🔧 Attempting Edge WebDriver setup...");
+            WebDriverManager.edgedriver().setup();
+            EdgeOptions edgeOptions = new EdgeOptions();
+            edgeOptions.addArguments("--headless");
+            edgeOptions.addArguments("--window-size=1920,1080");
+            WebDriver driver = new EdgeDriver(edgeOptions);
+            LOG.info("   ✅ Edge WebDriver initialized successfully");
+            return driver;
+        } catch (Exception edgeException) {
+            LOG.warn("   ❌ Edge WebDriver failed: {}", edgeException.getMessage());
+        }
+
+        LOG.error("   ❌ No compatible browser found for screenshots");
+        LOG.error("   💡 Install one of: Google Chrome, Microsoft Edge");
+        LOG.error("   🔧 Chrome: https://www.google.com/chrome/");
+        LOG.error("   🔧 Edge: https://www.microsoft.com/edge");
+        return null;
+    }
+
+    /**
+     * Create screenshot directory
+     */
+    private void createScreenshotDirectory() {
+        try {
+            File screenshotFolder = new File(screenshotDir);
+            if (!screenshotFolder.exists()) {
+                screenshotFolder.mkdirs();
+                LOG.info("📁 Created screenshots directory: {}", screenshotFolder.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            LOG.warn("Could not create screenshot directory: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Take screenshot of the given URL with description
+     */
+    private void takeScreenshot(String url, String stepDescription, String testMethod) {
+        if (webDriver == null) {
+            LOG.warn("📸❌ WebDriver not available, skipping screenshot for: {}", stepDescription);
+            LOG.warn("   💡 Install Chrome browser to enable screenshots");
+            return;
+        }
+        
+        LOG.info("📸 Taking screenshot for: {}", stepDescription);
+
+        try {
+            // First, navigate to AEM login page and authenticate
+            webDriver.get("http://localhost:4502/libs/granite/core/content/login.html");
+            Thread.sleep(1000);
+            
+            // Check if we need to log in
+            try {
+                if (webDriver.getCurrentUrl().contains("login")) {
+                    LOG.info("   🔐 Logging into AEM...");
+                    webDriver.findElement(By.id("username")).sendKeys("admin");
+                    webDriver.findElement(By.id("password")).sendKeys("admin");
+                    webDriver.findElement(By.id("submit-button")).click();
+                    Thread.sleep(2000); // Wait for login to complete
+                    LOG.info("   ✅ AEM login successful");
+                }
+            } catch (Exception loginException) {
+                LOG.warn("   ⚠️ Could not perform login, trying direct URL access");
+            }
+            
+            // Now navigate to the actual page
+            LOG.info("   📄 Navigating to: {}", url);
+            webDriver.get(url);
+            Thread.sleep(5000); // Wait for page to fully load
+            
+            // Log page title to verify we're on the right page
+            String pageTitle = webDriver.getTitle();
+            LOG.info("   📑 Page Title: '{}'", pageTitle);
+            
+            // Wait a bit more if it looks like we're still loading
+            if (pageTitle.contains("Loading") || pageTitle.isEmpty()) {
+                LOG.info("   ⏳ Page still loading, waiting more...");
+                Thread.sleep(3000);
+            }
+            
+            TakesScreenshot screenshotTaker = (TakesScreenshot) webDriver;
+            byte[] screenshot = screenshotTaker.getScreenshotAs(OutputType.BYTES);
+            
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+            String filename = String.format("%s_%s_%s_%s.png", 
+                testMethod, 
+                stepDescription.replaceAll("[^a-zA-Z0-9]", "_"), 
+                timestamp,
+                System.currentTimeMillis() % 1000);
+            
+            File screenshotFile = new File(screenshotDir, filename);
+            try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
+                fos.write(screenshot);
+            }
+            
+            LOG.info("📸 Screenshot saved: {} - {}", filename, stepDescription);
+        } catch (Exception e) {
+            LOG.warn("Failed to take screenshot for '{}': {}", stepDescription, e.getMessage());
+        }
     }
 
     /**
@@ -179,14 +400,26 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             originalProductName = productData.get("name").asText();
             LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
 
+            // STEP 1.5: Take screenshot BEFORE Magento name change
+            LOG.info("📸 STEP 1.5: Taking screenshot BEFORE Magento name change");
+            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP1_Before_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+
             // STEP 2: Update product name in Magento
             String updatedProductName = originalProductName + " " + randomSuffix;
             LOG.info("🔄 STEP 2: Updating Magento product name");
             updateMagentoProductName(productSku, updatedProductName);
             LOG.info("   ✓ Updated Magento Product: '{}'", updatedProductName);
 
+            // STEP 2.5: Take screenshot AFTER Magento name change (before cache check)
+            LOG.info("📸 STEP 2.5: Taking screenshot AFTER Magento name change");
+            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP2_After_Magento_Change", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+
             // STEP 3: Verify AEM still shows old data (check both breadcrumb and product components)
             LOG.info("📋 STEP 3: Checking AEM product page still shows cached data");
+            
+            // Take screenshot to check if AEM shows cached data
+            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP3_Cache_Status_Check", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            
             ProductNameResult aemProductNames = getCurrentProductNameFromProductPage(productPageUrl);
             LOG.info("   AEM Breadcrumb Shows: '{}'", aemProductNames.breadcrumbName);
             LOG.info("   AEM Product Detail Shows: '{}'", aemProductNames.productDetailName);
@@ -207,6 +440,10 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             Thread.sleep(10000); // Wait 10 seconds
 
             LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data in both components");
+            
+            // Take screenshot to verify cache invalidation worked
+            takeScreenshot("http://localhost:4502" + productPageUrl, "STEP6_After_Cache_Clear", environment.replaceAll("[^a-zA-Z0-9]", "_"));
+            
             ProductNameResult freshProductNames = getCurrentProductNameFromProductPage(productPageUrl);
             LOG.info("   Fresh Breadcrumb Check: '{}'", freshProductNames.breadcrumbName);
             LOG.info("   Fresh Product Detail Check: '{}'", freshProductNames.productDetailName);
@@ -886,6 +1123,40 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+
+    /**
+     * Capture screenshot using Chrome DevTools Protocol for CI pipeline
+     */
+    private void captureScreenshot(String stepName, String url) {
+        try {
+            // Only capture screenshots in CI environment
+            boolean isCI = System.getenv("CIRCLECI") != null || System.getenv("CI") != null;
+            if (!isCI) {
+                LOG.debug("Skipping screenshot - not in CI environment");
+                return;
+            }
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HHmmss"));
+            String filename = String.format("screenshot-%s-%s.html", stepName, timestamp);
+            String screenshotsDir = "target/screenshots";
+            
+            // Create screenshots directory
+            Files.createDirectories(Paths.get(screenshotsDir));
+            
+            // For now, capture the HTML content - this will be visible in CI artifacts
+            String htmlContent = makeCacheRespectingRequest(url);
+            
+            File screenshotFile = new File(screenshotsDir, filename);
+            try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
+                fos.write(htmlContent.getBytes("UTF-8"));
+            }
+            
+            LOG.info("📸 Screenshot captured: {} (HTML content)", screenshotFile.getAbsolutePath());
+            
+        } catch (Exception e) {
+            LOG.warn("Failed to capture screenshot for step '{}': {}", stepName, e.getMessage());
+        }
     }
 
     /**

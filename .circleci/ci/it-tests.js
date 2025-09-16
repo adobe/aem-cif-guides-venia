@@ -132,6 +132,8 @@ try {
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
+        // Copy screenshots if they exist
+        ci.sh('if [ -d "it.tests/screenshots" ]; then cp -r it.tests/screenshots test-reports/screenshots; fi');
     }
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
