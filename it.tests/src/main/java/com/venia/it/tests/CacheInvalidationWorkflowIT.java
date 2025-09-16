@@ -98,9 +98,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
         runProductCacheInvalidationTest(
-                "BLT-FAB-001", // SKU - Back to original
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "Cloud - Product"
+                "BLT-LEA-001", // SKU - Using known working product for cache config test
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
+                "Cloud - Product (Cache Config Test)"
         );
     }
 
