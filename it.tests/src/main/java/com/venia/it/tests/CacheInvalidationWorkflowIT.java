@@ -69,10 +69,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration - Uses mcstaging for pipeline tests
-    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
+    private static final String MAGENTO_BASE_URL = "https://mcstaging.catalogservice-commerce.fun";
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("magento.admin.token",
-            System.getenv("MAGENTO_ADMIN_TOKEN") != null ? System.getenv("MAGENTO_ADMIN_TOKEN") : "etk0tf7974shom72dyphbxqxsqd2eqe5");
+    private static final String MAGENTO_ADMIN_TOKEN = "75k2m0r145nt8199749ulu4lususphlm";
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -89,6 +88,37 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
+        
+        // Detect and log detailed environment information
+        boolean isCI = System.getenv("CIRCLECI") != null || System.getenv("CI") != null;
+        String aemType = System.getenv("AEM");
+        String testType = System.getenv("TYPE");
+        String circleJobName = System.getenv("CIRCLE_JOB");
+        String circleBranch = System.getenv("CIRCLE_BRANCH");
+        
+        if (isCI) {
+            LOG.info("🔧 Environment: CI Pipeline (Docker)");
+            LOG.info("   🏗️  Job: {}", circleJobName != null ? circleJobName : "unknown");
+            LOG.info("   🌿 Branch: {}", circleBranch != null ? circleBranch : "unknown");
+            LOG.info("   🐳 AEM Type: {}", aemType != null ? aemType : "unknown");
+            LOG.info("   🧪 Test Type: {}", testType != null ? testType : "unknown");
+            
+            // Show which Docker executor is being used based on AEM type
+            if ("cloud".equals(aemType)) {
+                LOG.info("   📦 Docker Image: circleci-aem-cloudready:21331-openjdk11");
+                LOG.info("   ⚙️  Executor: test_executor_cloudready");
+                LOG.info("   🔧 Cache Expected: ❌ NO (CI Docker - Testing Only)");
+            } else if ("classic".equals(aemType)) {
+                LOG.info("   📦 Docker Image: circleci-aem:6.5.23.0-openjdk11");
+                LOG.info("   ⚙️  Executor: test_executor_655");
+                LOG.info("   🔧 Cache Expected: ❌ NO (CI Docker - Testing Only)");
+            }
+            
+            LOG.info("   ℹ️  CI Note: Cache behavior will differ from production");
+        } else {
+            LOG.info("🔧 Environment: Local Development");
+            LOG.info("   🔧 Cache Expected: ✅ YES (Full Dispatcher + AEM)");
+        }
 
         // Log token source for debugging (without exposing the actual token)
         if (System.getenv("MAGENTO_ADMIN_TOKEN") != null) {
