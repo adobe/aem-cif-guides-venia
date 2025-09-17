@@ -163,6 +163,16 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("   Updated Magento Product: '{}'", updatedProductName);
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
+            
+            // DEBUG: Log cache behavior details
+            if (!productCacheWorking) {
+                LOG.warn("🔍 DEBUG: Product cache not working - AEM showing fresh data immediately");
+                LOG.warn("   - Original Magento: '{}'", originalProductName);
+                LOG.warn("   - Updated Magento: '{}'", updatedProductName);  
+                LOG.warn("   - AEM Shows: '{}'", aemProductName);
+                LOG.warn("   - Environment: {}", environment);
+                LOG.warn("   - This indicates Data Service cache is not active");
+            }
 
             // STEP 4: Call cache invalidation (product only)
             LOG.info("🚀 STEP 4: Calling cache invalidation servlet for PRODUCT only");

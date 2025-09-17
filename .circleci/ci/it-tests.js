@@ -152,9 +152,6 @@ try {
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
     
-    // Configure GraphQL Data Service caching (temporary until config files are deployed)
-    configureGraphqlDataService();
-    
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
 
