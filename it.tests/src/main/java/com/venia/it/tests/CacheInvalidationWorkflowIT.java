@@ -79,57 +79,93 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * AEM 6.5 Product Cache Invalidation Test
+     * AEM 6.5 - Product Cache Invalidation using productSkus method
      */
     @Test
     @Category(IgnoreOnCloud.class)
     public void test65_Product_CacheInvalidation() throws Exception {
+        LOG.info("=== 🎯 AEM 6.5 - PRODUCT CACHE INVALIDATION (productSkus) ===");
         runProductCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - Back to original
+                "BLT-LEA-001", // SKU
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "AEM 6.5 - Product"
+                "AEM 6.5 - Product (productSkus method)"
         );
     }
 
     /**
-     * Cloud Category Cache Invalidation Test - RUNS FIRST
-     */
-    @Test
-    @Category(IgnoreOn65.class)
-    public void testCloud_Category_CacheInvalidation() throws Exception {
-        runCategoryCacheInvalidationTest(
-                "BLT-FAB-001", // SKU - Back to original  
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "venia-fabric-belts", // URL key
-                "Cloud - Category"
-        );
-    }
-
-    /**
-     * AEM 6.5 Category Cache Invalidation Test
+     * AEM 6.5 - Category Cache Invalidation using categoryUids method
      */
     @Test
     @Category(IgnoreOnCloud.class)
     public void test65_Category_CacheInvalidation() throws Exception {
+        LOG.info("=== 🎯 AEM 6.5 - CATEGORY CACHE INVALIDATION (categoryUids) ===");
         runCategoryCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - Back to original
+                "BLT-LEA-001", // SKU for context  
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
                 "venia-leather-belts", // URL key
-                "AEM 6.5 - Category"
+                "AEM 6.5 - Category (categoryUids method)"
         );
     }
 
     /**
-     * Cloud Product Cache Invalidation Test - RUNS SECOND  
+     * Cloud - Product Cache Invalidation using productSkus method (to verify cloud cache fix)
      */
     @Test
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheInvalidation() throws Exception {
+        LOG.info("=== 🎯 CLOUD - PRODUCT CACHE INVALIDATION (productSkus) ===");
         runProductCacheInvalidationTest(
-                "BLT-FAB-001", // SKU - Back to original
+                "BLT-FAB-001", // SKU - Test the problematic product in cloud
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "Cloud - Product (Cache Config Test)"
+                "Cloud - Product (productSkus method - Cache Config Test)"
         );
+    }
+
+    /**
+     * Cloud - Product Cache Invalidation using regexPatterns method
+     */
+    @Test 
+    @Category(IgnoreOn65.class)
+    public void testCloud_Product_RegexPattern() throws Exception {
+        LOG.info("=== 🎯 CLOUD - PRODUCT CACHE INVALIDATION (regexPatterns) ===");
+        String testSku = "BLT-LEA-001"; // Different product for variety
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
+        String environment = "Cloud - Product (regexPatterns method)";
+
+        // Run product test using regex pattern instead of productSkus
+        runRegexPatternProductTest(environment, testSku, categoryPage);
+    }
+
+    /**
+     * Cloud - Category Cache Invalidation using cacheNames method
+     */
+    @Test
+    @Category(IgnoreOn65.class)
+    public void testCloud_Category_CacheNames() throws Exception {
+        LOG.info("=== 🎯 CLOUD - CATEGORY CACHE INVALIDATION (cacheNames) ===");
+        String testSku = "BLT-FAB-001";
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        String categoryUrlKey = "venia-fabric-belts";
+        String environment = "Cloud - Category (cacheNames method)";
+        
+        // Run category test using cacheNames instead of categoryUids
+        runCacheNamesCategoryTest(environment, testSku, categoryPage, categoryUrlKey);
+    }
+
+    /**
+     * Cloud - Final Comprehensive Test using invalidateAll method
+     */
+    @Test
+    @Category(IgnoreOn65.class)
+    public void testCloud_InvalidateAll_Final() throws Exception {
+        LOG.info("=== 🎯 CLOUD - COMPREHENSIVE CACHE INVALIDATION (invalidateAll) ===");
+        String testSku = "BLT-FAB-001"; 
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        String categoryUrlKey = "venia-fabric-belts";
+        String environment = "Cloud - Final Test (invalidateAll method)";
+
+        // Test complete cache invalidation with both product and category
+        runInvalidateAllCacheTest(environment, testSku, categoryPage, categoryUrlKey);
     }
 
     /**
@@ -164,7 +200,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
             
-            // DEBUG: Log cache behavior details
+            // COMPREHENSIVE DIAGNOSTICS: Check AEM Configuration Status
             if (!productCacheWorking) {
                 LOG.warn("🔍 DEBUG: Product cache not working - AEM showing fresh data immediately");
                 LOG.warn("   - Original Magento: '{}'", originalProductName);
@@ -172,6 +208,86 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.warn("   - AEM Shows: '{}'", aemProductName);
                 LOG.warn("   - Environment: {}", environment);
                 LOG.warn("   - This indicates Data Service cache is not active");
+                
+                // DIAGNOSTIC 1: Check GraphQL Data Service Configuration
+                LOG.warn("🔧 DIAGNOSTIC 1: Checking AEM GraphQL Data Service Configuration...");
+                try {
+                    String configUrl = adminAuthor.getUrl() + "/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default";
+                    SlingHttpResponse configResponse = adminAuthor.doGet(configUrl, 200);
+                    String configContent = configResponse.getContent();
+                    boolean hasDataServiceConfig = configContent.contains("productCachingEnabled");
+                    boolean productCachingEnabled = configContent.contains("productCachingEnabled</td>") && configContent.contains("true");
+                    LOG.warn("   📊 Data Service Config Found: {} {}", hasDataServiceConfig ? "✅" : "❌", hasDataServiceConfig ? "YES" : "NO");
+                    if (hasDataServiceConfig) {
+                        LOG.warn("   📊 Product Caching Enabled: {} {}", productCachingEnabled ? "✅" : "❌", productCachingEnabled ? "YES" : "NO");
+                        if (configContent.contains("productCachingTimeMinutes")) {
+                            LOG.warn("   📊 Config contains cache timing settings");
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.warn("   ❌ Failed to check Data Service config: {}", e.getMessage());
+                }
+                
+                // DIAGNOSTIC 2: Check GraphQL Client Configuration (should be working since category works)
+                LOG.warn("🔧 DIAGNOSTIC 2: Checking AEM GraphQL Client Configuration...");
+                try {
+                    String clientConfigUrl = adminAuthor.getUrl() + "/system/console/configMgr/com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~default";
+                    SlingHttpResponse clientResponse = adminAuthor.doGet(clientConfigUrl, 200);
+                    String clientContent = clientResponse.getContent();
+                    boolean hasClientConfig = clientContent.contains("cacheConfigurations");
+                    boolean hasProductCache = clientContent.contains("venia/components/commerce/product");
+                    LOG.warn("   📊 GraphQL Client Config Found: {} {}", hasClientConfig ? "✅" : "❌", hasClientConfig ? "YES" : "NO");
+                    if (hasClientConfig) {
+                        LOG.warn("   📊 Product Component Cache Config: {} {}", hasProductCache ? "✅" : "❌", hasProductCache ? "YES" : "NO");
+                    }
+                } catch (Exception e) {
+                    LOG.warn("   ❌ Failed to check GraphQL Client config: {}", e.getMessage());
+                }
+                
+                // DIAGNOSTIC 3: Check OSGi Service Status
+                LOG.warn("🔧 DIAGNOSTIC 3: Checking OSGi Service Status...");
+                try {
+                    String servicesUrl = adminAuthor.getUrl() + "/system/console/services.json";
+                    SlingHttpResponse servicesResponse = adminAuthor.doGet(servicesUrl, 200);
+                    String servicesContent = servicesResponse.getContent();
+                    boolean dataServiceActive = servicesContent.contains("GraphqlDataServiceImpl") && servicesContent.contains("ACTIVE");
+                    LOG.warn("   📊 GraphQL Data Service Status: {} {}", dataServiceActive ? "✅ ACTIVE" : "❌ INACTIVE", dataServiceActive ? "RUNNING" : "NOT RUNNING");
+                } catch (Exception e) {
+                    LOG.warn("   ❌ Failed to check OSGi services: {}", e.getMessage());
+                }
+                
+                // DIAGNOSTIC 4: Check for Multiple Data Service Configurations
+                LOG.warn("🔧 DIAGNOSTIC 4: Checking for Multiple Data Service Configurations...");
+                try {
+                    String allConfigsUrl = adminAuthor.getUrl() + "/system/console/configMgr.json";
+                    SlingHttpResponse allConfigsResponse = adminAuthor.doGet(allConfigsUrl, 200);
+                    String allConfigsContent = allConfigsResponse.getContent();
+                    int dataServiceConfigCount = (allConfigsContent.split("GraphqlDataServiceImpl", -1).length - 1);
+                    LOG.warn("   📊 Total GraphQL Data Service Configs Found: {}", dataServiceConfigCount);
+                    if (dataServiceConfigCount > 1) {
+                        LOG.warn("   ⚠️  Multiple configurations detected - potential conflict!");
+                    } else if (dataServiceConfigCount == 0) {
+                        LOG.warn("   ❌ NO Data Service configurations found!");
+                    }
+                } catch (Exception e) {
+                    LOG.warn("   ❌ Failed to check config count: {}", e.getMessage());
+                }
+                
+                // DIAGNOSTIC 5: Test Direct GraphQL Query to Magento
+                LOG.warn("🔧 DIAGNOSTIC 5: Testing Direct GraphQL Connection to Magento...");
+                try {
+                    // Test if we can query Magento directly
+                    String magentoTestName = getMagentoProductName(productSku);
+                    boolean magentoConnected = magentoTestName != null && !magentoTestName.isEmpty();
+                    LOG.warn("   📊 Direct Magento Connection: {} {}", magentoConnected ? "✅" : "❌", magentoConnected ? "WORKING" : "FAILED");
+                    if (magentoConnected) {
+                        LOG.warn("   📊 Magento Response: '{}'", magentoTestName);
+                        boolean magentoDifferent = !magentoTestName.equals(aemProductName);
+                        LOG.warn("   📊 AEM vs Magento Difference: {} {}", magentoDifferent ? "✅" : "❌", magentoDifferent ? "DIFFERENT DATA" : "SAME DATA");
+                    }
+                } catch (Exception e) {
+                    LOG.warn("   ❌ Failed to test Magento connection: {}", e.getMessage());
+                }
             }
 
             // STEP 4: Call cache invalidation (product only)
@@ -575,6 +691,411 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         } catch (Exception e) {
             LOG.error("Failed to make cache-respecting request: {}", e.getMessage());
             throw new ClientException("Failed to make cache-respecting request", e);
+        }
+    }
+
+    /**
+     * Product Cache Test using Regex Pattern - Focused on product invalidation only
+     */
+    private void runRegexPatternProductTest(String environment, String testSku, String categoryPageUrl) throws Exception {
+        String originalProductName = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original product data
+            LOG.info("📋 STEP 1: Getting original product data");
+            originalProductName = getMagentoProductName(testSku);
+            LOG.info("   ✓ Original Product: '{}'", originalProductName);
+
+            // STEP 2: Update in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating Product in Magento");
+            updateMagentoProductName(testSku, updatedProductName);
+            LOG.info("   ✓ Updated Product: '{}'", updatedProductName);
+
+            // STEP 3: Verify cache working
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
+
+            // STEP 4: Clear cache using REGEX PATTERN for product
+            LOG.info("🚀 STEP 4: Calling cache invalidation with PRODUCT REGEX PATTERN");
+            String productRegex = String.format("\\\"sku\\\"\\\\s*\\\\\\\"%s\\\"", testSku);
+            
+            String payload = String.format(
+                "{\n" +
+                "    \"regexPatterns\": [\"%s\"],\n" +
+                "    \"storePath\": \"/content/venia/us/en\"\n" +
+                "}", productRegex);
+            
+            LOG.info("📝 Cache invalidation payload (product regex): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify
+            LOG.info("⏳ STEP 5: Waiting for regex pattern invalidation...");
+            Thread.sleep(10000);
+            
+            LOG.info("🔍 STEP 6: Verifying product cache cleared via regex pattern");
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            boolean productUpdated = aemProductName.contains(randomSuffix);
+            LOG.info("   Fresh Product Check: '{}'", aemProductName);
+            LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
+
+            if (productUpdated) {
+                LOG.info("🎉 SUCCESS: Product regex pattern invalidation test passed!");
+            } else {
+                Assert.fail("❌ FAILED: Product regex pattern invalidation failed");
+            }
+
+        } finally {
+            // Cleanup
+            LOG.info("🧹 CLEANUP: Reverting product name back to original...");
+            if (originalProductName != null) {
+                try {
+                    updateMagentoProductName(testSku, originalProductName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore product name: {}", e.getMessage());
+                }
+            }
+            LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Category Cache Test using Cache Names - Focused on category component clearing
+     */
+    private void runCacheNamesCategoryTest(String environment, String testSku, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        String originalCategoryName = null;
+        String categoryId = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original category data
+            LOG.info("📋 STEP 1: Getting original category data");
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+            JsonNode categoryData = getMagentoCategoryData(categoryId);
+            originalCategoryName = categoryData.get("name").asText();
+            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+
+            // STEP 2: Update in Magento
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating Category in Magento");
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+
+            // STEP 3: Verify cache working
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
+
+            // STEP 4: Clear specific component caches using CACHE NAMES
+            LOG.info("🚀 STEP 4: Calling cache invalidation with SPECIFIC CACHE NAMES");
+            String payload = String.format(
+                "{\n" +
+                "    \"cacheNames\": [\n" +
+                "        \"venia/components/commerce/navigation\",\n" +
+                "        \"venia/components/commerce/breadcrumb\",\n" +
+                "        \"com.adobe.cq.commerce.core.search.services.SearchFilterService\"\n" +
+                "    ],\n" +
+                "    \"storePath\": \"/content/venia/us/en\"\n" +
+                "}");
+            
+            LOG.info("📝 Cache invalidation payload (category cache names): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify
+            LOG.info("⏳ STEP 5: Waiting for cache names invalidation...");
+            Thread.sleep(10000);
+            
+            LOG.info("🔍 STEP 6: Verifying category component caches cleared");
+            aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
+            LOG.info("   Fresh Category Check: '{}'", aemCategoryName);
+            LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
+
+            if (categoryUpdated) {
+                LOG.info("🎉 SUCCESS: Category cache names invalidation test passed!");
+                LOG.info("✅ Cache configurations remain intact for subsequent tests");
+            } else {
+                Assert.fail("❌ FAILED: Category cache names invalidation failed");
+            }
+
+        } finally {
+            // Cleanup
+            LOG.info("🧹 CLEANUP: Reverting category name back to original...");
+            if (originalCategoryName != null && categoryId != null) {
+                try {
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore category name: {}", e.getMessage());
+                }
+            }
+            LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Regex Pattern Cache Invalidation Test - Tests pattern-based cache clearing
+     */
+    private void runRegexPatternCacheTest(String environment, String testSku, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        String originalProductName = null;
+        String originalCategoryName = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original data
+            LOG.info("📋 STEP 1: Getting original data from both Product and Category");
+            originalProductName = getMagentoProductName(testSku);
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+            JsonNode categoryData = getMagentoCategoryData(categoryId);
+            originalCategoryName = categoryData.get("name").asText();
+            LOG.info("   ✓ Original Product: '{}'", originalProductName);
+            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+
+            // STEP 2: Update both in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating both Product and Category in Magento");
+            updateMagentoProductName(testSku, updatedProductName);
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            LOG.info("   ✓ Updated Product: '{}'", updatedProductName);
+            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+
+            // STEP 3: Verify cache working (both should show old data)
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
+            LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
+
+            // STEP 4: Clear cache using regex patterns
+            LOG.info("🚀 STEP 4: Calling cache invalidation with REGEX PATTERNS");
+            String productRegex = String.format("\\\"sku\\\"\\\\s*\\\\s*\\\"%s\\\"", testSku);
+            String categoryRegex = String.format("\\\"uid\\\"\\\\s*:\\\\s*\\\\{\\\"id\\\"\\\\s*:\\\\s*\\\"%s\\\"", categoryUid);
+            
+            String payload = String.format(
+                "{\n" +
+                "    \"regexPatterns\": [\"%s\", \"%s\"],\n" +
+                "    \"storePath\": \"/content/venia/us/en\"\n" +
+                "}", productRegex, categoryRegex);
+            
+            LOG.info("📝 Cache invalidation payload (regex patterns): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify cache cleared
+            LOG.info("⏳ STEP 5: Waiting for regex pattern cache invalidation...");
+            Thread.sleep(10000);
+            
+            LOG.info("🔍 STEP 6: Verifying cache shows fresh data after regex invalidation");
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean productUpdated = aemProductName.contains(randomSuffix);
+            boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
+            LOG.info("   Fresh Product Check: '{}'", aemProductName);
+            LOG.info("   Fresh Category Check: '{}'", aemCategoryName);
+            LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
+            LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
+
+            if (productUpdated && categoryUpdated) {
+                LOG.info("🎉 SUCCESS: Regex pattern cache invalidation test passed!");
+            } else {
+                Assert.fail(String.format("❌ FAILED: Regex pattern cache invalidation failed - Product: %s, Category: %s", 
+                    productUpdated ? "✅" : "❌", categoryUpdated ? "✅" : "❌"));
+            }
+
+        } finally {
+            // Cleanup
+            LOG.info("🧹 CLEANUP: Reverting names back to original values...");
+            if (originalProductName != null) {
+                try {
+                    updateMagentoProductName(testSku, originalProductName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore product name: {}", e.getMessage());
+                }
+            }
+            if (originalCategoryName != null) {
+                try {
+                    String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+                    String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore category name: {}", e.getMessage());
+                }
+            }
+            LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Cache Names Invalidation Test - Tests specific component cache clearing
+     */
+    private void runCacheNamesCacheTest(String environment, String testSku, String categoryPageUrl) throws Exception {
+        String originalProductName = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original data
+            LOG.info("📋 STEP 1: Getting original product data");
+            originalProductName = getMagentoProductName(testSku);
+            LOG.info("   ✓ Original Product: '{}'", originalProductName);
+
+            // STEP 2: Update in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating Product in Magento");
+            updateMagentoProductName(testSku, updatedProductName);
+            LOG.info("   ✓ Updated Product: '{}'", updatedProductName);
+
+            // STEP 3: Verify cache working
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
+
+            // STEP 4: Clear specific cache names
+            LOG.info("🚀 STEP 4: Calling cache invalidation with CACHE NAMES");
+            String payload = String.format(
+                "{\n" +
+                "    \"cacheNames\": [\n" +
+                "        \"venia/components/commerce/product\",\n" +
+                "        \"venia/components/commerce/navigation\",\n" +
+                "        \"venia/components/commerce/breadcrumb\"\n" +
+                "    ],\n" +
+                "    \"storePath\": \"/content/venia/us/en\"\n" +
+                "}");
+            
+            LOG.info("📝 Cache invalidation payload (cache names): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify
+            LOG.info("⏳ STEP 5: Waiting for cache names invalidation...");
+            Thread.sleep(10000);
+            
+            LOG.info("🔍 STEP 6: Verifying specific component caches cleared");
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            boolean productUpdated = aemProductName.contains(randomSuffix);
+            LOG.info("   Fresh Product Check: '{}'", aemProductName);
+            LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
+
+            if (productUpdated) {
+                LOG.info("🎉 SUCCESS: Cache names invalidation test passed!");
+            } else {
+                Assert.fail("❌ FAILED: Cache names invalidation failed - component caches not cleared");
+            }
+
+        } finally {
+            // Cleanup
+            LOG.info("🧹 CLEANUP: Reverting product name back to original...");
+            if (originalProductName != null) {
+                try {
+                    updateMagentoProductName(testSku, originalProductName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore product name: {}", e.getMessage());
+                }
+            }
+            LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Invalidate All Cache Test - Tests complete cache flush
+     */
+    private void runInvalidateAllCacheTest(String environment, String testSku, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        String originalProductName = null;
+        String originalCategoryName = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original data
+            LOG.info("📋 STEP 1: Getting original data from both Product and Category");
+            originalProductName = getMagentoProductName(testSku);
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+            JsonNode categoryData = getMagentoCategoryData(categoryId);
+            originalCategoryName = categoryData.get("name").asText();
+            LOG.info("   ✓ Original Product: '{}'", originalProductName);
+            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+
+            // STEP 2: Update both in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating both Product and Category in Magento");
+            updateMagentoProductName(testSku, updatedProductName);
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            LOG.info("   ✓ Updated Product: '{}'", updatedProductName);
+            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+
+            // STEP 3: Verify cache working (both should show old data)
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
+            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
+            LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
+
+            // STEP 4: Clear ALL cache
+            LOG.info("🚀 STEP 4: Calling cache invalidation with INVALIDATE ALL");
+            String payload = String.format(
+                "{\n" +
+                "    \"invalidateAll\": true,\n" +
+                "    \"storePath\": \"/content/venia/us/en\"\n" +
+                "}");
+            
+            LOG.info("📝 Cache invalidation payload (invalidate all): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify everything cleared
+            LOG.info("⏳ STEP 5: Waiting for complete cache invalidation...");
+            Thread.sleep(15000); // Longer wait for complete flush
+            
+            LOG.info("🔍 STEP 6: Verifying ALL caches cleared");
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean productUpdated = aemProductName.contains(randomSuffix);
+            boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
+            LOG.info("   Fresh Product Check: '{}'", aemProductName);
+            LOG.info("   Fresh Category Check: '{}'", aemCategoryName);
+            LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
+            LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
+
+            if (productUpdated && categoryUpdated) {
+                LOG.info("🎉 SUCCESS: Invalidate All cache test passed!");
+            } else {
+                Assert.fail(String.format("❌ FAILED: Invalidate All cache failed - Product: %s, Category: %s", 
+                    productUpdated ? "✅" : "❌", categoryUpdated ? "✅" : "❌"));
+            }
+
+        } finally {
+            // Cleanup
+            LOG.info("🧹 CLEANUP: Reverting names back to original values...");
+            if (originalProductName != null) {
+                try {
+                    updateMagentoProductName(testSku, originalProductName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore product name: {}", e.getMessage());
+                }
+            }
+            if (originalCategoryName != null) {
+                try {
+                    String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+                    String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                } catch (Exception e) {
+                    LOG.warn("Could not restore category name: {}", e.getMessage());
+                }
+            }
+            LOG.info("🧹 Cleanup complete");
         }
     }
 }

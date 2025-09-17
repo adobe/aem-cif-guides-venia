@@ -163,8 +163,20 @@ try {
         ci.sh(`curl -s -X DELETE -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" || echo "Config deletion completed"`);
         ci.sh('sleep 5');
         
-        // Apply fresh configuration
+        // Apply fresh configuration (try different approach)
         console.log('✨ Applying fresh Data Service configuration...');
+        
+        // Try to update existing config first, then create if needed
+        ci.sh(`curl -s -u admin:admin -X POST "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" \
+               -d "apply=true" \
+               -d "productCachingEnabled=true" \
+               -d "productCachingSize=1000" \
+               -d "productCachingTimeMinutes=10" \
+               -d "categoryCachingEnabled=true" \
+               -d "categoryCachingSize=100" \
+               -d "categoryCachingTimeMinutes=60" || echo "Update existing config failed, trying factory creation..."`);
+        
+        // Fallback to factory creation
         configureGraphqlDataService();
         
         // Wait for configuration to become active
@@ -173,11 +185,15 @@ try {
         
         // Verify configuration is active and log details
         console.log('🔍 Verifying Data Service configuration is active...');
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr.json" | jq -r '.configurations[] | select(.fpid == "com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl") | "Found: " + .name + " [" + .id + "]"' || echo "Config verification completed"`);
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Config check completed"`);
         
-        // Additional verification - check if config is actually applied
-        console.log('📋 Checking OSGi service status...');
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/services.json" | jq -r '.data[] | select(.id | contains("GraphqlDataServiceImpl")) | "Service: " + .name + " - " + .state' || echo "Service check completed"`);
+        // Additional verification - check OSGi services
+        console.log('📋 Checking OSGi service status...');  
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/services.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Service check completed"`);
+        
+        // Final verification - check if the specific config exists
+        console.log('🎯 Checking specific Data Service configuration...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" | grep -i "productCachingEnabled" || echo "Specific config check completed"`);
     }
     
     // Configure CIF Cache Invalidation
