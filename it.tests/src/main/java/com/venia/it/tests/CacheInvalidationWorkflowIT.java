@@ -92,15 +92,16 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Cloud Product Cache Invalidation Test
+     * Cloud Category Cache Invalidation Test - RUNS FIRST
      */
     @Test
     @Category(IgnoreOn65.class)
-    public void testCloud_Product_CacheInvalidation() throws Exception {
-        runProductCacheInvalidationTest(
-                "BLT-LEA-001", // SKU - Using known working product for cache config test
-                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html", // Category page
-                "Cloud - Product (Cache Config Test)"
+    public void testCloud_Category_CacheInvalidation() throws Exception {
+        runCategoryCacheInvalidationTest(
+                "BLT-FAB-001", // SKU - Back to original  
+                "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
+                "venia-fabric-belts", // URL key
+                "Cloud - Category"
         );
     }
 
@@ -119,16 +120,15 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
-     * Cloud Category Cache Invalidation Test
+     * Cloud Product Cache Invalidation Test - RUNS SECOND  
      */
     @Test
     @Category(IgnoreOn65.class)
-    public void testCloud_Category_CacheInvalidation() throws Exception {
-        runCategoryCacheInvalidationTest(
+    public void testCloud_Product_CacheInvalidation() throws Exception {
+        runProductCacheInvalidationTest(
                 "BLT-FAB-001", // SKU - Back to original
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html", // Category page
-                "venia-fabric-belts", // URL key
-                "Cloud - Category"
+                "Cloud - Product (Cache Config Test)"
         );
     }
 
