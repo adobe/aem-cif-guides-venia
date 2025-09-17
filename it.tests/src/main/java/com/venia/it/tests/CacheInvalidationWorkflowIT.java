@@ -43,6 +43,7 @@ import com.venia.it.category.IgnoreOnCloud;
 import com.venia.it.category.IgnoreOn65;
 
 import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
 
 import java.util.Random;
 
@@ -277,7 +278,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.warn("🔧 DIAGNOSTIC 5: Testing Direct GraphQL Connection to Magento...");
                 try {
                     // Test if we can query Magento directly
-                    String magentoTestName = getMagentoProductName(productSku);
+                    JsonNode productData2 = getMagentoProductData(productSku);
+                    String magentoTestName = productData2 != null ? productData2.get("name").asText() : null;
                     boolean magentoConnected = magentoTestName != null && !magentoTestName.isEmpty();
                     LOG.warn("   📊 Direct Magento Connection: {} {}", magentoConnected ? "✅" : "❌", magentoConnected ? "WORKING" : "FAILED");
                     if (magentoConnected) {
@@ -663,6 +665,29 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
+     * Get Magento product name (helper method)
+     */
+    private String getMagentoProductName(String sku) throws Exception {
+        JsonNode productData = getMagentoProductData(sku);
+        return productData.get("name").asText();
+    }
+
+    /**
+     * Get product page URL (helper method) - returns category page containing the product
+     */
+    private String getProductPageUrl(String sku) {
+        // Return appropriate category page based on SKU
+        if (sku.equals("BLT-LEA-001")) {
+            return "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
+        } else if (sku.equals("BLT-FAB-001")) {
+            return "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        } else {
+            // Default to leather belts category
+            return "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
+        }
+    }
+
+    /**
      * Make a cache-respecting request to AEM (not using admin client which bypasses cache)
      */
     private String makeCacheRespectingRequest(String path) throws ClientException {
@@ -715,7 +740,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 3: Verify cache working
             LOG.info("📋 STEP 3: Verifying cache shows old data");
-            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
 
@@ -730,7 +755,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "}", productRegex);
             
             LOG.info("📝 Cache invalidation payload (product regex): {}", payload);
-            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
             LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
 
             // STEP 5: Wait and verify
@@ -738,7 +763,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             Thread.sleep(10000);
             
             LOG.info("🔍 STEP 6: Verifying product cache cleared via regex pattern");
-            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             boolean productUpdated = aemProductName.contains(randomSuffix);
             LOG.info("   Fresh Product Check: '{}'", aemProductName);
             LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
@@ -805,7 +830,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "}");
             
             LOG.info("📝 Cache invalidation payload (category cache names): {}", payload);
-            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
             LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
 
             // STEP 5: Wait and verify
@@ -869,7 +894,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 3: Verify cache working (both should show old data)
             LOG.info("📋 STEP 3: Verifying cache shows old data");
-            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
@@ -888,7 +913,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "}", productRegex, categoryRegex);
             
             LOG.info("📝 Cache invalidation payload (regex patterns): {}", payload);
-            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
             LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
 
             // STEP 5: Wait and verify cache cleared
@@ -896,7 +921,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             Thread.sleep(10000);
             
             LOG.info("🔍 STEP 6: Verifying cache shows fresh data after regex invalidation");
-            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             boolean productUpdated = aemProductName.contains(randomSuffix);
             boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
@@ -956,7 +981,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 3: Verify cache working
             LOG.info("📋 STEP 3: Verifying cache shows old data");
-            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
 
@@ -973,7 +998,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "}");
             
             LOG.info("📝 Cache invalidation payload (cache names): {}", payload);
-            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
             LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
 
             // STEP 5: Wait and verify
@@ -981,7 +1006,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             Thread.sleep(10000);
             
             LOG.info("🔍 STEP 6: Verifying specific component caches cleared");
-            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             boolean productUpdated = aemProductName.contains(randomSuffix);
             LOG.info("   Fresh Product Check: '{}'", aemProductName);
             LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
@@ -1036,7 +1061,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 3: Verify cache working (both should show old data)
             LOG.info("📋 STEP 3: Verifying cache shows old data");
-            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             boolean productCacheWorking = !aemProductName.equals(updatedProductName);
             boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
@@ -1052,7 +1077,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "}");
             
             LOG.info("📝 Cache invalidation payload (invalidate all): {}", payload);
-            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", payload, "application/json", 200);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
             LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
 
             // STEP 5: Wait and verify everything cleared
@@ -1060,7 +1085,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             Thread.sleep(15000); // Longer wait for complete flush
             
             LOG.info("🔍 STEP 6: Verifying ALL caches cleared");
-            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku));
+            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
             aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
             boolean productUpdated = aemProductName.contains(randomSuffix);
             boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
