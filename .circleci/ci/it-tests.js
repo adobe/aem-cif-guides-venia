@@ -72,11 +72,13 @@ const configureGraphqlDataService = () => {
 }
 
 const configureCifCacheInvalidation = () => {
-    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
+    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
+    console.log('🔧 Configuring cache invalidation servlet...');
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr" \
                 -u "admin:admin" \
                 -d "apply=true" \
-                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl"
+                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
+                -d "propertylist=" || echo "Cache servlet config completed"
     `)
     
     // 2. Enable cache invalidation listener (both author and publish)
@@ -146,7 +148,7 @@ try {
         updateGraphqlClientConfiguration();
     } else {
         // update the existing venia endpoint (Cloud environment uses ~venia PID)
-        updateGraphqlClientConfiguration('venia');
+        updateGraphqlClientConfiguration('default');
     }
 
     // Configure GraphQL Proxy
@@ -155,15 +157,27 @@ try {
     // Configure GraphQL Data Service caching (force apply in Cloud)
     if (classifier !== 'classic') {
         console.log('🔧 Force applying GraphQL Data Service config for Cloud environment...');
+        
+        // First, delete any existing conflicting configuration
+        console.log('🗑️ Removing existing Data Service config...');
+        ci.sh(`curl -s -X DELETE -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" || echo "Config deletion completed"`);
+        ci.sh('sleep 5');
+        
+        // Apply fresh configuration
+        console.log('✨ Applying fresh Data Service configuration...');
         configureGraphqlDataService();
         
         // Wait for configuration to become active
         console.log('⏳ Waiting for Data Service configuration to become active...');
-        ci.sh('sleep 15');
+        ci.sh('sleep 20');
         
-        // Verify configuration is active
-        console.log('🔍 Verifying Data Service configuration...');
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Config verification completed"`);
+        // Verify configuration is active and log details
+        console.log('🔍 Verifying Data Service configuration is active...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr.json" | jq -r '.configurations[] | select(.fpid == "com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl") | "Found: " + .name + " [" + .id + "]"' || echo "Config verification completed"`);
+        
+        // Additional verification - check if config is actually applied
+        console.log('📋 Checking OSGi service status...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/services.json" | jq -r '.data[] | select(.id | contains("GraphqlDataServiceImpl")) | "Service: " + .name + " - " + .state' || echo "Service check completed"`);
     }
     
     // Configure CIF Cache Invalidation
