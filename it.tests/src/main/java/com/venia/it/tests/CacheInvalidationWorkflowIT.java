@@ -150,6 +150,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
         String environment = "Cloud - Product (cacheNames method)";
         
+        // Warm up cache for Cloud environment
+        warmUpCache(testSku, categoryPage);
+        
         // Run product test using cacheNames from GraphQL client configuration
         runCacheNamesProductTest(environment, testSku, categoryPage);
     }
@@ -165,6 +168,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
         String categoryUrlKey = "venia-fabric-belts";
         String environment = "Cloud - Final Test (invalidateAll method)";
+
+        // Warm up cache for Cloud environment
+        warmUpCache(testSku, categoryPage);
 
         // Test complete cache invalidation with both product and category
         runInvalidateAllCacheTest(environment, testSku, categoryPage, categoryUrlKey);
@@ -1023,7 +1029,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             if (productUpdated && categoryUpdated) {
                 LOG.info("🎉 SUCCESS: Regex pattern cache invalidation test passed!");
-                } else {
+                    } else {
                 Assert.fail(String.format("❌ FAILED: Regex pattern cache invalidation failed - Product: %s, Category: %s", 
                     productUpdated ? "✅" : "❌", categoryUpdated ? "✅" : "❌"));
             }
@@ -1111,7 +1117,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             if (productUpdated) {
                 LOG.info("🎉 SUCCESS: Cache names invalidation test passed!");
-            } else {
+                } else {
                 Assert.fail("❌ FAILED: Cache names invalidation failed - component caches not cleared");
             }
 
@@ -1217,7 +1223,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             if (originalProductName != null) {
                 try {
                     updateMagentoProductName(testSku, originalProductName);
-                } catch (Exception e) {
+        } catch (Exception e) {
                     LOG.warn("Could not restore product name: {}", e.getMessage());
                 }
             }
@@ -1231,6 +1237,29 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 }
             }
             LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Warm up cache for Cloud environment to avoid cold cache issues
+     */
+    private void warmUpCache(String testSku, String categoryPageUrl) throws Exception {
+        LOG.info("🔥 WARM-UP: Pre-loading cache for product '{}' in Cloud environment", testSku);
+        
+        try {
+            // Make a few cache-respecting requests to warm up the cache
+            for (int i = 0; i < 3; i++) {
+                makeCacheRespectingRequest(categoryPageUrl);
+                Thread.sleep(1000); // Small delay between requests
+            }
+            
+            // Also warm up the specific product
+            getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
+            Thread.sleep(1000);
+            
+            LOG.info("🔥 WARM-UP: Cache warm-up completed");
+        } catch (Exception e) {
+            LOG.warn("⚠️ WARM-UP: Cache warm-up failed, but continuing test: {}", e.getMessage());
         }
     }
 }
