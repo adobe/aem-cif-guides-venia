@@ -50,9 +50,9 @@ import java.util.Random;
 /**
  * Cache Invalidation Test - Tests both product and category cache invalidation for AEM 6.5 and Cloud
  */
-public class CacheInvalidationWorkflowIT extends CommerceTestBase {
+public class SCacheInvalidationWorkflowIT extends CommerceTestBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SCacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration
