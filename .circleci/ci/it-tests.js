@@ -147,8 +147,8 @@ try {
         // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {
-        // update the existing venia endpoint (Cloud environment uses ~venia PID)
-        updateGraphqlClientConfiguration('default');
+        // update the default endpoint with higher ranking to override deployed config
+        updateGraphqlClientConfiguration('default', 10);  // Higher ranking than deployed venia (5)
     }
 
     // Configure GraphQL Proxy
