@@ -51,7 +51,7 @@
       }
     ],
     "xdm:currencyCode": "USD",
-    "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&quot; inseam</li><li>Machine wash, line dry</li></ul>",
+    "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&#34; inseam</li><li>Machine wash, line dry</li></ul>",
     "dc:title": "Honora Wide Leg Pants",
     "@type": "venia/components/commerce/product"
   }
