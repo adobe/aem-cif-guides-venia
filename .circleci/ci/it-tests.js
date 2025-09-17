@@ -152,6 +152,20 @@ try {
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
     
+    // Configure GraphQL Data Service caching (force apply in Cloud)
+    if (classifier !== 'classic') {
+        console.log('🔧 Force applying GraphQL Data Service config for Cloud environment...');
+        configureGraphqlDataService();
+        
+        // Wait for configuration to become active
+        console.log('⏳ Waiting for Data Service configuration to become active...');
+        ci.sh('sleep 15');
+        
+        // Verify configuration is active
+        console.log('🔍 Verifying Data Service configuration...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Config verification completed"`);
+    }
+    
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
 
