@@ -54,22 +54,7 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
-const configureGraphqlDataService = () => {
-    // Configure GraphQL Data Service caching (needed for product caching)
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" \
-                -u "admin:admin" \
-                -d "apply=true" \
-                -d "factoryPid=com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl" \
-                -d "propertylist=identifier,productCachingEnabled,productCachingSize,productCachingTimeMinutes,categoryCachingEnabled,categoryCachingSize,categoryCachingTimeMinutes" \
-                -d "identifier=default" \
-                -d "productCachingEnabled=true" \
-                -d "productCachingSize=1000" \
-                -d "productCachingTimeMinutes=10" \
-                -d "categoryCachingEnabled=true" \
-                -d "categoryCachingSize=100" \
-                -d "categoryCachingTimeMinutes=60"
-    `)
-}
+
 
 const configureCifCacheInvalidation = () => {
     // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
@@ -147,54 +132,13 @@ try {
         // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {
-        // update the default endpoint with higher ranking to override deployed config
-        updateGraphqlClientConfiguration('default', 10);  // Higher ranking than deployed venia (5)
+        // update the existing default endpoint
+               updateGraphqlClientConfiguration('default');
     }
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
-    
-    // Configure GraphQL Data Service caching (force apply in Cloud)
-    if (classifier !== 'classic') {
-        console.log('🔧 Force applying GraphQL Data Service config for Cloud environment...');
-        
-        // First, delete any existing conflicting configuration
-        console.log('🗑️ Removing existing Data Service config...');
-        ci.sh(`curl -s -X DELETE -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" || echo "Config deletion completed"`);
-        ci.sh('sleep 5');
-        
-        // Apply fresh configuration (try different approach)
-        console.log('✨ Applying fresh Data Service configuration...');
-        
-        // Try to update existing config first, then create if needed
-        ci.sh(`curl -s -u admin:admin -X POST "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" \
-               -d "apply=true" \
-               -d "productCachingEnabled=true" \
-               -d "productCachingSize=1000" \
-               -d "productCachingTimeMinutes=10" \
-               -d "categoryCachingEnabled=true" \
-               -d "categoryCachingSize=100" \
-               -d "categoryCachingTimeMinutes=60" || echo "Update existing config failed, trying factory creation..."`);
-        
-        // Fallback to factory creation
-        configureGraphqlDataService();
-        
-        // Wait for configuration to become active
-        console.log('⏳ Waiting for Data Service configuration to become active...');
-        ci.sh('sleep 20');
-        
-        // Verify configuration is active and log details
-        console.log('🔍 Verifying Data Service configuration is active...');
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Config check completed"`);
-        
-        // Additional verification - check OSGi services
-        console.log('📋 Checking OSGi service status...');  
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/services.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Service check completed"`);
-        
-        // Final verification - check if the specific config exists
-        console.log('🎯 Checking specific Data Service configuration...');
-        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" | grep -i "productCachingEnabled" || echo "Specific config check completed"`);
-    }
+
     
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
@@ -227,9 +171,8 @@ try {
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
-        // Copy screenshots if they exist
-        ci.sh('if [ -d "it.tests/screenshots" ]; then cp -r it.tests/screenshots test-reports/screenshots; fi');
-    }
+
+          }
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
