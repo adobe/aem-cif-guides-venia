@@ -135,15 +135,15 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     @Test
     @Category(IgnoreOn65.class)
-    public void testCloud_Product_RegexPattern() throws Exception {
+    public void testCloud_Category_RegexPattern() throws Exception {
         LOG.info("=== 🎯 CLOUD - CATEGORY CACHE INVALIDATION (regexPatterns) ===");
-        String testSku = "BLT-FAB-001"; // FABRIC category test with regex
-        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
-        String categoryUrlKey = "venia-fabric-belts";
+        String testSku = "BLT-LEA-001"; // BLACK LEATHER - different product to avoid contamination
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
+        String categoryUrlKey = "venia-leather-belts";
         String environment = "Cloud - Category (regexPatterns method)";
 
-        // Run category test using regex pattern instead of categoryUids
-        runRegexPatternCacheTest(environment, testSku, categoryPage, categoryUrlKey);
+        // Run category-only test using regex pattern 
+        runCategoryRegexPatternTest(environment, categoryPage, categoryUrlKey);
     }
 
     /**
@@ -153,9 +153,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_InvalidateAll_Final() throws Exception {
         LOG.info("=== 🎯 CLOUD - COMPREHENSIVE CACHE INVALIDATION (invalidateAll) ===");
-        String testSku = "BLT-FAB-001";
-        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
-        String categoryUrlKey = "venia-fabric-belts";
+        String testSku = "MT12"; // Driven Backpack - completely different product
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-bags.html";
+        String categoryUrlKey = "venia-bags";
         String environment = "Cloud - Final Test (invalidateAll method)";
 
         // Test complete cache invalidation with both product and category
@@ -659,13 +659,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         LOG.info("🔧 Applying GraphQL Data Service configuration for local testing...");
 
         String baseUrl = adminAuthor.getUrl().toString();
-        String configUrl = baseUrl + "/system/console/configMgr/%5BTemporary%20PID%20replaced%20by%20real%20PID%20upon%20save%5D";
+        String configUrl = baseUrl + "/system/console/configMgr";
         LOG.info("🔧 Configuration URL: {}", configUrl);
 
         // Create form data for GraphQL Data Service configuration
         StringBuilder payload = new StringBuilder();
         payload.append("apply=true");
         payload.append("&factoryPid=com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl");
+        payload.append("&propertylist=identifier,productCachingEnabled,productCachingSize,productCachingTimeMinutes,categoryCachingEnabled,categoryCachingSize,categoryCachingTimeMinutes");
         payload.append("&identifier=default");
         payload.append("&productCachingEnabled=true");
         payload.append("&productCachingSize=1000");
@@ -688,9 +689,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 if (statusCode == 200 || statusCode == 302) {
                     LOG.info("✅ GraphQL Data Service configuration applied successfully");
                     // Wait a moment for configuration to become active
-                    Thread.sleep(3000);
+                    safeSleep(3000);
                 } else {
                     LOG.warn("⚠️ Configuration response status: {}", statusCode);
+                    String responseBody = EntityUtils.toString(response.getEntity());
+                    LOG.warn("⚠️ Response body: {}", responseBody.length() > 200 ? responseBody.substring(0, 200) + "..." : responseBody);
                 }
             }
         } catch (Exception e) {
@@ -709,6 +712,18 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
+    }
+
+    /**
+     * Safe sleep method that handles InterruptedException gracefully
+     */
+    private void safeSleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.warn("⚠️ Sleep interrupted: {}", e.getMessage());
+        }
     }
 
     /**
@@ -933,6 +948,90 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
             
+            LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Category-only Regex Pattern Cache Invalidation Test - Tests category pattern-based cache clearing
+     */
+    private void runCategoryRegexPatternTest(String environment, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        String originalCategoryName = null;
+        String randomSuffix = generateRandomString(6);
+
+        try {
+            // STEP 1: Get original category data only
+            LOG.info("📋 STEP 1: Getting original category data");
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+            JsonNode categoryData = getMagentoCategoryData(categoryId);
+            originalCategoryName = categoryData.get("name").asText();
+            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+
+            // STEP 2: Update category in Magento
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            LOG.info("🔄 STEP 2: Updating Category in Magento");
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+
+            // STEP 3: Verify category cache working (should show old data)
+            LOG.info("📋 STEP 3: Verifying category cache shows old data");
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
+
+            if (!categoryCacheWorking) {
+                Assert.fail("❌ FAILED: Category cache not working - test cannot proceed as it would be a false positive");
+            }
+
+            // STEP 4: Clear category cache using regex patterns
+            LOG.info("🚀 STEP 4: Calling cache invalidation with CATEGORY REGEX PATTERNS");
+            String categoryRegex = String.format("venia-leather-belts"); // Simple pattern for fabric belts category
+
+            String payload = String.format(
+                    "{\n" +
+                            "    \"regexPatterns\": [\"%s\"],\n" +
+                            "    \"storePath\": \"/content/venia/us/en\"\n" +
+                            "}", categoryRegex);
+
+            LOG.info("📝 Cache invalidation payload (category regex): {}", payload);
+            SlingHttpResponse response = adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(payload, ContentType.APPLICATION_JSON), 200);
+            LOG.info("✅ Response: Status={}, Content={}", response.getStatusLine(), response.getContent());
+
+            // STEP 5: Wait and verify category cache cleared
+            LOG.info("⏳ STEP 5: Waiting for regex pattern invalidation...");
+            safeSleep(5000);
+
+            LOG.info("🔍 STEP 6: Verifying category cache cleared via regex pattern");
+            String freshCategoryCheck = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("Fresh Category Check: '{}'", freshCategoryCheck);
+            boolean categoryUpdated = freshCategoryCheck.equals(updatedCategoryName);
+            LOG.info("Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
+
+            if (!categoryUpdated) {
+                Assert.fail("❌ FAILED: Category regex pattern invalidation did not work - cache was not cleared");
+            }
+
+            LOG.info("🎉 SUCCESS: Category regex pattern invalidation test passed!");
+
+        } finally {
+            // Cleanup: Restore original category name
+            if (originalCategoryName != null) {
+                try {
+                    String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+                    String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                    LOG.info("📦 Restored category name: {}", originalCategoryName);
+
+                    // Clear cache after reversion
+                    LOG.info("🧹 Clearing cache after reversion...");
+                    String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"/content/venia/us/en\"}";
+                    adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
+
+                } catch (Exception e) {
+                    LOG.warn("Could not restore category name: {}", e.getMessage());
+                }
+            }
             LOG.info("🧹 Cleanup complete");
         }
     }
