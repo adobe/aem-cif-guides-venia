@@ -138,14 +138,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Category_RegexPattern() throws Exception {
         LOG.info("=== 🎯 CLOUD - CATEGORY CACHE INVALIDATION (regexPatterns) ===");
-        String testSku = "BLT-LEA-001"; // BLACK LEATHER - different product to avoid contamination
-        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
-        String categoryUrlKey = "venia-leather-belts";
+        String testSku = "BLT-FAB-001"; // FABRIC BELT - same as first test for consistency
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        String categoryUrlKey = "venia-fabric-belts";
         String environment = "Cloud - Category (regexPatterns method)";
 
-        // Cache already warmed up by first test - no need for additional warm-up
-        LOG.info("🔥 CACHE STATUS: Using cache already warmed by previous test");
-        // Run category-only test using regex pattern 
+        // Cache already warmed by first test - proceeding with regex test
         runCategoryRegexPatternTest(environment, categoryPage, categoryUrlKey);
     }
 
@@ -1061,7 +1059,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 4: Clear category cache using regex patterns
             LOG.info("🚀 STEP 4: Calling cache invalidation with CATEGORY REGEX PATTERNS");
-            String categoryRegex = String.format("venia-leather-belts"); // Simple pattern for fabric belts category
+            String categoryRegex = String.format("venia-fabric-belts"); // Simple pattern for fabric belts category
 
             String payload = String.format(
                     "{\n" +
