@@ -1017,31 +1017,45 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * Category-only Regex Pattern Cache Invalidation Test - Tests category pattern-based cache clearing
      */
     private void runCategoryRegexPatternTest(String environment, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        // First get the true original from Magento for restoration purposes
+        String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+        String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+        JsonNode categoryData = getMagentoCategoryData(categoryId);
+        String trueOriginalCategoryFromMagento = categoryData.get("name").asText();
+        
         String originalCategoryName = null;
         String randomSuffix = generateRandomString(6);
 
         try {
-            // STEP 1: Get original category data only
-            LOG.info("📋 STEP 1: Getting original category data");
-            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-            String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
-            JsonNode categoryData = getMagentoCategoryData(categoryId);
-            originalCategoryName = categoryData.get("name").asText();
-            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+            // STEP 1: Get category name from AEM page (this naturally loads cache)
+            LOG.info("📋 STEP 1: Getting category name from AEM page (this naturally loads cache)");
+            originalCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   🏪 AEM Category Name (now cached): '{}'", originalCategoryName);
 
-            // STEP 2: Update category in Magento
+            // STEP 2: Update category in Magento (backend change)
             String updatedCategoryName = originalCategoryName + " " + randomSuffix;
-            LOG.info("🔄 STEP 2: Updating Category in Magento");
+            LOG.info("🔄 STEP 2: Updating Category in Magento backend");
             updateMagentoCategoryName(categoryId, updatedCategoryName);
-            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+            LOG.info("   📦 Updated Category: '{}'", updatedCategoryName);
 
-            // STEP 3: Verify category cache working (should show old data)
-            LOG.info("📋 STEP 3: Verifying category cache shows old data");
-            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            // STEP 3: Verify category cache working (should show old cached data)
+            LOG.info("📋 STEP 3: Verifying category cache shows old data (should be cached name)");
+            String aemCategoryNameAfterChange = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   AEM Category Shows: '{}'", aemCategoryNameAfterChange);
+            LOG.info("   Expected Cached: '{}'", originalCategoryName);
+            LOG.info("   Updated Magento: '{}'", updatedCategoryName);
+            
+            boolean categoryCacheWorking = aemCategoryNameAfterChange.equals(originalCategoryName) && !aemCategoryNameAfterChange.equals(updatedCategoryName);
             LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
 
             if (!categoryCacheWorking) {
+                LOG.warn("❌ DEBUG: Category cache not working - AEM showing fresh data immediately");
+                LOG.warn("   - Original AEM (cached): '{}'", originalCategoryName);
+                LOG.warn("   - Updated Magento: '{}'", updatedCategoryName);
+                LOG.warn("   - AEM Shows After Change: '{}'", aemCategoryNameAfterChange);
+                LOG.warn("   - Environment: {}", environment);
+                LOG.warn("   - This indicates Data Service cache is not active");
+                
                 Assert.fail("❌ FAILED: Category cache not working - test cannot proceed as it would be a false positive");
             }
 
@@ -1076,22 +1090,18 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             LOG.info("🎉 SUCCESS: Category regex pattern invalidation test passed!");
 
         } finally {
-            // Cleanup: Restore original category name
-            if (originalCategoryName != null) {
-                try {
-                    String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-                    String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
-                    updateMagentoCategoryName(categoryId, originalCategoryName);
-                    LOG.info("📦 Restored category name: {}", originalCategoryName);
+            // Cleanup: Restore true original category name
+            try {
+                updateMagentoCategoryName(categoryId, trueOriginalCategoryFromMagento);
+                LOG.info("📦 Restored category name: {}", trueOriginalCategoryFromMagento);
 
-                    // Clear cache after reversion
-                    LOG.info("🧹 Clearing cache after reversion...");
-                    String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"/content/venia/us/en\"}";
-                    adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
+                // Clear cache after reversion
+                LOG.info("🧹 Clearing cache after reversion...");
+                String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"/content/venia/us/en\"}";
+                adminAuthor.doPost("/bin/cif/invalidate-cache", new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
 
-                } catch (Exception e) {
-                    LOG.warn("Could not restore category name: {}", e.getMessage());
-                }
+            } catch (Exception e) {
+                LOG.warn("Could not restore category name: {}", e.getMessage());
             }
             LOG.info("🧹 Cleanup complete");
         }
