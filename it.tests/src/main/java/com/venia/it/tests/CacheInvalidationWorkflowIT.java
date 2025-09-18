@@ -127,6 +127,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html"; // Category page
         String environment = "Cloud - Product (cacheNames method)";
         
+        // No need for separate warm-up - test will naturally warm cache in Step 1
         runCacheNamesProductTest(environment, testSku, categoryPage);
     }
 
@@ -142,6 +143,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         String categoryUrlKey = "venia-leather-belts";
         String environment = "Cloud - Category (regexPatterns method)";
 
+        // Cache already warmed up by first test - no need for additional warm-up
+        LOG.info("🔥 CACHE STATUS: Using cache already warmed by previous test");
         // Run category-only test using regex pattern 
         runCategoryRegexPatternTest(environment, categoryPage, categoryUrlKey);
     }
@@ -153,12 +156,13 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_InvalidateAll_Final() throws Exception {
         LOG.info("=== 🎯 CLOUD - COMPREHENSIVE CACHE INVALIDATION (invalidateAll) ===");
-        String testSku = "MT12"; // Driven Backpack - completely different product
-        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-bags.html";
-        String categoryUrlKey = "venia-bags";
+        String testSku = "BLT-FAB-001"; // Use valid product - Canvas Fabric Belt for final test  
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        String categoryUrlKey = "venia-fabric-belts";
         String environment = "Cloud - Final Test (invalidateAll method)";
 
-        // Test complete cache invalidation with both product and category
+        // Test complete cache invalidation with both product and category - cache already warmed
+        LOG.info("🔥 CACHE STATUS: Cache already warmed from first test - proceeding directly");
         runInvalidateAllCacheTest(environment, testSku, categoryPage, categoryUrlKey);
     }
 
@@ -170,31 +174,42 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         LOG.info("🎯 SKU: {}", productSku);
         LOG.info("📂 Category Page: {}", categoryPageUrl);
 
+        // First get the true original from Magento for restoration purposes
+        String trueOriginalFromMagento = getMagentoProductName(productSku);
+        
         String originalProductName = null;
         String randomSuffix = generateRandomString(6);
 
         try {
-            // STEP 1: Get product name from Magento
-            LOG.info("📋 STEP 1: Getting original product name from Magento");
-            JsonNode productData = getMagentoProductData(productSku);
-            originalProductName = productData.get("name").asText();
-            LOG.info("   ✓ Magento Product Name: '{}'", originalProductName);
+            // STEP 1: Get product name from AEM page (this naturally loads cache)
+            LOG.info("📋 STEP 1: Getting product name from AEM page (this naturally loads cache)");
+            originalProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   🏪 AEM Product Name (now cached): '{}'", originalProductName);
 
-            // STEP 2: Update product name in Magento
+            // STEP 2: Update product name in Magento (backend change)
             String updatedProductName = originalProductName + " " + randomSuffix;
-            LOG.info("🔄 STEP 2: Updating Magento product name");
+            LOG.info("🔄 STEP 2: Updating product name in Magento backend");
             updateMagentoProductName(productSku, updatedProductName);
-            LOG.info("   ✓ Updated Magento Product: '{}'", updatedProductName);
+            LOG.info("   📦 Updated Magento Product: '{}'", updatedProductName);
 
-            // STEP 3: Verify AEM still shows old data (cache working)
-            LOG.info("📋 STEP 3: Checking AEM still shows cached data");
-            String aemProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
-            LOG.info("   AEM Product Shows: '{}'", aemProductName);
-            LOG.info("   Updated Magento Product: '{}'", updatedProductName);
-            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
-            LOG.info("   Product Cache Working: {}", productCacheWorking ? "✅ YES" : "❌ NO");
+            // STEP 3: Check AEM still shows cached (old) data
+            LOG.info("📋 STEP 3: Checking AEM still shows cached data (should be old name)");
+            String aemProductNameAfterChange = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            LOG.info("   AEM Product Shows: '{}'", aemProductNameAfterChange);
+            LOG.info("   Expected Cached: '{}'", originalProductName);
+            LOG.info("   Updated Magento: '{}'", updatedProductName);
+
+            boolean productCacheWorking = aemProductNameAfterChange.equals(originalProductName) && !aemProductNameAfterChange.equals(updatedProductName);
+            LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
 
             if (!productCacheWorking) {
+                LOG.warn("❌ DEBUG: Product cache not working - AEM showing fresh data immediately");
+                LOG.warn("   - Original AEM (cached): '{}'", originalProductName);
+                LOG.warn("   - Updated Magento: '{}'", updatedProductName);
+                LOG.warn("   - AEM Shows After Change: '{}'", aemProductNameAfterChange);
+                LOG.warn("   - Environment: {}", environment);
+                LOG.warn("   - This indicates Data Service cache is not active");
+                
                 Assert.fail("❌ FAILED: Product cache not working - test cannot proceed as it would be a false positive");
             }
 
@@ -203,7 +218,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.warn("🔍 DEBUG: Product cache not working - AEM showing fresh data immediately");
                 LOG.warn("   - Original Magento: '{}'", originalProductName);
                 LOG.warn("   - Updated Magento: '{}'", updatedProductName);
-                LOG.warn("   - AEM Shows: '{}'", aemProductName);
+                LOG.warn("   - AEM Shows: '{}'", aemProductNameAfterChange);
                 LOG.warn("   - Environment: {}", environment);
                 LOG.warn("   - This indicates Data Service cache is not active");
 
@@ -281,7 +296,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                     LOG.warn("   📊 Direct Magento Connection: {} {}", magentoConnected ? "✅" : "❌", magentoConnected ? "WORKING" : "FAILED");
                     if (magentoConnected) {
                         LOG.warn("   📊 Magento Response: '{}'", magentoTestName);
-                        boolean magentoDifferent = !magentoTestName.equals(aemProductName);
+                        boolean magentoDifferent = !magentoTestName.equals(aemProductNameAfterChange);
                         LOG.warn("   📊 AEM vs Magento Difference: {} {}", magentoDifferent ? "✅" : "❌", magentoDifferent ? "DIFFERENT DATA" : "SAME DATA");
                     }
                 } catch (Exception e) {
@@ -296,7 +311,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 5: Wait for cache invalidation
             LOG.info("⏳ STEP 5: Waiting for cache invalidation...");
-            Thread.sleep(10000); // Wait 10 seconds
+            safeSleep(10000); // Wait 10 seconds
 
             // STEP 6: Verify AEM now shows fresh product data
             LOG.info("🔍 STEP 6: Checking AEM now shows fresh product data");
@@ -310,13 +325,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         } finally {
             // Restore original product name
-            if (originalProductName != null) {
-                try {
-                    updateMagentoProductName(productSku, originalProductName);
-                    LOG.info("🔄 Restored product name: {}", originalProductName);
-                } catch (Exception e) {
-                    LOG.warn("Could not restore product name: {}", e.getMessage());
-                }
+            try {
+                updateMagentoProductName(productSku, trueOriginalFromMagento);
+                LOG.info("🔄 Restored product name: {}", trueOriginalFromMagento);
+            } catch (Exception e) {
+                LOG.warn("Could not restore product name: {}", e.getMessage());
             }
         }
     }
@@ -383,7 +396,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 6: Wait for cache invalidation
             LOG.info("⏳ STEP 6: Waiting for cache invalidation...");
-            Thread.sleep(10000); // Wait 10 seconds
+            safeSleep(10000); // Wait 10 seconds
 
             // STEP 7: Verify AEM now shows fresh category data
             LOG.info("🔍 STEP 7: Checking AEM now shows fresh category data");
@@ -461,7 +474,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 throw new Exception("Failed to update product: " + response.getStatusLine().getStatusCode());
             }
         }
-        Thread.sleep(2000); // Wait for Magento to process
+        safeSleep(2000); // Wait for Magento to process
     }
 
     /**
@@ -481,7 +494,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 throw new Exception("Failed to update category: " + response.getStatusLine().getStatusCode());
             }
         }
-        Thread.sleep(2000); // Wait for Magento to process
+        safeSleep(2000); // Wait for Magento to process
     }
 
     /**
@@ -727,6 +740,54 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
+     * Warm up product cache by making multiple cache-respecting requests
+     */
+    private void warmUpProductCache(String testSku, String categoryPage) throws Exception {
+        LOG.info("🔥 WARM-UP: Pre-loading product cache for SKU '{}' in Cloud environment", testSku);
+        
+        try {
+            // Make multiple requests to warm up the cache
+            for (int i = 0; i < 3; i++) {
+                LOG.info("🔥 WARM-UP: Request {} of 3", i + 1);
+                makeCacheRespectingRequest(categoryPage);  
+                safeSleep(1000); // Small delay between requests
+            }
+            
+            // Also warm up the specific product
+            getCurrentProductNameFromAEMPage(categoryPage, testSku);  
+            safeSleep(1000);
+            
+            LOG.info("🔥 WARM-UP: Product cache warm-up completed");
+        } catch (Exception e) {
+            LOG.warn("⚠️ WARM-UP: Product cache warm-up failed, but continuing test: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Warm up category cache by making multiple cache-respecting requests
+     */
+    private void warmUpCategoryCache(String categoryPage) throws Exception {
+        LOG.info("🔥 WARM-UP: Pre-loading category cache for page '{}'", categoryPage);
+        
+        try {
+            // Make multiple requests to warm up the cache
+            for (int i = 0; i < 3; i++) {
+                LOG.info("🔥 WARM-UP: Request {} of 3", i + 1);
+                makeCacheRespectingRequest(categoryPage);  
+                safeSleep(1000); // Small delay between requests
+            }
+            
+            // Also warm up the specific category data
+            getCurrentCategoryNameFromAEMPage(categoryPage);
+            safeSleep(1000);
+            
+            LOG.info("🔥 WARM-UP: Category cache warm-up completed");
+        } catch (Exception e) {
+            LOG.warn("⚠️ WARM-UP: Category cache warm-up failed, but continuing test: {}", e.getMessage());
+        }
+    }
+
+    /**
      * Get Magento product name (helper method)
      */
     private String getMagentoProductName(String sku) throws Exception {
@@ -857,7 +918,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
             } catch (Exception e) {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
@@ -943,7 +1004,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
             } catch (Exception e) {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
@@ -1138,7 +1199,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
             } catch (Exception e) {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
@@ -1224,7 +1285,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
             } catch (Exception e) {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
@@ -1234,43 +1295,69 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
+     * Invalidate All Cache Test with Warm-up - Tests complete cache flush with cache pre-loading
+     */
+    private void runInvalidateAllCacheTestWithWarmup(String environment, String testSku, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        // Cache should already be warmed from first test - just run the test
+        LOG.info("🔥 CACHE STATUS: Cache already warmed from first test - proceeding directly to test");
+        
+        // Run the actual test (cache already loaded)
+        runInvalidateAllCacheTest(environment, testSku, categoryPageUrl, categoryUrlKey);
+    }
+
+    /**
      * Invalidate All Cache Test - Tests complete cache flush
      */
     private void runInvalidateAllCacheTest(String environment, String testSku, String categoryPageUrl, String categoryUrlKey) throws Exception {
+        // Get true originals from Magento for restoration purposes  
+        String trueOriginalProductFromMagento = getMagentoProductName(testSku);
+        String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+        String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+        JsonNode categoryData = getMagentoCategoryData(categoryId);
+        String trueOriginalCategoryFromMagento = categoryData.get("name").asText();
+        
         String originalProductName = null;
         String originalCategoryName = null;
         String randomSuffix = generateRandomString(6);
 
         try {
-            // STEP 1: Get original data
-            LOG.info("📋 STEP 1: Getting original data from both Product and Category");
-            originalProductName = getMagentoProductName(testSku);
-            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-            String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
-            JsonNode categoryData = getMagentoCategoryData(categoryId);
-            originalCategoryName = categoryData.get("name").asText();
-            LOG.info("   ✓ Original Product: '{}'", originalProductName);
-            LOG.info("   ✓ Original Category: '{}'", originalCategoryName);
+            // STEP 1: Get original data from AEM pages (this naturally loads cache)
+            LOG.info("📋 STEP 1: Getting original data from both AEM Product and Category pages (naturally loads cache)");
+            originalProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
+            originalCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            LOG.info("   🏪 Original Product (now cached): '{}'", originalProductName);
+            LOG.info("   🏪 Original Category (now cached): '{}'", originalCategoryName);
 
-            // STEP 2: Update both in Magento
+            // STEP 2: Update both in Magento (backend changes)
             String updatedProductName = originalProductName + " " + randomSuffix;
             String updatedCategoryName = originalCategoryName + " " + randomSuffix;
-            LOG.info("🔄 STEP 2: Updating both Product and Category in Magento");
+            LOG.info("🔄 STEP 2: Updating both Product and Category in Magento backend");
             updateMagentoProductName(testSku, updatedProductName);
             updateMagentoCategoryName(categoryId, updatedCategoryName);
-            LOG.info("   ✓ Updated Product: '{}'", updatedProductName);
-            LOG.info("   ✓ Updated Category: '{}'", updatedCategoryName);
+            LOG.info("   📦 Updated Product: '{}'", updatedProductName);
+            LOG.info("   📦 Updated Category: '{}'", updatedCategoryName);
 
-            // STEP 3: Verify cache working (both should show old data)
-            LOG.info("📋 STEP 3: Verifying cache shows old data");
-            String aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
-            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-            boolean productCacheWorking = !aemProductName.equals(updatedProductName);
-            boolean categoryCacheWorking = !aemCategoryName.equals(updatedCategoryName);
+            // STEP 3: Verify cache working (both should show old cached data)
+            LOG.info("📋 STEP 3: Verifying cache shows old data (should be cached names)");
+            String aemProductNameAfterChange = getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
+            String aemCategoryNameAfterChange = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            
+            boolean productCacheWorking = aemProductNameAfterChange.equals(originalProductName) && !aemProductNameAfterChange.equals(updatedProductName);
+            boolean categoryCacheWorking = aemCategoryNameAfterChange.equals(originalCategoryName) && !aemCategoryNameAfterChange.equals(updatedCategoryName);
+            
             LOG.info("   Product Cache Working: {} {}", productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO");
             LOG.info("   Category Cache Working: {} {}", categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO");
 
             if (!productCacheWorking || !categoryCacheWorking) {
+                LOG.warn("❌ DEBUG: Cache not working - AEM showing fresh data immediately");
+                LOG.warn("   - Original Product (cached): '{}'", originalProductName);
+                LOG.warn("   - Original Category (cached): '{}'", originalCategoryName);
+                LOG.warn("   - Updated Product: '{}'", updatedProductName);
+                LOG.warn("   - Updated Category: '{}'", updatedCategoryName);
+                LOG.warn("   - AEM Product After Change: '{}'", aemProductNameAfterChange);
+                LOG.warn("   - AEM Category After Change: '{}'", aemCategoryNameAfterChange);
+                LOG.warn("   - Environment: {}", environment);
+                
                 Assert.fail("❌ FAILED: Cache not working - test cannot proceed as it would be a false positive");
             }
 
@@ -1288,15 +1375,15 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // STEP 5: Wait and verify everything cleared
             LOG.info("⏳ STEP 5: Waiting for complete cache invalidation...");
-            Thread.sleep(15000); // Longer wait for complete flush
+            safeSleep(15000); // Longer wait for complete flush
 
             LOG.info("🔍 STEP 6: Verifying ALL caches cleared");
-            aemProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
-            aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
-            boolean productUpdated = aemProductName.contains(randomSuffix);
-            boolean categoryUpdated = aemCategoryName.contains(randomSuffix);
-            LOG.info("   Fresh Product Check: '{}'", aemProductName);
-            LOG.info("   Fresh Category Check: '{}'", aemCategoryName);
+            String freshProductName = getCurrentProductNameFromAEMPage(getProductPageUrl(testSku), testSku);
+            String freshCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean productUpdated = freshProductName.contains(randomSuffix);
+            boolean categoryUpdated = freshCategoryName.contains(randomSuffix);
+            LOG.info("   Fresh Product Check: '{}'", freshProductName);
+            LOG.info("   Fresh Category Check: '{}'", freshCategoryName);
             LOG.info("   Product Updated: {} {}", productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
             LOG.info("   Category Updated: {} {}", categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
 
@@ -1309,22 +1396,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         } finally {
             // Cleanup
-            LOG.info("🧹 CLEANUP: Reverting names back to original values...");
-            if (originalProductName != null) {
-                try {
-                    updateMagentoProductName(testSku, originalProductName);
-                } catch (Exception e) {
-                    LOG.warn("Could not restore product name: {}", e.getMessage());
-                }
+            LOG.info("🧹 CLEANUP: Reverting names back to true original values...");
+            try {
+                updateMagentoProductName(testSku, trueOriginalProductFromMagento);
+                LOG.info("📦 Restored product name: {}", trueOriginalProductFromMagento);
+            } catch (Exception e) {
+                LOG.warn("Could not restore product name: {}", e.getMessage());
             }
-            if (originalCategoryName != null) {
-                try {
-                    String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
-                    String categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
-                    updateMagentoCategoryName(categoryId, originalCategoryName);
-                } catch (Exception e) {
-                    LOG.warn("Could not restore category name: {}", e.getMessage());
-                }
+            
+            try {
+                updateMagentoCategoryName(categoryId, trueOriginalCategoryFromMagento);
+                LOG.info("📦 Restored category name: {}", trueOriginalCategoryFromMagento);
+            } catch (Exception e) {
+                LOG.warn("Could not restore category name: {}", e.getMessage());
             }
             
             // Clear cache after reversion to avoid test interference
@@ -1332,7 +1416,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
             } catch (Exception e) {
                 LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
@@ -1345,31 +1429,35 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * Cache Names Product Test - Tests product cache invalidation using cacheNames method
      */
     private void runCacheNamesProductTest(String environment, String testSku, String categoryPageUrl) throws Exception {
-        LOG.info("🔄 STEP 1: Getting original product name from Magento");
-        String originalProductName = getMagentoProductName(testSku);
-        LOG.info("   📦 Magento Product Name: '{}'", originalProductName);
+        // First get the true original from Magento for restoration purposes
+        String trueOriginalFromMagento = getMagentoProductName(testSku);
+        
+        LOG.info("🔄 STEP 1: Getting product name from AEM page (this naturally loads cache)");
+        String originalProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
+        LOG.info("   🏪 AEM Product Name (now cached): '{}'", originalProductName);
 
         try {
-            // Update product in Magento
-            LOG.info("🔄 STEP 2: Updating Magento product name");
+            // Update product in Magento (backend change)
+            LOG.info("🔄 STEP 2: Updating product name in Magento backend");
             String updatedProductName = originalProductName + " " + generateRandomString(6);
             updateMagentoProductName(testSku, updatedProductName);
             LOG.info("   📦 Updated Magento Product: '{}'", updatedProductName);
 
-            // Check AEM shows cached data
-            LOG.info("🔄 STEP 3: Checking AEM still shows cached data");
-            String aemProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
-            LOG.info("   AEM Product Shows: '{}'", aemProductName);
-            LOG.info("   Updated Magento Product: '{}'", updatedProductName);
+            // Check AEM still shows cached (old) data
+            LOG.info("🔄 STEP 3: Checking AEM still shows cached data (should be old name)");
+            String aemProductNameAfterChange = getCurrentProductNameFromAEMPage(categoryPageUrl, testSku);
+            LOG.info("   AEM Product Shows: '{}'", aemProductNameAfterChange);
+            LOG.info("   Expected Cached: '{}'", originalProductName);
+            LOG.info("   Updated Magento: '{}'", updatedProductName);
 
-            boolean cacheWorking = !aemProductName.equals(updatedProductName);
+            boolean cacheWorking = aemProductNameAfterChange.equals(originalProductName) && !aemProductNameAfterChange.equals(updatedProductName);
             LOG.info("   Product Cache Working: {} {}", cacheWorking ? "✅" : "❌", cacheWorking ? "YES" : "NO");
 
             if (!cacheWorking) {
                 LOG.warn("❌ DEBUG: Product cache not working - AEM showing fresh data immediately");
-                LOG.warn("   - Original Magento: '{}'", originalProductName);
+                LOG.warn("   - Original AEM (cached): '{}'", originalProductName);
                 LOG.warn("   - Updated Magento: '{}'", updatedProductName);
-                LOG.warn("   - AEM Shows: '{}'", aemProductName);
+                LOG.warn("   - AEM Shows After Change: '{}'", aemProductNameAfterChange);
                 LOG.warn("   - Environment: {}", environment);
                 LOG.warn("   - This indicates Data Service cache is not active");
                 
@@ -1394,7 +1482,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
             // Wait for cache invalidation
             LOG.info("⏳ STEP 5: Waiting for cache names invalidation...");
-            Thread.sleep(5000);
+            safeSleep(5000);
 
             // Verify product updated
             LOG.info("🔄 STEP 6: Verifying product component caches cleared");
@@ -1413,29 +1501,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         } finally {
             // Cleanup and clear cache
-            LOG.info("🧹 Restoring product name to original...");
+            LOG.info("🧹 Restoring product name to true original from Magento...");
             try {
-                updateMagentoProductName(testSku, originalProductName);
-                LOG.info("📦 Restored product name: {}", originalProductName);
+                updateMagentoProductName(testSku, trueOriginalFromMagento);
+                LOG.info("📦 Restored product name: {}", trueOriginalFromMagento);
                 
                 // Clear cache after reversion to avoid test interference
                 LOG.info("🧹 Clearing cache after reversion...");
                 String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
                 adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
+                safeSleep(2000); // Wait for cache clear
                 
             } catch (Exception e) {
                 LOG.warn("Could not restore product name or clear cache: {}", e.getMessage());
-            }
-            
-            // Clear cache after reversion to avoid test interference
-            try {
-                LOG.info("🧹 Clearing cache after reversion...");
-                String clearPayload = "{\"invalidateAll\": true, \"storePath\": \"" + STORE_PATH + "\"}";
-                adminAuthor.doPost(CACHE_INVALIDATION_ENDPOINT, new StringEntity(clearPayload, ContentType.APPLICATION_JSON), 200);
-                Thread.sleep(2000); // Wait for cache clear
-            } catch (Exception e) {
-                LOG.warn("Could not clear cache after reversion: {}", e.getMessage());
             }
             
             LOG.info("🧹 Cleanup complete");
