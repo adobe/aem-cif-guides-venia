@@ -32,11 +32,16 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}"
+                -d "service.ranking=${ranking}" \
+                -d "cacheConfigurations=venia/components/commerce/navigation:true:5:300" \
+                -d "cacheConfigurations=com.adobe.cq.commerce.core.search.services.SearchFilterService:true:10:300" \
+                -d "cacheConfigurations=venia/components/commerce/breadcrumb:true:1000:1000" \
+                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000" \
+                -d "cacheConfigurations=venia/components/commerce/productlist:true:50:1000"
     `)
 }
 
@@ -59,13 +64,38 @@ const configureGraphqlDataService = () => {
                 -d "identifier=default" \
                 -d "productCachingEnabled=true" \
                 -d "productCachingSize=1000" \
-                -d "productCachingTimeMinutes=5" \
+                -d "productCachingTimeMinutes=10" \
                 -d "categoryCachingEnabled=true" \
                 -d "categoryCachingSize=100" \
                 -d "categoryCachingTimeMinutes=60"
     `)
 }
 
+const configureCifCacheInvalidation = () => {
+    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
+    console.log('🔧 Configuring cache invalidation servlet...');
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
+                -d "propertylist=" || echo "Cache servlet config completed"
+    `)
+    
+    // 2. Enable cache invalidation listener (both author and publish)
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -d "propertylist=enableDispatcherCacheInvalidation,dispatcherBasePathConfiguration,dispatcherUrlPathConfiguration,dispatcherBaseUrl" \
+                -d "enableDispatcherCacheInvalidation=true" \
+                -d "dispatcherBasePathConfiguration=/content/venia/([a-z]{2})/([a-z]{2}):/content/venia/$1/$2" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath:/products/product-page.html/(.+):/p/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath:/products/category-page.html/(.+):/c/$1" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath-1:/products/product-page.html/(.+):/pp/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath-1:/products/category-page.html/(.+):/cc/$1" \
+                -d "dispatcherBaseUrl=http://localhost:80"
+    `)
+}
 
 
 
@@ -126,8 +156,48 @@ try {
     
     // Configure GraphQL Data Service caching (force apply in Cloud)
     if (classifier !== 'classic') {
+        console.log('🔧 Force applying GraphQL Data Service config for Cloud environment...');
+        
+        // First, delete any existing conflicting configuration
+        console.log('🗑️ Removing existing Data Service config...');
+        ci.sh(`curl -s -X DELETE -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" || echo "Config deletion completed"`);
+        ci.sh('sleep 5');
+        
+        // Apply fresh configuration (try different approach)
+        console.log('✨ Applying fresh Data Service configuration...');
+        
+        // Try to update existing config first, then create if needed
+        ci.sh(`curl -s -u admin:admin -X POST "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" \
+               -d "apply=true" \
+               -d "productCachingEnabled=true" \
+               -d "productCachingSize=1000" \
+               -d "productCachingTimeMinutes=10" \
+               -d "categoryCachingEnabled=true" \
+               -d "categoryCachingSize=100" \
+               -d "categoryCachingTimeMinutes=60" || echo "Update existing config failed, trying factory creation..."`);
+        
+        // Fallback to factory creation
         configureGraphqlDataService();
+        
+        // Wait for configuration to become active
+        console.log('⏳ Waiting for Data Service configuration to become active...');
+        ci.sh('sleep 20');
+        
+        // Verify configuration is active and log details
+        console.log('🔍 Verifying Data Service configuration is active...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Config check completed"`);
+        
+        // Additional verification - check OSGi services
+        console.log('📋 Checking OSGi service status...');  
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/services.json" | grep -i "GraphqlDataServiceImpl" | head -3 || echo "Service check completed"`);
+        
+        // Final verification - check if the specific config exists
+        console.log('🎯 Checking specific Data Service configuration...');
+        ci.sh(`curl -s -u admin:admin "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.graphql.magento.GraphqlDataServiceImpl~default" | grep -i "productCachingEnabled" || echo "Specific config check completed"`);
     }
+    
+    // Configure CIF Cache Invalidation
+    configureCifCacheInvalidation();
 
     // Run integration tests
     if (TYPE === 'integration') {
