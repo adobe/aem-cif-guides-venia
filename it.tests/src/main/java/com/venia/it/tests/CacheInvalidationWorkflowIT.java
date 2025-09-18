@@ -123,7 +123,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Category(IgnoreOn65.class)
     public void testCloud_Product_CacheNames() throws Exception {
         LOG.info("=== 🎯 CLOUD - PRODUCT CACHE INVALIDATION (cacheNames) ===");
-        String testSku = "BLT-FAB-001"; // SKU - Test the problematic product in cloud
+        String testSku = "BLT-FAB-001"; // SKU - FABRIC product test with cacheNames
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html"; // Category page
         String environment = "Cloud - Product (cacheNames method)";
         
@@ -136,13 +136,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Test
     @Category(IgnoreOn65.class)
     public void testCloud_Product_RegexPattern() throws Exception {
-        LOG.info("=== 🎯 CLOUD - PRODUCT CACHE INVALIDATION (regexPatterns) ===");
-        String testSku = "BLT-LEA-001"; // Different product for variety
-        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html";
-        String environment = "Cloud - Product (regexPatterns method)";
+        LOG.info("=== 🎯 CLOUD - CATEGORY CACHE INVALIDATION (regexPatterns) ===");
+        String testSku = "BLT-FAB-001"; // FABRIC category test with regex
+        String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
+        String categoryUrlKey = "venia-fabric-belts";
+        String environment = "Cloud - Category (regexPatterns method)";
 
-        // Run product test using regex pattern instead of productSkus
-        runRegexPatternProductTest(environment, testSku, categoryPage);
+        // Run category test using regex pattern instead of categoryUids
+        runRegexPatternCacheTest(environment, testSku, categoryPage, categoryUrlKey);
     }
 
     /**
