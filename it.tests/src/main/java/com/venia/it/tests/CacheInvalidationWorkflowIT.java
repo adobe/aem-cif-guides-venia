@@ -56,8 +56,11 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration - from environment variables (required)
-    private static final String MAGENTO_BASE_URL = System.getProperty("COMMERCE_ENDPOINT", 
+    private static final String COMMERCE_ENDPOINT_RAW = System.getProperty("COMMERCE_ENDPOINT", 
             System.getenv("COMMERCE_ENDPOINT"));
+    // Extract base URL by removing /graphql suffix if present
+    private static final String MAGENTO_BASE_URL = COMMERCE_ENDPOINT_RAW != null ? 
+            COMMERCE_ENDPOINT_RAW.replaceAll("/graphql$", "") : null;
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL != null ? MAGENTO_BASE_URL + "/rest/V1" : null;
     private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("COMMERCE_INTEGRATION_TOKEN",
             System.getenv("COMMERCE_INTEGRATION_TOKEN"));
@@ -78,7 +81,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
-        LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
+        LOG.info("🌐 Raw Endpoint: {}", COMMERCE_ENDPOINT_RAW);
+        LOG.info("🌍 Magento Base URL: {}", MAGENTO_BASE_URL);
+        LOG.info("🔗 REST API URL: {}", MAGENTO_REST_URL);
         LOG.info("🔑 Token Source: {}", getTokenSource());
         LOG.info("🌐 Endpoint Source: {}", getEndpointSource());
 
