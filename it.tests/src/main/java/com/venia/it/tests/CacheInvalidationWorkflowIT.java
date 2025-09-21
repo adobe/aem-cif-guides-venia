@@ -55,10 +55,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    // Magento Configuration
-    private static final String MAGENTO_BASE_URL = "https://mcprod.catalogservice-commerce.fun";
-    private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL + "/rest/V1";
-    private static final String MAGENTO_ADMIN_TOKEN = "etk0tf7974shom72dyphbxqxsqd2eqe5";
+    // Magento Configuration - from environment variables (required)
+    private static final String MAGENTO_BASE_URL = System.getProperty("COMMERCE_ENDPOINT", 
+            System.getenv("COMMERCE_ENDPOINT"));
+    private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL != null ? MAGENTO_BASE_URL + "/rest/V1" : null;
+    private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("COMMERCE_INTEGRATION_TOKEN",
+            System.getenv("COMMERCE_INTEGRATION_TOKEN"));
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
@@ -66,9 +68,19 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
     @Before
     public void setUp() throws Exception {
+        // Validate required environment variables
+        if (MAGENTO_BASE_URL == null || MAGENTO_BASE_URL.trim().isEmpty()) {
+            throw new IllegalStateException("COMMERCE_ENDPOINT environment variable or system property is required but not set");
+        }
+        if (MAGENTO_ADMIN_TOKEN == null || MAGENTO_ADMIN_TOKEN.trim().isEmpty()) {
+            throw new IllegalStateException("COMMERCE_INTEGRATION_TOKEN environment variable or system property is required but not set");
+        }
+
         httpClient = HttpClients.createDefault();
         LOG.info("=== CACHE INVALIDATION WORKFLOW TEST SETUP ===");
         LOG.info("🌍 Magento URL: {}", MAGENTO_BASE_URL);
+        LOG.info("🔑 Token Source: {}", getTokenSource());
+        LOG.info("🌐 Endpoint Source: {}", getEndpointSource());
 
         // Apply necessary GraphQL Data Service configuration for local testing
         try {
@@ -1525,6 +1537,32 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             }
             
             LOG.info("🧹 Cleanup complete");
+        }
+    }
+
+    /**
+     * Helper method to identify the source of the integration token configuration
+     */
+    private String getTokenSource() {
+        if (System.getProperty("COMMERCE_INTEGRATION_TOKEN") != null) {
+            return "System Property (-DCOMMERCE_INTEGRATION_TOKEN)";
+        } else if (System.getenv("COMMERCE_INTEGRATION_TOKEN") != null) {
+            return "Environment Variable (COMMERCE_INTEGRATION_TOKEN)";
+        } else {
+            return "NOT SET (required)";
+        }
+    }
+
+    /**
+     * Helper method to identify the source of the endpoint configuration
+     */
+    private String getEndpointSource() {
+        if (System.getProperty("COMMERCE_ENDPOINT") != null) {
+            return "System Property (-DCOMMERCE_ENDPOINT)";
+        } else if (System.getenv("COMMERCE_ENDPOINT") != null) {
+            return "Environment Variable (COMMERCE_ENDPOINT)";
+        } else {
+            return "NOT SET (required)";
         }
     }
 }
