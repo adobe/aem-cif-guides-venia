@@ -97,7 +97,7 @@ describe('Product recommendation', function () {
             return false;
         }
 
-        pickerButton.waitForEnabled();
+        pickerButton.waitForEnabled({ timeout: 3000 });
         pickerButton.click();
         expect($('h3=Add Product')).toBeDisplayed();
 
@@ -135,7 +135,7 @@ describe('Product recommendation', function () {
                 }
             },
             {
-                timeout: 15000,
+                timeout: 10000,
                 timeoutMsg: `Failed to select product directly: ${productName}`
             }
         );
@@ -160,7 +160,7 @@ describe('Product recommendation', function () {
                 searchField.setValue('Alexia');
 
                 const product = $('//div[contains(text(),"Alexia Maxi Dress")]');
-                product.waitForDisplayed({ timeout: 8000 });
+                product.waitForDisplayed({ timeout: 5000 });
                 if (product.isDisplayed()) {
                     product.click();
 
@@ -195,7 +195,7 @@ describe('Product recommendation', function () {
         browser.AEMEditorLoaded();
 
         const productComponent = $('div[data-path*="/jcr:content/root/container/container/product"]');
-        productComponent.waitForDisplayed({ timeout: 10000 });
+        productComponent.waitForDisplayed({ timeout: 5000 });
         expect(productComponent).toBeDisplayed();
 
         productComponent.waitAndClick();
@@ -256,7 +256,7 @@ describe('Product recommendation', function () {
                 );
                 return addedComponents.length > 0;
             },
-            { timeout: 10000, timeoutMsg: 'Component was not added to the page' }
+            { timeout: 5000, timeoutMsg: 'Component was not added to the page' }
         );
 
         const addedComponents = $$(
@@ -333,7 +333,7 @@ describe('Product recommendation', function () {
         });
 
         const titleElement = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
-        titleElement.waitForDisplayed({ timeout: 20000 });
+        titleElement.waitForDisplayed({ timeout: 5000 });
 
         const titleText = titleElement.getText();
         const productCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
