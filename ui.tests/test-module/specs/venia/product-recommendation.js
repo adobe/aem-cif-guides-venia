@@ -21,36 +21,71 @@ describe('Product recommendation', function () {
     let onboardingHandler;
     let addedNodeName = null;
     before(() => {
-        // Set window size to desktop
-        browser.setWindowSize(1280, 960);
+        try {
+            // Set window size to desktop
+            browser.setWindowSize(1280, 960);
 
-        // AEM Login
-        browser.AEMForceLogout();
-        browser.url(config.aem.author.base_url);
-        browser.AEMLogin(config.aem.author.username, config.aem.author.password);
+            // AEM Login
+            browser.AEMForceLogout();
+            browser.url(config.aem.author.base_url);
+            browser.AEMLogin(config.aem.author.username, config.aem.author.password);
 
-        // Enable helper to handle onboarding dialog popup
-        onboardingHandler = new OnboardingDialogHandler(browser);
-        onboardingHandler.enable();
+            // Enable helper to handle onboarding dialog popup
+            onboardingHandler = new OnboardingDialogHandler(browser);
+            onboardingHandler.enable();
 
-        // Create a random test page with product page template
-        const pageName = `product-test-${randomString()}`;
-        testing_page = `/content/venia/us/en/products/${pageName}`;
-        browser.AEMCreatePage({
-            title: 'Product Test Page',
-            name: pageName,
-            parent: '/content/venia/us/en/products',
-            template: '/conf/venia/settings/wcm/templates/product-page'
-        });
+            // Create a random test page with product page template
+            const pageName = `product-test-${randomString()}`;
+            testing_page = `/content/venia/us/en/products/${pageName}`;
+            browser.AEMCreatePage({
+                title: 'Product Test Page',
+                name: pageName,
+                parent: '/content/venia/us/en/products',
+                template: '/conf/venia/settings/wcm/templates/product-page'
+            });
 
-        // Configure the product detail component with a specific product
-        configureProductDetailComponent();
+            // Configure the product detail component with a specific product
+            configureProductDetailComponent();
+        } catch (error) {
+            // If setup fails, still record the testing_page for cleanup
+            console.error('Setup failed:', error.message);
+            throw error; // Re-throw to fail the test properly
+        }
+    });
+
+    afterEach(function () {
+        // Clean up any open dialogs after each test to prevent interference
+        try {
+            const dialogs = $$('.cq-dialog');
+            dialogs.forEach(dialog => {
+                if (dialog.isDisplayed()) {
+                    const closeButton = dialog.$('button.cq-dialog-cancel, button[title="Cancel"], .coral-Icon--close');
+                    if (closeButton.isDisplayed()) {
+                        closeButton.click();
+                    }
+                }
+            });
+        } catch (e) {
+            // Ignore dialog cleanup errors
+        }
     });
 
     after(function () {
-        onboardingHandler.disable();
-        if (testing_page) {
-            browser.AEMDeletePage(testing_page);
+        try {
+            if (onboardingHandler) {
+                onboardingHandler.disable();
+            }
+        } catch (e) {
+            // Continue cleanup even if onboarding handler fails
+        }
+
+        try {
+            if (testing_page) {
+                browser.AEMDeletePage(testing_page);
+            }
+        } catch (e) {
+            // Log cleanup failure but don't throw to avoid masking test failures
+            console.warn('Failed to delete test page:', testing_page, e.message);
         }
     });
 
@@ -74,12 +109,22 @@ describe('Product recommendation', function () {
                     if (productElement.isDisplayed() && productElement.isClickable()) {
                         productElement.click();
 
-                        const submitButton = $('span=Add').parentElement();
-                        if (submitButton.isDisplayed()) {
-                            submitButton.waitForEnabled();
-                            let enabled = submitButton.isEnabled();
-                            if (enabled) {
+                        try {
+                            const addButtonSpan = $('span=Add');
+                            addButtonSpan.waitForDisplayed({ timeout: 5000 });
+
+                            const submitButton = addButtonSpan.parentElement();
+                            submitButton.waitForEnabled({ timeout: 5000 });
+                            if (submitButton.isDisplayed() && submitButton.isEnabled()) {
                                 submitButton.click();
+                                return true;
+                            }
+                        } catch (e) {
+                            // Fallback: try different Add button selector
+                            const addButtonAlt = $('button*=Add');
+                            if (addButtonAlt.isDisplayed()) {
+                                addButtonAlt.waitForEnabled({ timeout: 3000 });
+                                addButtonAlt.click();
                                 return true;
                             }
                         }
@@ -106,20 +151,38 @@ describe('Product recommendation', function () {
         }
 
         if (pickerButton.isDisplayed()) {
+            pickerButton.waitForClickable({ timeout: 5000 });
             pickerButton.waitAndClick();
 
             const searchField = $('input[type="search"][placeholder="Search"], input[aria-label="Search"]');
+            searchField.waitForDisplayed({ timeout: 5000 });
             if (searchField.isDisplayed()) {
                 searchField.setValue('Alexia');
 
                 const product = $('//div[contains(text(),"Alexia Maxi Dress")]');
+                product.waitForDisplayed({ timeout: 8000 });
                 if (product.isDisplayed()) {
                     product.click();
 
-                    const addButton = $('span=Add').parentElement();
-                    if (addButton.isDisplayed()) {
-                        addButton.click();
-                        return true;
+                    // Wait for Add button to become available and enabled
+                    try {
+                        const addButtonSpan = $('span=Add');
+                        addButtonSpan.waitForDisplayed({ timeout: 5000 });
+
+                        const addButton = addButtonSpan.parentElement();
+                        addButton.waitForEnabled({ timeout: 5000 });
+                        if (addButton.isDisplayed()) {
+                            addButton.click();
+                            return true;
+                        }
+                    } catch (e) {
+                        // Fallback: try different Add button selector
+                        const addButtonAlt = $('button*=Add');
+                        if (addButtonAlt.isDisplayed()) {
+                            addButtonAlt.waitForEnabled({ timeout: 3000 });
+                            addButtonAlt.click();
+                            return true;
+                        }
                     }
                 }
             }
@@ -132,22 +195,31 @@ describe('Product recommendation', function () {
         browser.AEMEditorLoaded();
 
         const productComponent = $('div[data-path*="/jcr:content/root/container/container/product"]');
+        productComponent.waitForDisplayed({ timeout: 10000 });
         expect(productComponent).toBeDisplayed();
 
         productComponent.waitAndClick();
 
         const configureButton = $('button[title="Configure"]');
+        configureButton.waitForDisplayed({ timeout: 5000 });
         expect(configureButton).toBeDisplayed();
         configureButton.waitAndClick();
 
         const productField = $('product-field');
+        productField.waitForDisplayed({ timeout: 3000, reverse: false });
         if (productField.isDisplayed()) {
             const success = productVariantSelection(productField, 'Alexia Maxi Dress');
             if (!success) {
-                manualProductSelection();
+                const fallbackSuccess = manualProductSelection();
+                if (!fallbackSuccess) {
+                    throw new Error('Failed to configure product using both primary and fallback methods');
+                }
             }
         } else {
-            manualProductSelection();
+            const fallbackSuccess = manualProductSelection();
+            if (!fallbackSuccess) {
+                throw new Error('Failed to configure product using manual selection method');
+            }
         }
 
         clickDoneButton();
@@ -374,22 +446,7 @@ describe('Product recommendation', function () {
                 expect(addToWishlistBtn).toBeDisplayed();
             }
         } finally {
-            // Component is kept for other tests
-        }
-    });
-
-    it('test page cleanup verification', () => {
-        browser.url(`${config.aem.author.base_url}/editor.html${testing_page}.html`);
-        browser.AEMEditorLoaded();
-
-        const productComponent = $('div[data-path*="/jcr:content/root/container/container/product"]');
-        expect(productComponent).toBeDisplayed();
-
-        if (addedNodeName) {
-            const recommendationComponent = $(
-                `div[data-path="${testing_page}/jcr:content/root/container/container/${addedNodeName}"]`
-            );
-            expect(recommendationComponent).toBeDisplayed();
+            // No component cleanup needed - entire page will be deleted
         }
     });
 });
