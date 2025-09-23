@@ -37,6 +37,7 @@ import org.apache.sling.models.annotations.Via;
 import org.apache.sling.models.annotations.injectorspecific.ScriptVariable;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.via.ResourceSuperType;
+import com.shopify.graphql.support.AbstractResponse;
 
 @Model(adaptables = SlingHttpServletRequest.class, adapters = MyProductTeaser.class, resourceType = MyProductTeaserImpl.RESOURCE_TYPE)
 public class MyProductTeaserImpl implements MyProductTeaser {
@@ -62,7 +63,7 @@ public class MyProductTeaserImpl implements MyProductTeaser {
     @PostConstruct
     public void initModel() {
         // Set system property to enable custom simple fields
-        System.setProperty("com.shopify.graphql.support.disableSchemaViolationError", "true");
+        System.setProperty(AbstractResponse.UNLOCK_CUSTOM_UNSAFE_FIELDS_PROPERTY, "true");
         
         productRetriever = productTeaser.getProductRetriever();
 
