@@ -134,6 +134,160 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
 
     /**
+     * AEM 6.5 - Cross-Platform Cache Test (6.5 Product + Cloud Category)
+     */
+    @Test
+    @Category(IgnoreOnCloud.class)
+    public void test65_CrossPlatform_ProductAndCategory_CacheTest() throws Exception {
+        LOG.info("=== 🎯 AEM 6.5 - CROSS-PLATFORM CACHE TEST (6.5 Product + Cloud Category) ===");
+        
+        // Use 6.5 product and Cloud category
+        String productSku = "BLT-LEA-001"; // 6.5 product
+        String categoryUrlKey = "venia-fabric-belts"; // Cloud category
+        String productPageUrl = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html"; // 6.5 product page
+        String categoryPageUrl = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html"; // Cloud category page
+        
+        LOG.info("🎯 Product SKU (6.5): {}", productSku);
+        LOG.info("🎯 Category URL Key (Cloud): {}", categoryUrlKey);
+        LOG.info("📂 Product Page: {}", productPageUrl);
+        LOG.info("📂 Category Page: {}", categoryPageUrl);
+        
+        String originalProductName = null;
+        String originalCategoryName = null;
+        String categoryId = null;
+        String randomSuffix = generateRandomString(6);
+        
+        try {
+            // STEP 1: Get original names
+            LOG.info("📋 STEP 1: Getting original names from both product and category");
+            originalProductName = getCurrentProductNameFromAEMPage(productPageUrl, productSku);
+            originalCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            
+            // Get category ID for updates
+            String categoryUid = getCategoryUidFromUrlKey(categoryUrlKey);
+            categoryId = new String(java.util.Base64.getDecoder().decode(categoryUid), "UTF-8");
+            
+            LOG.info("   ✅ Original Product Name: '{}'", originalProductName);
+            LOG.info("   ✅ Original Category Name: '{}'", originalCategoryName);
+            
+            // STEP 2: Update both names in Magento
+            String updatedProductName = originalProductName + " " + randomSuffix;
+            String updatedCategoryName = originalCategoryName + " " + randomSuffix;
+            
+            LOG.info("🔄 STEP 2: Updating both names in Magento");
+            updateMagentoProductName(productSku, updatedProductName);
+            updateMagentoCategoryName(categoryId, updatedCategoryName);
+            
+            LOG.info("   📦 Updated Product: '{}'", updatedProductName);
+            LOG.info("   📦 Updated Category: '{}'", updatedCategoryName);
+            
+            // STEP 3: Verify cache shows old data
+            LOG.info("📋 STEP 3: Verifying cache shows old data");
+            String aemProductName = getCurrentProductNameFromAEMPage(productPageUrl, productSku);
+            String aemCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            
+            boolean productCacheWorking = aemProductName.equals(originalProductName);
+            boolean categoryCacheWorking = aemCategoryName.equals(originalCategoryName);
+            
+            LOG.info("   Product Cache Working: {} {} (Shows: '{}', Expected: '{}')", 
+                    productCacheWorking ? "✅" : "❌", productCacheWorking ? "YES" : "NO", aemProductName, originalProductName);
+            LOG.info("   Category Cache Working: {} {} (Shows: '{}', Expected: '{}')", 
+                    categoryCacheWorking ? "✅" : "❌", categoryCacheWorking ? "YES" : "NO", aemCategoryName, originalCategoryName);
+            
+            // STEP 4: Clear both caches simultaneously
+            LOG.info("🚀 STEP 4: Clearing both caches simultaneously (6.5 method)");
+            String payload = String.format(
+                "{\n" +
+                "    \"productSkus\": [\"%s\"],\n" +
+                "    \"categoryUids\": [\"%s\"],\n" +
+                "    \"storePath\": \"%s\"\n" +
+                "}", productSku, categoryUid, STORE_PATH);
+            
+            LOG.info("📝 Cache invalidation payload: {}", payload);
+            
+            SlingHttpResponse response = adminAuthor.doPost(
+                CACHE_INVALIDATION_ENDPOINT,
+                new StringEntity(payload, ContentType.APPLICATION_JSON),
+                null,
+                200);
+            
+            LOG.info("📤 Response: Status={}, Content={}", response.getStatusLine().getStatusCode(), response.getContent());
+            
+            // STEP 5: Wait and verify fresh data
+            LOG.info("⏳ STEP 5: Waiting for cache invalidation...");
+            safeSleep(10000);
+            
+            LOG.info("🔍 STEP 6: Verifying fresh data shows");
+            String freshProductName = getCurrentProductNameFromAEMPage(productPageUrl, productSku);
+            String freshCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            
+            boolean productUpdated = freshProductName.equals(updatedProductName);
+            boolean categoryUpdated = freshCategoryName.equals(updatedCategoryName);
+            
+            LOG.info("   Fresh Product: '{}' - Updated: {} {}", freshProductName, productUpdated ? "✅" : "❌", productUpdated ? "YES" : "NO");
+            LOG.info("   Fresh Category: '{}' - Updated: {} {}", freshCategoryName, categoryUpdated ? "✅" : "❌", categoryUpdated ? "YES" : "NO");
+            
+            assertTrue("Product cache invalidation failed", productUpdated);
+            assertTrue("Category cache invalidation failed", categoryUpdated);
+            
+            // STEP 7: Revert names back to original
+            LOG.info("🔄 STEP 7: Reverting names back to original");
+            updateMagentoProductName(productSku, originalProductName);
+            updateMagentoCategoryName(categoryId, originalCategoryName);
+            
+            LOG.info("   📦 Reverted Product: '{}'", originalProductName);
+            LOG.info("   📦 Reverted Category: '{}'", originalCategoryName);
+            
+            // STEP 8: Clear cache again to get original names
+            LOG.info("🚀 STEP 8: Clearing cache again to get original names");
+            SlingHttpResponse finalResponse = adminAuthor.doPost(
+                CACHE_INVALIDATION_ENDPOINT,
+                new StringEntity(payload, ContentType.APPLICATION_JSON),
+                null,
+                200);
+            
+            LOG.info("📤 Final Response: Status={}, Content={}", finalResponse.getStatusLine().getStatusCode(), finalResponse.getContent());
+            
+            // STEP 9: Wait and verify original names
+            LOG.info("⏳ STEP 9: Waiting for final cache clear...");
+            safeSleep(10000);
+            
+            LOG.info("🔍 STEP 10: Verifying original names show");
+            String finalProductName = getCurrentProductNameFromAEMPage(productPageUrl, productSku);
+            String finalCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            
+            boolean productRestored = finalProductName.equals(originalProductName);
+            boolean categoryRestored = finalCategoryName.equals(originalCategoryName);
+            
+            LOG.info("   Final Product: '{}' - Restored: {} {}", finalProductName, productRestored ? "✅" : "❌", productRestored ? "YES" : "NO");
+            LOG.info("   Final Category: '{}' - Restored: {} {}", finalCategoryName, categoryRestored ? "✅" : "❌", categoryRestored ? "YES" : "NO");
+            
+            assertTrue("Product name not restored to original", productRestored);
+            assertTrue("Category name not restored to original", categoryRestored);
+            
+            LOG.info("🎉 SUCCESS: Cross-platform cache test passed!");
+            
+        } catch (Exception e) {
+            LOG.error("❌ Cross-platform cache test failed: {}", e.getMessage(), e);
+            throw e;
+        } finally {
+            // Cleanup - ensure names are restored
+            try {
+                if (originalProductName != null) {
+                    updateMagentoProductName(productSku, originalProductName);
+                    LOG.info("🧹 Cleanup: Product name restored");
+                }
+                if (originalCategoryName != null && categoryId != null) {
+                    updateMagentoCategoryName(categoryId, originalCategoryName);
+                    LOG.info("🧹 Cleanup: Category name restored");
+                }
+            } catch (Exception e) {
+                LOG.warn("⚠️ Cleanup failed: {}", e.getMessage());
+            }
+        }
+    }
+
+    /**
      * Cloud - Product Cache Invalidation using cacheNames method
      */
     @Test
@@ -338,11 +492,34 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             assertTrue("Product cache invalidation failed - AEM not showing fresh data", productUpdated);
             LOG.info("🎉 SUCCESS: Product cache invalidation test passed!");
 
+            // STEP 7: Revert name back to original
+            LOG.info("🔄 STEP 7: Reverting product name back to original");
+            updateMagentoProductName(productSku, trueOriginalFromMagento);
+            LOG.info("   📦 Reverted Product: '{}'", trueOriginalFromMagento);
+
+            // STEP 8: Clear cache again to get original name
+            LOG.info("🚀 STEP 8: Clearing cache again to get original name");
+            boolean finalCacheCleared = callCacheInvalidationServlet(productSku, null);
+            assertTrue("Final cache invalidation servlet call failed", finalCacheCleared);
+
+            // STEP 9: Wait and verify original name shows
+            LOG.info("⏳ STEP 9: Waiting for final cache clear...");
+            safeSleep(10000);
+
+            LOG.info("🔍 STEP 10: Verifying original name shows");
+            String finalProductName = getCurrentProductNameFromAEMPage(categoryPageUrl, productSku);
+            boolean productRestored = finalProductName.equals(trueOriginalFromMagento);
+
+            LOG.info("   Final Product: '{}' - Restored: {} {}", finalProductName, productRestored ? "✅" : "❌", productRestored ? "YES" : "NO");
+            assertTrue("Product name not restored to original", productRestored);
+
+            LOG.info("🎉 COMPLETE SUCCESS: Product cache test with full cycle passed!");
+
         } finally {
-            // Restore original product name
+            // Cleanup - ensure name is restored (backup)
             try {
                 updateMagentoProductName(productSku, trueOriginalFromMagento);
-                LOG.info("🔄 Restored product name: {}", trueOriginalFromMagento);
+                LOG.info("🧹 Cleanup: Product name ensured restored");
             } catch (Exception e) {
                 LOG.warn("Could not restore product name: {}", e.getMessage());
             }
@@ -423,12 +600,35 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             assertTrue("Category cache invalidation failed - AEM not showing fresh data", categoryUpdated);
             LOG.info("🎉 SUCCESS: Category cache invalidation test passed!");
 
+            // STEP 8: Revert name back to original
+            LOG.info("🔄 STEP 8: Reverting category name back to original");
+            updateMagentoCategoryName(categoryId, originalCategoryName);
+            LOG.info("   📦 Reverted Category: '{}'", originalCategoryName);
+
+            // STEP 9: Clear cache again to get original name
+            LOG.info("🚀 STEP 9: Clearing cache again to get original name");
+            boolean finalCacheCleared = callCacheInvalidationServlet(null, categoryUrlKey);
+            assertTrue("Final cache invalidation servlet call failed", finalCacheCleared);
+
+            // STEP 10: Wait and verify original name shows
+            LOG.info("⏳ STEP 10: Waiting for final cache clear...");
+            safeSleep(10000);
+
+            LOG.info("🔍 STEP 11: Verifying original name shows");
+            String finalCategoryName = getCurrentCategoryNameFromAEMPage(categoryPageUrl);
+            boolean categoryRestored = finalCategoryName.equals(originalCategoryName);
+
+            LOG.info("   Final Category: '{}' - Restored: {} {}", finalCategoryName, categoryRestored ? "✅" : "❌", categoryRestored ? "YES" : "NO");
+            assertTrue("Category name not restored to original", categoryRestored);
+
+            LOG.info("🎉 COMPLETE SUCCESS: Category cache test with full cycle passed!");
+
         } finally {
-            // Restore original category name
+            // Cleanup - ensure name is restored (backup)
             if (originalCategoryName != null && categoryId != null) {
                 try {
                     updateMagentoCategoryName(categoryId, originalCategoryName);
-                    LOG.info("🔄 Restored category name: {}", originalCategoryName);
+                    LOG.info("🧹 Cleanup: Category name ensured restored");
                 } catch (Exception e) {
                     LOG.warn("Could not restore category name: {}", e.getMessage());
                 }
