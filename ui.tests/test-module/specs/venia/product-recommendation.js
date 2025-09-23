@@ -363,90 +363,86 @@ describe('Product recommendation', function () {
     });
 
     it('product recommendation custom configuration test', () => {
-        try {
-            const editorUrl = `${config.aem.author.base_url}/editor.html${testing_page}.html`;
-            browser.url(editorUrl);
-            browser.AEMEditorLoaded();
-            openComponentDialog(addedNodeName);
+        const editorUrl = `${config.aem.author.base_url}/editor.html${testing_page}.html`;
+        browser.url(editorUrl);
+        browser.AEMEditorLoaded();
+        openComponentDialog(addedNodeName);
 
-            const preconfiguredCheckbox = $('coral-checkbox[name="./preconfigured"]');
-            expect(preconfiguredCheckbox).toBeDisplayed();
+        const preconfiguredCheckbox = $('coral-checkbox[name="./preconfigured"]');
+        expect(preconfiguredCheckbox).toBeDisplayed();
 
-            const checkboxInput = preconfiguredCheckbox.$('input[type="checkbox"]');
-            const isChecked = checkboxInput.isSelected();
+        const checkboxInput = preconfiguredCheckbox.$('input[type="checkbox"]');
+        const isChecked = checkboxInput.isSelected();
 
-            if (isChecked) {
-                preconfiguredCheckbox.waitAndClick();
-            }
+        if (isChecked) {
+            preconfiguredCheckbox.waitAndClick();
+        }
 
-            const titleInput = $('input[name="./jcr:title"]');
-            expect(titleInput).toBeDisplayed();
-            titleInput.clearValue();
-            titleInput.setValue('Recommended products test');
+        const titleInput = $('input[name="./jcr:title"]');
+        expect(titleInput).toBeDisplayed();
+        titleInput.clearValue();
+        titleInput.setValue('Recommended products test');
 
-            const recommendationTypeDropdown = $('coral-select[name="./recommendationType"]');
-            expect(recommendationTypeDropdown).toBeDisplayed();
-            recommendationTypeDropdown.waitAndClick();
+        const recommendationTypeDropdown = $('coral-select[name="./recommendationType"]');
+        expect(recommendationTypeDropdown).toBeDisplayed();
+        recommendationTypeDropdown.waitAndClick();
 
-            const moreLikeThisOption = $('coral-selectlist-item[value="more-like-this"]');
-            moreLikeThisOption.waitForDisplayed({ timeout: 5000 });
-            moreLikeThisOption.waitAndClick();
+        const moreLikeThisOption = $('coral-selectlist-item[value="more-like-this"]');
+        moreLikeThisOption.waitForDisplayed({ timeout: 5000 });
+        moreLikeThisOption.waitAndClick();
 
-            clickDoneButton();
+        clickDoneButton();
 
-            const testProductUrl = `${config.aem.author.base_url}${testing_page}.html?wcmmode=disabled`;
-            browser.url(testProductUrl);
+        const testProductUrl = `${config.aem.author.base_url}${testing_page}.html?wcmmode=disabled`;
+        browser.url(testProductUrl);
 
-            const productName = $('.productFullDetail__productName span[role="name"]');
-            expect(productName).toBeDisplayed();
-            expect(productName).toHaveText('Alexia Maxi Dress');
+        const productName = $('.productFullDetail__productName span[role="name"]');
+        expect(productName).toBeDisplayed();
+        expect(productName).toHaveText('Alexia Maxi Dress');
 
-            const productSku = $('.productFullDetail__sku strong[role="sku"]');
-            expect(productSku).toBeDisplayed();
-            expect(productSku).toHaveText('VD09');
+        const productSku = $('.productFullDetail__sku strong[role="sku"]');
+        expect(productSku).toBeDisplayed();
+        expect(productSku).toHaveText('VD09');
 
-            const productPrice = $('.productFullDetail__price .price');
-            expect(productPrice).toBeDisplayed();
+        const productPrice = $('.productFullDetail__price .price');
+        expect(productPrice).toBeDisplayed();
 
-            const recommendationsComponent = $('[data-is-product-recs]');
-            expect(recommendationsComponent).toBeDisplayed();
+        const recommendationsComponent = $('[data-is-product-recs]');
+        expect(recommendationsComponent).toBeDisplayed();
 
-            browser.execute(() => {
-                /* eslint-disable-next-line no-undef */
-                window.scrollTo(0, document.body.scrollHeight * 0.7);
-            });
+        browser.execute(() => {
+            /* eslint-disable-next-line no-undef */
+            window.scrollTo(0, document.body.scrollHeight * 0.7);
+        });
 
-            const recommendationsTitle = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
-            expect(recommendationsTitle).toBeDisplayed();
-            expect(recommendationsTitle).toHaveText('Recommended products test');
+        const recommendationsTitle = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
+        expect(recommendationsTitle).toBeDisplayed();
+        expect(recommendationsTitle).toHaveText('Recommended products test');
 
-            const recommendationCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
-            expect(recommendationCards.length).toBeGreaterThan(0);
+        const recommendationCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
+        expect(recommendationCards.length).toBeGreaterThan(0);
 
-            const cardsToTest = Math.min(3, recommendationCards.length);
+        const cardsToTest = Math.min(3, recommendationCards.length);
 
-            for (let i = 0; i < cardsToTest; i++) {
-                const card = recommendationCards[i];
+        for (let i = 0; i < cardsToTest; i++) {
+            const card = recommendationCards[i];
 
-                const productImage = card.$('.cmp-ProductRecsGallery__ProductCard__productImage');
-                expect(productImage).toBeDisplayed();
+            const productImage = card.$('.cmp-ProductRecsGallery__ProductCard__productImage');
+            expect(productImage).toBeDisplayed();
 
-                const productLink = card.$('a[title]');
-                expect(productLink).toBeDisplayed();
+            const productLink = card.$('a[title]');
+            expect(productLink).toBeDisplayed();
 
-                const productTitle = productLink.getAttribute('title');
-                expect(productTitle).not.toBe('');
-                expect(productTitle).not.toBe(null);
-                expect(productTitle).not.toBe('Alexia Maxi Dress');
+            const productTitle = productLink.getAttribute('title');
+            expect(productTitle).not.toBe('');
+            expect(productTitle).not.toBe(null);
+            expect(productTitle).not.toBe('Alexia Maxi Dress');
 
-                const addToCartBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToCart');
-                expect(addToCartBtn).toBeDisplayed();
+            const addToCartBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToCart');
+            expect(addToCartBtn).toBeDisplayed();
 
-                const addToWishlistBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToWishlist');
-                expect(addToWishlistBtn).toBeDisplayed();
-            }
-        } finally {
-            // No component cleanup needed - entire page will be deleted
+            const addToWishlistBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToWishlist');
+            expect(addToWishlistBtn).toBeDisplayed();
         }
     });
 });
