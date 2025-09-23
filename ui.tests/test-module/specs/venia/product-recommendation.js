@@ -42,7 +42,7 @@ describe('Product recommendation', function () {
             parent: '/content/venia/us/en/products',
             template: '/conf/venia/settings/wcm/templates/product-page'
         });
-        browser.pause(2000); // Wait for page creation
+
 
         // Configure the product detail component with a specific product
         configureProductDetailComponent();
@@ -97,7 +97,7 @@ describe('Product recommendation', function () {
                         console.log('✅ Found product directly:', productName);
                         productElement.click();
                         console.log('✅ Clicked on product');
-                        browser.pause(500);
+
 
                         // Click the Add button
                         const submitButton = $('span=Add').parentElement();
@@ -148,14 +148,13 @@ describe('Product recommendation', function () {
             pickerButton.waitAndClick();
             console.log('✅ Clicked picker button (manual)');
 
-            browser.pause(2000);
+
 
             // Search for Alexia
             const searchField = $('input[type="search"][placeholder="Search"], input[aria-label="Search"]');
             if (searchField.isDisplayed()) {
                 searchField.setValue('Alexia');
                 console.log('🔍 Searched for Alexia');
-                browser.pause(3000);
 
                 // Try to select using XPath
                 const product = $('//div[contains(text(),"Alexia Maxi Dress")]');
@@ -200,7 +199,7 @@ describe('Product recommendation', function () {
         configureButton.waitAndClick();
         console.log('⚙️ Opened component configuration dialog');
 
-        browser.pause(2000); // Wait for dialog to fully load
+
 
         // Use the proven product selection approach
         console.log('🔍 Looking for product field...');
@@ -223,7 +222,7 @@ describe('Product recommendation', function () {
         console.log('✅ Closing configuration dialog...');
         clickDoneButton();
         console.log('🎉 Product detail component configured successfully!');
-        browser.pause(1000);
+
     };
 
     const addComponentToPage = (group = 'Venia - Commerce') => {
