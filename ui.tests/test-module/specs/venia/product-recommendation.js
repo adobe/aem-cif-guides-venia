@@ -43,7 +43,6 @@ describe('Product recommendation', function () {
             template: '/conf/venia/settings/wcm/templates/product-page'
         });
 
-
         // Configure the product detail component with a specific product
         configureProductDetailComponent();
     });
@@ -98,7 +97,6 @@ describe('Product recommendation', function () {
                         productElement.click();
                         console.log('✅ Clicked on product');
 
-
                         // Click the Add button
                         const submitButton = $('span=Add').parentElement();
                         if (submitButton.isDisplayed()) {
@@ -147,8 +145,6 @@ describe('Product recommendation', function () {
         if (pickerButton.isDisplayed()) {
             pickerButton.waitAndClick();
             console.log('✅ Clicked picker button (manual)');
-
-
 
             // Search for Alexia
             const searchField = $('input[type="search"][placeholder="Search"], input[aria-label="Search"]');
@@ -199,8 +195,6 @@ describe('Product recommendation', function () {
         configureButton.waitAndClick();
         console.log('⚙️ Opened component configuration dialog');
 
-
-
         // Use the proven product selection approach
         console.log('🔍 Looking for product field...');
         const productField = $('product-field');
@@ -222,7 +216,6 @@ describe('Product recommendation', function () {
         console.log('✅ Closing configuration dialog...');
         clickDoneButton();
         console.log('🎉 Product detail component configured successfully!');
-
     };
 
     const addComponentToPage = (group = 'Venia - Commerce') => {
