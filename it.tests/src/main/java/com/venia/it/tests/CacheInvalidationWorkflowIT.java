@@ -109,7 +109,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     @Test
     @Category(IgnoreOnCloud.class)
-    public void test65_Product_CacheInvalidation() throws Exception {
+    public void test65_01_Product_CacheInvalidation() throws Exception {
         LOG.info("=== 🎯 AEM 6.5 - PRODUCT CACHE INVALIDATION (productSkus) ===");
         runProductCacheInvalidationTest(
                 "BLT-LEA-001", // SKU
@@ -123,7 +123,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     @Test
     @Category(IgnoreOnCloud.class)
-    public void test65_Category_CacheInvalidation() throws Exception {
+    public void test65_02_Category_CacheInvalidation() throws Exception {
         LOG.info("=== 🎯 AEM 6.5 - CATEGORY CACHE INVALIDATION (categoryUids) ===");
         runCategoryCacheInvalidationTest(
                 "BLT-LEA-001", // SKU for context
@@ -138,7 +138,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      */
     @Test
     @Category(IgnoreOnCloud.class)
-    public void test65_CrossPlatform_ProductAndCategory_CacheTest() throws Exception {
+    public void test65_03_CrossPlatform_ProductAndCategory_CacheTest() throws Exception {
         LOG.info("=== 🎯 AEM 6.5 - CROSS-PLATFORM CACHE TEST (6.5 Product + Cloud Category) ===");
         
         // Use 6.5 product and Cloud category
