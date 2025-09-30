@@ -243,7 +243,7 @@ describe('Component Dialogs', function () {
         fields[0].$('coral-select').click();
 
         let itemsSelector =
-            config.aem.type === 'classic'
+            config.aem.type === 'classic' || config.aem.type === 'lts'
                 ? 'coral-overlay.is-open coral-selectlist-item[value="productAssociation"]'
                 : 'coral-popover-content coral-selectlist-item[value="productAssociation"]';
         $(itemsSelector).click();
@@ -252,7 +252,7 @@ describe('Component Dialogs', function () {
 
         fields[0].$('coral-select').click();
         itemsSelector =
-            config.aem.type === 'classic'
+            config.aem.type === 'classic' || config.aem.type === 'lts'
                 ? 'coral-overlay.is-open coral-selectlist-item[value="categoryAssociation"]'
                 : 'coral-popover-content coral-selectlist-item[value="categoryAssociation"]';
         $(itemsSelector).click();
