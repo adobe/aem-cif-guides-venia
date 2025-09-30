@@ -74,6 +74,12 @@ executors:
         <<: *docker_auth
       - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
         <<: *docker_auth
+  test_executor_660:
+    docker:
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+        <<: *docker_auth
+      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.6.6.0-openjdk21
+        <<: *docker_auth
 
 jobs:
   build:
@@ -139,6 +145,19 @@ jobs:
     working_directory: /home/circleci/build
     <<: *integration_test_steps
 
+  integration-test-660:
+    executor: test_executor_660
+    environment:
+      AEM: lts
+      TYPE: integration
+    parameters:
+      classifier:
+        default: "lts"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
   integration-test-cloudready-with-addon:
     executor: test_executor_cloudready
     environment:
@@ -175,6 +194,20 @@ jobs:
     parameters:
       classifier:
         default: "classic"
+        type: string
+    resource_class: large
+    working_directory: /home/circleci/build
+    <<: *integration_test_steps
+
+  selenium-chrome-660:
+    executor: test_executor_660
+    environment:
+      AEM: lts
+      TYPE: selenium
+      BROWSER: chrome
+    parameters:
+      classifier:
+        default: "lts"
         type: string
     resource_class: large
     working_directory: /home/circleci/build
@@ -227,6 +260,14 @@ workflows:
               only: /.*/
           requires:
             - build
+      - integration-test-660:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
       - integration-test-cloudready-with-addon:
           context:
             - CIF Artifactory Cloud
@@ -244,6 +285,14 @@ workflows:
           requires:
             - build
       - selenium-chrome-655:
+          context:
+            - CIF Artifactory Cloud
+          filters:
+            tags:
+              only: /.*/
+          requires:
+            - build
+      - selenium-chrome-660:
           context:
             - CIF Artifactory Cloud
           filters:
