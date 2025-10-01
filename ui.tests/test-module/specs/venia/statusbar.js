@@ -16,7 +16,7 @@
 
 const config = require('../../lib/config');
 const { OnboardingDialogHandler } = require('../../lib/commons');
-const isCloud = process.env.AEM_VERSION !== 'classic';
+const isCloud = process.env.AEM_VERSION !== 'classic' && process.env.AEM_VERSION !== 'lts';
 
 describe('Catalog Page Status', function () {
     const editor_page = `${config.aem.author.base_url}/editor.html`;
