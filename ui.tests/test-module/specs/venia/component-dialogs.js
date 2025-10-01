@@ -153,7 +153,11 @@ describe('Component Dialogs', function () {
         expect($('label=Select Product')).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(8);
+        if (config.aem.type === 'lts') {
+            expect(fields.length).toEqual(7);
+        } else {
+            expect(fields.length).toEqual(8);
+        }
 
         // fields of the OOTB component
         expect(fields[0].$('product-field')).toBeDisplayed();
@@ -164,7 +168,7 @@ describe('Component Dialogs', function () {
         expect(fields[4].$('input[name="./id"]')).toBeDisplayed();
     });
 
-    it('opens the releated products dialog', () => {
+    it('opens the related products dialog', () => {
         addComponentToPage('Related Products');
 
         openComponentDialog('relatedproducts', 'aem:sites:components:dialogs:cif-core-components:relatedproducts:v1');
@@ -204,7 +208,7 @@ describe('Component Dialogs', function () {
         expect($('[data-is-product-recs] .cmp-ProductRecsGallery__ProductRecsGallery__root')).toExist();
     });
 
-    it('opens the searchresults dialog', () => {
+    it('opens the search results dialog', () => {
         addComponentToPage('Search Results');
         openComponentDialog('searchresults', 'aem:sites:components:dialogs:cif-core-components:searchresults:v2');
 
