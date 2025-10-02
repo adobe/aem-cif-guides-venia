@@ -60,13 +60,22 @@ try {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
 
+        // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
+        let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
         let extras;
         if (classifier == 'classic') {
-            // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
-            let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
             // Download latest add-on for AEM 6.5 release from artifactory
             ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
             extras = ` --install-file ${buildPath}/dependencies/addon-650.zip`;
+
+            // The core components are already installed in the Cloud SDK
+            extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
+            extras += ` --install-file ${buildPath}/classic/all/target/aem-cif-guides-venia.all-classic-${veniaVersion}.zip`
+
+        } else if (classifier == 'lts') {
+            // Download latest add-on for AEM 6.5 LTS release from artifactory
+            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-660-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-660.zip`);
+            extras = ` --install-file ${buildPath}/dependencies/addon-660.zip`;
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
@@ -87,15 +96,17 @@ try {
             extras += ` --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:${cifVersion}:jar`;
         }
 
+        const maxMetaspace = classifier == 'lts' ? '-XX:MaxMetaspaceSize=256m' : '-XX:MaxPermSize=256m';
+
         // Start CQ
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
-            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
+            --vm-options \\\"-Xmx1536m ${maxMetaspace} -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
     // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
-    if (classifier == 'classic') {
+    if (classifier == 'classic' || classifier == 'lts') {
         // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {

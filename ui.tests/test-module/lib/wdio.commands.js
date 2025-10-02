@@ -231,7 +231,7 @@ browser.addCommand('GraniteSelectPath', function (pathField, title) {
     // Select node
     const node = $(`div[title="${title}"]`);
     expect(node).toExist();
-    if (config.aem.type === 'classic') {
+    if (config.aem.type === 'classic' || config.aem.type === 'lts') {
         node.parentElement().parentElement().$('coral-columnview-item-thumbnail').moveTo({ xOffset: 1, yOffset: 1 });
         node.parentElement().parentElement().$('coral-columnview-item-thumbnail').click();
     } else {

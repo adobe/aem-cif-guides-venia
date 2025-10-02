@@ -93,7 +93,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
     before(function () {
         // Only run this test suite for AEM cloud
-        if (config.aem.type === 'classic') {
+        if (config.aem.type === 'classic' || config.aem.type === 'lts') {
             this.skip();
         }
 
