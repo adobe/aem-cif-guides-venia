@@ -89,107 +89,6 @@ describe('Product recommendation', function () {
         }
     });
 
-    function productVariantSelection(productField, productName) {
-        expect(productField).toBeDisplayed();
-
-        const pickerButton = productField.$('button[aria-label="Open Picker"]');
-        if (!pickerButton.isDisplayed()) {
-            return false;
-        }
-
-        pickerButton.waitForEnabled({ timeout: 3000 });
-        pickerButton.click();
-        expect($('h3=Add Product')).toBeDisplayed();
-
-        return browser.waitUntil(
-            () => {
-                try {
-                    const productElement = $(`//div[contains(text(),"${productName}")]`);
-
-                    if (productElement.isDisplayed() && productElement.isClickable()) {
-                        productElement.click();
-
-                        try {
-                            const addButtonSpan = $('span=Add');
-                            addButtonSpan.waitForDisplayed({ timeout: 5000 });
-
-                            const submitButton = addButtonSpan.parentElement();
-                            submitButton.waitForEnabled({ timeout: 5000 });
-                            if (submitButton.isDisplayed() && submitButton.isEnabled()) {
-                                submitButton.click();
-                                return true;
-                            }
-                        } catch (e) {
-                            // Fallback: try different Add button selector
-                            const addButtonAlt = $('button*=Add');
-                            if (addButtonAlt.isDisplayed()) {
-                                addButtonAlt.waitForEnabled({ timeout: 3000 });
-                                addButtonAlt.click();
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                } catch (e) {
-                    return false;
-                }
-            },
-            {
-                timeout: 10000,
-                timeoutMsg: `Failed to select product directly: ${productName}`
-            }
-        );
-    }
-
-    function manualProductSelection() {
-        let pickerButton = $('button[aria-label="Open Picker"]');
-        if (!pickerButton.isDisplayed()) {
-            pickerButton = $('.spectrum-ActionButton_e2d99e.PickerButton__position_right__p_skQ');
-        }
-        if (!pickerButton.isDisplayed()) {
-            pickerButton = $('button.spectrum-ActionButton_e2d99e');
-        }
-
-        if (pickerButton.isDisplayed()) {
-            pickerButton.waitForClickable({ timeout: 5000 });
-            pickerButton.waitAndClick();
-
-            const searchField = $('input[type="search"][placeholder="Search"], input[aria-label="Search"]');
-            searchField.waitForDisplayed({ timeout: 5000 });
-            if (searchField.isDisplayed()) {
-                searchField.setValue('Alexia');
-
-                const product = $('//div[contains(text(),"Alexia Maxi Dress")]');
-                product.waitForDisplayed({ timeout: 5000 });
-                if (product.isDisplayed()) {
-                    product.click();
-
-                    // Wait for Add button to become available and enabled
-                    try {
-                        const addButtonSpan = $('span=Add');
-                        addButtonSpan.waitForDisplayed({ timeout: 5000 });
-
-                        const addButton = addButtonSpan.parentElement();
-                        addButton.waitForEnabled({ timeout: 5000 });
-                        if (addButton.isDisplayed()) {
-                            addButton.click();
-                            return true;
-                        }
-                    } catch (e) {
-                        // Fallback: try different Add button selector
-                        const addButtonAlt = $('button*=Add');
-                        if (addButtonAlt.isDisplayed()) {
-                            addButtonAlt.waitForEnabled({ timeout: 3000 });
-                            addButtonAlt.click();
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     const configureProductDetailComponent = () => {
         browser.url(`${config.aem.author.base_url}/editor.html${testing_page}.html`);
         browser.AEMEditorLoaded();
@@ -206,21 +105,8 @@ describe('Product recommendation', function () {
         configureButton.waitAndClick();
 
         const productField = $('product-field');
-        productField.waitForDisplayed({ timeout: 3000, reverse: false });
-        if (productField.isDisplayed()) {
-            const success = productVariantSelection(productField, 'Alexia Maxi Dress');
-            if (!success) {
-                const fallbackSuccess = manualProductSelection();
-                if (!fallbackSuccess) {
-                    throw new Error('Failed to configure product using both primary and fallback methods');
-                }
-            }
-        } else {
-            const fallbackSuccess = manualProductSelection();
-            if (!fallbackSuccess) {
-                throw new Error('Failed to configure product using manual selection method');
-            }
-        }
+        productField.waitForDisplayed({ timeout: 5000 });
+        browser.CIFSelectProduct(productField, 'Alexia Maxi Dress');
 
         clickDoneButton();
     };
