@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.venia.it.category.IgnoreOnCloud;
 import com.venia.it.category.IgnoreOn65;
+import com.venia.it.category.IgnoreOnLts;
 
 import static org.junit.Assert.assertTrue;
 import org.junit.Assert;
@@ -173,7 +174,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * AEM 6.5 - Product Cache Invalidation using productSkus method
      */
     @Test
-    @Category(IgnoreOnCloud.class)
+    @Category({IgnoreOnCloud.class, IgnoreOnLts.class})
     public void test65_01_Product_CacheInvalidation() throws Exception {
         CacheTestConfig config = new CacheTestConfig(
                 "AEM 6.5 - Product (productSkus method)",
@@ -191,7 +192,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * AEM 6.5 - Category Cache Invalidation using categoryUids method
      */
     @Test
-    @Category(IgnoreOnCloud.class)
+    @Category({IgnoreOnCloud.class, IgnoreOnLts.class})
     public void test65_02_Category_CacheInvalidation() throws Exception {
         runCategoryCacheInvalidationTest(
                 "BLT-LEA-001",
@@ -205,7 +206,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * AEM 6.5 - Cross-Platform Cache Test (6.5 Product + Cloud Category)
      */
     @Test
-    @Category(IgnoreOnCloud.class)
+    @Category({IgnoreOnCloud.class, IgnoreOnLts.class})
     public void test65_03_CrossPlatform_ProductAndCategory_CacheTest() throws Exception {
         
         String productSku = "BLT-LEA-001"; 
@@ -329,7 +330,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * Cloud - Product Cache Invalidation using cacheNames method
      */
     @Test
-    @Category(IgnoreOn65.class)
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testCloud_01_Product_CacheNames() throws Exception {
         String testSku = "BLT-FAB-001";
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
@@ -342,7 +343,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * Cloud - Cache Invalidation using regexPatterns method (Product + Category)
      */
     @Test
-    @Category(IgnoreOn65.class)
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testCloud_02_RegexPatterns() throws Exception {
         String testSku = "BLT-FAB-001";
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
@@ -356,7 +357,7 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
      * Cloud - Final Comprehensive Test using invalidateAll method
      */
     @Test
-    @Category(IgnoreOn65.class)
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testCloud_03_InvalidateAll_Final() throws Exception {
         String testSku = "BLT-FAB-001";
         String categoryPage = "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html";
