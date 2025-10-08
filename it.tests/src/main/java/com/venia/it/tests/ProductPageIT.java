@@ -31,10 +31,9 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -45,6 +44,32 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_DETAILS_SELECTOR = PRODUCT_SELECTOR + "> .productFullDetail__root";
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
+    
+    /**
+     * Normalize JSON string to handle differences between environments
+     * - Normalizes HTML entities (&#39; -> ')
+     * - Sorts JSON fields for consistent comparison
+     */
+    private String normalizeJson(String jsonString) {
+        try {
+            // Normalize HTML entities
+            String normalized = jsonString
+                .replace("&#39;", "'")
+                .replace("&#34;", "\"")
+                .replace("&quot;", "\"")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">");
+            
+            // Parse and re-serialize to normalize field ordering
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.readTree(normalized);
+            return mapper.writeValueAsString(node);
+        } catch (Exception e) {
+            // If normalization fails, return original string
+            return jsonString;
+        }
+    }
 
     @Test
     @Category(IgnoreOn65.class)
@@ -96,15 +121,19 @@ public class ProductPageIT extends CommerceTestBase {
         System.out.println(actualJsonString);
         System.out.println("=== LTS DEBUG: End JSON Comparison ===");
         
-        // Use lenient JSON comparison to handle field ordering and HTML entity differences
-        try {
-            JSONAssert.assertEquals("Expected product datalayer to match sample data, but found differences", expectedJsonString, actualJsonString, JSONCompareMode.LENIENT);
-        } catch (Exception e) {
-            // Fallback to strict comparison with detailed error
-            JsonNode result = Utils.OBJECT_MAPPER.readTree(actualJsonString);
-            JsonNode expected = Utils.OBJECT_MAPPER.readTree(expectedJsonString);
-            assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
-        }
+        // Normalize both JSON strings to handle field ordering and HTML entity differences
+        String normalizedExpected = normalizeJson(expectedJsonString);
+        String normalizedActual = normalizeJson(actualJsonString);
+        
+        System.out.println("=== LTS DEBUG: Normalized Expected JSON ===");
+        System.out.println(normalizedExpected);
+        System.out.println("=== LTS DEBUG: Normalized Actual JSON ===");
+        System.out.println(normalizedActual);
+        
+        // Compare normalized JSON
+        JsonNode result = Utils.OBJECT_MAPPER.readTree(normalizedActual);
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(normalizedExpected);
+        assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -142,15 +171,19 @@ public class ProductPageIT extends CommerceTestBase {
         System.out.println(actualJsonString);
         System.out.println("=== LTS DEBUG: End Grouped Product JSON Comparison ===");
         
-        // Use lenient JSON comparison to handle field ordering and HTML entity differences
-        try {
-            JSONAssert.assertEquals("Expected grouped product datalayer to match sample data, but found differences", expectedJsonString, actualJsonString, JSONCompareMode.LENIENT);
-        } catch (Exception e) {
-            // Fallback to strict comparison with detailed error
-            JsonNode result = Utils.OBJECT_MAPPER.readTree(actualJsonString);
-            JsonNode expected = Utils.OBJECT_MAPPER.readTree(expectedJsonString);
-            assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
-        }
+        // Normalize both JSON strings to handle field ordering and HTML entity differences
+        String normalizedExpected = normalizeJson(expectedJsonString);
+        String normalizedActual = normalizeJson(actualJsonString);
+        
+        System.out.println("=== LTS DEBUG: Normalized Expected Grouped Product JSON ===");
+        System.out.println(normalizedExpected);
+        System.out.println("=== LTS DEBUG: Normalized Actual Grouped Product JSON ===");
+        System.out.println(normalizedActual);
+        
+        // Compare normalized JSON
+        JsonNode result = Utils.OBJECT_MAPPER.readTree(normalizedActual);
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(normalizedExpected);
+        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
