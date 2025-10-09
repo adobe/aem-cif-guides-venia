@@ -155,7 +155,14 @@ try {
 
     // Run integration tests
     if (TYPE === 'integration') {
-        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOn65' : 'com.venia.it.category.IgnoreOnCloud';
+        let excludedCategory;
+        if (classifier === 'classic') {
+            excludedCategory = 'com.venia.it.category.IgnoreOn65';
+        } else if (classifier === 'lts') {
+            excludedCategory = 'com.venia.it.category.IgnoreOnLts';
+        } else {
+            excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
+        }
         console.log(`=== ENVIRONMENT DEBUG: Running integration tests with classifier: ${classifier}`);
         console.log(`=== ENVIRONMENT DEBUG: Excluding category: ${excludedCategory}`);
         console.log(`=== ENVIRONMENT DEBUG: Classic=${classifier === 'classic'}, LTS=${classifier === 'lts'}, Cloud=${classifier === 'cloud'}`);
