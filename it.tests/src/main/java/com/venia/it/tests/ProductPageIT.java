@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
+import com.venia.it.category.IgnoreOnLts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -67,6 +68,9 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleData65() throws ClientException, IOException {
+        System.out.println("=== ENVIRONMENT DEBUG: Running testProductPageWithSampleData65 ===");
+        System.out.println("=== ENVIRONMENT DEBUG: This test has @Category(IgnoreOnCloud.class) ===");
+        System.out.println("=== ENVIRONMENT DEBUG: Expected to run on: Classic and LTS (excludes Cloud) ===");
         testProductPageWithSampleData("datalayer/simple-product-65.json");
     }
 
@@ -112,6 +116,9 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleDataForGroupedProduct65() throws ClientException, IOException {
+        System.out.println("=== ENVIRONMENT DEBUG: Running testProductPageWithSampleDataForGroupedProduct65 ===");
+        System.out.println("=== ENVIRONMENT DEBUG: This test has @Category(IgnoreOnCloud.class) ===");
+        System.out.println("=== ENVIRONMENT DEBUG: Expected to run on: Classic and LTS (excludes Cloud) ===");
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product-65.json");
     }
 
