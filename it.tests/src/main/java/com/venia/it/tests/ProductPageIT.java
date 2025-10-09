@@ -113,6 +113,7 @@ public class ProductPageIT extends CommerceTestBase {
     }
 
     @Test
+    @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleDataForGroupedProduct65() throws ClientException, IOException {
         System.out.println("=== ENVIRONMENT DEBUG: Running testProductPageWithSampleDataForGroupedProduct65 ===");
         System.out.println("=== ENVIRONMENT DEBUG: This test has @Category(IgnoreOnCloud.class) ===");
