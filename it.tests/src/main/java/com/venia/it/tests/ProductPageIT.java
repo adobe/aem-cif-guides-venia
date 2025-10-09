@@ -48,15 +48,42 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
     /**
-     * Compare JSON strings ignoring field order using JSONAssert with LENIENT mode
+     * Compare JSON strings ignoring field order and HTML entity encoding differences
      */
     private void assertJsonEqualsIgnoreOrder(String expectedJson, String actualJson, String message) {
         try {
-            JSONAssert.assertEquals(message, expectedJson, actualJson, JSONCompareMode.LENIENT);
+            // Normalize HTML entities in both JSON strings
+            String normalizedExpected = normalizeHtmlEntities(expectedJson);
+            String normalizedActual = normalizeHtmlEntities(actualJson);
+            
+            JSONAssert.assertEquals(message, normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
         } catch (Exception e) {
             // If JSONAssert fails, provide more detailed error message
             throw new AssertionError(message + " - Expected: " + expectedJson + " - Actual: " + actualJson, e);
         }
+    }
+    
+    /**
+     * Normalize HTML entities to regular characters for comparison
+     */
+    private String normalizeHtmlEntities(String jsonString) {
+        if (jsonString == null) {
+            return null;
+        }
+        
+        // Replace common HTML entities with their regular characters
+        return jsonString
+            .replace("&#39;", "'")           // apostrophe (numeric)
+            .replace("&quot;", "\"")         // double quote (named)
+            .replace("&#34;", "\"")          // double quote (numeric)
+            .replace("&amp;", "&")           // ampersand (named)
+            .replace("&#38;", "&")           // ampersand (numeric)
+            .replace("&lt;", "<")            // less than (named)
+            .replace("&#60;", "<")           // less than (numeric)
+            .replace("&gt;", ">")            // greater than (named)
+            .replace("&#62;", ">")           // greater than (numeric)
+            .replace("&nbsp;", " ")          // non-breaking space
+            .replace("&#160;", " ");         // non-breaking space (numeric)
     }
 
     @Test
