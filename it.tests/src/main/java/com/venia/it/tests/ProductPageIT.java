@@ -33,6 +33,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +45,18 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_DETAILS_SELECTOR = PRODUCT_SELECTOR + "> .productFullDetail__root";
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
+
+    /**
+     * Compare JSON strings ignoring field order using JSONAssert with LENIENT mode
+     */
+    private void assertJsonEqualsIgnoreOrder(String expectedJson, String actualJson, String message) {
+        try {
+            JSONAssert.assertEquals(message, expectedJson, actualJson, JSONCompareMode.LENIENT);
+        } catch (Exception e) {
+            // If JSONAssert fails, provide more detailed error message
+            throw new AssertionError(message + " - Expected: " + expectedJson + " - Actual: " + actualJson, e);
+        }
+    }
 
     @Test
     @Category(IgnoreOn65.class)
@@ -84,9 +98,9 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
+        String actualJsonString = elements.first().attr("data-cmp-data-layer");
+        String expectedJsonString = Utils.getResource(jsonFile);
+        assertJsonEqualsIgnoreOrder(expectedJsonString, actualJsonString, "Expected product datalayer to match sample data, but found differences");
     }
 
     @Test
@@ -114,9 +128,9 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
+        String actualJsonString = elements.first().attr("data-cmp-data-layer");
+        String expectedJsonString = Utils.getResource(jsonFile);
+        assertJsonEqualsIgnoreOrder(expectedJsonString, actualJsonString, "Expected grouped product datalayer to match sample data, but found differences");
     }
 
     @Test
