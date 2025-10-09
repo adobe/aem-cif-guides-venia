@@ -155,7 +155,14 @@ try {
 
     // Run integration tests
     if (TYPE === 'integration') {
-        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOn65' : 'com.venia.it.category.IgnoreOnCloud';
+        let excludedCategory;
+        if (classifier === 'classic') {
+            excludedCategory = 'com.venia.it.category.IgnoreOn65';
+        } else if (classifier === 'lts') {
+            excludedCategory = 'com.venia.it.category.IgnoreOnLts';
+        } else {
+            excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
+        }
         ci.dir('it.tests', () => {
             ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
         });
