@@ -1,6 +1,29 @@
 {
   "product-dc59ad50df": {
     "xdm:listPrice": 78.0,
+    "xdm:SKU": "VP05",
+    "xdm:assets": [
+      {
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
+        "repo:id": "image-d816a929e1",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
+        "repo:id": "image-00895991b6",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
+        "repo:id": "image-1ca8c02f71",
+        "@type": "image"
+      },
+      {
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
+        "repo:id": "image-f9f35702e0",
+        "@type": "image"
+      }
+    ],
     "xdm:categories": [
       {
         "repo:id": "category-2212426126",
@@ -27,32 +50,9 @@
         "xdm:asset": null
       }
     ],
-    "xdm:assets": [
-      {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
-        "repo:id": "image-d816a929e1",
-        "@type": "image"
-      },
-      {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
-        "repo:id": "image-00895991b6",
-        "@type": "image"
-      },
-      {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
-        "repo:id": "image-1ca8c02f71",
-        "@type": "image"
-      },
-      {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
-        "repo:id": "image-f9f35702e0",
-        "@type": "image"
-      }
-    ],
-    "xdm:SKU": "VP05",
     "xdm:currencyCode": "USD",
+    "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&quot; inseam</li><li>Machine wash, line dry</li></ul>",
     "dc:title": "Honora Wide Leg Pants",
-    "@type": "venia/components/commerce/product",
-    "dc:description": "<p>The Honora Wide Leg Pants definitely hold their own when it comes to standing out from the crowd. These pants feature a unique design and a varying color palette to make pairing a snap.</p><p>Features:</p><ul><li>Elastic waistband</li><li>Drawstring waist</li><li>Sits just below the waist</li><li>31&#34; inseam</li><li>Machine wash, line dry</li></ul>"
+    "@type": "venia/components/commerce/product"
   }
 }
