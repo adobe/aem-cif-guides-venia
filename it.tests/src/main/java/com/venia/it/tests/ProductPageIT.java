@@ -74,8 +74,8 @@ public class ProductPageIT extends CommerceTestBase {
         // Replace common HTML entities with their regular characters
         return jsonString
             .replace("&#39;", "'")           // apostrophe (numeric)
-            .replace("&quot;", "\"")         // double quote (named)
-            .replace("&#34;", "\"")          // double quote (numeric)
+            .replace("&quot;", "\\\"")       // double quote (named) - escape for JSON
+            .replace("&#34;", "\\\"")        // double quote (numeric) - escape for JSON
             .replace("&amp;", "&")           // ampersand (named)
             .replace("&#38;", "&")           // ampersand (numeric)
             .replace("&lt;", "<")            // less than (named)
