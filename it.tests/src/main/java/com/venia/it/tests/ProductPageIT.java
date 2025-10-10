@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
-import com.venia.it.category.IgnoreOnLts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,8 +33,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -47,45 +44,6 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
-    /**
-     * Compare JSON strings ignoring field order and HTML entity encoding differences
-     */
-    private void assertJsonEqualsIgnoreOrder(String expectedJson, String actualJson, String message) {
-        try {
-            // Normalize HTML entities in both JSON strings
-            String normalizedExpected = normalizeHtmlEntities(expectedJson);
-            String normalizedActual = normalizeHtmlEntities(actualJson);
-            
-            JSONAssert.assertEquals(message, normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
-        } catch (Exception e) {
-            // If JSONAssert fails, provide more detailed error message
-            throw new AssertionError(message + " - Expected: " + expectedJson + " - Actual: " + actualJson, e);
-        }
-    }
-    
-    /**
-     * Normalize HTML entities to regular characters for comparison
-     */
-    private String normalizeHtmlEntities(String jsonString) {
-        if (jsonString == null) {
-            return null;
-        }
-        
-        // Replace common HTML entities with their regular characters
-        return jsonString
-            .replace("&#39;", "'")           // apostrophe (numeric)
-            .replace("&quot;", "\\\"")       // double quote (named) - escape for JSON
-            .replace("&#34;", "\\\"")        // double quote (numeric) - escape for JSON
-            .replace("&amp;", "&")           // ampersand (named)
-            .replace("&#38;", "&")           // ampersand (numeric)
-            .replace("&lt;", "<")            // less than (named)
-            .replace("&#60;", "<")           // less than (numeric)
-            .replace("&gt;", ">")            // greater than (named)
-            .replace("&#62;", ">")           // greater than (numeric)
-            .replace("&nbsp;", " ")          // non-breaking space
-            .replace("&#160;", " ");         // non-breaking space (numeric)
-    }
-
     @Test
     @Category(IgnoreOn65.class)
     public void testProductPageWithSampleData() throws ClientException, IOException {
@@ -95,9 +53,6 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleData65() throws ClientException, IOException {
-        System.out.println("=== ENVIRONMENT DEBUG: Running testProductPageWithSampleData65 ===");
-        System.out.println("=== ENVIRONMENT DEBUG: This test has @Category(IgnoreOnCloud.class) ===");
-        System.out.println("=== ENVIRONMENT DEBUG: Expected to run on: Classic and LTS (excludes Cloud) ===");
         testProductPageWithSampleData("datalayer/simple-product-65.json");
     }
 
@@ -131,7 +86,20 @@ public class ProductPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         String actualJsonString = elements.first().attr("data-cmp-data-layer");
         String expectedJsonString = Utils.getResource(jsonFile);
-        assertJsonEqualsIgnoreOrder(expectedJsonString, actualJsonString, "Expected product datalayer to match sample data, but found differences");
+        
+        // DEBUG LOGGING - Print JSON for comparison
+        System.out.println("=== JSON DEBUG START ===");
+        System.out.println("Test: testProductPageWithSampleData");
+        System.out.println("JSON File: " + jsonFile);
+        System.out.println("--- EXPECTED JSON ---");
+        System.out.println(expectedJsonString);
+        System.out.println("--- ACTUAL JSON ---");
+        System.out.println(actualJsonString);
+        System.out.println("=== JSON DEBUG END ===");
+        
+        JsonNode result = Utils.OBJECT_MAPPER.readTree(actualJsonString);
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(expectedJsonString);
+        assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
@@ -143,9 +111,6 @@ public class ProductPageIT extends CommerceTestBase {
     @Test
     @Category(IgnoreOnCloud.class)
     public void testProductPageWithSampleDataForGroupedProduct65() throws ClientException, IOException {
-        System.out.println("=== ENVIRONMENT DEBUG: Running testProductPageWithSampleDataForGroupedProduct65 ===");
-        System.out.println("=== ENVIRONMENT DEBUG: This test has @Category(IgnoreOnCloud.class) ===");
-        System.out.println("=== ENVIRONMENT DEBUG: Expected to run on: Classic and LTS (excludes Cloud) ===");
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product-65.json");
     }
 
@@ -164,7 +129,20 @@ public class ProductPageIT extends CommerceTestBase {
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
         String actualJsonString = elements.first().attr("data-cmp-data-layer");
         String expectedJsonString = Utils.getResource(jsonFile);
-        assertJsonEqualsIgnoreOrder(expectedJsonString, actualJsonString, "Expected grouped product datalayer to match sample data, but found differences");
+        
+        // DEBUG LOGGING - Print JSON for comparison
+        System.out.println("=== JSON DEBUG START ===");
+        System.out.println("Test: testProductPageWithSampleDataForGroupedProduct");
+        System.out.println("JSON File: " + jsonFile);
+        System.out.println("--- EXPECTED JSON ---");
+        System.out.println(expectedJsonString);
+        System.out.println("--- ACTUAL JSON ---");
+        System.out.println(actualJsonString);
+        System.out.println("=== JSON DEBUG END ===");
+        
+        JsonNode result = Utils.OBJECT_MAPPER.readTree(actualJsonString);
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(expectedJsonString);
+        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
     }
 
     @Test
