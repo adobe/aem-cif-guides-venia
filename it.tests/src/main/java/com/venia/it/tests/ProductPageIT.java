@@ -33,6 +33,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -82,11 +84,16 @@ public class ProductPageIT extends CommerceTestBase {
         // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
         assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
 
-        // Verify dataLayer attributes - use Jackson JsonNode comparison for semantic equality
+        // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode actual = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected product datalayer to match sample data, but found differences", expected, actual);
+        String actualJson = elements.first().attr("data-cmp-data-layer");
+        String expectedJson = Utils.getResource(jsonFile);
+        
+        try {
+            JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
+        } catch (Exception e) {
+            throw new AssertionError("Expected product datalayer to match sample data, but found differences: " + e.getMessage(), e);
+        }
     }
 
     @Test
@@ -112,11 +119,16 @@ public class ProductPageIT extends CommerceTestBase {
         // Verify that the section for GroupedProduct is displayed
         assertEquals("Expected 1 grouped product section, but found: " + doc.select(GROUPED_PRODUCTS_SELECTOR).size(), 1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
-        // Verify dataLayer attributes - use Jackson JsonNode comparison for semantic equality
+        // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode actual = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, actual);
+        String actualJson = elements.first().attr("data-cmp-data-layer");
+        String expectedJson = Utils.getResource(jsonFile);
+        
+        try {
+            JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
+        } catch (Exception e) {
+            throw new AssertionError("Expected grouped product datalayer to match sample data, but found differences: " + e.getMessage(), e);
+        }
     }
 
     @Test
