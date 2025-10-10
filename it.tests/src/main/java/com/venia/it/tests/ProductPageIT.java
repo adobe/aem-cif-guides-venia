@@ -46,6 +46,7 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
+
     @Test
     @Category(IgnoreOn65.class)
     public void testProductPageWithSampleData() throws ClientException, IOException {
@@ -86,8 +87,8 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJson = elements.first().attr("data-cmp-data-layer");
-        String expectedJson = Utils.getResource(jsonFile);
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\"");
         
         try {
             JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
@@ -121,8 +122,8 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJson = elements.first().attr("data-cmp-data-layer");
-        String expectedJson = Utils.getResource(jsonFile);
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\"");
         
         try {
             JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
