@@ -21,6 +21,7 @@ import java.util.List;
 import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
@@ -45,6 +46,13 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_DETAILS_SELECTOR = PRODUCT_SELECTOR + "> .productFullDetail__root";
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
+
+    /**
+     * Normalize HTML entities to regular characters for comparison
+     */
+    private String normalizeHtmlEntities(String jsonString) {
+        return jsonString == null ? null : StringEscapeUtils.unescapeHtml4(jsonString);
+    }
 
     @Test
     @Category(IgnoreOn65.class)
@@ -89,10 +97,13 @@ public class ProductPageIT extends CommerceTestBase {
         String actualJsonString = elements.first().attr("data-cmp-data-layer");
         String expectedJsonString = Utils.getResource(jsonFile);
         
-        // Use JSONAssert with LENIENT mode to ignore field ordering differences
+        // Normalize HTML entities and use JSONAssert LENIENT mode
+        String normalizedExpected = normalizeHtmlEntities(expectedJsonString);
+        String normalizedActual = normalizeHtmlEntities(actualJsonString);
+        
         try {
             JSONAssert.assertEquals("Expected product datalayer to match sample data", 
-                expectedJsonString, actualJsonString, JSONCompareMode.LENIENT);
+                normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
         } catch (Exception e) {
             throw new AssertionError("JSON comparison failed: " + e.getMessage(), e);
         }
@@ -126,10 +137,13 @@ public class ProductPageIT extends CommerceTestBase {
         String actualJsonString = elements.first().attr("data-cmp-data-layer");
         String expectedJsonString = Utils.getResource(jsonFile);
         
-        // Use JSONAssert with LENIENT mode to ignore field ordering differences
+        // Normalize HTML entities and use JSONAssert LENIENT mode
+        String normalizedExpected = normalizeHtmlEntities(expectedJsonString);
+        String normalizedActual = normalizeHtmlEntities(actualJsonString);
+        
         try {
             JSONAssert.assertEquals("Expected grouped product datalayer to match sample data", 
-                expectedJsonString, actualJsonString, JSONCompareMode.LENIENT);
+                normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
         } catch (Exception e) {
             throw new AssertionError("JSON comparison failed: " + e.getMessage(), e);
         }
