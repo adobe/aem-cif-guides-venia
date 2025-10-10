@@ -21,7 +21,6 @@ import java.util.List;
 import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
@@ -34,8 +33,6 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -46,13 +43,6 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_DETAILS_SELECTOR = PRODUCT_SELECTOR + "> .productFullDetail__root";
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
-
-    /**
-     * Normalize HTML entities to regular characters for comparison
-     */
-    private String normalizeHtmlEntities(String jsonString) {
-        return jsonString == null ? null : StringEscapeUtils.unescapeHtml4(jsonString);
-    }
 
     @Test
     @Category(IgnoreOn65.class)
@@ -92,21 +82,11 @@ public class ProductPageIT extends CommerceTestBase {
         // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
         assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
 
-        // Verify dataLayer attributes
+        // Verify dataLayer attributes - use Jackson JsonNode comparison for semantic equality
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJsonString = elements.first().attr("data-cmp-data-layer");
-        String expectedJsonString = Utils.getResource(jsonFile);
-        
-        // Normalize HTML entities and use JSONAssert LENIENT mode
-        String normalizedExpected = normalizeHtmlEntities(expectedJsonString);
-        String normalizedActual = normalizeHtmlEntities(actualJsonString);
-        
-        try {
-            JSONAssert.assertEquals("Expected product datalayer to match sample data", 
-                normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
-        } catch (Exception e) {
-            throw new AssertionError("JSON comparison failed: " + e.getMessage(), e);
-        }
+        JsonNode actual = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
+        assertEquals("Expected product datalayer to match sample data, but found differences", expected, actual);
     }
 
     @Test
@@ -132,21 +112,11 @@ public class ProductPageIT extends CommerceTestBase {
         // Verify that the section for GroupedProduct is displayed
         assertEquals("Expected 1 grouped product section, but found: " + doc.select(GROUPED_PRODUCTS_SELECTOR).size(), 1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
-        // Verify dataLayer attributes
+        // Verify dataLayer attributes - use Jackson JsonNode comparison for semantic equality
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJsonString = elements.first().attr("data-cmp-data-layer");
-        String expectedJsonString = Utils.getResource(jsonFile);
-        
-        // Normalize HTML entities and use JSONAssert LENIENT mode
-        String normalizedExpected = normalizeHtmlEntities(expectedJsonString);
-        String normalizedActual = normalizeHtmlEntities(actualJsonString);
-        
-        try {
-            JSONAssert.assertEquals("Expected grouped product datalayer to match sample data", 
-                normalizedExpected, normalizedActual, JSONCompareMode.LENIENT);
-        } catch (Exception e) {
-            throw new AssertionError("JSON comparison failed: " + e.getMessage(), e);
-        }
+        JsonNode actual = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
+        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
+        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, actual);
     }
 
     @Test
