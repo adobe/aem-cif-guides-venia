@@ -88,8 +88,8 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\"");
-        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\"");
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\\\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\\\"");
         
         try {
             JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
@@ -123,8 +123,8 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\"");
-        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\"");
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\\\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\\\"");
         
         try {
             JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
