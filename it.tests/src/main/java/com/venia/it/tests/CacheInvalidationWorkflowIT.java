@@ -62,6 +62,47 @@ import java.util.Random;
  * 4. Run specific tests using categories: @Category(IgnoreOnCloud.class) for 6.5, @Category(IgnoreOn65.class) for Cloud
  */
 public class CacheInvalidationWorkflowIT extends CommerceTestBase {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
+    
+    static {
+        LOG.info("════════════════════════════════════════════════════════════════");
+        LOG.info("📊 Cache Invalidation Workflow Test Suite Loaded");
+        LOG.info("════════════════════════════════════════════════════════════════");
+        LOG.info("Total tests in this class: 15");
+        LOG.info("");
+        LOG.info("  🟦 AEM 6.5 tests: 5 (marked with @Category({IgnoreOnCloud.class, IgnoreOnLts.class}))");
+        LOG.info("     1. test65_01_ProductSkus");
+        LOG.info("     2. test65_02_CategoryUids");
+        LOG.info("     3. test65_03_CacheNames");
+        LOG.info("     4. test65_04_RegexPatterns");
+        LOG.info("     5. test65_05_InvalidateAll");
+        LOG.info("");
+        LOG.info("  🟨 LTS tests: 5 (marked with @Category({IgnoreOn65.class, IgnoreOnCloud.class}))");
+        LOG.info("     6. testLts_01_ProductSkus");
+        LOG.info("     7. testLts_02_CategoryUids");
+        LOG.info("     8. testLts_03_CacheNames");
+        LOG.info("     9. testLts_04_RegexPatterns");
+        LOG.info("    10. testLts_05_InvalidateAll");
+        LOG.info("");
+        LOG.info("  🟩 Cloud tests: 5 (marked with @Category({IgnoreOn65.class, IgnoreOnLts.class}))");
+        LOG.info("    11. testCloud_01_ProductSkus");
+        LOG.info("    12. testCloud_02_CategoryUids");
+        LOG.info("    13. testCloud_03_CacheNames");
+        LOG.info("    14. testCloud_04_RegexPatterns");
+        LOG.info("    15. testCloud_05_InvalidateAll");
+        LOG.info("");
+        LOG.info("════════════════════════════════════════════════════════════════");
+        LOG.info("📋 Test Execution Rules:");
+        LOG.info("  - Maven with -Dexclude.category=com.venia.it.category.IgnoreOnCloud");
+        LOG.info("    → Skips AEM 6.5 tests → Runs 10 tests (LTS + Cloud)");
+        LOG.info("  - Maven with -Dexclude.category=com.venia.it.category.IgnoreOnLts");
+        LOG.info("    → Skips LTS tests → Runs 10 tests (6.5 + Cloud)");
+        LOG.info("  - Maven with -Dexclude.category=com.venia.it.category.IgnoreOn65");
+        LOG.info("    → Skips Cloud tests → Runs 10 tests (6.5 + LTS)");
+        LOG.info("  - Maven with no exclusion → Runs all 15 tests");
+        LOG.info("════════════════════════════════════════════════════════════════");
+    }
 
     /**
      * Configuration class for cache invalidation tests
@@ -127,7 +168,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(CacheInvalidationWorkflowIT.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Magento Configuration - from environment variables (required)
@@ -279,10 +319,37 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 LOG.info("  ✅ venia-fabric-belts → {}", sharedOriginalState.fabricCategoryOriginal);
             }
             
-            // Clear all caches one final time
+            // Clear all caches one final time to ensure restored data is picked up
             LOG.info("🧹 Clearing all caches one final time...");
-            // Note: Cannot use adminAuthor in static context, but individual tests handle their own cache clearing
-            LOG.info("  ℹ️  Individual tests handle cache clearing during execution");
+            LOG.info("  ℹ️  This ensures restored original names are immediately available in AEM");
+            
+            // Wait for Magento database to persist the changes
+            Thread.sleep(2000);
+            
+            // Clear AEM cache using HTTP client
+            try {
+                String clearPayload = "{\n    \"invalidateAll\": true,\n    \"storePath\": \"" + STORE_PATH + "\"\n}";
+                HttpPost post = new HttpPost("http://localhost:4502" + CACHE_INVALIDATION_ENDPOINT);
+                post.setHeader("Authorization", "Basic YWRtaW46YWRtaW4="); // admin:admin
+                post.setHeader("Content-Type", "application/json");
+                post.setEntity(new StringEntity(clearPayload, ContentType.APPLICATION_JSON));
+                
+                try (CloseableHttpResponse response = httpClient.execute(post)) {
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode == 200) {
+                        LOG.info("  ✅ All AEM caches cleared successfully");
+                    } else {
+                        LOG.warn("  ⚠️  Cache clear returned status {}", statusCode);
+                    }
+                }
+                
+                // Wait for cache invalidation to propagate
+                Thread.sleep(2000);
+                LOG.info("  ✅ Cache invalidation completed and propagated");
+            } catch (Exception e) {
+                LOG.warn("  ⚠️  Could not clear AEM cache: {}", e.getMessage());
+                LOG.warn("  ℹ️  This is non-critical - cache will naturally expire");
+            }
             
             LOG.info("✅ @AfterClass: Cleanup completed successfully");
             LOG.info("ℹ️  This cleanup runs ONCE for all 15 tests (instead of 15 times)");
@@ -777,6 +844,38 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         LOG.info("");
         LOG.info("📍 STEP 5: Verify fresh data (should show NEW names)");
         LOG.info("─────────────────────────────────────────────────");
+        
+        // First, verify Magento has the updated data
+        if (config.includeProduct) {
+            String magentoProductName = getMagentoProductName(config.productSku);
+            LOG.info("   🔍 Magento current state for {}: '{}'", config.productSku, magentoProductName);
+            if (!magentoProductName.equals(testData.updatedProductName)) {
+                LOG.warn("   ⚠️  WARNING: Magento product name mismatch!");
+                LOG.warn("      Expected in Magento: '{}'", testData.updatedProductName);
+                LOG.warn("      Actually in Magento: '{}'", magentoProductName);
+                LOG.warn("      Waiting 2s for Magento consistency...");
+                Thread.sleep(2000);
+                magentoProductName = getMagentoProductName(config.productSku);
+                LOG.info("   🔍 Magento after wait: '{}'", magentoProductName);
+            }
+        }
+        
+        if (config.includeCategory) {
+            JsonNode categoryData = getMagentoCategoryData(testData.categoryId);
+            String magentoCategoryName = categoryData.get("name").asText();
+            LOG.info("   🔍 Magento current state for {}: '{}'", config.categoryUrlKey, magentoCategoryName);
+            if (!magentoCategoryName.equals(testData.updatedCategoryName)) {
+                LOG.warn("   ⚠️  WARNING: Magento category name mismatch!");
+                LOG.warn("      Expected in Magento: '{}'", testData.updatedCategoryName);
+                LOG.warn("      Actually in Magento: '{}'", magentoCategoryName);
+                LOG.warn("      Waiting 2s for Magento consistency...");
+                Thread.sleep(2000);
+                categoryData = getMagentoCategoryData(testData.categoryId);
+                magentoCategoryName = categoryData.get("name").asText();
+                LOG.info("   🔍 Magento after wait: '{}'", magentoCategoryName);
+            }
+        }
+        
         LOG.info("🔍 Checking AEM after cache clear...");
         verifyFreshData(config, testData);
 
