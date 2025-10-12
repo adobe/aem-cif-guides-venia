@@ -22,6 +22,7 @@ import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
+import com.venia.it.category.IgnoreOnLts;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
@@ -45,7 +46,7 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
     @Test
-    @Category(IgnoreOn65.class)
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testProductPageWithSampleData() throws ClientException, IOException {
         testProductPageWithSampleData("datalayer/simple-product.json");
     }
@@ -90,7 +91,7 @@ public class ProductPageIT extends CommerceTestBase {
     }
 
     @Test
-    @Category(IgnoreOn65.class )
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product.json");
     }
