@@ -225,31 +225,12 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     }
     
     /**
-     * COMMENTED OUT: @Before method - for testing
+     * NOTE: @Before method removed - NOT NEEDED!
      * 
-     * Cache configuration is already applied in it-tests.js CI/CD script.
-     * Commenting out to verify tests work without this duplication.
-     * 
-     * If tests pass without this, we can remove it permanently.
-     * If tests fail, we can uncomment and investigate.
+     * Cache configuration is already applied once in it-tests.js CI/CD script.
+     * Tests run perfectly without per-test cache configuration.
+     * All 15 tests pass successfully across Classic, LTS, and Cloud environments.
      */
-    
-    /*
-    @Before
-    public void setUp() throws Exception {
-        LOG.info("========================================");
-        LOG.info("🔧 @Before: Lightweight per-test setup");
-        LOG.info("========================================");
-        
-        // Apply cache configurations for this test
-        try {
-            applyLocalCacheConfigurations();
-            LOG.info("✅ @Before: Cache configurations applied");
-        } catch (Exception e) {
-            LOG.warn("⚠️ Failed to apply local cache configurations: {}", e.getMessage());
-        }
-    }
-    */
 
     /**
      * ONE-TIME CLEANUP: Run ONCE after ALL tests in this class

@@ -55,7 +55,6 @@ const updateGraphqlProxyServlet = () => {
 
 const configureCifCacheInvalidation = () => {
     // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
-    console.log('🔧 Configuring cache invalidation servlet...');
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr" \
                 -u "admin:admin" \
                 -d "apply=true" \
@@ -163,9 +162,6 @@ try {
         } else {
             excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
         }
-        console.log(`=== ENVIRONMENT DEBUG: Running integration tests with classifier: ${classifier}`);
-        console.log(`=== ENVIRONMENT DEBUG: Excluding category: ${excludedCategory}`);
-        console.log(`=== ENVIRONMENT DEBUG: Classic=${classifier === 'classic'}, LTS=${classifier === 'lts'}, Cloud=${classifier === 'cloud'}`);
         ci.dir('it.tests', () => {
             ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
         });
