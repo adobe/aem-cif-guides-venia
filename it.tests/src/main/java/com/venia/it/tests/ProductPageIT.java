@@ -23,7 +23,6 @@ import com.venia.it.category.IgnoreOnCloud;
 import com.venia.it.category.IgnoreOnLts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
-import com.venia.it.category.IgnoreOnLts;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.sling.testing.clients.ClientException;
 import org.apache.sling.testing.clients.SlingHttpResponse;
