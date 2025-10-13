@@ -76,11 +76,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         final boolean includeProduct;
         final boolean includeCategory;
         final boolean fullCycle;
+        final String hardcodedProductName;  // Hardcoded value to restore to
+        final String hardcodedCategoryName; // Hardcoded value to restore to
 
         CacheTestConfig(String testName, String productSku, String categoryUrlKey,
                         String productPageUrl, String categoryPageUrl,
                         CacheInvalidationType invalidationType,
-                        boolean includeProduct, boolean includeCategory, boolean fullCycle) {
+                        boolean includeProduct, boolean includeCategory, boolean fullCycle,
+                        String hardcodedProductName, String hardcodedCategoryName) {
             this.testName = testName;
             this.productSku = productSku;
             this.categoryUrlKey = categoryUrlKey;
@@ -90,6 +93,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             this.includeProduct = includeProduct;
             this.includeCategory = includeCategory;
             this.fullCycle = fullCycle;
+            this.hardcodedProductName = hardcodedProductName;
+            this.hardcodedCategoryName = hardcodedCategoryName;
         }
     }
 
@@ -139,48 +144,18 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     private static final String MAGENTO_REST_URL = MAGENTO_BASE_URL != null ? MAGENTO_BASE_URL + "/rest/V1" : null;
     private static final String MAGENTO_ADMIN_TOKEN = System.getProperty("COMMERCE_INTEGRATION_TOKEN",
             System.getenv("COMMERCE_INTEGRATION_TOKEN"));
-    
-    // AEM Configuration - from environment variables or default
-    private static final String AEM_AUTHOR_URL = System.getProperty("AEM_AUTHOR_URL",
-            System.getenv().getOrDefault("AEM_AUTHOR_URL", "http://localhost:4502"));
-    
     private static final String CACHE_INVALIDATION_ENDPOINT = "/bin/cif/invalidate-cache";
     private static final String STORE_PATH = "/content/venia/us/en";
 
     private static CloseableHttpClient httpClient;
 
-    // Store original state ONCE for ALL tests (class-level, initialized in @BeforeClass)
-    private static class OriginalTestState {
-        // Products
-        String leatherProductOriginal;  // BLT-LEA-001 for 6.5
-        String metalProductOriginal;    // BLT-MET-001 for LTS
-        String fabricProductOriginal;   // BLT-FAB-001 for Cloud
-
-        // Categories
-        String leatherCategoryId;
-        String leatherCategoryOriginal;
-        String metalCategoryId;
-        String metalCategoryOriginal;
-        String fabricCategoryId;
-        String fabricCategoryOriginal;
-    }
-
-    // Shared state across all tests (populated ONCE in @BeforeClass)
-    private static OriginalTestState sharedOriginalState = new OriginalTestState();
-    
-    // Track which tests actually ran (set by first test that executes)
-    private static volatile boolean ran65Tests = false;
-    private static volatile boolean ranLtsTests = false;
-    private static volatile boolean ranCloudTests = false;
-
     /**
-     * ONE-TIME SETUP: Run ONCE before ALL tests in this class
-     * Fetches and stores original product/category names from Magento
+     * ONE-TIME SETUP: Initialize HTTP client
      */
     @BeforeClass
     public static void setupOnce() throws Exception {
         LOG.info("========================================");
-        LOG.info("🔧 @BeforeClass: ONE-TIME SETUP for all tests");
+        LOG.info("🔧 @BeforeClass: Initializing HTTP client");
         LOG.info("========================================");
 
         // Validate required environment variables
@@ -193,142 +168,24 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
         httpClient = HttpClients.createDefault();
         LOG.info("✅ HTTP Client initialized");
-        LOG.info("ℹ️  Relying on previous run's @AfterClass for clean state");
-
-        try {
-            // Get original product names ONCE
-            LOG.info("📝 Fetching original product names from Magento...");
-            sharedOriginalState.leatherProductOriginal = getMagentoProductNameStatic("BLT-LEA-001");
-            LOG.info("  ✅ BLT-LEA-001 (6.5): {}", sharedOriginalState.leatherProductOriginal);
-
-            sharedOriginalState.metalProductOriginal = getMagentoProductNameStatic("BLT-MET-001");
-            LOG.info("  ✅ BLT-MET-001 (LTS): {}", sharedOriginalState.metalProductOriginal);
-
-            sharedOriginalState.fabricProductOriginal = getMagentoProductNameStatic("BLT-FAB-001");
-            LOG.info("  ✅ BLT-FAB-001 (Cloud): {}", sharedOriginalState.fabricProductOriginal);
-
-            // Get original category names ONCE
-            LOG.info("📝 Fetching original category names from Magento...");
-
-            String leatherUid = getCategoryUidFromUrlKeyStatic("venia-leather-belts");
-            sharedOriginalState.leatherCategoryId = new String(java.util.Base64.getDecoder().decode(leatherUid), "UTF-8");
-            JsonNode leatherData = getMagentoCategoryDataStatic(sharedOriginalState.leatherCategoryId);
-            sharedOriginalState.leatherCategoryOriginal = leatherData.get("name").asText();
-            LOG.info("  ✅ venia-leather-belts (6.5): {}", sharedOriginalState.leatherCategoryOriginal);
-
-            String metalUid = getCategoryUidFromUrlKeyStatic("venia-metal-belts");
-            sharedOriginalState.metalCategoryId = new String(java.util.Base64.getDecoder().decode(metalUid), "UTF-8");
-            JsonNode metalData = getMagentoCategoryDataStatic(sharedOriginalState.metalCategoryId);
-            sharedOriginalState.metalCategoryOriginal = metalData.get("name").asText();
-            LOG.info("  ✅ venia-metal-belts (LTS): {}", sharedOriginalState.metalCategoryOriginal);
-
-            String fabricUid = getCategoryUidFromUrlKeyStatic("venia-fabric-belts");
-            sharedOriginalState.fabricCategoryId = new String(java.util.Base64.getDecoder().decode(fabricUid), "UTF-8");
-            JsonNode fabricData = getMagentoCategoryDataStatic(sharedOriginalState.fabricCategoryId);
-            sharedOriginalState.fabricCategoryOriginal = fabricData.get("name").asText();
-            LOG.info("  ✅ venia-fabric-belts (Cloud): {}", sharedOriginalState.fabricCategoryOriginal);
-
-            LOG.info("✅ @BeforeClass: Original state saved successfully");
-            LOG.info("ℹ️  This setup runs ONCE for all 15 tests (instead of 15 times)");
-        } catch (Exception e) {
-            LOG.error("❌ Failed to get original state: {}", e.getMessage());
-            throw e;
-        }
+        LOG.info("ℹ️  Each test is self-contained and handles its own cleanup");
     }
 
     /**
-     * NOTE: @Before method removed - NOT NEEDED!
-     *
-     * Cache configuration is already applied once in it-tests.js CI/CD script.
-     * Tests run perfectly without per-test cache configuration.
-     * All 15 tests pass successfully across Classic, LTS, and Cloud environments.
-     */
-
-    /**
-     * ONE-TIME CLEANUP: Run ONCE after ALL tests in this class
-     * Restores all products/categories to their original state
+     * ONE-TIME CLEANUP: Close HTTP client
      */
     @AfterClass
     public static void cleanupOnce() throws Exception {
         LOG.info("========================================");
-        LOG.info("🧹 @AfterClass: ONE-TIME CLEANUP after all tests");
+        LOG.info("🧹 @AfterClass: Closing HTTP client");
         LOG.info("========================================");
 
-        try {
-            // Restore ALL products to original names
-            LOG.info("🔄 Restoring all products to original names...");
-
-            if (sharedOriginalState.leatherProductOriginal != null) {
-                updateMagentoProductNameStatic("BLT-LEA-001", sharedOriginalState.leatherProductOriginal);
-                LOG.info("  ✅ BLT-LEA-001 → {}", sharedOriginalState.leatherProductOriginal);
-            }
-
-            if (sharedOriginalState.metalProductOriginal != null) {
-                updateMagentoProductNameStatic("BLT-MET-001", sharedOriginalState.metalProductOriginal);
-                LOG.info("  ✅ BLT-MET-001 → {}", sharedOriginalState.metalProductOriginal);
-            }
-
-            if (sharedOriginalState.fabricProductOriginal != null) {
-                updateMagentoProductNameStatic("BLT-FAB-001", sharedOriginalState.fabricProductOriginal);
-                LOG.info("  ✅ BLT-FAB-001 → {}", sharedOriginalState.fabricProductOriginal);
-            }
-
-            // Restore ALL categories to original names
-            LOG.info("🔄 Restoring all categories to original names...");
-
-            if (sharedOriginalState.leatherCategoryId != null && sharedOriginalState.leatherCategoryOriginal != null) {
-                updateMagentoCategoryNameStatic(sharedOriginalState.leatherCategoryId, sharedOriginalState.leatherCategoryOriginal);
-                LOG.info("  ✅ venia-leather-belts → {}", sharedOriginalState.leatherCategoryOriginal);
-            }
-
-            if (sharedOriginalState.metalCategoryId != null && sharedOriginalState.metalCategoryOriginal != null) {
-                updateMagentoCategoryNameStatic(sharedOriginalState.metalCategoryId, sharedOriginalState.metalCategoryOriginal);
-                LOG.info("  ✅ venia-metal-belts → {}", sharedOriginalState.metalCategoryOriginal);
-            }
-
-            if (sharedOriginalState.fabricCategoryId != null && sharedOriginalState.fabricCategoryOriginal != null) {
-                updateMagentoCategoryNameStatic(sharedOriginalState.fabricCategoryId, sharedOriginalState.fabricCategoryOriginal);
-                LOG.info("  ✅ venia-fabric-belts → {}", sharedOriginalState.fabricCategoryOriginal);
-            }
-
-            // Clear environment-specific caches (for parallel execution safety)
-            LOG.info("🧹 Clearing environment-specific caches...");
-            LOG.info("  ℹ️  Only clearing caches for tests that actually ran");
-            
-            // Clear only the products/categories used by this test run
-            if (ran65Tests && sharedOriginalState.leatherProductOriginal != null) {
-                clearSpecificCachesStatic("BLT-LEA-001", sharedOriginalState.leatherCategoryId);
-                LOG.info("  ✅ Cleared 6.5 caches (Leather products - BLT-LEA-001)");
-            } else if (!ran65Tests) {
-                LOG.info("  ⏭️  Skipped 6.5 caches (tests didn't run)");
-            }
-            
-            if (ranLtsTests && sharedOriginalState.metalProductOriginal != null) {
-                clearSpecificCachesStatic("BLT-MET-001", sharedOriginalState.metalCategoryId);
-                LOG.info("  ✅ Cleared LTS caches (Metal products - BLT-MET-001)");
-            } else if (!ranLtsTests) {
-                LOG.info("  ⏭️  Skipped LTS caches (tests didn't run)");
-            }
-            
-            if (ranCloudTests && sharedOriginalState.fabricProductOriginal != null) {
-                clearSpecificCachesStatic("BLT-FAB-001", sharedOriginalState.fabricCategoryId);
-                LOG.info("  ✅ Cleared Cloud caches (Fabric products - BLT-FAB-001)");
-            } else if (!ranCloudTests) {
-                LOG.info("  ⏭️  Skipped Cloud caches (tests didn't run)");
-            }
-
-            LOG.info("✅ @AfterClass: Cleanup completed successfully");
-            LOG.info("ℹ️  This cleanup runs ONCE for all 15 tests (instead of 15 times)");
-        } catch (Exception e) {
-            LOG.error("❌ @AfterClass: Cleanup FAILED: {}", e.getMessage());
-        } finally {
-            // Always close HTTP client
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (Exception e) {
-                    LOG.warn("Failed to close HTTP client: {}", e.getMessage());
-                }
+        if (httpClient != null) {
+            try {
+                httpClient.close();
+                LOG.info("✅ HTTP client closed");
+            } catch (Exception e) {
+                LOG.warn("Failed to close HTTP client: {}", e.getMessage());
             }
         }
     }
@@ -343,7 +200,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Test
     @Category({IgnoreOnCloud.class, IgnoreOnLts.class})
     public void test65_01_ProductSkus() throws Exception {
-        ran65Tests = true; // Mark that 6.5 tests executed
         LOG.info("========================================");
         LOG.info("🟦 AEM 6.5 Test 1/5: productSkus Method");
         LOG.info("   Product: BLT-LEA-001 (Leather Belt)");
@@ -357,7 +213,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 null,
                 CacheInvalidationType.PRODUCT_SKUS,
-                true, false, true
+                true, false, true,
+                "Leather Chain Belt",  // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ AEM 6.5 Test 1/5 PASSED: productSkus method validated");
@@ -382,7 +240,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 null,
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 CacheInvalidationType.CATEGORY_UIDS,
-                false, true, true
+                false, true, true,
+                null,                   // No product
+                "Leather Belts"         // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ AEM 6.5 Test 2/5 PASSED: categoryUids method validated");
@@ -407,7 +267,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 null,
                 CacheInvalidationType.CACHE_NAMES,
-                true, false, true
+                true, false, true,
+                "Leather Chain Belt",   // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ AEM 6.5 Test 3/5 PASSED: cacheNames method validated");
@@ -433,7 +295,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 CacheInvalidationType.REGEX_PATTERNS,
-                true, true, true
+                true, true, true,
+                "Leather Chain Belt",   // Hardcoded product name
+                "Leather Belts"         // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ AEM 6.5 Test 4/5 PASSED: regexPatterns method validated");
@@ -459,7 +323,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-leather-belts.html",
                 CacheInvalidationType.INVALIDATE_ALL,
-                true, true, true
+                true, true, true,
+                "Leather Chain Belt",   // Hardcoded product name
+                "Leather Belts"         // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ AEM 6.5 Test 5/5 PASSED: invalidateAll method validated");
@@ -476,7 +342,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Test
     @Category({IgnoreOn65.class, IgnoreOnCloud.class})
     public void testLts_01_ProductSkus() throws Exception {
-        ranLtsTests = true; // Mark that LTS tests executed
         LOG.info("========================================");
         LOG.info("🟨 LTS Test 1/5: productSkus Method");
         LOG.info("   Product: BLT-MET-001 (Metal Belt)");
@@ -490,7 +355,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 null,
                 CacheInvalidationType.PRODUCT_SKUS,
-                true, false, true
+                true, false, true,
+                "Metal Chain Belt",     // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ LTS Test 1/5 PASSED: productSkus method validated");
@@ -515,7 +382,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 null,
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 CacheInvalidationType.CATEGORY_UIDS,
-                false, true, true
+                false, true, true,
+                null,                   // No product
+                "Metal Belts"           // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ LTS Test 2/5 PASSED: categoryUids method validated");
@@ -540,7 +409,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 null,
                 CacheInvalidationType.CACHE_NAMES,
-                true, false, true
+                true, false, true,
+                "Metal Chain Belt",     // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ LTS Test 3/5 PASSED: cacheNames method validated");
@@ -566,7 +437,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 CacheInvalidationType.REGEX_PATTERNS,
-                true, true, true
+                true, true, true,
+                "Metal Chain Belt",     // Hardcoded product name
+                "Metal Belts"           // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ LTS Test 4/5 PASSED: regexPatterns method validated");
@@ -592,7 +465,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-metal-belts.html",
                 CacheInvalidationType.INVALIDATE_ALL,
-                true, true, true
+                true, true, true,
+                "Metal Chain Belt",     // Hardcoded product name
+                "Metal Belts"           // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ LTS Test 5/5 PASSED: invalidateAll method validated");
@@ -609,7 +484,6 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
     @Test
     @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testCloud_01_ProductSkus() throws Exception {
-        ranCloudTests = true; // Mark that Cloud tests executed
         LOG.info("========================================");
         LOG.info("🟩 Cloud Test 1/5: productSkus Method");
         LOG.info("   Product: BLT-FAB-001 (Fabric Belt)");
@@ -623,7 +497,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 null,
                 CacheInvalidationType.PRODUCT_SKUS,
-                true, false, true
+                true, false, true,
+                "Fabric Chain Belt",    // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ Cloud Test 1/5 PASSED: productSkus method validated");
@@ -648,7 +524,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 null,
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 CacheInvalidationType.CATEGORY_UIDS,
-                false, true, true
+                false, true, true,
+                null,                   // No product
+                "Fabric Belts"          // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ Cloud Test 2/5 PASSED: categoryUids method validated");
@@ -673,7 +551,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 null,
                 CacheInvalidationType.CACHE_NAMES,
-                true, false, true
+                true, false, true,
+                "Fabric Chain Belt",    // Hardcoded product name
+                null                    // No category
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ Cloud Test 3/5 PASSED: cacheNames method validated");
@@ -699,7 +579,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 CacheInvalidationType.REGEX_PATTERNS,
-                true, true, true
+                true, true, true,
+                "Fabric Chain Belt",    // Hardcoded product name
+                "Fabric Belts"          // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ Cloud Test 4/5 PASSED: regexPatterns method validated");
@@ -725,7 +607,9 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 "/content/venia/us/en/products/category-page.html/venia-accessories/venia-belts/venia-fabric-belts.html",
                 CacheInvalidationType.INVALIDATE_ALL,
-                true, true, true
+                true, true, true,
+                "Fabric Chain Belt",    // Hardcoded product name
+                "Fabric Belts"          // Hardcoded category name
         );
         runCacheInvalidationTest(config);
         LOG.info("✅ Cloud Test 5/5 PASSED: invalidateAll method validated");
@@ -738,13 +622,14 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
 
     /**
      * Common cache invalidation test workflow
-     *
-     * Note: Original state is saved in @Before and restored in @After automatically.
-     * No need to track cleanup data here!
+     * 
+     * CRITICAL: Uses try-finally to ensure cleanup (Steps 6-8) ALWAYS runs,
+     * even if test fails at any step (1-5)
      */
     private void runCacheInvalidationTest(CacheTestConfig config) throws Exception {
 
         TestData testData = new TestData(generateRandomString(6));
+        String payload = null;  // Declared here so it's accessible in finally block
 
         LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         LOG.info("📋 TEST: {}", config.testName);
@@ -753,77 +638,160 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         if (config.includeCategory) LOG.info("📁 CATEGORY: {}", config.categoryUrlKey);
         LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        // STEP 1: Get current data from AEM (to establish baseline)
-        LOG.info("");
-        LOG.info("📍 STEP 1: Get current cached data from AEM");
-        LOG.info("─────────────────────────────────────────────────");
+        try {
+            // ========== TEST PHASE (Steps 1-5) ==========
+            
+            // STEP 1: Get current data from AEM (to establish baseline)
+            LOG.info("");
+            LOG.info("📍 STEP 1: Get current cached data from AEM");
+            LOG.info("─────────────────────────────────────────────────");
 
-        if (config.includeProduct) {
-            testData.setOriginalProductName(getCurrentProductNameFromAEMPage(config.productPageUrl, config.productSku));
-            LOG.info("✅ Product SKU: {}", config.productSku);
-            LOG.info("✅ Current AEM cached name: '{}'", testData.originalProductName);
+            if (config.includeProduct) {
+                testData.setOriginalProductName(getCurrentProductNameFromAEMPage(config.productPageUrl, config.productSku));
+                LOG.info("✅ Product SKU: {}", config.productSku);
+                LOG.info("✅ Current AEM cached name: '{}'", testData.originalProductName);
+            }
+
+            if (config.includeCategory) {
+                testData.categoryUid = getCategoryUidFromUrlKey(config.categoryUrlKey);
+                testData.categoryId = new String(java.util.Base64.getDecoder().decode(testData.categoryUid), "UTF-8");
+                testData.setOriginalCategoryName(getCurrentCategoryNameFromAEMPage(config.categoryPageUrl));
+                LOG.info("✅ Category URL Key: {}", config.categoryUrlKey);
+                LOG.info("✅ Current AEM cached name: '{}'", testData.originalCategoryName);
+            }
+
+            // STEP 2: Update data in Magento
+            LOG.info("");
+            LOG.info("📍 STEP 2: Update names in Magento backend");
+            LOG.info("─────────────────────────────────────────────────");
+
+            if (config.includeProduct) {
+                LOG.info("🔄 Updating product {} in Magento...", config.productSku);
+                LOG.info("   Old name: '{}'", testData.originalProductName);
+                LOG.info("   New name: '{}'", testData.updatedProductName);
+                updateMagentoProductName(config.productSku, testData.updatedProductName);
+                LOG.info("✅ Product updated in Magento backend");
+            }
+
+            if (config.includeCategory) {
+                LOG.info("🔄 Updating category {} in Magento...", config.categoryUrlKey);
+                LOG.info("   Old name: '{}'", testData.originalCategoryName);
+                LOG.info("   New name: '{}'", testData.updatedCategoryName);
+                updateMagentoCategoryName(testData.categoryId, testData.updatedCategoryName);
+                LOG.info("✅ Category updated in Magento backend");
+            }
+
+            // STEP 3: Verify cache is working (shows old data)
+            LOG.info("");
+            LOG.info("📍 STEP 3: Verify cache is working (should show OLD names)");
+            LOG.info("─────────────────────────────────────────────────");
+            LOG.info("🔍 Checking AEM after Magento update...");
+            verifyCacheWorking(config, testData);
+
+            // STEP 4: Perform cache invalidation
+            LOG.info("");
+            LOG.info("📍 STEP 4: Clear cache using {} method", config.invalidationType);
+            LOG.info("─────────────────────────────────────────────────");
+            payload = generateCacheInvalidationPayload(config, testData.categoryUid);
+            LOG.info("📤 Payload: {}", payload.replace("\n", " "));
+            performCacheInvalidation(payload, config.invalidationType.toString());
+            LOG.info("✅ Cache invalidation request sent");
+
+            // STEP 5: Verify fresh data shows
+            LOG.info("");
+            LOG.info("📍 STEP 5: Verify fresh data (should show NEW names)");
+            LOG.info("─────────────────────────────────────────────────");
+            LOG.info("🔍 Checking AEM after cache clear...");
+            verifyFreshData(config, testData);
+
+            LOG.info("");
+            LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            LOG.info("✅ TEST PASSED: {}", config.testName);
+            LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            LOG.info("");
+
+        } finally {
+            // ========== CLEANUP PHASE (Steps 6-8) - ALWAYS RUNS ==========
+            LOG.info("");
+            LOG.info("🔒 CLEANUP: Restoring to hardcoded values (runs even on test failure)");
+            LOG.info("─────────────────────────────────────────────────");
+
+            try {
+                // STEP 6: Restore to hardcoded original values
+                LOG.info("");
+                LOG.info("📍 STEP 6: Restore to hardcoded original values");
+                LOG.info("─────────────────────────────────────────────────");
+
+                if (config.includeProduct && config.hardcodedProductName != null) {
+                    LOG.info("🔄 Restoring product {} to hardcoded value...", config.productSku);
+                    LOG.info("   Hardcoded name: '{}'", config.hardcodedProductName);
+                    updateMagentoProductName(config.productSku, config.hardcodedProductName);
+                    LOG.info("✅ Product restored to hardcoded value");
+                }
+
+                if (config.includeCategory && config.hardcodedCategoryName != null) {
+                    LOG.info("🔄 Restoring category {} to hardcoded value...", config.categoryUrlKey);
+                    LOG.info("   Hardcoded name: '{}'", config.hardcodedCategoryName);
+                    updateMagentoCategoryName(testData.categoryId, config.hardcodedCategoryName);
+                    LOG.info("✅ Category restored to hardcoded value");
+                }
+
+                // STEP 7: Clear cache again
+                LOG.info("");
+                LOG.info("📍 STEP 7: Clear cache again to fetch hardcoded values");
+                LOG.info("─────────────────────────────────────────────────");
+                if (payload == null) {
+                    // If test failed before payload was generated, regenerate it
+                    payload = generateCacheInvalidationPayload(config, testData.categoryUid);
+                }
+                LOG.info("📤 Payload: {}", payload.replace("\n", " "));
+                performCacheInvalidation(payload, config.invalidationType.toString());
+                LOG.info("✅ Cache invalidation request sent");
+
+                // STEP 8: Verify hardcoded values show
+                LOG.info("");
+                LOG.info("📍 STEP 8: Verify hardcoded values (cleanup verification)");
+                LOG.info("─────────────────────────────────────────────────");
+                LOG.info("🔍 Checking AEM after restoration...");
+                
+                if (config.includeProduct && config.hardcodedProductName != null) {
+                    String currentProduct = getCurrentProductNameFromAEMPage(config.productPageUrl, config.productSku);
+                    LOG.info("   Product {}: AEM shows '{}'", config.productSku, currentProduct);
+                    LOG.info("   Expected (hardcoded): '{}'", config.hardcodedProductName);
+                    if (currentProduct.equals(config.hardcodedProductName)) {
+                        LOG.info("   ✅ Product restored to hardcoded value");
+                    } else {
+                        LOG.warn("   ⚠️ Product NOT showing hardcoded value (cleanup verification failed)");
+                        LOG.warn("      Expected: '{}'", config.hardcodedProductName);
+                        LOG.warn("      Got: '{}'", currentProduct);
+                        // Don't throw here - we're in cleanup, log warning only
+                    }
+                }
+
+                if (config.includeCategory && config.hardcodedCategoryName != null) {
+                    String currentCategory = getCurrentCategoryNameFromAEMPage(config.categoryPageUrl);
+                    LOG.info("   Category {}: AEM shows '{}'", config.categoryUrlKey, currentCategory);
+                    LOG.info("   Expected (hardcoded): '{}'", config.hardcodedCategoryName);
+                    if (currentCategory.equals(config.hardcodedCategoryName)) {
+                        LOG.info("   ✅ Category restored to hardcoded value");
+                    } else {
+                        LOG.warn("   ⚠️ Category NOT showing hardcoded value (cleanup verification failed)");
+                        LOG.warn("      Expected: '{}'", config.hardcodedCategoryName);
+                        LOG.warn("      Got: '{}'", currentCategory);
+                        // Don't throw here - we're in cleanup, log warning only
+                    }
+                }
+
+                LOG.info("");
+                LOG.info("✅ CLEANUP COMPLETED: Hardcoded values restored");
+                LOG.info("");
+
+            } catch (Exception cleanupException) {
+                LOG.error("❌ CLEANUP FAILED: {}", cleanupException.getMessage());
+                LOG.error("   Test may have left Magento in dirty state!");
+                // Don't rethrow - we want the original test failure (if any) to be reported
+            }
         }
-
-        if (config.includeCategory) {
-            testData.categoryUid = getCategoryUidFromUrlKey(config.categoryUrlKey);
-            testData.categoryId = new String(java.util.Base64.getDecoder().decode(testData.categoryUid), "UTF-8");
-            testData.setOriginalCategoryName(getCurrentCategoryNameFromAEMPage(config.categoryPageUrl));
-            LOG.info("✅ Category URL Key: {}", config.categoryUrlKey);
-            LOG.info("✅ Current AEM cached name: '{}'", testData.originalCategoryName);
-        }
-
-        // STEP 2: Update data in Magento
-        LOG.info("");
-        LOG.info("📍 STEP 2: Update names in Magento backend");
-        LOG.info("─────────────────────────────────────────────────");
-
-        if (config.includeProduct) {
-            LOG.info("🔄 Updating product {} in Magento...", config.productSku);
-            LOG.info("   Old name: '{}'", testData.originalProductName);
-            LOG.info("   New name: '{}'", testData.updatedProductName);
-            updateMagentoProductName(config.productSku, testData.updatedProductName);
-            LOG.info("✅ Product updated in Magento backend");
-        }
-
-        if (config.includeCategory) {
-            LOG.info("🔄 Updating category {} in Magento...", config.categoryUrlKey);
-            LOG.info("   Old name: '{}'", testData.originalCategoryName);
-            LOG.info("   New name: '{}'", testData.updatedCategoryName);
-            updateMagentoCategoryName(testData.categoryId, testData.updatedCategoryName);
-            LOG.info("✅ Category updated in Magento backend");
-        }
-
-        // STEP 3: Verify cache is working (shows old data)
-        LOG.info("");
-        LOG.info("📍 STEP 3: Verify cache is working (should show OLD names)");
-        LOG.info("─────────────────────────────────────────────────");
-        LOG.info("🔍 Checking AEM after Magento update...");
-        verifyCacheWorking(config, testData);
-
-        // STEP 4: Perform cache invalidation
-        LOG.info("");
-        LOG.info("📍 STEP 4: Clear cache using {} method", config.invalidationType);
-        LOG.info("─────────────────────────────────────────────────");
-        String payload = generateCacheInvalidationPayload(config, testData.categoryUid);
-        LOG.info("📤 Payload: {}", payload.replace("\n", " "));
-        performCacheInvalidation(payload, config.invalidationType.toString());
-        LOG.info("✅ Cache invalidation request sent");
-
-        // STEP 5: Verify fresh data shows
-        LOG.info("");
-        LOG.info("📍 STEP 5: Verify fresh data (should show NEW names)");
-        LOG.info("─────────────────────────────────────────────────");
-        LOG.info("🔍 Checking AEM after cache clear...");
-        verifyFreshData(config, testData);
-
-        LOG.info("");
-        LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        LOG.info("✅ TEST PASSED: {}", config.testName);
-        LOG.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        LOG.info("");
-
-        // Note: @After tearDown() will automatically restore ALL products/categories to original state!
-        // No need for cleanup code here - whether test passes or fails, @After always runs!
     }
 
     /**
@@ -965,7 +933,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         // Redirect to new unified method
         CacheTestConfig config = new CacheTestConfig(
                 environment, productSku, null, categoryPageUrl, null,
-                CacheInvalidationType.PRODUCT_SKUS, true, false, true
+                CacheInvalidationType.PRODUCT_SKUS, true, false, true,
+                null, null  // No hardcoded values for legacy method
         );
         runCacheInvalidationTest(config);
     }
@@ -978,7 +947,8 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
         // Redirect to new unified method
         CacheTestConfig config = new CacheTestConfig(
                 environment, null, categoryUrlKey, null, categoryPageUrl,
-                CacheInvalidationType.CATEGORY_UIDS, false, true, true
+                CacheInvalidationType.CATEGORY_UIDS, false, true, true,
+                null, null  // No hardcoded values for legacy method
         );
         runCacheInvalidationTest(config);
     }
@@ -2262,81 +2232,5 @@ public class CacheInvalidationWorkflowIT extends CommerceTestBase {
             }
         }
         Thread.sleep(2000); // Wait for Magento to process
-    }
-
-    /**
-     * Clear all AEM caches (static version for @BeforeClass)
-     * Used only at the START to ensure clean state before fetching original data
-     */
-    private static void clearAllCachesStatic() throws Exception {
-        String url = AEM_AUTHOR_URL + CACHE_INVALIDATION_ENDPOINT;
-        HttpPost request = new HttpPost(url);
-        
-        // Set basic auth (admin:admin)
-        String auth = java.util.Base64.getEncoder().encodeToString("admin:admin".getBytes());
-        request.setHeader("Authorization", "Basic " + auth);
-        request.setHeader("Content-Type", "application/json");
-
-        // Payload to invalidate all caches
-        String payload = String.format("{\"invalidateAll\": true, \"storePath\": \"%s\"}", STORE_PATH);
-        request.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                LOG.warn("⚠️ Cache clear returned status: {}", statusCode);
-            }
-        }
-        Thread.sleep(2000); // Wait for cache to clear
-    }
-
-    /**
-     * Clear specific product/category caches (for @AfterClass)
-     * This is SAFE for parallel execution as it only clears specific SKUs
-     * 
-     * @param productSku Product SKU to clear (e.g., "BLT-LEA-001")
-     * @param categoryId Category ID to clear (decoded from UID)
-     */
-    private static void clearSpecificCachesStatic(String productSku, String categoryId) throws Exception {
-        if (productSku == null && categoryId == null) {
-            return; // Nothing to clear
-        }
-
-        String url = AEM_AUTHOR_URL + CACHE_INVALIDATION_ENDPOINT;
-        HttpPost request = new HttpPost(url);
-        
-        // Set basic auth (admin:admin)
-        String auth = java.util.Base64.getEncoder().encodeToString("admin:admin".getBytes());
-        request.setHeader("Authorization", "Basic " + auth);
-        request.setHeader("Content-Type", "application/json");
-
-        // Build payload with specific SKU and category UID
-        StringBuilder payloadBuilder = new StringBuilder();
-        payloadBuilder.append("{");
-        
-        if (productSku != null) {
-            payloadBuilder.append("\"productSkus\": [\"").append(productSku).append("\"]");
-        }
-        
-        if (categoryId != null) {
-            if (productSku != null) {
-                payloadBuilder.append(", ");
-            }
-            // Encode category ID back to UID
-            String categoryUid = java.util.Base64.getEncoder().encodeToString(categoryId.getBytes("UTF-8"));
-            payloadBuilder.append("\"categoryUids\": [\"").append(categoryUid).append("\"]");
-        }
-        
-        payloadBuilder.append(", \"storePath\": \"").append(STORE_PATH).append("\"}");
-        
-        request.setEntity(new StringEntity(payloadBuilder.toString(), ContentType.APPLICATION_JSON));
-
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                LOG.warn("⚠️ Specific cache clear returned status: {}", statusCode);
-            }
-        }
-        Thread.sleep(1000); // Brief wait for cache to clear
     }
 }
