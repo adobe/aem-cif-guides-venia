@@ -19,7 +19,7 @@ import { shape, string, func } from 'prop-types';
 import { useSummary } from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/useSummary';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/summary.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/summary.module.css';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
 import summaryPayments from './summaryPaymentCollection';
 

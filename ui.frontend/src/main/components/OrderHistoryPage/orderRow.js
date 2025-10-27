@@ -23,7 +23,7 @@ import Icon from '@magento/venia-ui/lib/components/Icon';
 import CollapsedImageGallery from '@magento/venia-ui/lib/components/OrderHistoryPage/collapsedImageGallery';
 import OrderProgressBar from '@magento/venia-ui/lib/components/OrderHistoryPage/orderProgressBar';
 import OrderDetails from './OrderDetails';
-import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/orderRow.css';
+import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/orderRow.module.css';
 
 const OrderRow = props => {
     const { order } = props;

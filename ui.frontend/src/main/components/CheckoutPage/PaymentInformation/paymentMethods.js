@@ -21,8 +21,8 @@ import { usePaymentMethods } from '@magento/peregrine/lib/talons/CheckoutPage/Pa
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import RadioGroup from '@magento/venia-ui/lib/components/RadioGroup';
 import Radio from '@magento/venia-ui/lib/components/RadioGroup/radio';
-import paymentMethodOperations from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentMethods.gql';
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentMethods.css';
+import paymentMethodOperations from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/paymentMethods.gql.js';
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/paymentMethods.module.css';
 import payments from './paymentMethodCollection';
 
 const PaymentMethods = props => {

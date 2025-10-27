@@ -17,7 +17,7 @@ import { string, func, arrayOf, shape, number, oneOf } from 'prop-types';
 import Item from './item';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
-import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/ProductList/productList.css';
+import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/ProductList/productList.module.css';
 
 const ProductList = props => {
     const { items, handleRemoveItem, classes: propClasses, closeMiniCart, configurableThumbnailSource } = props;

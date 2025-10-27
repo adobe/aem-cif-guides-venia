@@ -24,10 +24,10 @@ import ProductOptions from '@magento/venia-ui/lib/components/LegacyMiniCart/prod
 import Section from '@magento/venia-ui/lib/components/LegacyMiniCart/section';
 import Quantity from '@magento/venia-ui/lib/components/CartPage/ProductListing/quantity';
 
-import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/product.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/product.module.css';
 
-import { CartPageFragment } from '@magento/venia-ui/lib/components/CartPage/cartPageFragments.gql';
-import { AvailableShippingMethodsCartFragment } from '@magento/venia-ui/lib/components/CartPage/PriceAdjustments/ShippingMethods/shippingMethodsFragments.gql';
+import { CartPageFragment } from '@magento/peregrine/lib/talons/CartPage/cartPageFragments.gql.js';
+import { AvailableShippingMethodsCartFragment } from '@magento/peregrine/lib/talons/CartPage/PriceAdjustments/ShippingMethods/shippingMethodsFragments.gql.js';
 
 const IMAGE_SIZE = 100;
 

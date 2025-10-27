@@ -18,7 +18,7 @@ import { bool, func } from 'prop-types';
 
 import { useEditModal } from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/useEditModal';
 import Dialog from '@magento/venia-ui/lib/components/Dialog';
-import editModalOperations from '@magento/venia-ui/lib/components/CheckoutPage/PaymentInformation/editModal.gql';
+import editModalOperations from '@magento/peregrine/lib/talons/CheckoutPage/PaymentInformation/editModal.gql.js';
 import editablePayments from './editablePaymentCollection';
 
 const EditModal = props => {

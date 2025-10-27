@@ -18,7 +18,7 @@ import { FormattedMessage } from 'react-intl';
 import PriceSummary from '../PriceSummary';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderSummary/orderSummary.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderSummary/orderSummary.module.css';
 
 const OrderSummary = props => {
     const classes = useStyle(defaultClasses, props.classes);

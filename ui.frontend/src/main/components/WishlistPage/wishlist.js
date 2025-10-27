@@ -22,7 +22,7 @@ import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator'
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import WishlistItems from '@magento/venia-ui/lib/components/WishlistPage/wishlistItems';
 import Button from '@magento/venia-ui/lib/components/Button';
-import defaultClasses from '@magento/venia-ui/lib/components/WishlistPage/wishlist.css';
+import defaultClasses from '@magento/venia-ui/lib/components/WishlistPage/wishlist.module.css';
 import ActionMenu from '@magento/venia-ui/lib/components/WishlistPage/actionMenu';
 import operations from './wishlist.gql';
 

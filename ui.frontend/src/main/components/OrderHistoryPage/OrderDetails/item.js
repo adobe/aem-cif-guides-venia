@@ -20,7 +20,7 @@ import Button from '@magento/venia-ui/lib/components/Button';
 import ProductOptions from '@magento/venia-ui/lib/components/LegacyMiniCart/productOptions';
 import Image from '@magento/venia-ui/lib/components/Image';
 import Price from '@magento/venia-ui/lib/components/Price';
-import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/item.css';
+import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/item.module.css';
 import PlaceholderImage from '@magento/venia-ui/lib/components/Image/placeholderImage';
 
 const Item = props => {

@@ -35,7 +35,7 @@ import ShippingInformation from '@magento/venia-ui/lib/components/CheckoutPage/S
 import ItemsReview from '@magento/venia-ui/lib/components/CheckoutPage/ItemsReview';
 import ScrollAnchor from '@magento/venia-ui/lib/components/ScrollAnchor/scrollAnchor';
 
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/checkoutPage.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/checkoutPage.module.css';
 
 // Overrides
 import OrderSummary from './OrderSummary';

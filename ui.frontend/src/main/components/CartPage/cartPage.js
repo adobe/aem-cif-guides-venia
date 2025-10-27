@@ -24,8 +24,8 @@ import StockStatusMessage from '@magento/venia-ui/lib/components/StockStatusMess
 import PriceAdjustments from '@magento/venia-ui/lib/components/CartPage/PriceAdjustments';
 import ProductListing from './ProductListing';
 import PriceSummary from './PriceSummary';
-import defaultClasses from '@magento/venia-ui/lib/components/CartPage/cartPage.css';
-import { GET_CART_DETAILS } from '@magento/venia-ui/lib/components/CartPage/cartPage.gql';
+import defaultClasses from '@magento/venia-ui/lib/components/CartPage/cartPage.module.css';
+import cartPageOperations from '@magento/peregrine/lib/talons/CartPage/cartPage.gql.js';
 
 const CheckIcon = <Icon size={20} src={Check} />;
 
@@ -49,7 +49,7 @@ const CheckIcon = <Icon size={20} src={Check} />;
 const CartPage = props => {
     const talonProps = useCartPage({
         queries: {
-            getCartDetails: GET_CART_DETAILS
+            getCartDetails: cartPageOperations.getCartDetailsQuery
         }
     });
 

@@ -25,7 +25,7 @@ import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/Loadi
 
 import AddressCard from '@magento/venia-ui/lib/components/AddressBookPage/addressCard';
 import AddEditDialog from '@magento/venia-ui/lib/components/AddressBookPage/addEditDialog';
-import defaultClasses from '@magento/venia-ui/lib/components/AddressBookPage/addressBookPage.css';
+import defaultClasses from '@magento/venia-ui/lib/components/AddressBookPage/addressBookPage.module.css';
 
 const AddressBookPage = props => {
     const {

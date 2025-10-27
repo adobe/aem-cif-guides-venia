@@ -19,7 +19,7 @@ import { useOrderConfirmationPage } from '@magento/peregrine/lib/talons/Checkout
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import ItemsReview from '@magento/venia-ui/lib/components/CheckoutPage/ItemsReview';
-import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderConfirmationPage/orderConfirmationPage.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CheckoutPage/OrderConfirmationPage/orderConfirmationPage.module.css';
 
 const OrderConfirmationPage = props => {
     const classes = useStyle(defaultClasses, props.classes);

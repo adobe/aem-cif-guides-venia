@@ -22,7 +22,7 @@ import Button from '@magento/venia-ui/lib/components/Button';
 import { Message } from '@magento/venia-ui/lib/components/Field';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';
 
-import defaultClasses from '@magento/venia-ui/lib/components/AccountInformationPage/accountInformationPage.css';
+import defaultClasses from '@magento/venia-ui/lib/components/AccountInformationPage/accountInformationPage.module.css';
 import AccountInformationPageOperations from '@magento/venia-ui/lib/components/AccountInformationPage/accountInformationPage.gql.js';
 
 const EditModal = React.lazy(() => import('@magento/venia-ui/lib/components/AccountInformationPage/editModal'));

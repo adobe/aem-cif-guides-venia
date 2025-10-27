@@ -18,9 +18,9 @@ import { useProductListing } from '@magento/peregrine/lib/talons/CartPage/Produc
 
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import LoadingIndicator from '@magento/venia-ui/lib/components/LoadingIndicator';
-import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/productListing.css';
+import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/productListing.module.css';
 import Product from './product';
-import { ProductListingFragment } from '@magento/venia-ui/lib/components/CartPage/ProductListing/productListingFragments';
+import { ProductListingFragment } from '@magento/peregrine/lib/talons/CartPage/ProductListing/productListingFragments.gql.js';
 
 const EditModal = React.lazy(
     async () => await import('@magento/venia-ui/lib/components/CartPage/ProductListing/EditModal').default

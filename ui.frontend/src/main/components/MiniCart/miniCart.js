@@ -25,8 +25,8 @@ import Button from '@magento/venia-ui/lib/components/Button';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import StockStatusMessage from '@magento/venia-ui/lib/components/StockStatusMessage';
 import ProductList from './ProductList';
-import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/miniCart.css';
-import operations from '@magento/venia-ui/lib/components/MiniCart/miniCart.gql';
+import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/miniCart.module.css';
+import operations from '@magento/peregrine/lib/talons/MiniCart/miniCart.gql.js';
 
 const errorIcon = <Icon src={AlertCircleIcon} size={20} />;
 

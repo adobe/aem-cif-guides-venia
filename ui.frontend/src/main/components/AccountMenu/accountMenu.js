@@ -20,7 +20,7 @@ import CreateAccount from '@magento/venia-ui/lib/components/CreateAccount';
 import SignIn from '@magento/venia-ui/lib/components/SignIn/signIn';
 import AccountMenuItems from './accountMenuItems';
 import ForgotPassword from '@magento/venia-ui/lib/components/ForgotPassword';
-import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenu.css';
+import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenu.module.css';
 
 const AccountMenu = React.forwardRef((props, ref) => {
     const { accountMenuIsOpen, setAccountMenuIsOpen, showWishList } = props;

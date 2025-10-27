@@ -27,7 +27,7 @@ import OrderTotal from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderD
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import Button from '@magento/venia-ui/lib/components/Button';
 
-import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/orderDetails.css';
+import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/orderDetails.module.css';
 
 const OrderDetails = props => {
     const { classes: propClasses, imagesData, orderData } = props;

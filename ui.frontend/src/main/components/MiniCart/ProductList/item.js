@@ -25,7 +25,7 @@ import Icon from '@magento/venia-ui/lib/components//Icon';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import configuredVariant from '@magento/peregrine/lib/util/configuredVariant';
 
-import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/ProductList/item.css';
+import defaultClasses from '@magento/venia-ui/lib/components/MiniCart/ProductList/item.module.css';
 
 const Item = props => {
     const {

@@ -18,7 +18,7 @@ import { FormattedMessage } from 'react-intl';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import { useAccountMenuItems } from './useAccountMenuItems';
 
-import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenuItems.css';
+import defaultClasses from '@magento/venia-ui/lib/components/AccountMenu/accountMenuItems.module.css';
 
 const AccountMenuItems = props => {
     const { onSignOut, showWishList } = props;

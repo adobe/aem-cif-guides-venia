@@ -18,7 +18,7 @@ import { useStyle } from '@magento/venia-ui/lib/classify';
 
 import Item from './item';
 
-import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/items.css';
+import defaultClasses from '@magento/venia-ui/lib/components/OrderHistoryPage/OrderDetails/items.module.css';
 import { FormattedMessage } from 'react-intl';
 
 const Items = props => {
