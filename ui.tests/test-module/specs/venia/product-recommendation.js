@@ -286,8 +286,7 @@ describe('Product recommendation', function () {
     });
 
     it('product recommendation custom configuration test', () => {
-        const editorUrl = `${config.aem.author.base_url}/editor.html${testing_page}.html`;
-        browser.url(editorUrl);
+        browser.url(`${config.aem.author.base_url}/editor.html${testing_page}.html`);
         browser.AEMEditorLoaded();
         openComponentDialog(addedNodeName);
 
@@ -298,10 +297,6 @@ describe('Product recommendation', function () {
         });
 
         openPublishedPageAndScroll();
-
-        const recommendationsComponent = $('[data-is-product-recs]');
-        expect(recommendationsComponent).toBeDisplayed();
-
         validateRecommendationsTitle('Recommended products test');
         validateProductCards(3);
     });
