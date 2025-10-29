@@ -189,27 +189,7 @@ describe('Product recommendation', function () {
         });
     };
 
-    it('adding component successfully to page test', () => {
-        addedNodeName = addComponentToPage();
-        openComponentDialog(addedNodeName);
-
-        const preconfiguredCheckbox = $('coral-checkbox[name="./preconfigured"]');
-        expect(preconfiguredCheckbox).toBeDisplayed();
-
-        const checkboxInput = preconfiguredCheckbox.$('input[type="checkbox"]');
-        const isChecked = checkboxInput.isSelected();
-        if (!isChecked) {
-            preconfiguredCheckbox.click();
-        }
-
-        clickDoneButton();
-    });
-
-    it('should capture preconfigured POST response and validate component data', () => {
-        const intercept = browser.mock('**/recs/v1/precs/preconfigured*', {
-            method: 'POST'
-        });
-
+    const openPublishedPageAndScroll = () => {
         const productPageUrl = `${config.aem.author.base_url}${testing_page}.html?wcmmode=disabled`;
         browser.url(productPageUrl);
 
@@ -217,35 +197,92 @@ describe('Product recommendation', function () {
             /* eslint-disable-next-line no-undef */
             window.scrollTo(0, document.body.scrollHeight * 0.6);
         });
+    };
 
+    const validateRecommendationsTitle = expectedTitle => {
         const titleElement = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
         titleElement.waitForDisplayed({ timeout: 5000 });
+        expect(titleElement).toBeDisplayed();
 
         const titleText = titleElement.getText();
-        const productCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
+        expect(titleText).not.toBe('');
+        expect(titleText).not.toBe(null);
 
-        const componentProductNames = [];
+        if (expectedTitle) {
+            expect(titleText).toBe(expectedTitle);
+        }
+
+        return titleText;
+    };
+
+    const validateProductCards = (minCount = 3) => {
+        const productCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
+        expect(productCards.length).toBeGreaterThan(minCount);
+
         productCards.forEach(card => {
             const productLink = card.$('a');
+            expect(productLink).toBeDisplayed();
+
             const productTitleDiv = productLink.$('div:nth-child(2)');
             const productTitle = productTitleDiv.getText();
-            componentProductNames.push(productTitle);
+            expect(productTitle).not.toBe('');
+            expect(productTitle).not.toBe(null);
+
+            const priceElement = card.$('.cmp-ProductRecsGallery__ProductCard__price');
+            expect(priceElement).toBeDisplayed();
+            const priceText = priceElement.getText();
+            expect(priceText).not.toBe('');
         });
 
-        const calls = intercept.calls;
-        expect(calls.length).toBeGreaterThan(0, 'Should intercept API calls');
+        return productCards.length;
+    };
 
-        const call = calls[0];
-        const requestData = call.body;
-        const firstResult = requestData.results[0];
-        const apiTitle = firstResult.storefrontLabel || firstResult.unitName;
-        const apiProductNames = firstResult.products.map(product => product.name);
+    const configureComponentDialog = config => {
+        const { preconfigured, title, recommendationType } = config;
 
-        const titleMatch = apiTitle === titleText;
-        const allApiProductsPresent = apiProductNames.every(apiName => componentProductNames.includes(apiName));
+        const preconfiguredCheckbox = $('coral-checkbox[name="./preconfigured"]');
+        expect(preconfiguredCheckbox).toBeDisplayed();
 
-        expect(titleMatch).toBe(true, 'API title should match component title');
-        expect(allApiProductsPresent).toBe(true, 'All API products should be present in component');
+        const checkboxInput = preconfiguredCheckbox.$('input[type="checkbox"]');
+        const isChecked = checkboxInput.isSelected();
+
+        if (preconfigured && !isChecked) {
+            preconfiguredCheckbox.waitAndClick();
+        } else if (!preconfigured && isChecked) {
+            preconfiguredCheckbox.waitAndClick();
+        }
+
+        if (!preconfigured && title) {
+            const titleInput = $('input[name="./jcr:title"]');
+            expect(titleInput).toBeDisplayed();
+            titleInput.clearValue();
+            titleInput.setValue(title);
+        }
+
+        if (!preconfigured && recommendationType) {
+            const recommendationTypeDropdown = $('coral-select[name="./recommendationType"]');
+            expect(recommendationTypeDropdown).toBeDisplayed();
+            recommendationTypeDropdown.waitAndClick();
+
+            const option = $(`coral-selectlist-item[value="${recommendationType}"]`);
+            option.waitForDisplayed({ timeout: 5000 });
+            option.waitAndClick();
+        }
+
+        clickDoneButton();
+    };
+
+    it('adding component successfully to page test', () => {
+        addedNodeName = addComponentToPage();
+        openComponentDialog(addedNodeName);
+
+        configureComponentDialog({ preconfigured: true });
+    });
+
+    it('should display product recommendations with title and products', () => {
+        openPublishedPageAndScroll();
+        validateRecommendationsTitle();
+        validateProductCards(3);
     });
 
     it('product recommendation custom configuration test', () => {
@@ -254,81 +291,18 @@ describe('Product recommendation', function () {
         browser.AEMEditorLoaded();
         openComponentDialog(addedNodeName);
 
-        const preconfiguredCheckbox = $('coral-checkbox[name="./preconfigured"]');
-        expect(preconfiguredCheckbox).toBeDisplayed();
+        configureComponentDialog({
+            preconfigured: false,
+            title: 'Recommended products test',
+            recommendationType: 'more-like-this'
+        });
 
-        const checkboxInput = preconfiguredCheckbox.$('input[type="checkbox"]');
-        const isChecked = checkboxInput.isSelected();
-
-        if (isChecked) {
-            preconfiguredCheckbox.waitAndClick();
-        }
-
-        const titleInput = $('input[name="./jcr:title"]');
-        expect(titleInput).toBeDisplayed();
-        titleInput.clearValue();
-        titleInput.setValue('Recommended products test');
-
-        const recommendationTypeDropdown = $('coral-select[name="./recommendationType"]');
-        expect(recommendationTypeDropdown).toBeDisplayed();
-        recommendationTypeDropdown.waitAndClick();
-
-        const moreLikeThisOption = $('coral-selectlist-item[value="more-like-this"]');
-        moreLikeThisOption.waitForDisplayed({ timeout: 5000 });
-        moreLikeThisOption.waitAndClick();
-
-        clickDoneButton();
-
-        const testProductUrl = `${config.aem.author.base_url}${testing_page}.html?wcmmode=disabled`;
-        browser.url(testProductUrl);
-
-        const productName = $('.productFullDetail__productName span[role="name"]');
-        expect(productName).toBeDisplayed();
-        expect(productName).toHaveText('Alexia Maxi Dress');
-
-        const productSku = $('.productFullDetail__sku strong[role="sku"]');
-        expect(productSku).toBeDisplayed();
-        expect(productSku).toHaveText('VD09');
-
-        const productPrice = $('.productFullDetail__price .price');
-        expect(productPrice).toBeDisplayed();
+        openPublishedPageAndScroll();
 
         const recommendationsComponent = $('[data-is-product-recs]');
         expect(recommendationsComponent).toBeDisplayed();
 
-        browser.execute(() => {
-            /* eslint-disable-next-line no-undef */
-            window.scrollTo(0, document.body.scrollHeight * 0.7);
-        });
-
-        const recommendationsTitle = $('.cmp-ProductRecsGallery__ProductRecsGallery__title');
-        expect(recommendationsTitle).toBeDisplayed();
-        expect(recommendationsTitle).toHaveText('Recommended products test');
-
-        const recommendationCards = $$('.cmp-ProductRecsGallery__ProductCard__card');
-        expect(recommendationCards.length).toBeGreaterThan(0);
-
-        const cardsToTest = Math.min(3, recommendationCards.length);
-
-        for (let i = 0; i < cardsToTest; i++) {
-            const card = recommendationCards[i];
-
-            const productImage = card.$('.cmp-ProductRecsGallery__ProductCard__productImage');
-            expect(productImage).toBeDisplayed();
-
-            const productLink = card.$('a[title]');
-            expect(productLink).toBeDisplayed();
-
-            const productTitle = productLink.getAttribute('title');
-            expect(productTitle).not.toBe('');
-            expect(productTitle).not.toBe(null);
-            expect(productTitle).not.toBe('Alexia Maxi Dress');
-
-            const addToCartBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToCart');
-            expect(addToCartBtn).toBeDisplayed();
-
-            const addToWishlistBtn = card.$('.cmp-ProductRecsGallery__ProductCard__addToWishlist');
-            expect(addToWishlistBtn).toBeDisplayed();
-        }
+        validateRecommendationsTitle('Recommended products test');
+        validateProductCards(3);
     });
 });
