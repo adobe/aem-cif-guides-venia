@@ -34,9 +34,7 @@ const PaymentMethods = props => {
 
     const talonProps = usePaymentMethods({
         ...paymentMethodOperations
-    });
-
-    const { availablePaymentMethods, currentSelectedPaymentMethod, initialSelectedMethod, isLoading } = talonProps;
+    });    const { availablePaymentMethods, currentSelectedPaymentMethod, initialSelectedMethod, isLoading } = talonProps;
 
     if (isLoading) {
         return null;

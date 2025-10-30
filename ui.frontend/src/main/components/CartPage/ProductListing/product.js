@@ -26,8 +26,8 @@ import Quantity from '@magento/venia-ui/lib/components/CartPage/ProductListing/q
 
 import defaultClasses from '@magento/venia-ui/lib/components/CartPage/ProductListing/product.module.css';
 
-import { CartPageFragment } from '@magento/peregrine/lib/talons/CartPage/cartPageFragments.gql.js';
-import { AvailableShippingMethodsCartFragment } from '@magento/peregrine/lib/talons/CartPage/PriceAdjustments/ShippingMethods/shippingMethodsFragments.gql.js';
+import { CartPageFragment } from '@magento/peregrine/lib/talons/CartPage/cartPageFragments.gql';
+import { AvailableShippingMethodsCartFragment } from '@magento/peregrine/lib/talons/CartPage/PriceAdjustments/ShippingMethods/shippingMethodsFragments.gql';
 
 const IMAGE_SIZE = 100;
 

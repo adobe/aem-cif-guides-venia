@@ -260,13 +260,13 @@
   "miniCart.editCartButton": [
     {
       "type": 0,
-      "value": "Edit Shopping Bag"
+      "value": "Edit Shopping Bag11"
     }
   ],
   "miniCart.emptyMessage": [
     {
       "type": 0,
-      "value": "There are no items in your cart."
+      "value": "There are no items in your cart11."
     }
   ],
   "miniCart.subtotal": [

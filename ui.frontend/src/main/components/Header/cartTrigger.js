@@ -15,12 +15,23 @@ import React, { Fragment, Suspense } from 'react';
 import { shape, string } from 'prop-types';
 import { ShoppingBag as ShoppingCartIcon } from 'react-feather';
 import { useIntl } from 'react-intl';
+import { gql } from '@apollo/client';
 import { useCartTrigger } from '@magento/peregrine/lib/talons/Header/useCartTrigger';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import Icon from '@magento/venia-ui/lib/components/Icon';
 import defaultClasses from '@magento/venia-ui/lib/components/Header/cartTrigger.module.css';
-import { GET_ITEM_COUNT_QUERY } from '@magento/peregrine/lib/talons/Header/cartTriggerFragments.gql.js';
+import { CartTriggerFragment } from '@magento/peregrine/lib/talons/Header/cartTriggerFragments.gql.js';
 import { useAddToCartEvent } from '@adobe/aem-core-cif-react-components';
+
+const GET_ITEM_COUNT_QUERY = gql`
+    query GetItemCount($cartId: String!) {
+        cart(cart_id: $cartId) {
+            id
+            ...CartTriggerFragment
+        }
+    }
+    ${CartTriggerFragment}
+`;
 
 const MiniCart = React.lazy(() => import('../MiniCart'));
 

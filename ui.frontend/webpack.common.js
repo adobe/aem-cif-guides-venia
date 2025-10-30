@@ -33,16 +33,28 @@ module.exports = (env) => ({
     output: {
         filename: 'clientlib-site/[name].js',
         chunkFilename: 'clientlib-site/[name].js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        devtoolModuleFilenameTemplate: 'webpack://[namespace]/[resource-path]?[loaders]'
     },
     module: {
         rules: [
+            {
+                test: /\.js$/,
+                enforce: 'pre',
+                loader: 'source-map-loader'
+            },
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: 'ts-loader'
+                        loader: 'ts-loader',
+                        options: {
+                            compilerOptions: {
+                                sourceMap: true,
+                                inlineSourceMap: false
+                            }
+                        }
                     },
                     {
                         loader: 'webpack-import-glob-loader',
@@ -58,6 +70,8 @@ module.exports = (env) => ({
                 loader: 'babel-loader',
                 options: {
                     envName: env,
+                    sourceMaps: true,
+                    inputSourceMap: true
                 }
             },
             {
@@ -67,6 +81,7 @@ module.exports = (env) => ({
                     {
                         loader: 'css-loader',
                         options: {
+                            sourceMap: true,
                             modules: {
                                 localIdentName: 'cmp-Venia[folder]__[name]__[local]'
                             }
@@ -82,12 +97,14 @@ module.exports = (env) => ({
                         loader: 'css-loader',
                         options: {
                             url: false,
-                            import: true
+                            import: true,
+                            sourceMap: true
                         }
                     },
                     {
                         loader: 'postcss-loader',
                         options: {
+                            sourceMap: true,
                             plugins() {
                                 return [require('autoprefixer')];
                             }
@@ -96,7 +113,7 @@ module.exports = (env) => ({
                     {
                         loader: 'sass-loader',
                         options: {
-                            url: false
+                            sourceMap: true
                         }
                     },
                     {

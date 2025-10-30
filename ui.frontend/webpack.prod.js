@@ -25,6 +25,7 @@ module.exports = merge(common('production'), {
                 terserOptions: {
                     mangle: true
                 },
+                sourceMap: true, // Enable source maps for terser
             }),
             new OptimizeCSSAssetsPlugin({
                 cssProcessorPluginOptions: {
@@ -50,6 +51,6 @@ module.exports = merge(common('production'), {
             }),
         ]
     },
-    devtool: 'none',
+    devtool: 'source-map', // Enable source maps for debugging
     performance: { hints: false }
 });

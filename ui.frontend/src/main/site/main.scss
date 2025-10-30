@@ -1,9 +1,12 @@
+// @use rules must come before any @import or other rules
+@use 'variables' as *;
+@use 'base';
 
 @import url('https://fonts.googleapis.com/css?family=Muli');
-@import 'variables';
-@import 'base';
 @import url('~@adobe/aem-core-cif-react-components/dist/main.css');
 @import url('~@adobe/aem-core-cif-product-recs-extension/dist/main.css');
+// Note: @use doesn't support glob patterns, so keeping @import for globs
+// These will import all styles including _heroimage-variables.scss and _heroimage.scss
 @import '../styles/**/*.scss';
 @import './styles/*.scss';
 

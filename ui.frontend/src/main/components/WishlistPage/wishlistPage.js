@@ -22,7 +22,7 @@ import { useConfigContext } from '@adobe/aem-core-cif-react-components';
 import { useStyle } from '@magento/venia-ui/lib/classify';
 import { fullPageLoadingIndicator } from '@magento/venia-ui/lib/components/LoadingIndicator';
 import Wishlist from './wishlist';
-import defaultClasses from '@magento/venia-ui/lib/components/WishlistPage/wishlistPage.module.css';
+import defaultClasses from './wishlistPage.module.css';
 
 const WishlistPage = props => {
     const {

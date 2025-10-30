@@ -1,3 +1,6 @@
+@use "sass:math";
+@use "sass:color";
+
 /*
  *  Copyright 2019 Adobe Systems Incorporated
  *
@@ -88,7 +91,7 @@
             transform: translateY(-50%);
 
             @media (min-width: $screen-md-min) {
-                margin-left: percentage(2/ $grid-columns);
+                margin-left: math.percentage(math.div(2, $grid-columns));
             }
 
             position: absolute;
@@ -123,13 +126,13 @@
     }
 
     p {
-        margin-bottom: ($jumbotron-padding / 2);
+        margin-bottom: math.div($jumbotron-padding, 2);
         font-size: $jumbotron-font-size;
         font-weight: 200;
     }
 
     > hr {
-        border-top-color: darken($jumbotron-bg, 10%);
+        border-top-color: color.scale($jumbotron-bg, $lightness: -10%);
     }
 
     .container &,
@@ -165,6 +168,6 @@
 .container-fluid {
     margin-right: auto;
     margin-left: auto;
-    padding-left: $grid-gutter-width / 2;
-    padding-right: $grid-gutter-width / 2;
+    padding-left: math.div($grid-gutter-width, 2);
+    padding-right: math.div($grid-gutter-width, 2);
 }

@@ -50,12 +50,12 @@ module.exports = {
                 // directories
                 js: {
                     cwd: 'clientlib-site',
-                    files: ['**/*.js'],
+                    files: ['**/*.js', '**/*.js.map'],
                     flatten: false
                 },
                 css: {
                     cwd: 'clientlib-site',
-                    files: ['**/*.css'],
+                    files: ['**/*.css', '**/*.css.map'],
                     flatten: false
                 },
 
@@ -64,7 +64,7 @@ module.exports = {
                     cwd: 'clientlib-site',
                     files: ['**/*.*'],
                     flatten: false,
-                    ignore: ['**/*.js', '**/*.css']
+                    ignore: ['**/*.js', '**/*.css', '**/*.map']
                 }
             }
         }

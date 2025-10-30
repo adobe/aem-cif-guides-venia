@@ -49,7 +49,7 @@ const CheckIcon = <Icon size={20} src={Check} />;
 const CartPage = props => {
     const talonProps = useCartPage({
         queries: {
-            getCartDetails: cartPageOperations.getCartDetailsQuery
+            getCartDetails: GET_CART_DETAILS
         }
     });
 

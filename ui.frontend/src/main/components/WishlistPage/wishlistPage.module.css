@@ -1,0 +1,19 @@
+.root {
+    composes: root from '@magento/venia-ui/lib/components/Main/main.module.css';
+}
+
+.heading {
+    line-height: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.errorContainer {
+    margin: 1rem;
+}
+
+.fetchError {
+    color: rgb(var(--venia-global-color-error));
+}
+
+
+
