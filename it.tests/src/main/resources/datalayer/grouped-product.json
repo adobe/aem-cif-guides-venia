@@ -4,8 +4,8 @@
     "xdm:SKU": "VA23",
     "xdm:assets": [
       {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/a/va23_main.jpg",
-        "repo:id": "image-6dac8adfd8",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/v/a/va23_main.jpg",
+        "repo:id": "image-73866a5185",
         "@type": "image"
       }
     ],
@@ -26,7 +26,7 @@
       }
     ],
     "xdm:currencyCode": "USD",
-    "dc:description": "This trio is designed for versatility. Brighten up a simple look or add another layer of “wow” to an already vibrant ensemble. Go as big and bold, or understated as you&#39;re in the mood to be.",
+    "dc:description": "This trio is designed for versatility. Brighten up a simple look or add another layer of \u201Cwow\u201D to an already vibrant ensemble. Go as big and bold, or understated as you&#39;re in the mood to be.",
     "dc:title": "Augusta Trio",
     "@type": "venia/components/commerce/product"
   }
