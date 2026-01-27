@@ -45,11 +45,12 @@ common:
         if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
           git clone https://github.com/adobe/aem-core-cif-components.git
           cd aem-core-cif-components
-          components_branch=$(git ls-remote --heads origin "${CIRCLE_BRANCH}")
-          if [[ -n "${components_branch}" ]]; then
-            git fetch origin "${CIRCLE_BRANCH}"
-            git checkout "${CIRCLE_BRANCH}"
-          fi
+          # Temporarily disabled branch checkout to debug pipeline issue
+          # components_branch=$(git ls-remote --heads origin "${CIRCLE_BRANCH}")
+          # if [[ -n "${components_branch}" ]]; then
+          #   git fetch origin "${CIRCLE_BRANCH}"
+          #   git checkout "${CIRCLE_BRANCH}"
+          # fi
           mvn -B clean install
           cd react-components
           npm link
