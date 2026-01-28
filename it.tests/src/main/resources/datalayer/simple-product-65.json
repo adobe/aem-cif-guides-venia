@@ -4,23 +4,23 @@
     "xdm:SKU": "VP05",
     "xdm:assets": [
       {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_main.jpg",
-        "repo:id": "image-d816a929e1",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/v/p/vp05-rn_main.jpg",
+        "repo:id": "image-4289f33d46",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_alt.jpg",
-        "repo:id": "image-00895991b6",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/v/p/vp05-rn_alt.jpg",
+        "repo:id": "image-59f1877d26",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05-rn_back.jpg",
-        "repo:id": "image-1ca8c02f71",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/v/p/vp05-rn_back.jpg",
+        "repo:id": "image-054c828af1",
         "@type": "image"
       },
       {
-        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/dbba4389ce8da2ab9399ca5f8b677aac/v/p/vp05_look.jpg",
-        "repo:id": "image-f9f35702e0",
+        "repo:path": "https://mcprod.catalogservice-commerce.fun/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/v/p/vp05_look.jpg",
+        "repo:id": "image-d2d067ecaf",
         "@type": "image"
       }
     ],
