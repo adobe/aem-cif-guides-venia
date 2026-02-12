@@ -26,7 +26,7 @@
       }
     ],
     "xdm:currencyCode": "USD",
-    "dc:description": "This trio is designed for versatility. Brighten up a simple look or add another layer of \u201Cwow\u201D to an already vibrant ensemble. Go as big and bold, or understated as you&#39;re in the mood to be.",
+    "dc:description": "This trio is designed for versatility. Brighten up a simple look or add another layer of \u201cwow\u201d to an already vibrant ensemble. Go as big and bold, or understated as you&#39;re in the mood to be.",
     "dc:title": "Augusta Trio",
     "@type": "venia/components/commerce/product"
   }
