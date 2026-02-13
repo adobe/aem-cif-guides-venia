@@ -33,6 +33,11 @@
             <span>${properties.text || 'New'}</span>
         </div>
 
+        <!-- Eco Friendly Badge -->
+        <div data-sly-test="${product.ecoFriendly}" class="item__eco">
+            <span>Eco Friendly</span>
+        </div>
+
         <sly data-sly-call="${imageTpl.actions @ product=product}" />
 
         <a class="item__name" href=${product.url}><span>${product.name}</span></a>

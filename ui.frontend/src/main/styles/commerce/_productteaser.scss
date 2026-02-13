@@ -95,6 +95,24 @@
         }
     }
 
+    .item__eco {
+        width: 60px;
+        height: 60px;
+        left: 0px;
+        overflow: hidden;
+        position: absolute;
+        padding: 5px;
+        
+        span {
+            display: block;
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            text-indent: -9999px;
+            background: no-repeat center center url('../resources/images/eco_friendly.svg');
+        }
+    }
+
     .productteaser__cta {
         position: relative;
         text-align: center;

@@ -29,6 +29,8 @@ import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRet
 import com.adobe.cq.commerce.magento.graphql.FilterRangeTypeInput;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.Via;
@@ -40,6 +42,11 @@ import org.apache.sling.models.annotations.via.ResourceSuperType;
 public class MyProductTeaserImpl implements MyProductTeaser {
 
     protected static final String RESOURCE_TYPE = "venia/components/commerce/productteaser";
+    
+    // Define the custom attribute name for eco-friendly products
+    private static final String ECO_FRIENDLY_ATTRIBUTE = "eco_friendly";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyProductTeaserImpl.class);
 
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -60,7 +67,10 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             // Pass your custom partial query to the ProductRetriever. This class will
             // automatically take care of executing your query as soon
             // as you try to access any product property.
-            productRetriever.extendProductQueryWith(p -> p.createdAt());
+            productRetriever.extendProductQueryWith(p -> p
+                .createdAt()
+                .addCustomSimpleFieldUnsafe(ECO_FRIENDLY_ATTRIBUTE)
+            );
 
             // Extend the product attribute query by passing a partial filter to the ProductRetriever.
             // Alternatively you can also return your own instance of ProductAttributeFilterInput to
@@ -86,6 +96,23 @@ public class MyProductTeaserImpl implements MyProductTeaser {
                 if (age < maxAgeProp) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean isEcoFriendly() {
+        if (productRetriever != null) {
+            Integer ecoFriendlyValue;
+            try {
+                ecoFriendlyValue = productRetriever.fetchProduct().getAsInteger(ECO_FRIENDLY_ATTRIBUTE);
+                if (ecoFriendlyValue != null && ecoFriendlyValue.equals(Integer.valueOf(1))) {
+                    LOGGER.info("*** Product is Eco Friendly**");
+                    return true;
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error retrieving eco friendly attribute: {}", e.getMessage());
             }
         }
         return false;
