@@ -18,7 +18,7 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
     if (!pid) {
@@ -32,11 +32,13 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}"
+                -d "service.ranking=${ranking}" \
+                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000" \
+                -d "cacheConfigurations=venia/components/commerce/productlist:true:50:1000"
     `)
 }
 
@@ -49,6 +51,35 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+
+
+const configureCifCacheInvalidation = () => {
+    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
+                -d "propertylist=" || echo "Cache servlet config completed"
+    `)
+    
+    // 2. Enable cache invalidation listener (both author and publish)
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -u "admin:admin" \
+                -d "apply=true" \
+                -d "factoryPid=com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
+                -d "propertylist=enableDispatcherCacheInvalidation,dispatcherBasePathConfiguration,dispatcherUrlPathConfiguration,dispatcherBaseUrl" \
+                -d "enableDispatcherCacheInvalidation=true" \
+                -d "dispatcherBasePathConfiguration=/content/venia/([a-z]{2})/([a-z]{2}):/content/venia/$1/$2" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath:/products/product-page.html/(.+):/p/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath:/products/category-page.html/(.+):/c/$1" \
+                -d "dispatcherUrlPathConfiguration=productUrlPath-1:/products/product-page.html/(.+):/pp/$1" \
+                -d "dispatcherUrlPathConfiguration=categoryUrlPath-1:/products/category-page.html/(.+):/cc/$1" \
+                -d "dispatcherBaseUrl=http://localhost:80"
+    `)
+}
+
+
+
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
@@ -60,13 +91,22 @@ try {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
 
+        // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
+        let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
         let extras;
         if (classifier == 'classic') {
-            // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
-            let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
             // Download latest add-on for AEM 6.5 release from artifactory
             ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
             extras = ` --install-file ${buildPath}/dependencies/addon-650.zip`;
+
+            // The core components are already installed in the Cloud SDK
+            extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
+            extras += ` --install-file ${buildPath}/classic/all/target/aem-cif-guides-venia.all-classic-${veniaVersion}.zip`
+
+        } else if (classifier == 'lts') {
+            // Download latest add-on for AEM 6.5 LTS release from artifactory
+            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-660-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-660.zip`);
+            extras = ` --install-file ${buildPath}/dependencies/addon-660.zip`;
 
             // The core components are already installed in the Cloud SDK
             extras += ` --bundle com.adobe.cq:core.wcm.components.all:${wcmVersion}:zip`;
@@ -87,30 +127,43 @@ try {
             extras += ` --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:${cifVersion}:jar`;
         }
 
+        const maxMetaspace = classifier == 'lts' ? '-XX:MaxMetaspaceSize=256m' : '-XX:MaxPermSize=256m';
+
         // Start CQ
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
             --bundle org.apache.sling:org.apache.sling.junit.core:1.0.23:jar \
             ${extras} \
-            --vm-options \\\"-Xmx1536m -XX:MaxPermSize=256m -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
+            --vm-options \\\"-Xmx1536m ${maxMetaspace} -Djava.awt.headless=true -javaagent:${process.env.JACOCO_AGENT}=destfile=crx-quickstart/jacoco-it.exec\\\"`);
     });
 
     // Configure GraphQL Endpoint for classic, in cloud the environment variable should be used directly
-    if (classifier == 'classic') {
+    if (classifier == 'classic' || classifier == 'lts') {
         // the configuration contained in venia may not yet be available so create a new one
         updateGraphqlClientConfiguration();
     } else {
         // update the existing default endpoint
-        updateGraphqlClientConfiguration('default');
+               updateGraphqlClientConfiguration('default');
     }
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
+    
+    // Configure CIF Cache Invalidation
+    configureCifCacheInvalidation();
+
     // Run integration tests
     if (TYPE === 'integration') {
-        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOn65' : 'com.venia.it.category.IgnoreOnCloud';
+        let excludedCategory;
+        if (classifier === 'classic') {
+            excludedCategory = 'com.venia.it.category.IgnoreOn65';
+        } else if (classifier === 'lts') {
+            excludedCategory = 'com.venia.it.category.IgnoreOnLts';
+        } else {
+            excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
+        }
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory}`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {
@@ -134,7 +187,8 @@ try {
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
-    }
+
+          }
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
