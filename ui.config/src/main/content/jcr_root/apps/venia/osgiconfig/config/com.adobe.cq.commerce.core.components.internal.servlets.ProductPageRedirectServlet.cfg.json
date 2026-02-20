@@ -1,0 +1,7 @@
+{
+    "sling.servlet.resourceTypes": [
+        "core/cif/components/structure/page/v1/page",
+        "core/cif/components/structure/page/v2/page",
+        "core/cif/components/structure/page/v3/page"
+    ]
+}
