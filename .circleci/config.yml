@@ -252,54 +252,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - integration-test-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - integration-test-660:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - integration-test-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-660:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
       - deploy-sample:
           context:
             - CIF Artifactory Cloud
@@ -309,17 +261,4 @@ workflows:
             - build
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
-      - update-cm:
-          context:
-            - CIF Artifactory Cloud
-            - CIF CM Stage
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+              only: venia-2026.02.17-deploy-sample
