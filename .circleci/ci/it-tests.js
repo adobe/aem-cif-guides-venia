@@ -18,7 +18,7 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = '/home/circleci/cq';
 const buildPath = '/home/circleci/build';
-const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
+const { TYPE, BROWSER, COMMERCE_ENDPOINT, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
     if (!pid) {
@@ -32,13 +32,11 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
                 -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}" \
-                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000" \
-                -d "cacheConfigurations=venia/components/commerce/productlist:true:50:1000"
+                -d "service.ranking=${ranking}"
     `)
 }
 
@@ -51,34 +49,22 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const updateCifEndpointConfiguration = () => {
+    const formData = {
+        apply: true,
+        serviceUrl: 'https://cifonskyline.z6.web.core.windows.net/',
+        version: 'preprod.stable.latest',
+        propertylist: 'serviceUrl,version',
+    };
 
-
-const configureCifCacheInvalidation = () => {
-    // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr" \
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.authoring.impl.CifEndpointServiceImpl" \
                 -u "admin:admin" \
-                -d "apply=true" \
-                -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
-                -d "propertylist=" || echo "Cache servlet config completed"
-    `)
-
-    // 2. Enable cache invalidation listener (both author and publish)
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
-                -u "admin:admin" \
-                -d "apply=true" \
-                -d "factoryPid=com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
-                -d "propertylist=enableDispatcherCacheInvalidation,dispatcherBasePathConfiguration,dispatcherUrlPathConfiguration,dispatcherBaseUrl" \
-                -d "enableDispatcherCacheInvalidation=true" \
-                -d "dispatcherBasePathConfiguration=/content/venia/([a-z]{2})/([a-z]{2}):/content/venia/$1/$2" \
-                -d "dispatcherUrlPathConfiguration=productUrlPath:/products/product-page.html/(.+):/p/$1" \
-                -d "dispatcherUrlPathConfiguration=categoryUrlPath:/products/category-page.html/(.+):/c/$1" \
-                -d "dispatcherUrlPathConfiguration=productUrlPath-1:/products/product-page.html/(.+):/pp/$1" \
-                -d "dispatcherUrlPathConfiguration=categoryUrlPath-1:/products/category-page.html/(.+):/cc/$1" \
-                -d "dispatcherBaseUrl=http://localhost:80"
+                -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+                --data-raw '${Object.entries(formData)
+                    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                    .join('&')}'
     `)
 }
-
-
 
 try {
     ci.stage("Integration Tests");
@@ -148,22 +134,14 @@ try {
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
-
-    // Configure CIF Cache Invalidation
-    configureCifCacheInvalidation();
+    // Configure CIF Endpoint Service (runtime configuration to bypass Cloud Service analyzer restrictions)
+    updateCifEndpointConfiguration();
 
     // Run integration tests
     if (TYPE === 'integration') {
-        let excludedCategory;
-        if (classifier === 'classic') {
-            excludedCategory = 'com.venia.it.category.IgnoreOn65';
-        } else if (classifier === 'lts') {
-            excludedCategory = 'com.venia.it.category.IgnoreOnLts';
-        } else {
-            excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
-        }
+        let excludedCategory = classifier === 'classic' ? 'com.venia.it.category.IgnoreOn65' : 'com.venia.it.category.IgnoreOnCloud';
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory}`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {
@@ -187,7 +165,6 @@ try {
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
-
     }
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
