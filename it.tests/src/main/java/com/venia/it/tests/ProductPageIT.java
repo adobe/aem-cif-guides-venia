@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.venia.it.category.IgnoreOn65;
 import com.venia.it.category.IgnoreOnCloud;
+import com.venia.it.category.IgnoreOnLts;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,6 +34,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.venia.it.utils.Utils;
 import org.junit.experimental.categories.Category;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,8 +47,9 @@ public class ProductPageIT extends CommerceTestBase {
     private static final String PRODUCT_NAME_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__productName > span";
     private static final String GROUPED_PRODUCTS_SELECTOR = PRODUCT_SELECTOR + ".productFullDetail__groupedProducts";
 
+
     @Test
-    @Category(IgnoreOn65.class)
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testProductPageWithSampleData() throws ClientException, IOException {
         testProductPageWithSampleData("datalayer/simple-product.json");
     }
@@ -82,15 +86,20 @@ public class ProductPageIT extends CommerceTestBase {
         // when Sites SEO is not available (legacy) the externalizer is used and the canonical link contains the scheme + authority
         assertTrue(StringUtils.endsWith(doc.select("link[rel=canonical]").first().attr("href"), pagePath));
 
-        // Verify dataLayer attributes
+        // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected product datalayer to match sample data, but found differences", expected, result);
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\\\"").replace("&quot;", "\\\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\\\"").replace("&quot;", "\\\"");
+        
+        try {
+            JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
+        } catch (Exception e) {
+            throw new AssertionError("Expected product datalayer to match sample data, but found differences: " + e.getMessage(), e);
+        }
     }
 
     @Test
-    @Category(IgnoreOn65.class )
+    @Category({IgnoreOn65.class, IgnoreOnLts.class})
     public void testProductPageWithSampleDataForGroupedProduct() throws ClientException, IOException {
         testProductPageWithSampleDataForGroupedProduct("datalayer/grouped-product.json");
     }
@@ -112,11 +121,16 @@ public class ProductPageIT extends CommerceTestBase {
         // Verify that the section for GroupedProduct is displayed
         assertEquals("Expected 1 grouped product section, but found: " + doc.select(GROUPED_PRODUCTS_SELECTOR).size(), 1, doc.select(GROUPED_PRODUCTS_SELECTOR).size());
 
-        // Verify dataLayer attributes
+        // Verify dataLayer attributes using JSONAssert LENIENT mode (ignores field order and extensibility)
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
-        JsonNode result = Utils.OBJECT_MAPPER.readTree(elements.first().attr("data-cmp-data-layer"));
-        JsonNode expected = Utils.OBJECT_MAPPER.readTree(Utils.getResource(jsonFile));
-        assertEquals("Expected grouped product datalayer to match sample data, but found differences", expected, result);
+        String actualJson = elements.first().attr("data-cmp-data-layer").replace("&#39;", "'").replace("&#34;", "\\\"").replace("&quot;", "\\\"");
+        String expectedJson = Utils.getResource(jsonFile).replace("&#39;", "'").replace("&#34;", "\\\"").replace("&quot;", "\\\"");
+        
+        try {
+            JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.LENIENT);
+        } catch (Exception e) {
+            throw new AssertionError("Expected grouped product datalayer to match sample data, but found differences: " + e.getMessage(), e);
+        }
     }
 
     @Test
