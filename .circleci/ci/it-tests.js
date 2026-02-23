@@ -164,7 +164,10 @@ try {
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
-    // Configure CIF Endpoint Service (runtime configuration to bypass Cloud Service analyzer restrictions)
+
+    // Configure CIF Cache Invalidation
+    configureCifCacheInvalidation();
+
     updateCifEndpointConfiguration();
 
     // Run integration tests
