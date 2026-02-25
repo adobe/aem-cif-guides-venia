@@ -51,7 +51,22 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const updateCifEndpointConfiguration = () => {
+    const formData = {
+        apply: true,
+        serviceUrl: 'https://cifonskyline.z6.web.core.windows.net/',
+        version: 'preprod.stable.latest',
+        propertylist: 'serviceUrl,version',
+    };
 
+     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.authoring.impl.CifEndpointServiceImpl" \
+                    -u "admin:admin" \
+                    -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+                    --data-raw '${Object.entries(formData)
+                        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                        .join('&')}'
+        `)
+    }
 
 const configureCifCacheInvalidation = () => {
     // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
@@ -61,7 +76,8 @@ const configureCifCacheInvalidation = () => {
                 -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
                 -d "propertylist=" || echo "Cache servlet config completed"
     `)
-    
+
+
     // 2. Enable cache invalidation listener (both author and publish)
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
                 -u "admin:admin" \
@@ -142,15 +158,17 @@ try {
         updateGraphqlClientConfiguration();
     } else {
         // update the existing default endpoint
-               updateGraphqlClientConfiguration('default');
+        updateGraphqlClientConfiguration('default');
     }
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
-    
+
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
+
+    updateCifEndpointConfiguration();
 
     // Run integration tests
     if (TYPE === 'integration') {
@@ -188,7 +206,7 @@ try {
     if (TYPE === 'integration') {
         ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
 
-          }
+    }
     if (TYPE === 'selenium') {
         ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
