@@ -27,8 +27,12 @@ import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 
 import com.adobe.cq.commerce.magento.graphql.FilterRangeTypeInput;
+import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.commerce.magento.graphql.ProductStockStatus;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.Via;
@@ -41,6 +45,7 @@ public class MyProductTeaserImpl implements MyProductTeaser {
 
     protected static final String RESOURCE_TYPE = "venia/components/commerce/productteaser";
 
+    private static final Logger LOG = LoggerFactory.getLogger(MyProductTeaserImpl.class);
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Self
@@ -61,6 +66,9 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             // automatically take care of executing your query as soon
             // as you try to access any product property.
             productRetriever.extendProductQueryWith(p -> p.createdAt());
+            productRetriever.extendProductQueryWith(p -> p
+                .stockStatus()
+                .onlyXLeftInStock());
 
             // Extend the product attribute query by passing a partial filter to the ProductRetriever.
             // Alternatively you can also return your own instance of ProductAttributeFilterInput to
@@ -89,6 +97,41 @@ public class MyProductTeaserImpl implements MyProductTeaser {
             }
         }
         return false;
+    }
+
+    @Override
+    public Boolean isLowStock() {
+        if (!properties.get("lowStockEnabled", false) || productRetriever == null) {
+            return false;
+        }
+        try {
+            ProductInterface product = productRetriever.fetchProduct();
+            if (product == null || product.getStockStatus() != ProductStockStatus.IN_STOCK) {
+                return false;
+            }
+            Double onlyXLeft = product.getOnlyXLeftInStock();
+            if (onlyXLeft == null) {
+                return false;
+            }
+            int threshold = properties.get("lowStockThreshold", 5);
+            return onlyXLeft > 0 && onlyXLeft <= threshold;
+        } catch (Exception e) {
+            LOG.warn("Unable to determine low stock status for product teaser", e);
+            return false;
+        }
+    }
+
+    @Override
+    public String getLowStockMessage() {
+        if (!isLowStock()) {
+            return null;
+        }
+        String customText = properties.get("lowStockText", "");
+        if (!customText.isEmpty()) {
+            return customText;
+        }
+        int qty = productRetriever.fetchProduct().getOnlyXLeftInStock().intValue();
+        return "Only " + qty + " left!";
     }
 
     @Override

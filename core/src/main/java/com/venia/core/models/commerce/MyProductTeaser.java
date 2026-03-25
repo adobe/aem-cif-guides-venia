@@ -22,4 +22,16 @@ public interface MyProductTeaser extends ProductTeaser {
     // Extend the existing interface with the additional properties which you
     // want to expose to the HTL template.
     public Boolean isShowBadge();
+
+    /**
+     * Returns {@code true} when the product's stock_status is IN_STOCK and
+     * only_x_left_in_stock is &gt; 0 and &lt;= the author-configured threshold.
+     */
+    public Boolean isLowStock();
+
+    /**
+     * Returns the remaining quantity as a display string (e.g. "Only 3 left!"),
+     * or {@code null} when the product is not in a low-stock state.
+     */
+    public String getLowStockMessage();
 }

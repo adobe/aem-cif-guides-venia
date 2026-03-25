@@ -21,6 +21,7 @@ import com.adobe.cq.commerce.core.components.models.productteaser.ProductTeaser;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
 import com.adobe.cq.commerce.core.components.services.urls.UrlProvider;
 import com.adobe.cq.commerce.magento.graphql.ProductInterface;
+import com.adobe.cq.commerce.magento.graphql.ProductStockStatus;
 import com.adobe.cq.wcm.core.components.models.Component;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.scripting.WCMBindingsConstants;
@@ -58,6 +59,9 @@ class MyProductTeaserImplTest {
     private static final String PRODUCTTEASER_BADGE_FALSE = "productteaser-badge-false";
     private static final String PRODUCTTEASER_BADGE_TRUE_NO_AGE = "productteaser-badge-true-no-age";
     private static final String PRODUCTTEASER_BADGE_TRUE_WITH_AGE = "productteaser-badge-true-with-age";
+    private static final String PRODUCTTEASER_LOW_STOCK_DISABLED = "productteaser-low-stock-disabled";
+    private static final String PRODUCTTEASER_LOW_STOCK_IN_STOCK = "productteaser-low-stock-in-stock";
+    private static final String PRODUCTTEASER_LOW_STOCK_CUSTOM_TEXT = "productteaser-low-stock-custom-text";
 
     public final AemContext context = new AemContext(ResourceResolverType.JCR_MOCK);
 
@@ -84,8 +88,24 @@ class MyProductTeaserImplTest {
         createResource(page, PRODUCTTEASER_BADGE_FALSE, false, null);
         createResource(page, PRODUCTTEASER_BADGE_TRUE_NO_AGE, true, null);
         createResource(page, PRODUCTTEASER_BADGE_TRUE_WITH_AGE, true, 3);
+        createLowStockResource(page, PRODUCTTEASER_LOW_STOCK_DISABLED, false, 5, null);
+        createLowStockResource(page, PRODUCTTEASER_LOW_STOCK_IN_STOCK, true, 5, null);
+        createLowStockResource(page, PRODUCTTEASER_LOW_STOCK_CUSTOM_TEXT, true, 5, "Hurry, almost gone!");
 
         context.addModelsForClasses(MyProductTeaserImpl.class);
+    }
+
+    void createLowStockResource(Page page, String name, boolean enabled, int threshold, String customText) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("sling:resourceType", "venia/components/commerce/productteaser");
+        props.put("sling:resourceSuperType", "core/cif/components/commerce/productteaser/v1/productteaser");
+        props.put("lowStockEnabled", enabled);
+        props.put("lowStockThreshold", threshold);
+        if (customText != null) {
+            props.put("lowStockText", customText);
+        }
+        props.put("linkTarget", "_blank");
+        context.create().resource(page, name, props);
     }
 
     void createResource(Page page, String name, Object badge, Object age) {
@@ -290,5 +310,69 @@ class MyProductTeaserImplTest {
     void testGetProductRetriever() throws Exception {
         setup(PRODUCTTEASER_NO_BADGE);
         Assertions.assertNotNull(underTest.getProductRetriever());
+    }
+
+    // ---- Low Stock Badge Tests ----
+
+    @Test
+    void testIsLowStock_false_featureDisabled() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_DISABLED);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(3.0);
+        Assertions.assertFalse(underTest.isLowStock());
+    }
+
+    @Test
+    void testIsLowStock_false_outOfStock() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_IN_STOCK);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.OUT_OF_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(3.0);
+        Assertions.assertFalse(underTest.isLowStock());
+    }
+
+    @Test
+    void testIsLowStock_false_nullOnlyXLeft() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_IN_STOCK);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(null);
+        Assertions.assertFalse(underTest.isLowStock());
+    }
+
+    @Test
+    void testIsLowStock_false_aboveThreshold() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_IN_STOCK);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(10.0); // threshold is 5
+        Assertions.assertFalse(underTest.isLowStock());
+    }
+
+    @Test
+    void testIsLowStock_true() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_IN_STOCK);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(3.0); // threshold is 5
+        Assertions.assertTrue(underTest.isLowStock());
+    }
+
+    @Test
+    void testGetLowStockMessage_auto() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_IN_STOCK);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(3.0);
+        Assertions.assertEquals("Only 3 left!", underTest.getLowStockMessage());
+    }
+
+    @Test
+    void testGetLowStockMessage_customText() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_CUSTOM_TEXT);
+        Mockito.when(product.getStockStatus()).thenReturn(ProductStockStatus.IN_STOCK);
+        Mockito.when(product.getOnlyXLeftInStock()).thenReturn(2.0);
+        Assertions.assertEquals("Hurry, almost gone!", underTest.getLowStockMessage());
+    }
+
+    @Test
+    void testGetLowStockMessage_null_whenNotLowStock() throws Exception {
+        setup(PRODUCTTEASER_LOW_STOCK_DISABLED);
+        Assertions.assertNull(underTest.getLowStockMessage());
     }
 }

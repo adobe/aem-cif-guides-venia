@@ -32,6 +32,9 @@
         <div data-sly-test="${product.showBadge}" class="item__badge">
             <span>${properties.text || 'New'}</span>
         </div>
+        <div data-sly-test="${product.lowStock}" class="item__badge item__badge--low-stock">
+            <span>${product.lowStockMessage}</span>
+        </div>
 
         <sly data-sly-call="${imageTpl.actions @ product=product}" />
 
