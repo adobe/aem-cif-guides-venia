@@ -35,7 +35,7 @@ ci.sh("mkdir -p artifacts");
 
 ci.stage("Deploy Venia Sample Project to Maven Central");
 // build and deploy only the cloud artifacts
-ci.sh(`mvn ${mvnOpts} clean deploy -Prelease,ossrh`)
+ci.sh(`mvn ${mvnOpts} clean deploy -Prelease,central`)
 ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}.zip`);
 
 ci.stage("Deploy Venia Sample Project to GitHub");
