@@ -143,7 +143,7 @@ try {
             extras += ` --bundle com.adobe.commerce.cif:core-cif-components-examples-bundle:${cifVersion}:jar`;
         }
 
-        const maxMetaspace = classifier == 'lts' ? '-XX:MaxMetaspaceSize=256m' : '-XX:MaxPermSize=256m';
+        const maxMetaspace = '-XX:MaxMetaspaceSize=512m';
 
         // Start CQ
         ci.sh(`./qp.sh -v start --id author --runmode author --port 4502 --qs-jar /home/circleci/cq/author/cq-quickstart.jar \
