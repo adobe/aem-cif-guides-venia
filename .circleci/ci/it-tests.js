@@ -42,6 +42,7 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
     `)
 }
 
+
 const updateGraphqlProxyServlet = () => {
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
                 -u "admin:admin" \
