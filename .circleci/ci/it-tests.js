@@ -91,8 +91,7 @@ try {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
 
-        // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
-        let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
+        let aemCifSdkApiVersion = "LATEST";
         let extras;
         if (classifier == 'classic') {
             // Download latest add-on for AEM 6.5 release from artifactory
