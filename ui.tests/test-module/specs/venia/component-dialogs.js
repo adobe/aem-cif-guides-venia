@@ -153,11 +153,8 @@ describe('Component Dialogs', function () {
         expect($('label=Select Product')).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        if (config.aem.type === 'lts') {
-            expect(fields.length).toEqual(7);
-        } else {
-            expect(fields.length).toEqual(8);
-        }
+
+        expect(fields.length).toEqual(8);
 
         // fields of the OOTB component
         expect(fields[0].$('product-field')).toBeDisplayed();
