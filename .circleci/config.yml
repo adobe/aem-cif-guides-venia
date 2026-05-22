@@ -1,6 +1,6 @@
 version: 2.1
 
-# Minimal CM downstream connection test (noop fetch only).
+# Debug: run update-cm against Azure branch issue-update-cm-debug (not main).
 # Restore full config from main when done.
 
 executors:
@@ -9,42 +9,21 @@ executors:
       - image: cimg/openjdk:11.0-browsers
 
 jobs:
-  update-cm-connection-debug:
+  update-cm-debug:
     executor: cif_executor
     working_directory: ~/repo
+    environment:
+      CM_TARGET_BRANCH: issue-update-cm-debug
     steps:
       - checkout
       - run:
-          name: Verify downstream CM Git connection (minimal noop fetch)
-          command: |
-            set -euo pipefail
-
-            if [[ -z "${GIT_REPO:-}" || -z "${GIT_USER:-}" || -z "${GIT_PASSWORD:-}" ]]; then
-              echo "ERROR: GIT_REPO, GIT_USER, and GIT_PASSWORD must be set (CIF CM Stage context)."
-              exit 1
-            fi
-
-            git config --local user.name "CircleCI Builds"
-            git config --local user.email "builds@circleci.com"
-            git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
-            trap 'git config --unset credential.helper || true' EXIT
-
-            git remote remove downstream 2>/dev/null || true
-            git remote add downstream "${GIT_REPO}"
-
-            echo "ls-remote (auth check)..."
-            git ls-remote downstream HEAD refs/heads/main
-
-            echo "noop fetch (same as update-cm.js)..."
-            git -c fetch.negotiationAlgorithm=noop fetch downstream
-
-            git rev-parse refs/remotes/downstream/main
-            echo "OK: downstream connection and noop fetch succeeded."
+          name: Sync to Azure CM (debug branch)
+          command: node .circleci/ci/update-cm.js
 
 workflows:
   cm-update-debug:
     jobs:
-      - update-cm-connection-debug:
+      - update-cm-debug:
           context:
             - CIF Artifactory Cloud
             - CIF CM Stage

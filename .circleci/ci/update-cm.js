@@ -21,9 +21,8 @@ const doUpdate = () => {
     // it will be force-deleted before the checkout if it exists, be careful
     const LOCAL_BRANCH = "tmp";
     // the target branch that should be updated
-    const TARGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
-    // the revision to update the TARGET_BRANCH to
-    const MERGE_REVISION = ci.env('CIRCLE_TAG'); // ci.env('CIRCLE_SHA1');
+    const TARGET_BRANCH = ci.env('CM_TARGET_BRANCH') || 'main';
+    const MERGE_REVISION = ci.env('CIRCLE_TAG') || ci.env('CIRCLE_SHA1');
     
     const downstreamRemoteExists = ci.sh(
         'git remote get-url downstream 2>/dev/null || echo "no"', true)
@@ -43,7 +42,11 @@ const doUpdate = () => {
         ci.sh(`git branch -D ${LOCAL_BRANCH}`);
     } 
 
-    ci.sh(`git checkout -b ${LOCAL_BRANCH} downstream/${TARGET_BRANCH}`);
+    const downstreamBranchExists = ci.sh(
+        `git rev-parse --verify "downstream/${TARGET_BRANCH}" 2>/dev/null || echo "no"`, true)
+        .toString().trim() != "no";
+    const checkoutRef = downstreamBranchExists ? `downstream/${TARGET_BRANCH}` : `downstream/main`;
+    ci.sh(`git checkout -b ${LOCAL_BRANCH} ${checkoutRef}`);
     ci.sh(`GIT_MERGE_AUTOEDIT=no git merge --no-ff ${MERGE_REVISION}`);
     ci.sh(`git push downstream ${LOCAL_BRANCH}:${TARGET_BRANCH}`);
 }
