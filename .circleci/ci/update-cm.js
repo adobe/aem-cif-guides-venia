@@ -33,7 +33,7 @@ const doUpdate = () => {
         ci.sh(`git remote add downstream ${ci.env('GIT_REPO')}`);
     }
 
-    ci.sh('git fetch downstream');
+    ci.sh('git -c fetch.negotiationAlgorithm=noop fetch downstream');
     
     const tmpBranchExists = ci.sh(
         `git rev-parse --verify "${LOCAL_BRANCH}" 2>/dev/null ||  echo "no"`, true)

@@ -1,7 +1,7 @@
 version: 2.1
 
-# Temporary config: downstream CM Git connection check only.
-# Restore full config from main when debugging is done.
+# Minimal CM downstream connection test (noop fetch only).
+# Restore full config from main when done.
 
 executors:
   cif_executor:
@@ -15,120 +15,31 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Verify downstream CM Git connection
+          name: Verify downstream CM Git connection (minimal noop fetch)
           command: |
             set -euo pipefail
-
-            log() { echo ""; echo "--- $1 ---"; echo ""; }
-
-            log "environment"
-            echo "CIRCLE_BRANCH=${CIRCLE_BRANCH:-unset}"
-            echo "CIRCLE_SHA1=${CIRCLE_SHA1:-unset}"
-            echo "GIT_REPO=${GIT_REPO:+set}"
-            echo "GIT_USER=${GIT_USER:+set}"
-            echo "GIT_PASSWORD=${GIT_PASSWORD:+set}"
 
             if [[ -z "${GIT_REPO:-}" || -z "${GIT_USER:-}" || -z "${GIT_PASSWORD:-}" ]]; then
               echo "ERROR: GIT_REPO, GIT_USER, and GIT_PASSWORD must be set (CIF CM Stage context)."
               exit 1
             fi
 
-            log "local git state"
-            git --version
-            git remote -v
-            echo "HEAD=$(git rev-parse HEAD 2>/dev/null || echo unavailable)"
-            echo "branch=$(git branch --show-current 2>/dev/null || echo detached)"
-            git rev-parse --is-shallow-repository 2>/dev/null || true
-            git count-objects -v 2>/dev/null || true
-
-            log "full git config (clone/fetch related)"
-            git config -l | grep -iE 'remote\.|partial|promisor|filter|recurse|depth|shallow|fetch\.|extensions\.' || echo "(no matching config)"
-
-            log "commits in workspace (would be used for fetch negotiation)"
-            git rev-list --max-count=25 HEAD 2>/dev/null | while read -r sha; do
-              if git cat-file -e "${sha}^{commit}" 2>/dev/null; then
-                type=$(git cat-file -t "${sha}" 2>/dev/null || echo unknown)
-                echo "OK   ${sha}  type=${type}  $(git log -1 --oneline "${sha}" 2>/dev/null || true)"
-              else
-                echo "MISS ${sha}  (cat-file -e failed — object missing locally)"
-              fi
-            done
-
-            log "configure credentials"
             git config --local user.name "CircleCI Builds"
             git config --local user.email "builds@circleci.com"
             git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
+            trap 'git config --unset credential.helper || true' EXIT
 
-            cleanup() {
-              git config --unset credential.helper || true
-              git config --local --unset user.name || true
-              git config --local --unset user.email || true
-            }
-            trap cleanup EXIT
+            git remote remove downstream 2>/dev/null || true
+            git remote add downstream "${GIT_REPO}"
 
-            log "add downstream remote"
-            if git remote get-url downstream &>/dev/null; then
-              echo "downstream remote already exists"
-              git remote get-url downstream
-            else
-              git remote add downstream "${GIT_REPO}"
-            fi
-
-            log "connection test (ls-remote)"
-            echo "Listing refs on downstream (auth + reachability, no object fetch)..."
+            echo "ls-remote (auth check)..."
             git ls-remote downstream HEAD refs/heads/main
 
-            log "clear promisor config before fetch probe"
-            git config --unset-all remote.origin.promisor 2>/dev/null || true
-            git config --unset-all extensions.partialClone 2>/dev/null || true
-            git config --unset-all remote.origin.partialclonefilter 2>/dev/null || true
+            echo "noop fetch (same as update-cm.js)..."
+            git -c fetch.negotiationAlgorithm=noop fetch downstream
 
-            TARGET_BRANCH=main
-            REFSPEC="+refs/heads/${TARGET_BRANCH}:refs/remotes/downstream/${TARGET_BRANCH}"
-            export GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_CURL_VERBOSE=1
-            TRACE_LOG="/tmp/git-fetch-trace.log"
-
-            log "fetch probe A — default negotiation (CI update-cm style, may fail)"
-            rm -f "${TRACE_LOG}"
-            set +e
-            git fetch downstream "${REFSPEC}" --no-tags --prune 2>&1 | tee "${TRACE_LOG}"
-            FETCH_DEFAULT_RC=${PIPESTATUS[0]}
-            set -e
-            echo "fetch probe A exit code: ${FETCH_DEFAULT_RC}"
-            if [[ "${FETCH_DEFAULT_RC}" -ne 0 ]]; then
-              echo "last 30 lines of trace:"
-              tail -30 "${TRACE_LOG}" || true
-              grep -iE 'fatal|unresolved|promisor|not our ref|invalid index-pack' "${TRACE_LOG}" || true
-            fi
-            git rev-parse "refs/remotes/downstream/${TARGET_BRANCH}" 2>/dev/null && echo "downstream/main present after probe A" || echo "downstream/main missing after probe A"
-
-            log "fetch probe B — noop negotiation (proposed fix)"
-            rm -f "${TRACE_LOG}"
-            set +e
-            git -c fetch.negotiationAlgorithm=noop fetch downstream "${REFSPEC}" --no-tags --prune 2>&1 | tee "${TRACE_LOG}"
-            FETCH_NOOP_RC=${PIPESTATUS[0]}
-            set -e
-            echo "fetch probe B exit code: ${FETCH_NOOP_RC}"
-            if [[ "${FETCH_NOOP_RC}" -ne 0 ]]; then
-              echo "last 30 lines of trace:"
-              tail -30 "${TRACE_LOG}" || true
-              grep -iE 'fatal|unresolved|promisor|not our ref|invalid index-pack' "${TRACE_LOG}" || true
-            fi
-
-            DOWNSTREAM_MAIN="$(git rev-parse "refs/remotes/downstream/${TARGET_BRANCH}" 2>/dev/null || echo missing)"
-            echo "downstream/main=${DOWNSTREAM_MAIN}"
-
-            log "summary"
-            echo "probe A (default):  exit=${FETCH_DEFAULT_RC}"
-            echo "probe B (noop):     exit=${FETCH_NOOP_RC}"
-            if [[ "${FETCH_NOOP_RC}" -ne 0 ]]; then
-              echo "ERROR: noop fetch still failed — compare diagnostics above with local machine."
-              exit 1
-            fi
-            if [[ "${FETCH_DEFAULT_RC}" -ne 0 ]]; then
-              echo "NOTE: default fetch failed but noop fetch succeeded — use noop in update-cm.js."
-            fi
-            echo "Downstream connection OK: ls-remote and noop fetch of refs/heads/${TARGET_BRANCH} succeeded."
+            git rev-parse refs/remotes/downstream/main
+            echo "OK: downstream connection and noop fetch succeeded."
 
 workflows:
   cm-update-debug:
@@ -139,4 +50,4 @@ workflows:
             - CIF CM Stage
           filters:
             branches:
-              only: /^issue-update-cm$/
+              only: /^issue-update-cm-debug$/
