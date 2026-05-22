@@ -1,325 +1,89 @@
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@1.1.1
-  browser-tools: circleci/browser-tools@1.5.3
-  node: circleci/node@5.0.2
-
-common:
-  integration_test_steps: &integration_test_steps
-    steps:
-      - checkout
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - restore_cache:
-          keys:
-            - maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-      - attach_workspace:
-          at: /home/circleci/build
-      - run:
-          name: Integration tests
-          command: node .circleci/ci/it-tests.js
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: maven-repo-{{ .Environment.CACHE_VERSION }}-its-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-      - store_test_results:
-          path: test-reports
-      # Save test results as artifacts
-      - store_artifacts:
-          path: test-reports
-      # Save AEM logs as artifacts
-      - store_artifacts:
-          path: logs
-
-  docker_auth: &docker_auth
-    auth:
-      username: $ARTIFACTORY_CLOUD_USER
-      password: $ARTIFACTORY_CLOUD_PASS
-
-  install_components: &install_components
-    run:
-      name: Install CIF Components
-      command: |
-        if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-          git clone https://github.com/adobe/aem-core-cif-components.git
-          cd aem-core-cif-components
-          components_branch=$(git ls-remote --heads origin ${CIRCLE_BRANCH})
-          if [[ ! -z ${components_branch} ]]; then
-            git fetch
-            git checkout $CIRCLE_BRANCH
-          fi
-          mvn -B clean install
-          cd react-components
-          npm link
-          cd ../extensions/product-recs/react-components
-          npm link
-        fi
-      working_directory: ./dependencies
+# Temporary config: downstream CM Git connection check only.
+# Restore full config from main when debugging is done.
 
 executors:
   cif_executor:
     docker:
       - image: cimg/openjdk:11.0-browsers
-  test_executor_cloudready:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
-        <<: *docker_auth
-  test_executor_655:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
-        <<: *docker_auth
-  test_executor_660:
-    docker:
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-        <<: *docker_auth
-      - image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
-        <<: *docker_auth
 
 jobs:
-  build:
+  update-cm-connection-debug:
     executor: cif_executor
-    working_directory: /home/circleci/build
+    working_directory: ~/repo
     steps:
-      - node/install:
-          node-version: '12.14.1'
       - checkout
-      - restore_cache:
-          keys:
-            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-
       - run:
-          name: Update permissions
-          command: sudo chown -R circleci /usr/local/lib/node_modules
-      - *install_components
-      - run:
-          name: Build
+          name: Verify downstream CM Git connection
           command: |
-            java -version
-            mvn -v
-            if [[ "$CIRCLE_BRANCH" != "" && "$CIRCLE_BRANCH" != "main" ]]; then
-              mvn -B clean install -PfedDev,classic
-            else
-              mvn -B clean install -Pclassic
+            set -euo pipefail
+
+            log() { echo ""; echo "--- $1 ---"; echo ""; }
+
+            log "environment"
+            echo "CIRCLE_BRANCH=${CIRCLE_BRANCH:-unset}"
+            echo "CIRCLE_SHA1=${CIRCLE_SHA1:-unset}"
+            echo "GIT_REPO=${GIT_REPO:+set}"
+            echo "GIT_USER=${GIT_USER:+set}"
+            echo "GIT_PASSWORD=${GIT_PASSWORD:+set}"
+
+            if [[ -z "${GIT_REPO:-}" || -z "${GIT_USER:-}" || -z "${GIT_PASSWORD:-}" ]]; then
+              echo "ERROR: GIT_REPO, GIT_USER, and GIT_PASSWORD must be set (CIF CM Stage context)."
+              exit 1
             fi
-      - run:
-          name: Run Unit Tests (Jest)
-          command: npm run ci
-          working_directory: ./ui.frontend
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-      - persist_to_workspace:
-          root: /home/circleci/build
-          paths:
-            - all/target/*.zip
-            - classic/all/target/*.zip
-            - dependencies/aem-core-cif-components/examples/bundle/target/*.jar
-      - store_test_results:
-          path: core/target/surefire-reports
-      - store_artifacts:
-          path: core/target/surefire-reports
-      - codecov/upload:
-          flags: unittests
-      - store_test_results:
-          path: ui.frontend/test-results
-      - store_artifacts:
-          path: ui.frontend/test-results
 
-  integration-test-655:
-    executor: test_executor_655
-    environment:
-      AEM: classic
-      TYPE: integration
-    parameters:
-      classifier:
-        default: "classic"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            log "local git state"
+            git --version
+            git remote -v
+            git config -l | grep -iE 'partial|promisor|filter|recurse|depth' || echo "(no partial/promisor config)"
 
-  integration-test-660:
-    executor: test_executor_660
-    environment:
-      AEM: lts
-      TYPE: integration
-    parameters:
-      classifier:
-        default: "lts"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            log "configure credentials"
+            git config --local user.name "CircleCI Builds"
+            git config --local user.email "builds@circleci.com"
+            git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
 
-  integration-test-cloudready-with-addon:
-    executor: test_executor_cloudready
-    environment:
-      AEM: cloud
-      TYPE: integration
-    parameters:
-      classifier:
-        default: "cloud"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            cleanup() {
+              git config --unset credential.helper || true
+              git config --local --unset user.name || true
+              git config --local --unset user.email || true
+            }
+            trap cleanup EXIT
 
-  selenium-chrome-cloudready-with-addon:
-    executor: test_executor_cloudready
-    environment:
-      AEM: cloud
-      TYPE: selenium
-      BROWSER: chrome
-    parameters:
-      classifier:
-        default: "cloud"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            log "add downstream remote"
+            if git remote get-url downstream &>/dev/null; then
+              echo "downstream remote already exists"
+              git remote get-url downstream
+            else
+              git remote add downstream "${GIT_REPO}"
+            fi
 
-  selenium-chrome-655:
-    executor: test_executor_655
-    environment:
-      AEM: classic
-      TYPE: selenium
-      BROWSER: chrome
-    parameters:
-      classifier:
-        default: "classic"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            log "connection test (ls-remote)"
+            echo "Listing refs on downstream (auth + reachability, no object fetch)..."
+            git ls-remote downstream HEAD refs/heads/main
 
-  selenium-chrome-660:
-    executor: test_executor_660
-    environment:
-      AEM: lts
-      TYPE: selenium
-      BROWSER: chrome
-    parameters:
-      classifier:
-        default: "lts"
-        type: string
-    resource_class: large
-    working_directory: /home/circleci/build
-    <<: *integration_test_steps
+            log "clear promisor config before fetch probe"
+            git config --unset-all remote.origin.promisor 2>/dev/null || true
+            git config --unset-all extensions.partialClone 2>/dev/null || true
+            git config --unset-all remote.origin.partialclonefilter 2>/dev/null || true
 
-  deploy-sample:
-    executor: cif_executor
-    working_directory: ~/repo
-    environment:
-      MAVEN_OPTS: -Xmx3200m
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - maven-repo-v2-{{ arch }}-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v2-
-      - run:
-          name: Deploy Venia Sample Project to GitHub
-          command: |
-            echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
-            node .circleci/ci/deploy-venia.js
-            rm -rf /home/circleci/.gnupg
-            rm -rf /home/circleci/.npmrc
+            log "fetch probe (same ref update-cm uses)"
+            TARGET_BRANCH=main
+            REFSPEC="+refs/heads/${TARGET_BRANCH}:refs/remotes/downstream/${TARGET_BRANCH}"
+            echo "Running: git fetch downstream ${REFSPEC} --no-tags --prune"
+            export GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_CURL_VERBOSE=1
+            git fetch downstream "${REFSPEC}" --no-tags --prune
 
-  update-cm:
-    executor: cif_executor
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run:
-          name: Update CM Repository
-          command: |
-            node .circleci/ci/update-cm.js
+            log "success"
+            echo "Downstream connection OK: ls-remote and fetch of refs/heads/${TARGET_BRANCH} succeeded."
 
 workflows:
-  version: 2
-  build-and-release:
+  cm-update-debug:
     jobs:
-      - build:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-      - integration-test-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - integration-test-660:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - integration-test-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-cloudready-with-addon:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-655:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - selenium-chrome-660:
-          context:
-            - CIF Artifactory Cloud
-          filters:
-            tags:
-              only: /.*/
-          requires:
-            - build
-      - deploy-sample:
-          context:
-            - CIF Artifactory Cloud
-            - CIF Maven Central
-            - CIF GitHub
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
-      - update-cm:
+      - update-cm-connection-debug:
           context:
             - CIF Artifactory Cloud
             - CIF CM Stage
-          requires:
-            - build
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^venia(-classic)?-\d+\.\d+\.\d+$/
+              only: /^issue-update-cm$/
