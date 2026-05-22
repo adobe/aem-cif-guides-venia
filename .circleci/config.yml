@@ -36,7 +36,23 @@ jobs:
             log "local git state"
             git --version
             git remote -v
-            git config -l | grep -iE 'partial|promisor|filter|recurse|depth' || echo "(no partial/promisor config)"
+            echo "HEAD=$(git rev-parse HEAD 2>/dev/null || echo unavailable)"
+            echo "branch=$(git branch --show-current 2>/dev/null || echo detached)"
+            git rev-parse --is-shallow-repository 2>/dev/null || true
+            git count-objects -v 2>/dev/null || true
+
+            log "full git config (clone/fetch related)"
+            git config -l | grep -iE 'remote\.|partial|promisor|filter|recurse|depth|shallow|fetch\.|extensions\.' || echo "(no matching config)"
+
+            log "commits in workspace (would be used for fetch negotiation)"
+            git rev-list --max-count=25 HEAD 2>/dev/null | while read -r sha; do
+              if git cat-file -e "${sha}^{commit}" 2>/dev/null; then
+                type=$(git cat-file -t "${sha}" 2>/dev/null || echo unknown)
+                echo "OK   ${sha}  type=${type}  $(git log -1 --oneline "${sha}" 2>/dev/null || true)"
+              else
+                echo "MISS ${sha}  (cat-file -e failed — object missing locally)"
+              fi
+            done
 
             log "configure credentials"
             git config --local user.name "CircleCI Builds"
@@ -67,15 +83,52 @@ jobs:
             git config --unset-all extensions.partialClone 2>/dev/null || true
             git config --unset-all remote.origin.partialclonefilter 2>/dev/null || true
 
-            log "fetch probe (same ref update-cm uses)"
             TARGET_BRANCH=main
             REFSPEC="+refs/heads/${TARGET_BRANCH}:refs/remotes/downstream/${TARGET_BRANCH}"
-            echo "Running: git fetch downstream ${REFSPEC} --no-tags --prune"
             export GIT_TRACE=1 GIT_TRACE_PACKET=1 GIT_CURL_VERBOSE=1
-            git fetch downstream "${REFSPEC}" --no-tags --prune
+            TRACE_LOG="/tmp/git-fetch-trace.log"
 
-            log "success"
-            echo "Downstream connection OK: ls-remote and fetch of refs/heads/${TARGET_BRANCH} succeeded."
+            log "fetch probe A — default negotiation (CI update-cm style, may fail)"
+            rm -f "${TRACE_LOG}"
+            set +e
+            git fetch downstream "${REFSPEC}" --no-tags --prune 2>&1 | tee "${TRACE_LOG}"
+            FETCH_DEFAULT_RC=${PIPESTATUS[0]}
+            set -e
+            echo "fetch probe A exit code: ${FETCH_DEFAULT_RC}"
+            if [[ "${FETCH_DEFAULT_RC}" -ne 0 ]]; then
+              echo "last 30 lines of trace:"
+              tail -30 "${TRACE_LOG}" || true
+              grep -iE 'fatal|unresolved|promisor|not our ref|invalid index-pack' "${TRACE_LOG}" || true
+            fi
+            git rev-parse "refs/remotes/downstream/${TARGET_BRANCH}" 2>/dev/null && echo "downstream/main present after probe A" || echo "downstream/main missing after probe A"
+
+            log "fetch probe B — noop negotiation (proposed fix)"
+            rm -f "${TRACE_LOG}"
+            set +e
+            git -c fetch.negotiationAlgorithm=noop fetch downstream "${REFSPEC}" --no-tags --prune 2>&1 | tee "${TRACE_LOG}"
+            FETCH_NOOP_RC=${PIPESTATUS[0]}
+            set -e
+            echo "fetch probe B exit code: ${FETCH_NOOP_RC}"
+            if [[ "${FETCH_NOOP_RC}" -ne 0 ]]; then
+              echo "last 30 lines of trace:"
+              tail -30 "${TRACE_LOG}" || true
+              grep -iE 'fatal|unresolved|promisor|not our ref|invalid index-pack' "${TRACE_LOG}" || true
+            fi
+
+            DOWNSTREAM_MAIN="$(git rev-parse "refs/remotes/downstream/${TARGET_BRANCH}" 2>/dev/null || echo missing)"
+            echo "downstream/main=${DOWNSTREAM_MAIN}"
+
+            log "summary"
+            echo "probe A (default):  exit=${FETCH_DEFAULT_RC}"
+            echo "probe B (noop):     exit=${FETCH_NOOP_RC}"
+            if [[ "${FETCH_NOOP_RC}" -ne 0 ]]; then
+              echo "ERROR: noop fetch still failed — compare diagnostics above with local machine."
+              exit 1
+            fi
+            if [[ "${FETCH_DEFAULT_RC}" -ne 0 ]]; then
+              echo "NOTE: default fetch failed but noop fetch succeeded — use noop in update-cm.js."
+            fi
+            echo "Downstream connection OK: ls-remote and noop fetch of refs/heads/${TARGET_BRANCH} succeeded."
 
 workflows:
   cm-update-debug:
