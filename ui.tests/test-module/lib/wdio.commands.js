@@ -251,7 +251,6 @@ browser.addCommand('CIFSelectCategory', function (categoryField, categoryName) {
     const pickerButton = categoryField.$('button[aria-label="Open Picker"]');
     pickerButton.waitForEnabled();
     pickerButton.click();
-    expect($('h3=Add Category')).toBeDisplayed();
     expect($('h2=Add Category')).toBeDisplayed();
 
     // Select category
@@ -272,7 +271,6 @@ browser.addCommand('CIFSelectProduct', function (productField, productName) {
     const pickerButton = productField.$('button[aria-label="Open Picker"]');
     pickerButton.waitForEnabled();
     pickerButton.click();
-    expect($('h3=Add Product')).toBeDisplayed();
     expect($('h2=Add Product')).toBeDisplayed();
 
     // Select product
