@@ -32,16 +32,13 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
-                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking,cacheConfigurations" \
+                -d "propertylist=identifier,url,httpMethod,httpHeaders,service.ranking" \
                 -d "identifier=default" \
                 -d "url=${COMMERCE_ENDPOINT}" \
-                -d "httpMethod=GET" \
-                -d "service.ranking=${ranking}" \
-                -d "cacheConfigurations=venia/components/commerce/product:true:50:1000" \
-                -d "cacheConfigurations=venia/components/commerce/productlist:true:50:1000"
+                -d "httpMethod=POST" \
+                -d "service.ranking=${ranking}"
     `)
 }
-
 
 const updateGraphqlProxyServlet = () => {
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
@@ -52,22 +49,7 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
-const updateCifEndpointConfiguration = () => {
-    const formData = {
-        apply: true,
-        serviceUrl: 'https://cifonskyline.z6.web.core.windows.net/',
-        version: 'preprod.stable.latest',
-        propertylist: 'serviceUrl,version',
-    };
 
-     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.authoring.impl.CifEndpointServiceImpl" \
-                    -u "admin:admin" \
-                    -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
-                    --data-raw '${Object.entries(formData)
-                        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-                        .join('&')}'
-        `)
-    }
 
 const configureCifCacheInvalidation = () => {
     // 1. Enable cache invalidation servlet (author only) - /bin/cif/invalidate-cache (Fixed factory config)
@@ -77,8 +59,7 @@ const configureCifCacheInvalidation = () => {
                 -d "factoryPid=com.adobe.cq.cif.cacheinvalidation.internal.InvalidateCacheNotificationImpl" \
                 -d "propertylist=" || echo "Cache servlet config completed"
     `)
-
-
+    
     // 2. Enable cache invalidation listener (both author and publish)
     ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.commerce.core.cacheinvalidation.internal.InvalidateCacheSupport" \
                 -u "admin:admin" \
@@ -108,8 +89,7 @@ try {
         // Connect to QP
         ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
 
-        // TODO: Remove when https://jira.corp.adobe.com/browse/ARTFY-6646 is resolved
-        let aemCifSdkApiVersion = "2025.09.02.1-SNAPSHOT";
+        let aemCifSdkApiVersion = "LATEST";
         let extras;
         if (classifier == 'classic') {
             // Download latest add-on for AEM 6.5 release from artifactory
@@ -159,17 +139,15 @@ try {
         updateGraphqlClientConfiguration();
     } else {
         // update the existing default endpoint
-        updateGraphqlClientConfiguration('default');
+               updateGraphqlClientConfiguration('default');
     }
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
-
+    
     // Configure CIF Cache Invalidation
     configureCifCacheInvalidation();
-
-    updateCifEndpointConfiguration();
 
     // Run integration tests
     if (TYPE === 'integration') {
