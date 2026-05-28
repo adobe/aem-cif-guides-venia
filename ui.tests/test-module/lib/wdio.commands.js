@@ -252,6 +252,7 @@ browser.addCommand('CIFSelectCategory', function (categoryField, categoryName) {
     pickerButton.waitForEnabled();
     pickerButton.click();
     expect($('h3=Add Category')).toBeDisplayed();
+    expect($('h2=Add Category')).toBeDisplayed();
 
     // Select category
     const categoryRow = $(`//div[contains(text(),"${categoryName}")]`);
@@ -272,6 +273,7 @@ browser.addCommand('CIFSelectProduct', function (productField, productName) {
     pickerButton.waitForEnabled();
     pickerButton.click();
     expect($('h3=Add Product')).toBeDisplayed();
+    expect($('h2=Add Product')).toBeDisplayed();
 
     // Select product
     const productRow = $(`//div[contains(text(),"${productName}")]`);
