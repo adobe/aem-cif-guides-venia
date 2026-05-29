@@ -33,7 +33,10 @@ const doUpdate = () => {
         ci.sh(`git remote add downstream ${ci.env('GIT_REPO')}`);
     }
 
-    ci.sh('git fetch downstream');
+    // CircleCI checks out GitHub (origin) first; default fetch tells Azure which SHAs we
+    // already have and triggers a thin pack that fails in CI (unresolved deltas). noop
+    // skips that negotiation so downstream objects are fetched without using origin as the base.
+    ci.sh('git -c fetch.negotiationAlgorithm=noop fetch downstream');
     
     const tmpBranchExists = ci.sh(
         `git rev-parse --verify "${LOCAL_BRANCH}" 2>/dev/null ||  echo "no"`, true)
