@@ -12,7 +12,7 @@
  *
  ******************************************************************************/
 import { useCallback } from 'react';
-import { useConfigContext } from '@adobe/aem-core-cif-react-components';
+import { useConfigContext } from '@adobe/aem-core-cif-react-components/useConfigContext';
 
 /**
  * @param {Object}      props
