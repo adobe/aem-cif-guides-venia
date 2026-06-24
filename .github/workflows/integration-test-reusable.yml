@@ -1,0 +1,95 @@
+name: Integration Test (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      job_name:
+        required: true
+        type: string
+      aem:
+        required: true
+        type: string
+      type:
+        required: true
+        type: string
+      qp_image:
+        required: true
+        type: string
+      aem_image:
+        required: true
+        type: string
+      browser:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  integration-test:
+    name: ${{ inputs.job_name }}
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ inputs.qp_image }}
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ inputs.aem_image }}
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: ${{ inputs.aem }}
+      TYPE: ${{ inputs.type }}
+      BROWSER: ${{ inputs.browser }}
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+      VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+      VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set build path
+        run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+
+      - name: Integration tests
+        run: bash .github/ci/run-integration-test.sh
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ inputs.job_name }}
+          if-no-files-found: ignore
+          path: test-reports
+
+      - name: Upload AEM logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aem-logs-${{ inputs.job_name }}
+          if-no-files-found: ignore
+          path: logs
+
+      - name: Publish integration test results
+        if: always() && inputs.type == 'integration'
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: test-reports/it.tests/**/*.xml
+          check_name: ${{ inputs.job_name }}
+
+      - name: Publish UI test results
+        if: always() && inputs.type == 'selenium'
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: test-reports/ui.tests/**/*.xml
+          check_name: ${{ inputs.job_name }}

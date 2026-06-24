@@ -14,18 +14,7 @@
 set -euo pipefail
 
 if [[ "${TYPE:-}" == "selenium" ]]; then
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq wget gnupg
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq google-chrome-stable
-    CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d. -f1)
-    wget -q "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" -O /tmp/chromedriver_version
-    CHROMEDRIVER_VERSION=$(cat /tmp/chromedriver_version)
-    wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O /tmp/chromedriver.zip
-    sudo unzip -q /tmp/chromedriver.zip -d /usr/local/bin
-    sudo chmod +x /usr/local/bin/chromedriver
+    bash .github/ci/install-chrome.sh
 fi
 
 node .circleci/ci/it-tests.js

@@ -13,18 +13,16 @@
 
 set -euo pipefail
 
-BRANCH="${GITHUB_REF_NAME:-${CIRCLE_BRANCH:-}}"
-REF_TYPE="${GITHUB_REF_TYPE:-branch}"
+branch="${GITHUB_REF_NAME:-${CIRCLE_BRANCH:-}}"
 
-if [[ "${REF_TYPE}" == "branch" && -n "${BRANCH}" && "${BRANCH}" != "main" ]]; then
+if [[ -n "${branch}" && "${branch}" != "main" ]]; then
     mkdir -p dependencies
     cd dependencies
     git clone https://github.com/adobe/aem-core-cif-components.git
     cd aem-core-cif-components
-    components_branch=$(git ls-remote --heads origin "${BRANCH}")
-    if [[ -n "${components_branch}" ]]; then
+    if git ls-remote --heads origin "${branch}" | grep -q "${branch}"; then
         git fetch
-        git checkout "${BRANCH}"
+        git checkout "${branch}"
     fi
     mvn -B clean install
     cd react-components

@@ -20,12 +20,12 @@ ci.context();
 
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
-const workspace = ci.env('CI_WORKSPACE') || ci.env('GITHUB_WORKSPACE') || '/home/circleci/repo';
-const mvnOpts = `-B -s ${workspace}/.circleci/settings.xml`;
-const githubOwner = ci.env('CIRCLE_PROJECT_USERNAME') || (ci.env('GITHUB_REPOSITORY') || '').split('/')[0];
-const githubRepo = ci.env('CIRCLE_PROJECT_REPONAME') || (ci.env('GITHUB_REPOSITORY') || '').split('/')[1];
-const githubSha = ci.env('CIRCLE_SHA1') || ci.env('GITHUB_SHA');
-const githubTag = ci.env('CIRCLE_TAG') || ci.env('GITHUB_REF_NAME');
+const repoPath = process.env.CI_REPO_PATH || '/home/circleci/repo';
+const mvnOpts = `-B -s ${repoPath}/.circleci/settings.xml`;
+const githubOwner = process.env.CIRCLE_PROJECT_USERNAME || process.env.GITHUB_REPOSITORY_OWNER;
+const githubRepo = process.env.CIRCLE_PROJECT_REPONAME || (process.env.GITHUB_REPOSITORY || '').split('/')[1];
+const githubSha = process.env.CIRCLE_SHA1 || process.env.GITHUB_SHA;
+const githubTag = process.env.CIRCLE_TAG || process.env.GITHUB_REF_NAME;
 
 ci.stage("Install GHR");
 ci.sh("mkdir -p tmp");

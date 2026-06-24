@@ -18,6 +18,7 @@ const ci = new (require('./ci.js'))();
 ci.context();
 const qpPath = process.env.CI_QP_PATH || '/home/circleci/cq';
 const buildPath = process.env.CI_BUILD_PATH || '/home/circleci/build';
+const qpServerHostname = process.env.QP_SERVER_HOSTNAME || 'localhost';
 const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
@@ -58,7 +59,7 @@ try {
 
     ci.dir(qpPath, () => {
         // Connect to QP
-        ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
+        ci.sh(`./qp.sh -v bind --server-hostname ${qpServerHostname} --server-port 55555`);
 
         let aemCifSdkApiVersion = "LATEST";
         let extras;
