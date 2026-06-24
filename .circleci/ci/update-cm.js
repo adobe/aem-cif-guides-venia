@@ -23,7 +23,7 @@ const doUpdate = () => {
     // the target branch that should be updated
     const TARGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
     // the revision to update the TARGET_BRANCH to
-    const MERGE_REVISION = ci.env('CIRCLE_TAG'); // ci.env('CIRCLE_SHA1');
+    const MERGE_REVISION = ci.env('CIRCLE_TAG') || ci.env('GITHUB_REF_NAME'); // ci.env('CIRCLE_SHA1');
     
     const downstreamRemoteExists = ci.sh(
         'git remote get-url downstream 2>/dev/null || echo "no"', true)

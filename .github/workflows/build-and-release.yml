@@ -1,0 +1,255 @@
+# Copyright 2026 Adobe. All rights reserved.
+# Licensed under the Apache License, Version 2.0
+#
+# GitHub Actions workflow mirroring .circleci/config.yml (build-and-release).
+# CircleCI remains active; both pipelines run in parallel during migration.
+#
+# Required repository secrets (mirror CircleCI contexts):
+#   ARTIFACTORY_CLOUD_USER, ARTIFACTORY_CLOUD_PASS
+#   COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN
+#   VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD
+#   CODECOV_TOKEN
+#   GPG_PRIVATE_KEY, GPG_PASSPHRASE (deploy-sample)
+#   MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD (deploy-sample)
+#   GIT_REPO, GIT_USER, GIT_PASSWORD (update-cm)
+
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+concurrency:
+  group: build-and-release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ARTIFACTORY_REGISTRY: docker-adobe-cif-release.dr-uw2.adobeitc.com
+  CI_BUILD_PATH: ${{ github.workspace }}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+
+      - name: Set up Node.js 12.14.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12.14.1'
+
+      - name: Install CIF components
+        run: bash .github/ci/install-cif-components.sh
+
+      - name: Build
+        run: |
+          java -version
+          mvn -v
+          if [[ "${{ github.ref_type }}" == "branch" && "${{ github.ref_name }}" != "" && "${{ github.ref_name }}" != "main" ]]; then
+            mvn -B clean install -PfedDev,classic
+          else
+            mvn -B clean install -Pclassic
+          fi
+
+      - name: Run unit tests (Jest)
+        working-directory: ui.frontend
+        run: npm run ci
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          retention-days: 7
+          if-no-files-found: ignore
+          path: |
+            all/target/*.zip
+            classic/all/target/*.zip
+            dependencies/aem-core-cif-components/examples/bundle/target/*.jar
+
+      - name: Upload Java unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-unit-test-results
+          retention-days: 7
+          path: core/target/surefire-reports
+
+      - name: Upload frontend test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-results
+          retention-days: 7
+          path: ui.frontend/test-results
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          fail_ci_if_error: false
+
+  integration-test:
+    name: ${{ matrix.name }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: integration-test-655
+            qp_image: circleci-qp:6.4.6-openjdk11
+            aem_image: circleci-aem:6.5.23.0-openjdk11
+            aem_classifier: classic
+            test_type: integration
+          - name: integration-test-660
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-lts:6.6.0-openjdk21
+            aem_classifier: lts
+            test_type: integration
+          - name: integration-test-cloudready-with-addon
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-cloudready:25194-openjdk21
+            aem_classifier: cloud
+            test_type: integration
+          - name: selenium-chrome-655
+            qp_image: circleci-qp:6.4.6-openjdk11
+            aem_image: circleci-aem:6.5.23.0-openjdk11
+            aem_classifier: classic
+            test_type: selenium
+            browser: chrome
+          - name: selenium-chrome-660
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-lts:6.6.0-openjdk21
+            aem_classifier: lts
+            test_type: selenium
+            browser: chrome
+          - name: selenium-chrome-cloudready-with-addon
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-cloudready:25194-openjdk21
+            aem_classifier: cloud
+            test_type: selenium
+            browser: chrome
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+
+      - name: Log in to Artifactory Docker registry
+        run: |
+          echo "${{ secrets.ARTIFACTORY_CLOUD_PASS }}" | docker login "${{ env.ARTIFACTORY_REGISTRY }}" \
+            -u "${{ secrets.ARTIFACTORY_CLOUD_USER }}" --password-stdin
+
+      - name: Run integration tests
+        env:
+          INTEGRATION_QP_IMAGE: ${{ env.ARTIFACTORY_REGISTRY }}/${{ matrix.qp_image }}
+          INTEGRATION_AEM_IMAGE: ${{ env.ARTIFACTORY_REGISTRY }}/${{ matrix.aem_image }}
+          AEM_CLASSIFIER: ${{ matrix.aem_classifier }}
+          TEST_TYPE: ${{ matrix.test_type }}
+          BROWSER: ${{ matrix.browser || '' }}
+          COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+          COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+          VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+          VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+        run: |
+          chmod +x .github/ci/run-integration-test.sh
+          docker compose -f .github/docker/docker-compose.integration.yml run --rm qp
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.name }}
+          retention-days: 7
+          path: test-reports
+
+      - name: Upload AEM logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aem-logs-${{ matrix.name }}
+          retention-days: 7
+          path: logs
+
+  deploy-sample:
+    name: deploy-sample
+    needs: build
+    if: github.ref_type == 'tag' && (startsWith(github.ref_name, 'venia-') || startsWith(github.ref_name, 'venia-classic-'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release tag
+        run: |
+          if ! echo "${{ github.ref_name }}" | grep -Eq '^venia(-classic)?-[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Tag '${{ github.ref_name }}' does not match release pattern venia(-classic)?-x.y.z"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+
+      - name: Import GPG key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
+
+      - name: Deploy Venia sample project
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_WORKSPACE: ${{ github.workspace }}
+        run: node .circleci/ci/deploy-venia.js
+
+      - name: Remove sensitive files
+        if: always()
+        run: rm -rf ~/.gnupg ~/.npmrc
+
+  update-cm:
+    name: update-cm
+    needs: build
+    if: github.ref_type == 'tag' && (startsWith(github.ref_name, 'venia-') || startsWith(github.ref_name, 'venia-classic-'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate release tag
+        run: |
+          if ! echo "${{ github.ref_name }}" | grep -Eq '^venia(-classic)?-[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Tag '${{ github.ref_name }}' does not match release pattern venia(-classic)?-x.y.z"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update Cloud Manager repository
+        env:
+          GIT_REPO: ${{ secrets.GIT_REPO }}
+          GIT_USER: ${{ secrets.GIT_USER }}
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+        run: node .circleci/ci/update-cm.js

@@ -1,0 +1,32 @@
+# Copyright 2026 Adobe. All rights reserved.
+# Licensed under the Apache License, Version 2.0
+
+services:
+  aem:
+    image: ${INTEGRATION_AEM_IMAGE}
+    ports:
+      - "55555:55555"
+      - "4502:4502"
+      - "3000:3000"
+
+  qp:
+    image: ${INTEGRATION_QP_IMAGE}
+    depends_on:
+      - aem
+    network_mode: service:aem
+    volumes:
+      - ${CI_BUILD_PATH}:/home/circleci/build
+    working_dir: /home/circleci/build
+    environment:
+      AEM: ${AEM_CLASSIFIER}
+      TYPE: ${TEST_TYPE}
+      BROWSER: ${BROWSER:-}
+      CI_QP_PATH: /home/circleci/cq
+      CI_BUILD_PATH: /home/circleci/build
+      COMMERCE_ENDPOINT: ${COMMERCE_ENDPOINT}
+      COMMERCE_INTEGRATION_TOKEN: ${COMMERCE_INTEGRATION_TOKEN}
+      VENIA_ACCOUNT_EMAIL: ${VENIA_ACCOUNT_EMAIL}
+      VENIA_ACCOUNT_PASSWORD: ${VENIA_ACCOUNT_PASSWORD}
+      JACOCO_AGENT: ${JACOCO_AGENT:-}
+    entrypoint: ["/bin/bash", "-lc"]
+    command: ["bash .github/ci/run-integration-test.sh"]

@@ -16,8 +16,8 @@
 
 const ci = new (require('./ci.js'))();
 ci.context();
-const qpPath = '/home/circleci/cq';
-const buildPath = '/home/circleci/build';
+const qpPath = process.env.CI_QP_PATH || '/home/circleci/cq';
+const buildPath = process.env.CI_BUILD_PATH || '/home/circleci/build';
 const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
