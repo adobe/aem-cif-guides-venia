@@ -1,42 +1,40 @@
-name: Build and Release
+name: build-and-release
 
+# Mirror CircleCI: one run per push; PRs use pull_request only to avoid duplicate checks.
 on:
-  push:
-    branches:
-      - '**'
-    tags:
-      - '**'
   pull_request:
-    branches:
+  push:
+    tags:
       - '**'
 
 concurrency:
-  group: build-and-release-${{ github.workflow }}-${{ github.ref }}
+  group: build-and-release-${{ github.ref }}
   cancel-in-progress: true
 
 env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
   ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
 
 jobs:
   build:
-    name: Build
+    name: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '11'
           cache: maven
 
-      - name: Set up Node.js 12.14.1
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '12.14.1'
+
+      - name: Update permissions
+        run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
 
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
@@ -45,7 +43,7 @@ jobs:
         run: |
           java -version
           mvn -v
-          if [[ "${{ github.ref_name }}" != "" && "${{ github.ref_name }}" != "main" ]]; then
+          if [[ -n "${BRANCH_NAME}" && "${BRANCH_NAME}" != "main" && "${GITHUB_REF}" != refs/tags/* ]]; then
             mvn -B clean install -PfedDev,classic
           else
             mvn -B clean install -Pclassic
@@ -56,6 +54,7 @@ jobs:
         run: npm run ci
 
       - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -72,167 +71,245 @@ jobs:
             classic/all/target/*.zip
             dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
-      - name: Upload Java unit test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: java-unit-test-results
-          if-no-files-found: ignore
-          path: core/target/surefire-reports
-
-      - name: Upload frontend unit test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-unit-test-results
-          if-no-files-found: ignore
-          path: ui.frontend/test-results
-
-      - name: Publish Java unit test results
-        if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: core/target/surefire-reports/**/*.xml
-          check_name: Java Unit Test Results
-
-      - name: Publish frontend unit test results
-        if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: ui.frontend/test-results/**/*.xml
-          check_name: Frontend Unit Test Results
-
   integration-test-655:
-    name: Integration Test (AEM 6.5)
+    name: integration-test-655
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Integration Test (AEM 6.5)
-      aem: classic
-      type: integration
-      qp_image: circleci-qp:6.4.6-openjdk11
-      aem_image: circleci-aem:6.5.23.0-openjdk11
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: classic
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-integration-test-655
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   integration-test-660:
-    name: Integration Test (AEM 6.5 LTS)
+    name: integration-test-660
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Integration Test (AEM 6.5 LTS)
-      aem: lts
-      type: integration
-      qp_image: circleci-qp:6.4.7-openjdk21
-      aem_image: circleci-aem-lts:6.6.0-openjdk21
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: lts
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-integration-test-660
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   integration-test-cloudready-with-addon:
-    name: Integration Test (Cloud)
+    name: integration-test-cloudready-with-addon
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Integration Test (Cloud)
-      aem: cloud
-      type: integration
-      qp_image: circleci-qp:6.4.7-openjdk21
-      aem_image: circleci-aem-cloudready:25194-openjdk21
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: cloud
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-integration-test-cloudready
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-cloudready-with-addon:
-    name: Selenium Chrome (Cloud)
+    name: selenium-chrome-cloudready-with-addon
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Selenium Chrome (Cloud)
-      aem: cloud
-      type: selenium
-      browser: chrome
-      qp_image: circleci-qp:6.4.7-openjdk21
-      aem_image: circleci-aem-cloudready:25194-openjdk21
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: cloud
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+      VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+      VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-selenium-chrome-cloudready
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-655:
-    name: Selenium Chrome (AEM 6.5)
+    name: selenium-chrome-655
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Selenium Chrome (AEM 6.5)
-      aem: classic
-      type: selenium
-      browser: chrome
-      qp_image: circleci-qp:6.4.6-openjdk11
-      aem_image: circleci-aem:6.5.23.0-openjdk11
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: classic
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+      VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+      VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-selenium-chrome-655
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-660:
-    name: Selenium Chrome (AEM 6.5 LTS)
+    name: selenium-chrome-660
     needs: build
-    uses: ./.github/workflows/integration-test-reusable.yml
-    secrets: inherit
-    with:
-      job_name: Selenium Chrome (AEM 6.5 LTS)
-      aem: lts
-      type: selenium
-      browser: chrome
-      qp_image: circleci-qp:6.4.7-openjdk21
-      aem_image: circleci-aem-lts:6.6.0-openjdk21
-
-  deploy-sample:
-    name: Deploy Venia Sample Project
-    needs: build
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/venia')
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
-      CI_REPO_PATH: ${{ github.workspace }}
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-      MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      AEM: lts
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+      COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+      VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+      VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
         with:
-          distribution: temurin
-          java-version: '11'
-          cache: maven
-
-      - name: Import GPG key
-        run: echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
-      - name: Deploy Venia Sample Project
-        run: node .circleci/ci/deploy-venia.js
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Cleanup credentials
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+      - uses: actions/upload-artifact@v4
         if: always()
-        run: |
-          rm -rf ~/.gnupg
-          rm -rf ~/.npmrc
-
-  update-cm:
-    name: Update Cloud Manager Repository
-    needs: build
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/venia')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Update CM Repository
-        run: node .circleci/ci/update-cm.js
-        env:
-          GIT_REPO: ${{ secrets.GIT_REPO }}
-          GIT_USER: ${{ secrets.GIT_USER }}
-          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+          name: test-reports-selenium-chrome-660
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs

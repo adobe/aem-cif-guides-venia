@@ -1,5 +1,5 @@
 [![CircleCI](https://circleci.com/gh/adobe/aem-cif-guides-venia.svg?style=svg)](https://circleci.com/gh/adobe/aem-cif-guides-venia)
-[![Build and Release](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/build-and-release.yml)
+[![build-and-release](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/build-and-release.yml)
 ![GitHub](https://img.shields.io/github/license/adobe/aem-cif-guides-venia.svg)
 
 # AEM Guides - CIF Venia Project
