@@ -30,7 +30,7 @@ describe('Catalog Page Status', function () {
 
     before(() => {
         // Set window size to desktop
-        browser.setWindowSize(1280, 960);
+        browser.setWindowSize(1280, 720);
 
         // AEM Login
         browser.AEMForceLogout();
