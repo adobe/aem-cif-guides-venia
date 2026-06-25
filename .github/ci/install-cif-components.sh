@@ -25,6 +25,14 @@ fi
 
 if [[ -n "${branch}" && "${branch}" != "main" ]]; then
     repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+    if [[ -z "${ARTIFACTORY_CLOUD_USER:-}" || -z "${ARTIFACTORY_CLOUD_PASS:-}" ]]; then
+        echo "::error::Missing GitHub secrets ARTIFACTORY_CLOUD_USER and ARTIFACTORY_CLOUD_PASS."
+        echo "::error::CircleCI injects these from the 'CIF Artifactory Cloud' context. An Adobe admin must add the same secrets to GitHub Actions."
+        echo "::error::The cloned aem-core-cif-components build requires Adobe Artifactory for SNAPSHOT dependencies (e.g. core-cif-components-parent:2.18.3-SNAPSHOT)."
+        exit 1
+    fi
+
     mkdir -p "${repo_root}/dependencies"
     cd "${repo_root}/dependencies"
 
@@ -36,11 +44,8 @@ if [[ -n "${branch}" && "${branch}" != "main" ]]; then
         git checkout "${branch}"
     fi
 
-    if [[ -n "${ARTIFACTORY_CLOUD_USER:-}" && -f "${repo_root}/.circleci/settings.xml" ]]; then
-        mvn -B clean install -s "${repo_root}/.circleci/settings.xml" -Partifactory-cloud
-    else
-        mvn -B clean install
-    fi
+    # CircleCI has Artifactory credentials in context; use settings.xml so Maven can resolve SNAPSHOT deps.
+    mvn -B clean install -s "${repo_root}/.circleci/settings.xml" -Partifactory-cloud
 
     cd react-components
     npm link

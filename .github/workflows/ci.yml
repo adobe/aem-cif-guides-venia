@@ -1,21 +1,10 @@
-# GitHub Actions secrets (mirror CircleCI contexts)
+# Mirrors CircleCI workflow "build-and-release" (.circleci/config.yml)
 #
-# CIF Artifactory Cloud:
+# Required GitHub secrets (from CircleCI context "CIF Artifactory Cloud"):
 #   ARTIFACTORY_CLOUD_USER, ARTIFACTORY_CLOUD_PASS
 #   COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN
 #   VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD
-#
-# CIF Maven Central (release environment only):
-#   MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD
-#   GPG_PRIVATE_KEY (base64), GPG_PASSPHRASE
-#
-# CIF CM Stage (release environment only):
-#   GIT_REPO, GIT_USER, GIT_PASSWORD
-#
-# Optional:
-#   CODECOV_TOKEN
-#
-# GITHUB_TOKEN is provided automatically for GitHub Releases.
+# Optional: CODECOV_TOKEN
 
 name: ci
 
@@ -30,7 +19,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_REGISTRY: docker-adobe-cif-release.dr-uw2.adobeitc.com
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
   ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
   COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
@@ -100,85 +88,179 @@ jobs:
             classic/all/target/*.zip
             dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
-  aem-tests:
-    name: ${{ matrix.job_name }}
+  integration-test-655:
+    name: integration-test-655
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - job_name: integration-test-655
-            aem: classic
-            type: integration
-            browser: ''
-            qp_image: circleci-qp:6.4.6-openjdk11
-            aem_image: circleci-aem:6.5.23.0-openjdk11
-          - job_name: integration-test-660
-            aem: lts
-            type: integration
-            browser: ''
-            qp_image: circleci-qp:6.4.7-openjdk21
-            aem_image: circleci-aem-lts:6.6.0-openjdk21
-          - job_name: integration-test-cloudready-with-addon
-            aem: cloud
-            type: integration
-            browser: ''
-            qp_image: circleci-qp:6.4.7-openjdk21
-            aem_image: circleci-aem-cloudready:25194-openjdk21
-          - job_name: selenium-chrome-655
-            aem: classic
-            type: selenium
-            browser: chrome
-            qp_image: circleci-qp:6.4.6-openjdk11
-            aem_image: circleci-aem:6.5.23.0-openjdk11
-          - job_name: selenium-chrome-660
-            aem: lts
-            type: selenium
-            browser: chrome
-            qp_image: circleci-qp:6.4.7-openjdk21
-            aem_image: circleci-aem-lts:6.6.0-openjdk21
-          - job_name: selenium-chrome-cloudready-with-addon
-            aem: cloud
-            type: selenium
-            browser: chrome
-            qp_image: circleci-qp:6.4.7-openjdk21
-            aem_image: circleci-aem-cloudready:25194-openjdk21
     container:
-      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ matrix.qp_image }}
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
-        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ matrix.aem_image }}
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
-      AEM: ${{ matrix.aem }}
-      TYPE: ${{ matrix.type }}
-      BROWSER: ${{ matrix.browser }}
+      AEM: classic
+      TYPE: integration
       CI_QP_PATH: /home/circleci/cq
       QP_SERVER_HOSTNAME: aem
     steps:
       - uses: actions/checkout@v4
-
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
-
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
+      - run: bash .github/ci/run-integration-test.sh
 
-      - name: Run AEM tests
-        run: bash .github/ci/run-integration-test.sh
-
-      - uses: actions/upload-artifact@v4
-        if: always()
+  integration-test-660:
+    name: integration-test-660
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: lts
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
         with:
-          name: test-reports-${{ matrix.job_name }}
-          if-no-files-found: ignore
-          path: |
-            test-reports
-            logs
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+
+  integration-test-cloudready-with-addon:
+    name: integration-test-cloudready-with-addon
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: cloud
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+
+  selenium-chrome-655:
+    name: selenium-chrome-655
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: classic
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+
+  selenium-chrome-660:
+    name: selenium-chrome-660
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: lts
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
+
+  selenium-chrome-cloudready-with-addon:
+    name: selenium-chrome-cloudready-with-addon
+    needs: build
+    runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: cloud
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - run: bash .github/ci/run-integration-test.sh
