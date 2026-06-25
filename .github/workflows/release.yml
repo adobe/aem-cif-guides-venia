@@ -1,11 +1,18 @@
+# Release workflow — gated by the "release" GitHub Environment.
+# Create Environment: Settings → Environments → release
+#
+# Tag filter matches CircleCI: ^venia(-classic)?-\d+\.\d+\.\d+$
+
 name: release
 
-# Separate workflow so release jobs never appear as skipped checks on PRs.
 on:
   push:
     tags:
       - 'venia-*'
       - 'venia-classic-*'
+
+permissions:
+  contents: write
 
 env:
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
@@ -14,7 +21,9 @@ env:
 jobs:
   deploy-sample:
     name: deploy-sample
+    if: matches(github.ref_name, '^venia(-classic)?-\d+\.\d+\.\d+$')
     runs-on: ubuntu-latest
+    environment: release
     env:
       CI_REPO_PATH: ${{ github.workspace }}
       GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -34,10 +43,16 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Deploy Venia Sample Project
-        run: node .circleci/ci/deploy-venia.js
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to Maven Central and build release packages
+        run: bash .github/ci/deploy-maven-release.sh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: artifacts/*
+          generate_release_notes: true
 
       - name: Cleanup credentials
         if: always()
@@ -47,7 +62,9 @@ jobs:
 
   update-cm:
     name: update-cm
+    if: matches(github.ref_name, '^venia(-classic)?-\d+\.\d+\.\d+$')
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,8 +74,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Update CM Repository
-        run: node .circleci/ci/update-cm.js
+      - name: Update Cloud Manager repository
+        run: bash .github/ci/update-cm.sh
         env:
           GIT_REPO: ${{ secrets.GIT_REPO }}
           GIT_USER: ${{ secrets.GIT_USER }}

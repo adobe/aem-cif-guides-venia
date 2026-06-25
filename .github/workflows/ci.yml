@@ -1,0 +1,184 @@
+# GitHub Actions secrets (mirror CircleCI contexts)
+#
+# CIF Artifactory Cloud:
+#   ARTIFACTORY_CLOUD_USER, ARTIFACTORY_CLOUD_PASS
+#   COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN
+#   VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD
+#
+# CIF Maven Central (release environment only):
+#   MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD
+#   GPG_PRIVATE_KEY (base64), GPG_PASSPHRASE
+#
+# CIF CM Stage (release environment only):
+#   GIT_REPO, GIT_USER, GIT_PASSWORD
+#
+# Optional:
+#   CODECOV_TOKEN
+#
+# GITHUB_TOKEN is provided automatically for GitHub Releases.
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    tags:
+      - '**'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOCKER_REGISTRY: docker-adobe-cif-release.dr-uw2.adobeitc.com
+  ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+  ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+  COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+  COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+  VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+  VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '12.14.1'
+
+      - name: Update permissions
+        run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
+
+      - name: Install CIF Components
+        run: bash .github/ci/install-cif-components.sh
+
+      - name: Build
+        run: |
+          java -version
+          mvn -v
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            BRANCH_NAME="${GITHUB_HEAD_REF}"
+          elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            BRANCH_NAME="${GITHUB_REF_NAME}"
+          else
+            BRANCH_NAME=""
+          fi
+          if [[ -n "${BRANCH_NAME}" && "${BRANCH_NAME}" != "main" ]]; then
+            mvn -B clean install -PfedDev,classic
+          else
+            mvn -B clean install -Pclassic
+          fi
+
+      - name: Run Unit Tests (Jest)
+        working-directory: ui.frontend
+        run: npm run ci
+
+      - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          fail_ci_if_error: false
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          if-no-files-found: warn
+          path: |
+            all/target/*.zip
+            classic/all/target/*.zip
+            dependencies/aem-core-cif-components/examples/bundle/target/*.jar
+
+  aem-tests:
+    name: ${{ matrix.job_name }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job_name: integration-test-655
+            aem: classic
+            type: integration
+            browser: ''
+            qp_image: circleci-qp:6.4.6-openjdk11
+            aem_image: circleci-aem:6.5.23.0-openjdk11
+          - job_name: integration-test-660
+            aem: lts
+            type: integration
+            browser: ''
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-lts:6.6.0-openjdk21
+          - job_name: integration-test-cloudready-with-addon
+            aem: cloud
+            type: integration
+            browser: ''
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-cloudready:25194-openjdk21
+          - job_name: selenium-chrome-655
+            aem: classic
+            type: selenium
+            browser: chrome
+            qp_image: circleci-qp:6.4.6-openjdk11
+            aem_image: circleci-aem:6.5.23.0-openjdk11
+          - job_name: selenium-chrome-660
+            aem: lts
+            type: selenium
+            browser: chrome
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-lts:6.6.0-openjdk21
+          - job_name: selenium-chrome-cloudready-with-addon
+            aem: cloud
+            type: selenium
+            browser: chrome
+            qp_image: circleci-qp:6.4.7-openjdk21
+            aem_image: circleci-aem-cloudready:25194-openjdk21
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ matrix.qp_image }}
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/${{ matrix.aem_image }}
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    env:
+      AEM: ${{ matrix.aem }}
+      TYPE: ${{ matrix.type }}
+      BROWSER: ${{ matrix.browser }}
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+
+      - name: Run AEM tests
+        run: bash .github/ci/run-integration-test.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-${{ matrix.job_name }}
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
