@@ -12,7 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
   ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
 
@@ -43,7 +42,7 @@ jobs:
         run: |
           java -version
           mvn -v
-          if [[ -n "${BRANCH_NAME}" && "${BRANCH_NAME}" != "main" && "${GITHUB_REF}" != refs/tags/* ]]; then
+          if [[ "${USE_FED_DEV:-false}" == "true" ]]; then
             mvn -B clean install -PfedDev,classic
           else
             mvn -B clean install -Pclassic
