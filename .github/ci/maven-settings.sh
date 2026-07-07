@@ -15,27 +15,26 @@ fi
 # Safe diagnostics only — never print secret values.
 echo "Diagnostics: ARTIFACTORY_CLOUD_USER length=${#ARTIFACTORY_CLOUD_USER}"
 echo "Diagnostics: ARTIFACTORY_CLOUD_PASS length=${#ARTIFACTORY_CLOUD_PASS}"
-echo "Diagnostics: testing Artifactory login to maven-adobe-cif-snapshot..."
+echo "Diagnostics: testing Artifactory login (repo root + sample SNAPSHOT POM)..."
 
-# Verify credentials before a long Maven build (401 = wrong user/pass or wrong secret scope).
-http_code="$(curl -s -o /dev/null -w '%{http_code}' \
-    -u "${ARTIFACTORY_CLOUD_USER}:${ARTIFACTORY_CLOUD_PASS}" \
-    'https://artifactory-uw2.adobeitc.com/artifactory/maven-adobe-cif-snapshot/')"
+artifactory_base="https://artifactory-uw2.adobeitc.com/artifactory/maven-adobe-cif-snapshot"
+sample_pom="${artifactory_base}/com/adobe/commerce/cif/core-cif-components-parent/2.18.3-SNAPSHOT/core-cif-components-parent-2.18.3-SNAPSHOT.pom"
 
-echo "Diagnostics: Artifactory HTTP response=${http_code}"
+for test_url in "${artifactory_base}/" "${sample_pom}"; do
+    http_code="$(curl -s -o /dev/null -w '%{http_code}' \
+        -u "${ARTIFACTORY_CLOUD_USER}:${ARTIFACTORY_CLOUD_PASS}" \
+        "${test_url}")"
+    echo "Diagnostics: GET ${test_url} -> HTTP ${http_code}"
 
-if [[ "${http_code}" == "401" || "${http_code}" == "403" ]]; then
-    echo "::error::Artifactory login failed (HTTP ${http_code}) — username/password rejected."
-    echo "::error::Fix: re-copy ARTIFACTORY_CLOUD_USER and ARTIFACTORY_CLOUD_PASS from CircleCI context 'CIF Artifactory Cloud' into GitHub Repository secrets (not Environment-only)."
-    echo "::error::Check: secret names are case-sensitive; remove leading/trailing spaces from values."
-    exit 1
-fi
+    if [[ "${http_code}" == "401" || "${http_code}" == "403" ]]; then
+        echo "::error::Artifactory login failed (HTTP ${http_code}) — username/password rejected."
+        echo "::error::Fix: ask an Adobe admin to copy ARTIFACTORY_CLOUD_USER and ARTIFACTORY_CLOUD_PASS from CircleCI context 'CIF Artifactory Cloud' into GitHub Repository secrets."
+        echo "::error::Check: secret names are case-sensitive; remove leading/trailing spaces from values."
+        exit 1
+    fi
+done
 
-if [[ "${http_code}" != "200" && "${http_code}" != "404" ]]; then
-    echo "::warning::Unexpected Artifactory HTTP ${http_code}; continuing, but Maven may still fail."
-fi
-
-echo "Diagnostics: Artifactory login OK."
+echo "Diagnostics: Artifactory credential check passed (401/403 not returned)."
 
 mkdir -p "${HOME}/.m2"
 
