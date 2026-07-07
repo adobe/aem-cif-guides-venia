@@ -46,6 +46,9 @@ jobs:
       - name: Update permissions
         run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
 
+      - name: Configure Maven Artifactory credentials
+        run: bash .github/ci/maven-settings.sh
+
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
 

@@ -41,5 +41,5 @@
 - [ ] I have updated the documentation accordingly.
 - [ ] I have read the **CONTRIBUTING** document.
 - [ ] I have added tests to cover my changes and the overall coverage did not decrease.
-- [ ] All unit tests pass on CircleCI and GitHub Actions.
+- [ ] All unit tests pass on CircleCI and GitHub Actions (`ci` workflow).
 - [ ] I ran all tests locally and they pass.
