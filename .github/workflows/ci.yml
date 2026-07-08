@@ -29,9 +29,9 @@ env:
 jobs:
   build:
     name: build
-    # CircleCI Venia build uses cimg/openjdk:11.0-browsers (default medium runner).
-    # Use ubuntu-latest — ubuntu-latest-4-cores needs org larger-runners enabled and can queue forever.
-    runs-on: ubuntu-latest
+    # CircleCI: cif_executor uses cimg/openjdk:11.0.16-browsers + resource_class: large (CIF repo).
+    # Venia CircleCI uses 11.0-browsers; CIF's own build-java-11 passes on 11.0.16-browsers.
+    runs-on: ubuntu-latest-4-cores
     container:
       image: cimg/openjdk:11.0.16-browsers
     steps:
