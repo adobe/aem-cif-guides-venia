@@ -25,8 +25,6 @@ env:
   COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
   VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
   VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
-  # setup-node / legacy actions on Node 12 require this at workflow level when needed.
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   build:
@@ -35,20 +33,13 @@ jobs:
     # Use ubuntu-latest — ubuntu-latest-4-cores needs org larger-runners enabled and can queue forever.
     runs-on: ubuntu-latest
     container:
-      image: cimg/openjdk:11.0-browsers
-      options: --user circleci
+      image: cimg/openjdk:11.0.16-browsers
     steps:
       - uses: actions/checkout@v4
 
-      # CircleCI: node/install node-version 12.14.1 (nvm inside cimg image).
-      - name: Install Node.js 12.14.1
-        run: |
-          source "${HOME}/.nvm/nvm.sh"
-          nvm install 12.14.1
-          nvm use 12.14.1
-          echo "$(dirname "$(command -v node)")" >> "${GITHUB_PATH}"
-          node -v
-          npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '12.14.1'
 
       # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
       - name: Restore Maven repository cache
@@ -69,6 +60,14 @@ jobs:
 
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
+
+      - name: Upload CIF unit test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cif-surefire-reports
+          if-no-files-found: ignore
+          path: dependencies/aem-core-cif-components/**/target/surefire-reports/
 
       - name: Build
         run: |
