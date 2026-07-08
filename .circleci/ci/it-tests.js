@@ -19,6 +19,7 @@ ci.context();
 const qpPath = process.env.CI_QP_PATH || '/home/circleci/cq';
 const buildPath = process.env.CI_BUILD_PATH || '/home/circleci/build';
 const qpServerHostname = process.env.QP_SERVER_HOSTNAME || 'localhost';
+const aemLogHost = process.env.AEM_LOG_HOST || 'localhost';
 const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
@@ -162,9 +163,9 @@ try {
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
         // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/error.log');
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stdout.log');
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stderr.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/error.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/stdout.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/stderr.log');
         ci.sh(`find . -name '*.log' -type f -size +32M -exec echo 'Truncating: ' {} \\; -execdir truncate --size 32M {} +`);
     });
 }

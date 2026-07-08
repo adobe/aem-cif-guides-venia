@@ -5,8 +5,8 @@
 
 set -euo pipefail
 
-# CircleCI exposes secondary container ports on localhost; GitHub Actions needs
-# --network host on both job and service containers for the same behavior.
+# CircleCI: secondary AEM container ports appear on localhost.
+# GitHub Actions: use service hostname (e.g. aem) via QP_SERVER_HOSTNAME / AEM_LOG_HOST.
 host="${QP_SERVER_HOSTNAME:-localhost}"
 port="${QP_SERVER_PORT:-55555}"
 max_attempts="${QP_WAIT_ATTEMPTS:-60}"
@@ -24,5 +24,5 @@ for attempt in $(seq 1 "${max_attempts}"); do
 done
 
 echo "::error::QuickProvider did not become reachable at ${host}:${port}."
-echo "::error::The AEM service container (circleci-aem) must expose port 55555 on localhost."
+echo "::error::The AEM service container (circleci-aem) must expose port 55555 at ${host}:${port}."
 exit 1
