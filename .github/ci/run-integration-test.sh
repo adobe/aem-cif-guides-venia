@@ -13,8 +13,16 @@
 
 set -euo pipefail
 
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# Artifactory auth for maven-download-plugin in it-tests.js (-Partifactory-cloud).
+bash "${repo_root}/.github/ci/maven-settings.sh"
+
+# CircleCI secondary containers are on localhost; GHA uses --network host (see ci.yml).
+bash "${repo_root}/.github/ci/wait-for-quickprovider.sh"
+
 if [[ "${TYPE:-}" == "selenium" ]]; then
-    bash .github/ci/install-chrome.sh
+    bash "${repo_root}/.github/ci/install-chrome.sh"
 fi
 
-node .circleci/ci/it-tests.js
+node "${repo_root}/.circleci/ci/it-tests.js"

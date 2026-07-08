@@ -37,12 +37,7 @@ if [[ -n "${branch}" && "${branch}" != "main" ]]; then
         git checkout "${branch}"
     fi
 
-    # Same as CircleCI (.circleci/config.yml install_components): plain mvn clean install.
-    # -Dskip-it: skip it/site and other integration-test modules — Venia fedDev only needs
-    # react-components npm link. Those IT modules reference an older parent SNAPSHOT
-    # (e.g. 2.18.3-SNAPSHOT) that is not in the cloned source tree; CircleCI succeeds
-    # because its ~/.m2 cache is warm from prior builds, not because it builds it/site.
-    mvn -B clean install -Dskip-it
+    mvn -B clean install
 
     cd react-components
     npm link

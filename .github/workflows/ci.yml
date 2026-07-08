@@ -100,19 +100,23 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: classic
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
@@ -129,19 +133,23 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: lts
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
@@ -158,19 +166,23 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: cloud
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
@@ -187,20 +199,24 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: classic
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
@@ -217,20 +233,24 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: lts
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
@@ -247,20 +267,24 @@ jobs:
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+      options: --network host
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+        options: --network host
     env:
       AEM: cloud
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
+      QP_SERVER_HOSTNAME: localhost
     steps:
       - uses: actions/checkout@v4
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
