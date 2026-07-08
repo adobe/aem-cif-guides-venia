@@ -51,8 +51,6 @@ if [[ -n "${branch}" && "${branch}" != "main" ]]; then
 
     mvn -B clean install
 
-    echo "CIF components installed from $(git rev-parse --short HEAD) on $(git branch --show-current)"
-
     cd react-components
     npm link
     cd ../extensions/product-recs/react-components
