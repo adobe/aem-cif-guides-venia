@@ -20,8 +20,12 @@ if command -v google-chrome >/dev/null 2>&1 && command -v chromedriver >/dev/nul
 fi
 
 if command -v apt-get >/dev/null 2>&1; then
-    sudo apt-get update
-    sudo apt-get install -y wget gnupg
+    # The base image may already have an unsigned google-chrome apt source configured,
+    # which makes apt-get update fail before we get a chance to install the signing key
+    # below (which overwrites that source with a properly signed one).
+    sudo apt-get update || true
+    command -v wget >/dev/null 2>&1 || sudo apt-get install -y wget
+    command -v gpg >/dev/null 2>&1 || sudo apt-get install -y gnupg
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
     sudo apt-get update

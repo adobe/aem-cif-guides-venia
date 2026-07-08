@@ -121,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -138,14 +139,21 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-655-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   integration-test-660:
     name: integration-test-660
@@ -153,6 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -170,14 +179,21 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-660-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   integration-test-cloudready-with-addon:
     name: integration-test-cloudready-with-addon
@@ -185,6 +201,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -202,14 +219,21 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-cloudready-with-addon-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-655:
     name: selenium-chrome-655
@@ -217,6 +241,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -235,14 +260,21 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-chrome-655-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-660:
     name: selenium-chrome-660
@@ -250,6 +282,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -268,14 +301,21 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-chrome-660-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
 
   selenium-chrome-cloudready-with-addon:
     name: selenium-chrome-cloudready-with-addon
@@ -283,6 +323,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      options: --user root
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -301,11 +342,18 @@ jobs:
       AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Fix workspace permissions
-        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-integration-test.sh
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-chrome-cloudready-with-addon-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
