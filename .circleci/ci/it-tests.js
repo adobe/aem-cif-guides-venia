@@ -152,10 +152,11 @@ try {
     // Copy tests results
     ci.sh('mkdir test-reports');
     if (TYPE === 'integration') {
-        ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests 2>/dev/null || true');
-    }
+        ci.sh('cp -r it.tests/target/failsafe-reports test-reports/it.tests');
+
+          }
     if (TYPE === 'selenium') {
-        ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests 2>/dev/null || true');
+        ci.sh('cp -r ui.tests/test-module/reports test-reports/ui.tests');
     }
 
     // Always download logs from AEM container

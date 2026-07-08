@@ -29,25 +29,18 @@ env:
 jobs:
   build:
     name: build
-    # CircleCI executor: cif_executor (cimg/openjdk:11.0-browsers)
+    # CircleCI executor: cif_executor (cimg/openjdk:11.0-browsers) — not ubuntu + Temurin.
     runs-on: ubuntu-latest
     container:
       image: cimg/openjdk:11.0-browsers
-      options: --user circleci
     steps:
       - uses: actions/checkout@v4
 
-      # CircleCI: node/install node-version 12.14.1 (nvm inside cimg)
-      - name: Install Node.js 12.14.1
-        run: |
-          export NVM_DIR="/opt/circleci/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-          nvm install 12.14.1
-          nvm use 12.14.1
-          node -v
-          npm -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '12.14.1'
 
-      # CircleCI: restore_cache on ~/.m2 BEFORE install_components
+      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v4
         with:
@@ -59,16 +52,24 @@ jobs:
             maven-repo-v2-
 
       - name: Update permissions
-        run: sudo chown -R circleci /usr/local/lib/node_modules || true
+        run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
+
+      # CircleCI build job does NOT configure ~/.m2/settings.xml or -Partifactory-cloud here.
+      # Artifactory settings are only used in it-tests.js (-s .circleci/settings.xml -Partifactory-cloud).
 
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
 
+      - name: Upload CIF unit test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cif-surefire-reports
+          if-no-files-found: ignore
+          path: dependencies/aem-core-cif-components/**/target/surefire-reports/
+
       - name: Build
         run: |
-          export NVM_DIR="/opt/circleci/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-          nvm use 12.14.1
           java -version
           mvn -v
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
@@ -86,12 +87,9 @@ jobs:
 
       - name: Run Unit Tests (Jest)
         working-directory: ui.frontend
-        run: |
-          export NVM_DIR="/opt/circleci/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-          nvm use 12.14.1
-          npm run ci
+        run: npm run ci
 
+      # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
         uses: actions/cache/save@v4
@@ -121,283 +119,193 @@ jobs:
     name: integration-test-655
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: classic
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-655-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-655-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
 
   integration-test-660:
     name: integration-test-660
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: lts
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-660-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-660-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
 
   integration-test-cloudready-with-addon:
     name: integration-test-cloudready-with-addon
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: cloud
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-cloudready-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-cloudready-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
 
   selenium-chrome-655:
     name: selenium-chrome-655
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: classic
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-655-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-655-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
 
   selenium-chrome-660:
     name: selenium-chrome-660
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: lts
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-660-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-660-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
 
   selenium-chrome-cloudready-with-addon:
     name: selenium-chrome-cloudready-with-addon
     needs: build
     runs-on: ubuntu-latest
+    container:
+      image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+        password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+    services:
+      aem:
+        image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        credentials:
+          username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+          password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     env:
       AEM: cloud
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: aem
+      AEM_LOG_HOST: aem
     steps:
       - uses: actions/checkout@v4
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+      - name: Fix workspace permissions
+        run: sudo chmod -R 777 "${GITHUB_WORKSPACE}" /github /__w/_temp || true
+      - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
       - uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - run: bash .github/ci/run-it-in-docker.sh docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21 docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.m2
-          key: maven-repo-v2-its-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-      - name: Upload test reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-cloudready-reports
-          if-no-files-found: ignore
-          path: test-reports
-      - name: Upload AEM logs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: selenium-chrome-cloudready-logs
-          if-no-files-found: ignore
-          path: logs
+      - run: bash .github/ci/run-integration-test.sh
