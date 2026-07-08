@@ -29,14 +29,12 @@ env:
 jobs:
   build:
     name: build
+    # CircleCI executor: cif_executor (cimg/openjdk:11.0-browsers) — not ubuntu + Temurin.
     runs-on: ubuntu-latest
+    container:
+      image: cimg/openjdk:11.0-browsers
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '11'
 
       - uses: actions/setup-node@v4
         with:
@@ -56,11 +54,19 @@ jobs:
       - name: Update permissions
         run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
 
-      - name: Configure Maven Artifactory credentials
-        run: bash .github/ci/maven-settings.sh
+      # CircleCI build job does NOT configure ~/.m2/settings.xml or -Partifactory-cloud here.
+      # Artifactory settings are only used in it-tests.js (-s .circleci/settings.xml -Partifactory-cloud).
 
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
+
+      - name: Upload CIF unit test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cif-surefire-reports
+          if-no-files-found: ignore
+          path: dependencies/aem-core-cif-components/**/target/surefire-reports/
 
       - name: Build
         run: |

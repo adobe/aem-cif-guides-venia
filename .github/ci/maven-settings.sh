@@ -91,10 +91,14 @@ settings = f"""<?xml version="1.0" encoding="UTF-8"?>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
+
+        <profile>
+            <id>central</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
     </profiles>
-    <activeProfiles>
-        <activeProfile>artifactory-cloud</activeProfile>
-    </activeProfiles>
 </settings>
 """
 
