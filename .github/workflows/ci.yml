@@ -37,11 +37,21 @@ jobs:
         with:
           distribution: temurin
           java-version: '11'
-          cache: maven
 
       - uses: actions/setup-node@v4
         with:
           node-version: '12.14.1'
+
+      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2
+          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
+            maven-repo-v2-${{ runner.os }}-
+            maven-repo-v2-
 
       - name: Update permissions
         run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
@@ -72,6 +82,14 @@ jobs:
       - name: Run Unit Tests (Jest)
         working-directory: ui.frontend
         run: npm run ci
+
+      # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
+      - name: Save Maven repository cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2
+          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}

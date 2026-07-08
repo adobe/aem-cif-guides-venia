@@ -37,6 +37,18 @@ if [[ -n "${branch}" && "${branch}" != "main" ]]; then
         git checkout "${branch}"
     fi
 
+    # On master, it/site still references parent 2.18.3-SNAPSHOT while parent/pom.xml is
+    # 2.18.5-SNAPSHOT. CircleCI succeeds because restore_cache (~/.m2) already contains the
+    # older parent POM from prior Adobe builds. Align versions so a cold ~/.m2 can use relativePath.
+    if [[ -f it/site/pom.xml && -f parent/pom.xml ]]; then
+        parent_version="$(sed -n 's:.*<version>\([^<]*\)</version>.*:\1:p' parent/pom.xml | head -n1)"
+        site_parent_version="$(sed -n '/<parent>/,/<\/parent>/s:.*<version>\([^<]*\)</version>.*:\1:p' it/site/pom.xml | head -n1)"
+        if [[ -n "${parent_version}" && -n "${site_parent_version}" && "${site_parent_version}" != "${parent_version}" ]]; then
+            echo "Aligning it/site parent version ${site_parent_version} -> ${parent_version} (CircleCI ~/.m2 cache workaround)"
+            sed -i "s/${site_parent_version}/${parent_version}/g" it/site/pom.xml
+        fi
+    fi
+
     mvn -B clean install
 
     cd react-components
