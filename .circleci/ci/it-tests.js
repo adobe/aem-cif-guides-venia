@@ -30,7 +30,7 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
         pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
     }
 
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
+    ci.sh(`curl -v "http://${qpServerHostname}:4502/system/console/configMgr/${pid}" \
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
@@ -43,7 +43,7 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
 }
 
 const updateGraphqlProxyServlet = () => {
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
+    ci.sh(`curl -v "http://${qpServerHostname}:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "propertylist=graphQLOriginUrl" \
@@ -129,7 +129,7 @@ try {
             excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
         }
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -Dit.author.url="http://${qpServerHostname}:4502" -Dit.publish.url="http://${qpServerHostname}:4503" -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {
@@ -139,7 +139,7 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DAEM_AUTHOR_URL="http://${qpServerHostname}:4502" -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
         });
     }
 
