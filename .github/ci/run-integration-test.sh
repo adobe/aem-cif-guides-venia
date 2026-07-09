@@ -18,8 +18,8 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # Artifactory auth for maven-download-plugin in it-tests.js (-Partifactory-cloud).
 bash "${repo_root}/.github/ci/maven-settings.sh"
 
-# CircleCI secondary containers are on localhost; GHA reaches the AEM service
-# container via its service id "aem" instead (see QP_SERVER_HOSTNAME in ci.yml).
+# This script runs inside the qp container started by run-containerized-test.sh,
+# sharing --network host with the aem container, so "localhost" reaches it directly.
 bash "${repo_root}/.github/ci/wait-for-quickprovider.sh"
 
 if [[ "${TYPE:-}" == "selenium" ]]; then

@@ -5,11 +5,10 @@
 
 set -euo pipefail
 
-# CircleCI exposes secondary container ports on localhost. GitHub Actions job
-# containers reach service containers via the service id as hostname instead
-# (see QP_SERVER_HOSTNAME=aem in ci.yml) — using --network host together with
-# `services:` triggers a GitHub Actions runner bug ("Value cannot be null.
-# (Parameter 'ContainerId')") so it must not be used here.
+# QP_SERVER_HOSTNAME is "localhost" here — the qp and aem containers share the
+# same network namespace (--network host, wired up in run-containerized-test.sh),
+# matching CircleCI's machine executor where all secondary containers are reachable
+# via localhost.
 host="${QP_SERVER_HOSTNAME:-localhost}"
 port="${QP_SERVER_PORT:-55555}"
 max_attempts="${QP_WAIT_ATTEMPTS:-60}"
