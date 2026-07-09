@@ -121,13 +121,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -135,8 +136,8 @@ jobs:
       AEM: classic
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
@@ -161,13 +162,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -175,8 +177,8 @@ jobs:
       AEM: lts
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
@@ -201,13 +203,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -215,8 +218,8 @@ jobs:
       AEM: cloud
       TYPE: integration
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
@@ -241,13 +244,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.23.0-openjdk11
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -256,8 +260,8 @@ jobs:
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
@@ -282,13 +286,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.0-openjdk21
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -297,8 +302,8 @@ jobs:
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
@@ -323,13 +328,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-      options: --user root
+      options: --user root --network host
       credentials:
         username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
         password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
     services:
       aem:
         image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:25194-openjdk21
+        options: --network host
         credentials:
           username: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
           password: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
@@ -338,8 +344,8 @@ jobs:
       TYPE: selenium
       BROWSER: chrome
       CI_QP_PATH: /home/circleci/cq
-      QP_SERVER_HOSTNAME: aem
-      AEM_LOG_HOST: aem
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
     steps:
       - uses: actions/checkout@v4
       - run: echo "CI_BUILD_PATH=${GITHUB_WORKSPACE}" >> "${GITHUB_ENV}"
