@@ -10,7 +10,7 @@
 # OF ANY KIND, either express or implied. See the License for the specific language
 # governing permissions and limitations under the License.
 #
-# Maven Central deploy + classic package build (GitHub Release upload is handled by GHA).
+# Maven Central deploy + classic package build (GitHub Release upload is handled by GHA)
 
 set -euo pipefail
 
