@@ -46,7 +46,7 @@ ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${re
 ci.stage("Deploy Venia Sample Project to GitHub");
 // build also the classic artifacts for github
 ci.sh(`mvn ${mvnOpts} clean install -Pclassic -pl classic/ui.config,classic/ui.content,classic/dispatcher,classic/all`);
-ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
+ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-classic-${releaseVersion}.zip`);
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
     -u ${githubOwner} \
     -r ${githubRepo} \
