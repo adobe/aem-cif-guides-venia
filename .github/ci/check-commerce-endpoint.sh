@@ -31,29 +31,22 @@ echo "Diagnostics: COMMERCE_ENDPOINT starts with http(s)=$([[ "${COMMERCE_ENDPOI
 
 query='{"query":"{ __typename }"}'
 body_file="$(mktemp)"
-headers_file="$(mktemp)"
 
-http_code="$(curl -sS -o "${body_file}" -D "${headers_file}" -w '%{http_code}' \
+http_code="$(curl -sS -o "${body_file}" -w '%{http_code}' \
     -X POST "${COMMERCE_ENDPOINT}" \
     -H 'Content-Type: application/json' \
     -d "${query}" 2>&1 || echo "curl_failed")"
 echo "Diagnostics: POST (no auth header) COMMERCE_ENDPOINT -> HTTP ${http_code}"
 echo "Diagnostics: response body (first 300 chars): $(head -c 300 "${body_file}")"
-if [[ "${http_code}" =~ ^30[12378]$ ]]; then
-    echo "Diagnostics: redirect Location header: $(grep -i '^location:' "${headers_file}" || echo '(none found)')"
-fi
 
 if [[ -n "${COMMERCE_INTEGRATION_TOKEN:-}" ]]; then
-    http_code_auth="$(curl -sS -o "${body_file}" -D "${headers_file}" -w '%{http_code}' \
+    http_code_auth="$(curl -sS -o "${body_file}" -w '%{http_code}' \
         -X POST "${COMMERCE_ENDPOINT}" \
         -H 'Content-Type: application/json' \
         -H "Authorization: Bearer ${COMMERCE_INTEGRATION_TOKEN}" \
         -d "${query}" 2>&1 || echo "curl_failed")"
     echo "Diagnostics: POST (with Bearer token) COMMERCE_ENDPOINT -> HTTP ${http_code_auth}"
     echo "Diagnostics: response body (first 300 chars): $(head -c 300 "${body_file}")"
-    if [[ "${http_code_auth}" =~ ^30[12378]$ ]]; then
-        echo "Diagnostics: redirect Location header: $(grep -i '^location:' "${headers_file}" || echo '(none found)')"
-    fi
 fi
 
-rm -f "${body_file}" "${headers_file}"
+rm -f "${body_file}"
