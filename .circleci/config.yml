@@ -245,6 +245,9 @@ jobs:
 workflows:
   version: 2
   build-and-release:
+    # Paused for testing: only GitHub Actions should run on PRs right now.
+    # Flip to `true` (or remove this line) to re-enable CircleCI.
+    when: false
     jobs:
       - build:
           context:
