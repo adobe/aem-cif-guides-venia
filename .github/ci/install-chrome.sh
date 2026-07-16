@@ -41,16 +41,36 @@ fi
 # bind-mounted workspace), but Chrome's sandbox refuses to run as root, and
 # wdio.conf.local.js ("DO NOT MODIFY") never passes --no-sandbox. Without it every
 # headless session fails instantly with "DevToolsActivePort file doesn't exist",
-# which fails every single spec. Wrap the real binary so any launcher (chromedriver,
-# selenium-standalone) picks the flag up transparently, regardless of what invokes it.
-chrome_bin="$(readlink -f "$(command -v google-chrome-stable 2>/dev/null || command -v google-chrome)")"
-if [[ "$(id -u)" -eq 0 ]] && ! grep -q -- '--no-sandbox' "${chrome_bin}" 2>/dev/null; then
-    sudo cp "${chrome_bin}" "${chrome_bin}.real"
-    sudo tee "${chrome_bin}" >/dev/null <<WRAPPER
+# which fails every single spec.
+#
+# Wrapping only the "google-chrome"/"google-chrome-stable" launcher script is NOT
+# enough: selenium-standalone's chromedriver launches the real leaf binary
+# (/opt/google/chrome/chrome) directly, bypassing a wrapper placed on the launcher.
+# So wrap every Chrome entry point chromedriver might exec -- the launcher script(s)
+# AND the underlying leaf binary -- idempotently, so the flags apply no matter which
+# path is invoked. (A double --no-sandbox from chained wrappers is harmless.)
+wrap_with_no_sandbox() {
+    local target="$1"
+    [[ -n "${target}" && -f "${target}" ]] || return 0
+    # Idempotency guard: presence of the ".real" backup means we already wrapped it.
+    # (Do NOT grep the target for "--no-sandbox" -- Chrome's leaf binary embeds that
+    # switch name as a string, which would be a false positive and skip the binary
+    # that actually needs wrapping.)
+    [[ -f "${target}.real" ]] && return 0
+    sudo cp "${target}" "${target}.real"
+    sudo tee "${target}" >/dev/null <<WRAPPER
 #!/usr/bin/env bash
-exec "${chrome_bin}.real" --no-sandbox --disable-dev-shm-usage "\$@"
+exec "${target}.real" --no-sandbox --disable-dev-shm-usage "\$@"
 WRAPPER
-    sudo chmod +x "${chrome_bin}"
+    sudo chmod +x "${target}"
+}
+
+if [[ "$(id -u)" -eq 0 ]]; then
+    chrome_launcher="$(readlink -f "$(command -v google-chrome-stable 2>/dev/null || command -v google-chrome)")"
+    wrap_with_no_sandbox "${chrome_launcher}"
+    # The launcher script exec's this sibling leaf binary; chromedriver may also
+    # launch it directly. This is the one that actually needs --no-sandbox as root.
+    wrap_with_no_sandbox "$(dirname "${chrome_launcher}")/chrome"
 fi
 
 google-chrome --version

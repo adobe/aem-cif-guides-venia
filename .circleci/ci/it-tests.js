@@ -14,8 +14,66 @@
 
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const ci = new (require('./ci.js'))();
 ci.context();
+
+/**
+ * On a Selenium failure the WDIO "spec" reporter only prints RUNNING/FAILED to the
+ * console -- the actual assertion/stacktrace (e.g. "session not created",
+ * "DevToolsActivePort file doesn't exist", element-not-found) is written to the
+ * reports directory and otherwise only reachable via the uploaded artifact. Dump the
+ * relevant report files to stdout so the real cause is visible directly in the CI log.
+ * Best-effort only: never let diagnostics mask the original test failure.
+ */
+const dumpSeleniumFailureDiagnostics = () => {
+    try {
+        // cwd is ui.tests here; WDIO writes its reports under test-module/reports.
+        const reportsDir = path.join(process.cwd(), 'test-module', 'reports');
+        if (!fs.existsSync(reportsDir)) {
+            console.log(`No Selenium reports directory found at ${reportsDir}`);
+            return;
+        }
+
+        const printFile = (file, maxLines) => {
+            try {
+                let content = fs.readFileSync(file, 'utf8');
+                if (maxLines) {
+                    const lines = content.split(/\r?\n/);
+                    if (lines.length > maxLines) {
+                        content = lines.slice(-maxLines).join('\n');
+                    }
+                }
+                console.log(`\n===== ${file} =====\n${content}`);
+            } catch (e) {
+                console.log(`Could not read ${file}: ${e.message}`);
+            }
+        };
+
+        const walk = dir => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    walk(full);
+                } else if (entry.name.endsWith('.xml')) {
+                    // JUnit results contain the failure message + stacktrace per spec.
+                    printFile(full);
+                } else if (entry.name.endsWith('.log')) {
+                    // WDIO / selenium-standalone logs -- tail only, they can be large.
+                    printFile(full, 200);
+                }
+            }
+        };
+
+        console.log('\n########## Selenium failure diagnostics ##########');
+        walk(reportsDir);
+        console.log('\n########## End Selenium failure diagnostics ##########');
+    } catch (e) {
+        console.log(`Failed to collect Selenium diagnostics: ${e.message}`);
+    }
+};
 const qpPath = process.env.CI_QP_PATH || '/home/circleci/cq';
 const buildPath = process.env.CI_BUILD_PATH || '/home/circleci/build';
 const qpServerHostname = process.env.QP_SERVER_HOSTNAME || 'localhost';
@@ -139,7 +197,13 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DAEM_AUTHOR_URL="http://${qpServerHostname}:4502" -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            try {
+                ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DAEM_AUTHOR_URL="http://${qpServerHostname}:4502" -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            } catch (e) {
+                // Surface the real WDIO error before failing the job.
+                dumpSeleniumFailureDiagnostics();
+                throw e;
+            }
         });
     }
 
