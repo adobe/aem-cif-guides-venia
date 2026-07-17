@@ -55,7 +55,7 @@ describe('Catalog Page Status', function () {
 
         if (isCloud) {
             // actions are not available on 6.5 in general
-            expect($('a[data-status-action-id="open-template-page"]')).not.toBeDisplayed();
+            expect($('a[data-status-action-id="open-template-pages"]')).not.toBeDisplayed();
         }
     });
 
