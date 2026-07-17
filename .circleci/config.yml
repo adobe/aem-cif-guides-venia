@@ -84,7 +84,7 @@ executors:
 jobs:
   build:
     executor: cif_executor
-    resource_class: large
+    resource_class: medium
     working_directory: /home/circleci/build
     steps:
       - node/install:
