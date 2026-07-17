@@ -18,12 +18,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Needed so the JUnit reporter (mikepenz/action-junit-report) can publish a
-# per-test check run with inline annotations on failing tests.
+# Test results are rendered into each job's Summary page by .github/ci/test-summary.py
+# (writes to $GITHUB_STEP_SUMMARY), so no extra token permissions are required.
 permissions:
   contents: read
-  checks: write
-  pull-requests: write
 
 env:
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
@@ -175,16 +173,6 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/TEST-*.xml'
-          check_name: 'integration-test-655 results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
 
   integration-test-660:
     name: integration-test-660
@@ -228,16 +216,6 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/TEST-*.xml'
-          check_name: 'integration-test-660 results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
 
   integration-test-cloudready-with-addon:
     name: integration-test-cloudready-with-addon
@@ -281,16 +259,6 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/TEST-*.xml'
-          check_name: 'integration-test-cloudready-with-addon results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
 
   selenium-chrome-655:
     name: selenium-chrome-655
@@ -335,16 +303,6 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/*.xml'
-          check_name: 'selenium-chrome-655 results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
 
   selenium-chrome-660:
     name: selenium-chrome-660
@@ -389,16 +347,6 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/*.xml'
-          check_name: 'selenium-chrome-660 results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
 
   selenium-chrome-cloudready-with-addon:
     name: selenium-chrome-cloudready-with-addon
@@ -443,13 +391,3 @@ jobs:
           path: |
             test-reports
             logs
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@v5
-        with:
-          report_paths: 'test-reports/**/*.xml'
-          check_name: 'selenium-chrome-cloudready-with-addon results'
-          detailed_summary: true
-          include_passed: true
-          truncate_stack_traces: false
-          fail_on_failure: false
