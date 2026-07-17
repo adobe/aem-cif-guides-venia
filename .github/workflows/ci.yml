@@ -165,10 +165,11 @@ jobs:
         if: ${{ !cancelled() }}
         uses: mikepenz/action-junit-report@v5
         with:
-          report_paths: 'test-reports/**/*.xml'
+          report_paths: 'test-reports/**/TEST-*.xml'
           check_name: 'integration-test-655 results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
 
   integration-test-660:
@@ -203,10 +204,11 @@ jobs:
         if: ${{ !cancelled() }}
         uses: mikepenz/action-junit-report@v5
         with:
-          report_paths: 'test-reports/**/*.xml'
+          report_paths: 'test-reports/**/TEST-*.xml'
           check_name: 'integration-test-660 results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
 
   integration-test-cloudready-with-addon:
@@ -241,10 +243,11 @@ jobs:
         if: ${{ !cancelled() }}
         uses: mikepenz/action-junit-report@v5
         with:
-          report_paths: 'test-reports/**/*.xml'
+          report_paths: 'test-reports/**/TEST-*.xml'
           check_name: 'integration-test-cloudready-with-addon results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
 
   selenium-chrome-655:
@@ -284,6 +287,7 @@ jobs:
           check_name: 'selenium-chrome-655 results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
 
   selenium-chrome-660:
@@ -323,6 +327,7 @@ jobs:
           check_name: 'selenium-chrome-660 results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
 
   selenium-chrome-cloudready-with-addon:
@@ -362,4 +367,5 @@ jobs:
           check_name: 'selenium-chrome-cloudready-with-addon results'
           detailed_summary: true
           include_passed: true
+          truncate_stack_traces: false
           fail_on_failure: false
