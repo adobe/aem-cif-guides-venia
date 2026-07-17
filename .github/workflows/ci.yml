@@ -152,6 +152,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -191,6 +205,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -230,6 +258,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -270,6 +312,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -310,6 +366,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -350,6 +420,20 @@ jobs:
           name: build-artifacts
           path: .
       - run: bash .github/ci/run-containerized-test.sh
+      - name: Render test results to job summary
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          # Make root-owned report files (written inside the container) readable.
+          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+          python3 .github/ci/test-summary.py
+      - name: Show AEM error.log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "=================== AEM error.log (last 400 lines) ==================="
+          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
