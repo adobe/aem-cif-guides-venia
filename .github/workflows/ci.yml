@@ -39,17 +39,20 @@ jobs:
     container:
       image: cimg/openjdk:11.0-browsers
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '12.14.1'
 
       # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2
+          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
+          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
+          # cache action's ~ expands to inside a container job — so cache an absolute path.
+          path: /home/circleci/.m2
           key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
@@ -67,7 +70,7 @@ jobs:
 
       - name: Upload CIF unit test reports on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cif-surefire-reports
           if-no-files-found: ignore
@@ -97,21 +100,24 @@ jobs:
       # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2
+          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
+          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
+          # cache action's ~ expands to inside a container job — so cache an absolute path.
+          path: /home/circleci/.m2
           key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
           fail_ci_if_error: false
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-artifacts
           if-no-files-found: warn
@@ -144,8 +150,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -155,9 +161,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -175,9 +181,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -187,7 +193,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-655-reports
           if-no-files-found: ignore
@@ -208,8 +214,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -219,9 +225,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -239,9 +245,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -251,7 +257,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-660-reports
           if-no-files-found: ignore
@@ -272,8 +278,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -283,9 +289,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -303,9 +309,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -315,7 +321,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-cloudready-with-addon-reports
           if-no-files-found: ignore
@@ -337,8 +343,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -348,9 +354,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -368,9 +374,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -380,7 +386,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-chrome-655-reports
           if-no-files-found: ignore
@@ -402,8 +408,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -413,9 +419,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -433,9 +439,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -445,7 +451,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-chrome-660-reports
           if-no-files-found: ignore
@@ -467,8 +473,8 @@ jobs:
       QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
       AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
@@ -478,9 +484,9 @@ jobs:
       # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
@@ -498,9 +504,9 @@ jobs:
       # restore step above; parallel jobs sharing the key simply no-op after the first save.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
-          path: ~/.m2/repository
+          path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Show AEM error.log on failure
         if: failure()
@@ -510,7 +516,7 @@ jobs:
           tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: selenium-chrome-cloudready-with-addon-reports
           if-no-files-found: ignore

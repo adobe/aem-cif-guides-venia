@@ -17,6 +17,11 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
+# Create ~/.m2 up front (before any docker pull/login that might fail) so the runner-side
+# path the actions/cache save step targets always exists — otherwise a job that fails
+# early logs a spurious "Path(s) specified do(es) not exist ... Cache save failed" warning.
+mkdir -p "${HOME}/.m2"
+
 : "${QP_IMAGE:?QP_IMAGE must be set}"
 : "${AEM_IMAGE:?AEM_IMAGE must be set}"
 : "${ARTIFACTORY_CLOUD_USER:?}"
@@ -42,7 +47,7 @@ docker pull "${QP_IMAGE}"
 # (which run directly on the runner, not in this container) can read/write. Without this
 # mount /root/.m2/repository only ever exists inside the container's ephemeral layer —
 # gone the instant --rm removes it — so every run re-downloads the whole dependency tree.
-mkdir -p "${HOME}/.m2"
+# (${HOME}/.m2 is created near the top of this script.)
 docker run --rm --network host --user root \
     -e AEM -e TYPE -e BROWSER -e CI_QP_PATH -e QP_SERVER_HOSTNAME -e AEM_LOG_HOST \
     -e ARTIFACTORY_CLOUD_USER -e ARTIFACTORY_CLOUD_PASS \
