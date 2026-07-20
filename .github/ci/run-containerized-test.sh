@@ -37,6 +37,12 @@ docker pull "${AEM_IMAGE}"
 docker run -d --network host --name "${aem_container}" "${AEM_IMAGE}"
 
 docker pull "${QP_IMAGE}"
+# Bind-mount the host's own ~/.m2 into the container's /root/.m2 (it runs as --user root)
+# so Maven's downloads land on the runner's filesystem, at a path the actions/cache steps
+# (which run directly on the runner, not in this container) can read/write. Without this
+# mount /root/.m2/repository only ever exists inside the container's ephemeral layer —
+# gone the instant --rm removes it — so every run re-downloads the whole dependency tree.
+mkdir -p "${HOME}/.m2"
 docker run --rm --network host --user root \
     -e AEM -e TYPE -e BROWSER -e CI_QP_PATH -e QP_SERVER_HOSTNAME -e AEM_LOG_HOST \
     -e ARTIFACTORY_CLOUD_USER -e ARTIFACTORY_CLOUD_PASS \
@@ -45,4 +51,5 @@ docker run --rm --network host --user root \
     -e CI_BUILD_PATH="${GITHUB_WORKSPACE}" \
     -e GITHUB_EVENT_NAME -e GITHUB_HEAD_REF -e GITHUB_REF -e GITHUB_REF_NAME \
     -v "${GITHUB_WORKSPACE}:${GITHUB_WORKSPACE}" -w "${GITHUB_WORKSPACE}" \
+    -v "${HOME}/.m2:/root/.m2" \
     "${QP_IMAGE}" bash .github/ci/run-integration-test.sh
