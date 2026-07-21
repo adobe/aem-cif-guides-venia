@@ -18,14 +18,12 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Test results are published as GitHub check runs by dorny/test-reporter (the "Tests (...)"
-# checks) — a compact pass/fail table with drill-down into each failed test, mirroring
-# CircleCI's native test summary in core-cif-components. That needs checks:write; actions:read
-# lets the reporter read run metadata.
+# Test results are published by mikepenz/action-junit-report (same as graphql, magento and
+# core-cif-components): only when a test fails, it writes a pass/fail summary to the job's
+# Summary tab and annotates the failing test(s). That needs checks:write.
 permissions:
   contents: read
   checks: write
-  actions: read
 
 env:
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
@@ -174,21 +172,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (integration classic)
+          report_paths: test-reports/**/TEST-*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       # Save the shared ~/.m2 cache from THIS job only. Every integration/selenium job uses
       # the same key and runs in parallel, so one saver is enough to populate it for future
       # runs — the others are restore-only, which avoids the concurrent-save race. Runs even
@@ -242,21 +241,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (integration lts)
+          report_paths: test-reports/**/TEST-*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -300,21 +300,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (integration addon)
+          report_paths: test-reports/**/TEST-*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -359,21 +360,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (selenium classic)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -418,21 +420,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (selenium lts)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -477,21 +480,22 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then publish them as a
-      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
-      # mirroring CircleCI's native test summary used by core-cif-components.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      - name: Publish test report
-        if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
         with:
-          name: Tests (${{ github.job }})
-          path: test-reports/**/*.xml
-          reporter: java-junit
-          fail-on-error: false
+          check_name: Tests (selenium addon)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
