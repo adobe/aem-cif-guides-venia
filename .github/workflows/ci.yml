@@ -36,47 +36,26 @@ env:
 jobs:
   build:
     name: build
-    # CircleCI executor: cif_executor (cimg/openjdk:11.0-browsers) — not ubuntu + Temurin.
     runs-on: ubuntu-latest
-    container:
-      image: cimg/openjdk:11.0-browsers
     steps:
       - uses: actions/checkout@v5
+
+      # Temurin 11 + built-in Maven dependency cache (replaces the explicit restore/save
+      # cache steps the old cimg container forced). Mirrors core-cif-components' build job.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
 
       - uses: actions/setup-node@v5
         with:
           node-version: '12.14.1'
 
-      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
-      - name: Restore Maven repository cache
-        uses: actions/cache/restore@v5
-        with:
-          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
-          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
-          # cache action's ~ expands to inside a container job — so cache an absolute path.
-          path: /home/circleci/.m2
-          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
-
-      - name: Update permissions
-        run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
-
       # CircleCI build job does NOT configure ~/.m2/settings.xml or -Partifactory-cloud here.
       # Artifactory settings are only used in it-tests.js (-s .circleci/settings.xml -Partifactory-cloud).
-
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh
-
-      - name: Upload CIF unit test reports on failure
-        if: failure()
-        uses: actions/upload-artifact@v5
-        with:
-          name: cif-surefire-reports
-          if-no-files-found: ignore
-          path: dependencies/aem-core-cif-components/**/target/surefire-reports/
 
       - name: Build
         run: |
@@ -99,17 +78,6 @@ jobs:
         working-directory: ui.frontend
         run: npm run ci
 
-      # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
-      - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
-        with:
-          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
-          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
-          # cache action's ~ expands to inside a container job — so cache an absolute path.
-          path: /home/circleci/.m2
-          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
-
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v6
@@ -119,7 +87,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: build-artifacts
           if-no-files-found: warn
@@ -184,7 +152,7 @@ jobs:
         uses: mikepenz/action-junit-report@v5
         with:
           check_name: Tests (integration classic)
-          report_paths: test-reports/**/*.xml
+          report_paths: test-reports/**/TEST-*.xml
           skip_success_summary: true
           fail_on_failure: false
       # Save the shared ~/.m2 cache from THIS job only. Every integration/selenium job uses
@@ -199,7 +167,7 @@ jobs:
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: integration-test-655-reports
           if-no-files-found: ignore
@@ -252,12 +220,12 @@ jobs:
         uses: mikepenz/action-junit-report@v5
         with:
           check_name: Tests (integration lts)
-          report_paths: test-reports/**/*.xml
+          report_paths: test-reports/**/TEST-*.xml
           skip_success_summary: true
           fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: integration-test-660-reports
           if-no-files-found: ignore
@@ -310,12 +278,12 @@ jobs:
         uses: mikepenz/action-junit-report@v5
         with:
           check_name: Tests (integration addon)
-          report_paths: test-reports/**/*.xml
+          report_paths: test-reports/**/TEST-*.xml
           skip_success_summary: true
           fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: integration-test-cloudready-with-addon-reports
           if-no-files-found: ignore
@@ -374,7 +342,7 @@ jobs:
           fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: selenium-chrome-655-reports
           if-no-files-found: ignore
@@ -433,7 +401,7 @@ jobs:
           fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: selenium-chrome-660-reports
           if-no-files-found: ignore
@@ -492,7 +460,7 @@ jobs:
           fail_on_failure: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: selenium-chrome-cloudready-with-addon-reports
           if-no-files-found: ignore

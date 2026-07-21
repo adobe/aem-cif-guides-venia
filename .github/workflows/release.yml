@@ -21,7 +21,6 @@ env:
 jobs:
   deploy-sample:
     name: deploy-sample
-    if: matches(github.ref_name, '^venia(-classic)?-\d+\.\d+\.\d+$')
     runs-on: ubuntu-latest
     environment: release
     env:
@@ -62,7 +61,6 @@ jobs:
 
   update-cm:
     name: update-cm
-    if: matches(github.ref_name, '^venia(-classic)?-\d+\.\d+\.\d+$')
     runs-on: ubuntu-latest
     environment: release
     steps:
