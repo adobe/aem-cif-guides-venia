@@ -18,10 +18,14 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Test results are rendered into each job's Summary page by .github/ci/test-summary.py
-# (writes to $GITHUB_STEP_SUMMARY), so no extra token permissions are required.
+# Test results are published as GitHub check runs by dorny/test-reporter (the "Tests (...)"
+# checks) — a compact pass/fail table with drill-down into each failed test, mirroring
+# CircleCI's native test summary in core-cif-components. That needs checks:write; actions:read
+# lets the reporter read run metadata.
 permissions:
   contents: read
+  checks: write
+  actions: read
 
 env:
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
@@ -156,9 +160,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -168,29 +174,31 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
+      # Save the shared ~/.m2 cache from THIS job only. Every integration/selenium job uses
+      # the same key and runs in parallel, so one saver is enough to populate it for future
+      # runs — the others are restore-only, which avoids the concurrent-save race. Runs even
+      # on failure so a partial download is still persisted.
       - name: Save Maven repository cache
         if: ${{ !cancelled() }}
         uses: actions/cache/save@v5
         with:
           path: ~/.m2
           key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -220,9 +228,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -232,29 +242,21 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
-      - name: Save Maven repository cache
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: dorny/test-reporter@v3
         with:
-          path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -284,9 +286,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -296,29 +300,21 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
-      - name: Save Maven repository cache
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: dorny/test-reporter@v3
         with:
-          path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -349,9 +345,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -361,29 +359,21 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
-      - name: Save Maven repository cache
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: dorny/test-reporter@v3
         with:
-          path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -414,9 +404,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -426,29 +418,21 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
-      - name: Save Maven repository cache
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: dorny/test-reporter@v3
         with:
-          path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
@@ -479,9 +463,11 @@ jobs:
           name: build-artifacts
           path: .
       # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
-      # runner's ~/.m2 via the bind mount in run-containerized-test.sh, so the cache steps
-      # (which run on the bare runner, not in the container) can persist them. Shared by all
-      # integration/selenium jobs — they resolve the same dependency tree. Mirrors the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
       # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
@@ -491,29 +477,21 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      - name: Render test results to job summary
+      # Make the container-written (root-owned) report files readable, then publish them as a
+      # GitHub check run — a compact pass/fail table with drill-down into each failed test,
+      # mirroring CircleCI's native test summary used by core-cif-components.
+      - name: Make test reports readable
         if: ${{ !cancelled() }}
-        continue-on-error: true
         shell: bash
-        run: |
-          # Make root-owned report files (written inside the container) readable.
-          sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-          python3 .github/ci/test-summary.py
-      # Persist whatever Maven downloaded into ~/.m2 (via the bind mount) even if the tests
-      # failed, so the next run restores it instead of re-downloading. Same key as the
-      # restore step above; parallel jobs sharing the key simply no-op after the first save.
-      - name: Save Maven repository cache
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test report
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: dorny/test-reporter@v3
         with:
-          path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-      - name: Show AEM error.log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "=================== AEM error.log (last 400 lines) ==================="
-          tail -n 400 logs/error.log 2>/dev/null || echo "(no logs/error.log — AEM may not have started)"
+          name: Tests (${{ github.job }})
+          path: test-reports/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
