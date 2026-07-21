@@ -9,10 +9,12 @@
 #
 # GitHub has no native "Tests" tab, so this parses the JUnit XML copied into
 # test-reports/ (Failsafe TEST-*.xml for integration jobs, WDIO results-*.xml for
-# selenium jobs) and writes a Markdown report to $GITHUB_STEP_SUMMARY:
+# selenium jobs) and writes a small Markdown report to $GITHUB_STEP_SUMMARY:
 #   - an overview table (Total / Passed / Failed / Skipped)
-#   - for each failed test: class, assertion message, stack trace, and the
-#     captured server log (<system-out>) inside a collapsible <details> block.
+#   - the list of failed test names, plus a link to the uploaded *-reports
+#     artifact where the full stack traces and AEM error.log can be analyzed.
+# Stack traces and server logs are intentionally NOT inlined here — keeping the
+# summary small mirrors how core-cif-components (CircleCI) surfaces results.
 #
 # The failsafe-summary.xml aggregate file is ignored (its root is not a testsuite).
 
@@ -20,10 +22,7 @@ import glob
 import os
 import xml.etree.ElementTree as ET
 
-# GitHub's step summary caps at ~1 MB. Keep each test's captured log bounded so a
-# few very chatty tests can't blow the budget (we keep the TAIL, where failures land).
-MAX_LOG_CHARS = 30000
-# Hard ceiling on the whole document, leaving headroom under the 1 MB limit.
+# Hard ceiling on the whole document, leaving headroom under GitHub's ~1 MB limit.
 MAX_TOTAL_CHARS = 900000
 
 job = os.environ.get("GITHUB_JOB", "tests")
@@ -32,11 +31,7 @@ summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
 xml_files = sorted(glob.glob("test-reports/**/*.xml", recursive=True))
 
 total = passed = skipped = 0
-failed = []  # list of dicts: classname, name, message, trace, sysout
-
-
-def text_of(node):
-    return (node.text or "") if node is not None else ""
+failed = []  # list of dicts: classname, name
 
 
 for path in xml_files:
@@ -60,14 +55,10 @@ for path in xml_files:
             skip = case.find("skipped")
             problem = fail if fail is not None else err
             if problem is not None:
-                sysout = text_of(case.find("system-out")).strip()
                 failed.append(
                     {
                         "classname": case.get("classname", ""),
                         "name": case.get("name", ""),
-                        "message": (problem.get("message") or "").strip(),
-                        "trace": text_of(problem).strip(),
-                        "sysout": sysout,
                     }
                 )
             elif skip is not None:
@@ -91,23 +82,33 @@ else:
     out.append("| {} | {} | {} | {} |\n".format(total, passed, len(failed), skipped))
 
     if failed:
-        out.append("### ❌ {} failed\n".format(len(failed)))
+        # Keep the summary small: just list which tests failed. Full stack traces
+        # and the captured AEM error.log live in the uploaded *-reports artifact —
+        # link to it so the details are one click away ("analyze"), not inlined.
+        out.append("### ❌ Failed tests ({})\n".format(len(failed)))
         for tc in failed:
-            out.append("#### `{}`".format(tc["name"]))
-            out.append("_{}_\n".format(tc["classname"]))
-            if tc["message"]:
-                out.append("> {}\n".format(tc["message"].replace("\n", " ")))
-            detail = tc["trace"]
-            if tc["sysout"]:
-                log = tc["sysout"]
-                if len(log) > MAX_LOG_CHARS:
-                    log = "…(log truncated — see the *-reports artifact for the full log)…\n" + log[-MAX_LOG_CHARS:]
-                detail = (detail + "\n\n===== captured server log (system-out) =====\n" + log).strip()
-            out.append("<details><summary>Stack trace &amp; server log</summary>\n")
-            out.append("```")
-            out.append(detail if detail else "(no stack trace captured)")
-            out.append("```")
-            out.append("</details>\n")
+            name = tc["name"] or "(unnamed)"
+            if tc["classname"]:
+                out.append("- `{}` — `{}`".format(name, tc["classname"]))
+            else:
+                out.append("- `{}`".format(name))
+        out.append("")
+
+        artifact = "{}-reports".format(job)
+        server = os.environ.get("GITHUB_SERVER_URL", "https://github.com")
+        repo = os.environ.get("GITHUB_REPOSITORY", "")
+        run_id = os.environ.get("GITHUB_RUN_ID", "")
+        if repo and run_id:
+            run_url = "{}/{}/actions/runs/{}".format(server, repo, run_id)
+            out.append(
+                "🔎 Download the **{}** artifact from the [workflow run]({}) to see "
+                "full stack traces and the AEM `error.log`.\n".format(artifact, run_url)
+            )
+        else:
+            out.append(
+                "🔎 Download the **{}** artifact to see full stack traces and the "
+                "AEM `error.log`.\n".format(artifact)
+            )
     else:
         out.append("All tests passed. 🎉\n")
 
