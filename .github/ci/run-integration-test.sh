@@ -30,4 +30,4 @@ if [[ "${TYPE:-}" == "selenium" ]]; then
     bash "${repo_root}/.github/ci/install-chrome.sh"
 fi
 
-node "${repo_root}/.circleci/ci/it-tests.js"
+node "${repo_root}/.github/ci/it-tests.js"

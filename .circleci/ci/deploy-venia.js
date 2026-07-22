@@ -20,12 +20,7 @@ ci.context();
 
 const releaseVersion = ci.sh(`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`, true).toString().trim();
 const releaseArtifact = ci.sh(`mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout`, true).toString().trim();
-const repoPath = process.env.CI_REPO_PATH || '/home/circleci/repo';
-const mvnOpts = `-B -s ${repoPath}/.circleci/settings.xml`;
-const githubOwner = process.env.CIRCLE_PROJECT_USERNAME || process.env.GITHUB_REPOSITORY_OWNER;
-const githubRepo = process.env.CIRCLE_PROJECT_REPONAME || (process.env.GITHUB_REPOSITORY || '').split('/')[1];
-const githubSha = process.env.CIRCLE_SHA1 || process.env.GITHUB_SHA;
-const githubTag = process.env.CIRCLE_TAG || process.env.GITHUB_REF_NAME;
+const mvnOpts = `-B -s /home/circleci/repo/.circleci/settings.xml`
 
 ci.stage("Install GHR");
 ci.sh("mkdir -p tmp");
@@ -46,10 +41,10 @@ ci.sh(`cp all/target/${releaseArtifact}.all-${releaseVersion}.zip artifacts/${re
 ci.stage("Deploy Venia Sample Project to GitHub");
 // build also the classic artifacts for github
 ci.sh(`mvn ${mvnOpts} clean install -Pclassic -pl classic/ui.config,classic/ui.content,classic/dispatcher,classic/all`);
-ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-classic-${releaseVersion}.zip`);
+ci.sh(`cp classic/all/target/${releaseArtifact}.all-classic-${releaseVersion}.zip artifacts/${releaseArtifact}.all-${releaseVersion}-classic.zip`);
 ci.sh(`./ghr -t ${ci.env("GITHUB_TOKEN")} \
-    -u ${githubOwner} \
-    -r ${githubRepo} \
-    -c ${githubSha} \
-    -replace ${githubTag} artifacts/`);
+    -u ${ci.env("CIRCLE_PROJECT_USERNAME")} \
+    -r ${ci.env("CIRCLE_PROJECT_REPONAME")} \
+    -c ${ci.env("CIRCLE_SHA1")} \
+    -replace ${ci.env("CIRCLE_TAG")} artifacts/`);
 

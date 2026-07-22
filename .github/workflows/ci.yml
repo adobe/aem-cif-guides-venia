@@ -67,7 +67,7 @@ jobs:
         run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
 
       # CircleCI build job does NOT configure ~/.m2/settings.xml or -Partifactory-cloud here.
-      # Artifactory settings are only used in it-tests.js (-s .circleci/settings.xml -Partifactory-cloud).
+      # Artifactory settings are only used in it-tests.js (-s .github/ci/settings.xml -Partifactory-cloud).
 
       - name: Install CIF Components
         run: bash .github/ci/install-cif-components.sh

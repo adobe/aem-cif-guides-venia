@@ -17,7 +17,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${repo_root}"
 
-mvn_opts=(-B -s "${repo_root}/.circleci/settings.xml")
+mvn_opts=(-B -s "${repo_root}/.github/ci/settings.xml")
 release_version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"
 release_artifact="$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)"
 

@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  checks: write
 
 env:
   ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
@@ -53,11 +54,17 @@ jobs:
           files: artifacts/*
           generate_release_notes: true
 
-      - name: Cleanup credentials
-        if: always()
-        run: |
-          rm -rf ~/.gnupg
-          rm -rf ~/.npmrc
+      # If the release build (mvn clean deploy) fails on a test, publish a "Tests" check
+      # with the failed tests + error/stack trace — same tool/style as the ci workflow.
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (release)
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
 
   update-cm:
     name: update-cm

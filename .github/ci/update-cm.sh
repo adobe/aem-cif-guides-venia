@@ -15,4 +15,4 @@
 set -euo pipefail
 
 git config --global fetch.negotiationAlgorithm noop
-node .circleci/ci/update-cm.js
+node .github/ci/update-cm.js
