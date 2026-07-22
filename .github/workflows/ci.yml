@@ -11,8 +11,10 @@ name: ci
 on:
   pull_request:
   push:
-    tags:
-      - '**'
+    # Release tags (venia-*) are handled by release.yml — exclude them here so the full
+    # build + integration/selenium suite doesn't run again, concurrently with the release.
+    tags-ignore:
+      - 'venia-*'
 
 concurrency:
   group: ci-${{ github.ref }}
