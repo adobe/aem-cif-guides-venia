@@ -1,5 +1,4 @@
-[![ci](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/ci.yml/badge.svg)](https://github.com/adobe/aem-cif-guides-venia/actions/workflows/ci.yml)
-[![CircleCI](https://circleci.com/gh/adobe/aem-cif-guides-venia.svg?style=svg)](https://circleci.com/gh/adobe/aem-cif-guides-venia)
+[![CircleCI](https://circleci.com/gh/adobe/aem-cif-guides-venia.svg?style=svg)](https://circleci.com/gh/aem-cif-guides-venia)
 ![GitHub](https://img.shields.io/github/license/adobe/aem-cif-guides-venia.svg)
 
 # AEM Guides - CIF Venia Project
@@ -32,7 +31,7 @@ The CIF Core Components and the Commerce Add-On connect to a Magento (or alterna
 The project deployment can be done via Cloud Manager or AEM package install. For project build and deployment use the `classic` profile, see steps below.
 
 ## Branching Strategy
-This project uses a `dev` branch for the development cycle between releases. On `dev` there can be dependencies to snapshot versions of the CIF Core components project. CircleCI and GitHub Actions provide the snapshot dependencies including the `react-components` package on all branches except `main`.
+This project uses a `dev` branch for the development cycle between releases. On `dev` there can be dependencies to snapshot versions of the CIF Core components project. CircleCI will provide the snapshot dependencies including the `react-components` package on all branches except `main`.
 
 After a release of the required dependencies, all dependencies have to be updated to release versions and the current state of the `dev` branch is merged to `main`. All releases of this project will be done from the `main` branch. This guarantees that the state on `main` can always be built and installed as-is.
 

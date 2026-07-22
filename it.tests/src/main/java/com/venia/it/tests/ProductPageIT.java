@@ -144,7 +144,7 @@ public class ProductPageIT extends CommerceTestBase {
 
         // Verify breadcrumb: Home
         elements = doc.select(BREADCRUMB_ITEMS_SELECTOR);
-        assertEquals("Expected 1 breadcrumb item, but found: " + elements.size(), 2, elements.size());
+        assertEquals("Expected 1 breadcrumb item, but found: " + elements.size(), 1, elements.size());
 
         // Verify dataLayer attributes
         elements = doc.select(PRODUCT_DETAILS_SELECTOR);
