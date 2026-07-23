@@ -44,7 +44,7 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Deploy to Maven Central and build release packages
-        run: bash .github/ci/deploy-maven-release.sh
+        run: bash .github/ci/deploy-venia.sh
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -80,7 +80,10 @@ jobs:
           node-version: '20'
 
       - name: Update Cloud Manager repository
-        run: bash .github/ci/update-cm.sh
+        # fetch.negotiationAlgorithm=noop works around an Azure DevOps git fetch issue.
+        run: |
+          git config --global fetch.negotiationAlgorithm noop
+          node .github/ci/update-cm.js
         env:
           GIT_REPO: ${{ secrets.GIT_REPO }}
           GIT_USER: ${{ secrets.GIT_USER }}

@@ -40,8 +40,8 @@ trap cleanup EXIT
 
 docker pull "${AEM_IMAGE}"
 
-# Start the AEM/QuickProvider container. Readiness (port 55555) is checked by the in-container
-# wait-for-quickprovider.sh once the client container starts.
+# Start the AEM/QuickProvider container. Readiness (port 55555) is polled inside the client
+# container by run-integration-test.sh once it starts.
 docker run -d --network host --name "${aem_container}" "${AEM_IMAGE}"
 
 docker pull "${QP_IMAGE}"
