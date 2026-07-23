@@ -9,11 +9,11 @@
 name: ci
 
 on:
-  pull_request:
   push:
-    # Build every branch push (mirrors the CircleCI "build" job, which ran on all branches).
-    # Without an explicit branches filter, a push trigger scoped only by tags-ignore would
-    # never fire on branch pushes, so main and feature branches would get no CI.
+    # Build every push to every branch — mirrors CircleCI, which builds every commit on every
+    # branch. Deliberately NO pull_request trigger: combined with push-on-all-branches it would
+    # double-run every commit that has an open PR (that was the earlier duplicate-runs problem).
+    # Trade-off vs a pull_request trigger: PRs opened from forks are not built.
     branches:
       - '**'
     # Release tags (venia-*) are handled by release.yml — exclude them here so the full
