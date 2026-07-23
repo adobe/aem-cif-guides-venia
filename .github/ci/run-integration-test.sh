@@ -22,10 +22,6 @@ bash "${repo_root}/.github/ci/maven-settings.sh"
 # sharing --network host with the aem container, so "localhost" reaches it directly.
 bash "${repo_root}/.github/ci/wait-for-quickprovider.sh"
 
-# Diagnostic-only — logs what COMMERCE_ENDPOINT actually returns so a bad secret value
-# can be told apart from any other cause of the GraphQL-backed test failures.
-bash "${repo_root}/.github/ci/check-commerce-endpoint.sh"
-
 if [[ "${TYPE:-}" == "selenium" ]]; then
     bash "${repo_root}/.github/ci/install-chrome.sh"
 fi
