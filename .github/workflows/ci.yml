@@ -130,59 +130,42 @@ jobs:
             classic/all/target/*.zip
             dependencies/aem-core-cif-components/examples/bundle/target/*.jar
 
-  # Integration + Selenium tests, collapsed from 6 near-identical jobs
-  # (integration/selenium × classic/lts/cloud) into one matrix.
-  #
-  # fail-fast: false — one combination failing (e.g. cloud) must NOT cancel the others;
-  # every type×aem combination runs and reports independently, exactly as the 6 separate
-  # jobs did before. The 'type' and 'aem' vectors give the 2×3=6 combinations; the
-  # 'include' entries attach the per-aem qp/aem images to the matching combinations.
-  #
-  # These do NOT use GitHub Actions' `container:` + `services:` keys. The QuickProvider RMI
-  # protocol used by run-integration-test.sh requires the qp client and the AEM server to
-  # share the same network namespace (traffic routed back through "localhost", like
-  # CircleCI's machine executor). That needs `--network host`, but combining it with a
-  # `services:` container crashes the runner before the job starts ("Error: Value cannot be
-  # null. (Parameter 'ContainerId')"). So this job runs on the bare runner and drives both
-  # containers via run-containerized-test.sh, sidestepping service-container orchestration.
-  test-aem:
-    name: ${{ matrix.type }} (${{ matrix.aem }})
+  # NOTE on the jobs below: they intentionally do NOT use GitHub Actions' `container:` +
+  # `services:` keys. The QuickProvider RMI protocol used by run-integration-test.sh
+  # requires the qp client and the AEM server to share the same network namespace
+  # (traffic is routed back through "localhost", exactly like CircleCI's machine
+  # executor). That means both containers need `--network host`, but the GitHub
+  # Actions runner has a bug where combining `--network host` with a `services:`
+  # container crashes the job before it even starts ("Error: Value cannot be null.
+  # (Parameter 'ContainerId')"). Instead, these jobs run directly on the bare runner
+  # and manually `docker run --network host` both images via run-containerized-test.sh,
+  # which sidesteps the runner's service-container orchestration entirely.
+
+  integration-test-655:
+    name: integration-test-655
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        type: [integration, selenium]
-        aem: [classic, lts, cloud]
-        include:
-          - aem: classic
-            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
-          - aem: lts
-            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
-          - aem: cloud
-            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
     env:
-      AEM: ${{ matrix.aem }}
-      TYPE: ${{ matrix.type }}
-      BROWSER: chrome
+      AEM: classic
+      TYPE: integration
       CI_QP_PATH: /home/circleci/cq
       QP_SERVER_HOSTNAME: localhost
       AEM_LOG_HOST: localhost
-      QP_IMAGE: ${{ matrix.qp_image }}
-      AEM_IMAGE: ${{ matrix.aem_image }}
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
     steps:
       - uses: actions/checkout@v5
       - uses: actions/download-artifact@v6
         with:
           name: build-artifacts
           path: .
-      # Restore the shared ~/.m2 (populated by the containerized mvn runs via the bind mount
-      # in run-containerized-test.sh). All combinations share ONE cache key; only the
-      # integration+classic combination saves it (below) — the rest are restore-only, which
-      # avoids the concurrent-save race between the parallel matrix legs.
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v5
         with:
@@ -191,36 +174,28 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable before publishing.
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
-      # On failure only, publish a "Tests" check with the failed test(s) + stack trace. Two
-      # type-gated steps because the report glob differs: integration writes failsafe
-      # TEST-*.xml; selenium (WDIO) writes *.xml.
-      - name: Publish test results (integration)
-        if: failure() && matrix.type == 'integration'
+      - name: Publish test results
+        if: failure()
         uses: mikepenz/action-junit-report@v5
         with:
-          check_name: Tests (${{ matrix.type }} ${{ matrix.aem }})
+          check_name: Tests (integration classic)
           report_paths: test-reports/**/TEST-*.xml
           skip_success_summary: true
           annotate_only: true
           fail_on_failure: false
-      - name: Publish test results (selenium)
-        if: failure() && matrix.type == 'selenium'
-        uses: mikepenz/action-junit-report@v5
-        with:
-          check_name: Tests (${{ matrix.type }} ${{ matrix.aem }})
-          report_paths: test-reports/**/*.xml
-          skip_success_summary: true
-          annotate_only: true
-          fail_on_failure: false
-      # Single cache saver (was the integration-test-655 job): only the integration+classic
-      # combination writes the shared ~/.m2 key, so the parallel legs don't race to save it.
+      # Save the shared ~/.m2 cache from THIS job only. Every integration/selenium job uses
+      # the same key and runs in parallel, so one saver is enough to populate it for future
+      # runs — the others are restore-only, which avoids the concurrent-save race. Runs even
+      # on failure so a partial download is still persisted.
       - name: Save Maven repository cache
-        if: ${{ !cancelled() && matrix.type == 'integration' && matrix.aem == 'classic' }}
+        if: ${{ !cancelled() }}
         uses: actions/cache/save@v5
         with:
           path: ~/.m2
@@ -229,7 +204,305 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
         with:
-          name: ${{ matrix.type }}-${{ matrix.aem }}-reports
+          name: integration-test-655-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
+
+  integration-test-660:
+    name: integration-test-660
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      AEM: lts
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (integration lts)
+          report_paths: test-reports/**/TEST-*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: integration-test-660-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
+
+  integration-test-cloudready-with-addon:
+    name: integration-test-cloudready-with-addon
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      AEM: cloud
+      TYPE: integration
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (integration addon)
+          report_paths: test-reports/**/TEST-*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: integration-test-cloudready-with-addon-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
+
+  selenium-chrome-655:
+    name: selenium-chrome-655
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      AEM: classic
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (selenium classic)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: selenium-chrome-655-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
+
+  selenium-chrome-660:
+    name: selenium-chrome-660
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      AEM: lts
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (selenium lts)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: selenium-chrome-660-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
+
+  selenium-chrome-cloudready-with-addon:
+    name: selenium-chrome-cloudready-with-addon
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      AEM: cloud
+      TYPE: selenium
+      BROWSER: chrome
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+      AEM_IMAGE: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the
+      # runner's ~/.m2 via the bind mount in run-containerized-test.sh. Every integration/
+      # selenium job resolves the same dependency tree and shares ONE cache key, but only the
+      # integration-test-655 job saves it (see its "Save Maven repository cache" step) — the
+      # rest are restore-only. A single saver avoids the concurrent-save race that otherwise
+      # made the parallel jobs log "another job may be creating this cache". Mirrors the
+      # test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then — only if a test
+      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
+      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: failure()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: Tests (selenium addon)
+          report_paths: test-reports/**/*.xml
+          skip_success_summary: true
+          annotate_only: true
+          fail_on_failure: false
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: selenium-chrome-cloudready-with-addon-reports
           if-no-files-found: ignore
           path: |
             test-reports
