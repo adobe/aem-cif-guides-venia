@@ -11,6 +11,11 @@ name: ci
 on:
   pull_request:
   push:
+    # Build every branch push (mirrors the CircleCI "build" job, which ran on all branches).
+    # Without an explicit branches filter, a push trigger scoped only by tags-ignore would
+    # never fire on branch pushes, so main and feature branches would get no CI.
+    branches:
+      - '**'
     # Release tags (venia-*) are handled by release.yml — exclude them here so the full
     # build + integration/selenium suite doesn't run again, concurrently with the release.
     tags-ignore:

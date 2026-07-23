@@ -29,8 +29,7 @@ cp "all/target/${release_artifact}.all-${release_version}.zip" "artifacts/"
 
 echo "Build classic artifacts for GitHub Release"
 mvn "${mvn_opts[@]}" clean install -Pclassic -pl classic/ui.config,classic/ui.content,classic/dispatcher,classic/all
-cp "classic/all/target/${release_artifact}.all-classic-${release_version}.zip" \
-    "artifacts/${release_artifact}.all-${release_version}-classic.zip"
+cp "classic/all/target/${release_artifact}.all-classic-${release_version}.zip" "artifacts/"
 
 echo "Release artifacts:"
 ls -la artifacts/

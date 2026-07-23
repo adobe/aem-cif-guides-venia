@@ -39,7 +39,53 @@ cleanup() {
 trap cleanup EXIT
 
 docker pull "${AEM_IMAGE}"
-docker run -d --network host --name "${aem_container}" "${AEM_IMAGE}"
+
+# Bring the AEM/QuickProvider container up and confirm its RMI port (55555) is actually
+# listening on the host (reachable directly thanks to --network host) BEFORE launching the
+# client container. On a small runner the heavier AEM-LTS quickstart can lose a startup race
+# and have its QuickProvider RMI agent die with a BindException; once it's dead, the
+# in-container wait-for-quickprovider.sh would just poll a corpse until it times out. If the
+# port doesn't come up (or the container exits), start a FRESH container — which clears any
+# stale X lock / half-bound socket from the failed boot — and retry.
+qp_port="${QP_SERVER_PORT:-55555}"
+aem_start_attempts="${AEM_START_ATTEMPTS:-3}"
+aem_ready_polls="${AEM_READY_POLLS:-60}"            # 60 * 5s = 5 min per attempt
+aem_ready_sleep="${AEM_READY_SLEEP_SECONDS:-5}"
+
+wait_for_qp() {
+    local attempt running
+    for attempt in $(seq 1 "${aem_ready_polls}"); do
+        if (echo >"/dev/tcp/localhost/${qp_port}") >/dev/null 2>&1; then
+            echo "QuickProvider is up on localhost:${qp_port} (poll ${attempt})."
+            return 0
+        fi
+        # No point waiting the full window if the container already exited/crashed.
+        running="$(docker inspect -f '{{.State.Running}}' "${aem_container}" 2>/dev/null || echo false)"
+        if [[ "${running}" != "true" ]]; then
+            echo "AEM container is no longer running; aborting this attempt."
+            return 1
+        fi
+        sleep "${aem_ready_sleep}"
+    done
+    echo "Timed out waiting for QuickProvider on localhost:${qp_port}."
+    return 1
+}
+
+for start_attempt in $(seq 1 "${aem_start_attempts}"); do
+    echo "Starting AEM container (attempt ${start_attempt}/${aem_start_attempts})..."
+    docker rm -f "${aem_container}" >/dev/null 2>&1 || true
+    docker run -d --network host --name "${aem_container}" "${AEM_IMAGE}"
+    if wait_for_qp; then
+        break
+    fi
+    echo "QuickProvider did not become reachable on attempt ${start_attempt}; recent AEM logs:"
+    docker logs --tail 100 "${aem_container}" 2>&1 || true
+    if [[ "${start_attempt}" -eq "${aem_start_attempts}" ]]; then
+        echo "::error::QuickProvider failed to start after ${aem_start_attempts} attempts."
+        exit 1
+    fi
+    echo "Retrying with a fresh AEM container..."
+done
 
 docker pull "${QP_IMAGE}"
 # Bind-mount the host's own ~/.m2 into the container's /root/.m2 (it runs as --user root)
