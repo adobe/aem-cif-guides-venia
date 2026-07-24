@@ -2,39 +2,24 @@
 #
 # Copyright 2026 Adobe. All rights reserved.
 # Licensed under the Apache License, Version 2.0
+#
+# Generates ~/.m2/settings.xml with Adobe Artifactory (cloud) credentials.
+#
+# Used by: the integration-test build (it-tests.js), which resolves the CIF commerce
+# add-on artifacts from Adobe Artifactory via the maven-download-plugin
+# (-Partifactory-cloud) and therefore needs authenticated <server> entries in ~/.m2.
+#
+# Why generate it here instead of committing a settings.xml that reads
+# ${env.ARTIFACTORY_CLOUD_USER/PASS}: Maven's ${env.*} interpolation inside <server>
+# credentials is not resolved reliably on all runners, so the secret values are inlined
+# into the generated file instead.
 
 set -euo pipefail
 
 if [[ -z "${ARTIFACTORY_CLOUD_USER:-}" || -z "${ARTIFACTORY_CLOUD_PASS:-}" ]]; then
     echo "::error::Missing ARTIFACTORY_CLOUD_USER or ARTIFACTORY_CLOUD_PASS repository secrets."
-    echo "Diagnostics: ARTIFACTORY_CLOUD_USER set=$([[ -n "${ARTIFACTORY_CLOUD_USER:-}" ]] && echo yes || echo no)"
-    echo "Diagnostics: ARTIFACTORY_CLOUD_PASS set=$([[ -n "${ARTIFACTORY_CLOUD_PASS:-}" ]] && echo yes || echo no)"
     exit 1
 fi
-
-# Safe diagnostics only — never print secret values.
-echo "Diagnostics: ARTIFACTORY_CLOUD_USER length=${#ARTIFACTORY_CLOUD_USER}"
-echo "Diagnostics: ARTIFACTORY_CLOUD_PASS length=${#ARTIFACTORY_CLOUD_PASS}"
-echo "Diagnostics: testing Artifactory login (repo root + sample SNAPSHOT POM)..."
-
-artifactory_base="https://artifactory-uw2.adobeitc.com/artifactory/maven-adobe-cif-snapshot"
-sample_pom="${artifactory_base}/com/adobe/commerce/cif/core-cif-components-parent/2.18.3-SNAPSHOT/core-cif-components-parent-2.18.3-SNAPSHOT.pom"
-
-for test_url in "${artifactory_base}/" "${sample_pom}"; do
-    http_code="$(curl -s -o /dev/null -w '%{http_code}' \
-        -u "${ARTIFACTORY_CLOUD_USER}:${ARTIFACTORY_CLOUD_PASS}" \
-        "${test_url}")"
-    echo "Diagnostics: GET ${test_url} -> HTTP ${http_code}"
-
-    if [[ "${http_code}" == "401" || "${http_code}" == "403" ]]; then
-        echo "::error::Artifactory login failed (HTTP ${http_code}) — username/password rejected."
-        echo "::error::Fix: ask an Adobe admin to copy ARTIFACTORY_CLOUD_USER and ARTIFACTORY_CLOUD_PASS from CircleCI context 'CIF Artifactory Cloud' into GitHub Repository secrets."
-        echo "::error::Check: secret names are case-sensitive; remove leading/trailing spaces from values."
-        exit 1
-    fi
-done
-
-echo "Diagnostics: Artifactory credential check passed (401/403 not returned)."
 
 mkdir -p "${HOME}/.m2"
 

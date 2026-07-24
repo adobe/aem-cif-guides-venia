@@ -13,7 +13,12 @@
 
 set -euo pipefail
 
-if ! command -v google-chrome >/dev/null 2>&1 || ! command -v chromedriver >/dev/null 2>&1; then
+# The circleci-qp test container already ships Google Chrome (the version CircleCI
+# validated against). Do NOT reinstall/upgrade it: pulling google-chrome-stable is a
+# ~134 MB download every run and would drift Chrome to whatever is currently "stable",
+# away from the version the image was built with. Only install Chrome if it is genuinely
+# missing (e.g. running outside that image).
+if ! command -v google-chrome >/dev/null 2>&1; then
     if command -v apt-get >/dev/null 2>&1; then
         # The base image may already have an unsigned google-chrome apt source configured,
         # which makes apt-get update fail before we get a chance to install the signing key
@@ -26,15 +31,17 @@ if ! command -v google-chrome >/dev/null 2>&1 || ! command -v chromedriver >/dev
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
     fi
+fi
 
-    if ! command -v chromedriver >/dev/null 2>&1; then
-        chrome_version="$(google-chrome --version | awk '{print $3}' | cut -d. -f1)"
-        driver_version="$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${chrome_version}")"
-        curl -sSL "https://storage.googleapis.com/chrome-for-testing-public/${driver_version}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip
-        sudo unzip -o /tmp/chromedriver.zip -d /tmp
-        sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-        sudo chmod +x /usr/local/bin/chromedriver
-    fi
+# Fetch a chromedriver that matches the installed Chrome's major version. This is the
+# only piece the image is missing, and it's a small download.
+if ! command -v chromedriver >/dev/null 2>&1; then
+    chrome_version="$(google-chrome --version | awk '{print $3}' | cut -d. -f1)"
+    driver_version="$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${chrome_version}")"
+    curl -sSL "https://storage.googleapis.com/chrome-for-testing-public/${driver_version}/linux64/chromedriver-linux64.zip" -o /tmp/chromedriver.zip
+    sudo unzip -o /tmp/chromedriver.zip -d /tmp
+    sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+    sudo chmod +x /usr/local/bin/chromedriver
 fi
 
 # run-containerized-test.sh runs this container as root (needed to write into the
