@@ -23,7 +23,9 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancel superseded runs on feature branches, but never cancel an in-progress build on main —
+  # each mainline commit must get a complete build/test run.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 # Test results are published by mikepenz/action-junit-report (same as graphql, magento and
 # core-cif-components): only when a test fails, it writes a pass/fail summary to the job's

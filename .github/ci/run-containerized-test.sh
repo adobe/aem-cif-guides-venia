@@ -15,8 +15,6 @@
 
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-
 # Create ~/.m2 up front (before any docker pull/login that might fail) so the runner-side
 # path the actions/cache save step targets always exists — otherwise a job that fails
 # early logs a spurious "Path(s) specified do(es) not exist ... Cache save failed" warning.
@@ -35,6 +33,12 @@ aem_container="aem-${GITHUB_RUN_ID:-local}-${GITHUB_JOB:-job}"
 cleanup() {
     docker logs "${aem_container}" || true
     docker rm -f "${aem_container}" >/dev/null 2>&1 || true
+    # maven-settings.sh (run inside the qp container) writes Artifactory credentials
+    # INLINED as plaintext into /root/.m2/settings.xml, which — via the -v "${HOME}/.m2:/root/.m2"
+    # bind mount below — lands on the runner's ${HOME}/.m2/settings.xml. The integration-test-655
+    # job then runs actions/cache/save on ~/.m2, which would persist those cleartext credentials
+    # in a cache entry readable by anyone who can run a workflow. Delete it before the cache save.
+    rm -f "${HOME}/.m2/settings.xml" || true
 }
 trap cleanup EXIT
 

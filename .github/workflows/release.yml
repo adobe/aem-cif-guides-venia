@@ -66,6 +66,10 @@ jobs:
 
   update-cm:
     name: update-cm
+    # Only advance the Cloud Manager 'main' branch after the Maven Central deploy + release
+    # packaging succeeded. Without this, update-cm runs concurrently with deploy-sample and
+    # would push the tag to Cloud Manager even when the release build failed.
+    needs: deploy-sample
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -77,10 +81,9 @@ jobs:
           node-version: '20'
 
       - name: Update Cloud Manager repository
-        # fetch.negotiationAlgorithm=noop works around an Azure DevOps git fetch issue.
-        run: |
-          git config --global fetch.negotiationAlgorithm noop
-          node .github/ci/update-cm.js
+        # update-cm.js already sets fetch.negotiationAlgorithm=noop per-command on the one
+        # fetch that needs it (the Azure DevOps git fetch workaround), so no global config here.
+        run: node .github/ci/update-cm.js
         env:
           GIT_REPO: ${{ secrets.GIT_REPO }}
           GIT_USER: ${{ secrets.GIT_USER }}
