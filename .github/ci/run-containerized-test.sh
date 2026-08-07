@@ -33,12 +33,6 @@ aem_container="aem-${GITHUB_RUN_ID:-local}-${GITHUB_JOB:-job}"
 cleanup() {
     docker logs "${aem_container}" || true
     docker rm -f "${aem_container}" >/dev/null 2>&1 || true
-    # maven-settings.sh (run inside the qp container) writes Artifactory credentials
-    # INLINED as plaintext into /root/.m2/settings.xml, which — via the -v "${HOME}/.m2:/root/.m2"
-    # bind mount below — lands on the runner's ${HOME}/.m2/settings.xml. The integration-test-655
-    # job then runs actions/cache/save on ~/.m2, which would persist those cleartext credentials
-    # in a cache entry readable by anyone who can run a workflow. Delete it before the cache save.
-    rm -f "${HOME}/.m2/settings.xml" || true
 }
 trap cleanup EXIT
 
@@ -55,6 +49,9 @@ docker pull "${QP_IMAGE}"
 # mount /root/.m2/repository only ever exists inside the container's ephemeral layer —
 # gone the instant --rm removes it — so every run re-downloads the whole dependency tree.
 # (${HOME}/.m2 is created near the top of this script.)
+# NOTE: JACOCO_AGENT is consumed by it-tests.js (the -javaagent path passed to qp.sh) but is
+# deliberately NOT forwarded here — it is baked into the qp image's own environment. If the qp
+# image is ever swapped for one without it, the JaCoCo agent path resolves empty and qp.sh fails.
 docker run --rm --network host --user root \
     -e AEM -e TYPE -e BROWSER -e CI_QP_PATH -e QP_SERVER_HOSTNAME -e AEM_LOG_HOST \
     -e ARTIFACTORY_CLOUD_USER -e ARTIFACTORY_CLOUD_PASS \

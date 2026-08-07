@@ -11,6 +11,10 @@
 # governing permissions and limitations under the License.
 #
 # Maven Central deploy + classic package build (GitHub Release upload is handled by GHA).
+#
+# The CircleCI version wiped ~/.gnupg and ~/.npmrc at the end to avoid leaking the imported GPG
+# key / npm token on its reused executors. That cleanup is dropped here on purpose: GitHub Actions
+# runners are ephemeral and destroyed after the job, so there is nothing persistent to scrub.
 
 set -euo pipefail
 

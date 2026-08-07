@@ -15,8 +15,9 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-# Artifactory auth for maven-download-plugin in it-tests.js (-Partifactory-cloud).
-bash "${repo_root}/.github/ci/maven-settings.sh"
+# Artifactory auth for the maven-download-plugin is provided by .github/ci/settings.xml,
+# which it-tests.js passes explicitly via `-s` (its <server> creds read ${env.ARTIFACTORY_*}).
+# No generated ~/.m2/settings.xml is needed, so we don't write inlined credentials to disk.
 
 # Wait for QuickProvider's RMI port to come up. This script runs inside the qp container
 # started by run-containerized-test.sh, sharing --network host with the aem container, so
