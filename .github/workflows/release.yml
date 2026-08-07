@@ -19,8 +19,15 @@ env:
   ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
 
 jobs:
+  # Run the full build + integration + Selenium suite on the tagged commit BEFORE publishing,
+  # so a release can never go to Maven Central / Cloud Manager on code the suite hasn't passed.
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
   deploy-sample:
     name: deploy-sample
+    needs: test
     runs-on: ubuntu-latest
     env:
       CI_REPO_PATH: ${{ github.workspace }}
