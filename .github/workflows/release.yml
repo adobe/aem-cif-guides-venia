@@ -59,15 +59,19 @@ jobs:
           files: artifacts/*
           generate_release_notes: true
 
-      # If the release build (mvn clean deploy) fails on a test, publish a "Tests" check
-      # with the failed tests + error/stack trace — same tool/style as the ci workflow.
+      # Publish a "Tests" check with a full report of the release build (mvn clean deploy):
+      # a detailed table of every test (passed and failed) with execution times, plus the
+      # error/stack trace for any failures — same tool/style as the ci workflow.
       - name: Publish test results
-        if: failure()
+        if: ${{ !cancelled() }}
         uses: mikepenz/action-junit-report@v5
         with:
           check_name: Tests (release)
           report_paths: '**/target/surefire-reports/TEST-*.xml'
-          skip_success_summary: true
+          detailed_summary: true
+          include_passed: true
+          include_time_in_summary: true
+          skip_success_summary: false
           annotate_only: true
           fail_on_failure: false
 

@@ -21,7 +21,8 @@ on:
         type: boolean
         default: true
 
-# mikepenz/action-junit-report writes a pass/fail summary + annotations when a test fails.
+# mikepenz/action-junit-report writes a full pass/fail summary (every test, with durations) on
+# every run, and annotations for failures.
 permissions:
   contents: read
   checks: write
@@ -228,20 +229,26 @@ jobs:
           restore-keys: |
             maven-repo-its-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
-      # Make the container-written (root-owned) report files readable, then — only if a test
-      # failed — write a pass/fail summary to this job's Summary tab and annotate the failing
-      # test(s), via mikepenz/action-junit-report (same as graphql, magento, core-cif-components).
+      # Make the container-written (root-owned) report files readable, then write a full pass/fail
+      # summary to this job's Summary tab — a detailed table of every test (passed and failed) with
+      # execution times — and annotate any failing test(s), via mikepenz/action-junit-report (same
+      # action as graphql, magento, core-cif-components).
       - name: Make test reports readable
         if: ${{ !cancelled() }}
         shell: bash
         run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
       - name: Publish test results
-        if: failure()
+        if: ${{ !cancelled() }}
         uses: mikepenz/action-junit-report@v5
         with:
           check_name: ${{ matrix.check_name }}
           report_paths: ${{ matrix.report_paths }}
-          skip_success_summary: true
+          # Always publish a full report: a detailed table of every test (passed and failed),
+          # including passed tests and their execution time.
+          detailed_summary: true
+          include_passed: true
+          include_time_in_summary: true
+          skip_success_summary: false
           annotate_only: true
           fail_on_failure: false
       # Save the shared ~/.m2 cache from the single save_cache job only. Runs even on failure so a
