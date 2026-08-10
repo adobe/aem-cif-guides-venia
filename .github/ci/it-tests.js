@@ -14,10 +14,70 @@
 
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const ci = new (require('./ci.js'))();
 ci.context();
-const qpPath = '/home/circleci/cq';
-const buildPath = '/home/circleci/build';
+
+/**
+ * On a Selenium failure the WDIO "spec" reporter only prints RUNNING/FAILED to the
+ * console -- the actual assertion/stacktrace (e.g. "session not created",
+ * "DevToolsActivePort file doesn't exist", element-not-found) is written to the
+ * reports directory and otherwise only reachable via the uploaded artifact. Dump the
+ * relevant report files to stdout so the real cause is visible directly in the CI log.
+ * Best-effort only: never let diagnostics mask the original test failure.
+ */
+const dumpSeleniumFailureDiagnostics = () => {
+    try {
+        // cwd is ui.tests here; WDIO writes its reports under test-module/reports.
+        const reportsDir = path.join(process.cwd(), 'test-module', 'reports');
+        if (!fs.existsSync(reportsDir)) {
+            console.log(`No Selenium reports directory found at ${reportsDir}`);
+            return;
+        }
+
+        const printFile = (file, maxLines) => {
+            try {
+                let content = fs.readFileSync(file, 'utf8');
+                if (maxLines) {
+                    const lines = content.split(/\r?\n/);
+                    if (lines.length > maxLines) {
+                        content = lines.slice(-maxLines).join('\n');
+                    }
+                }
+                console.log(`\n===== ${file} =====\n${content}`);
+            } catch (e) {
+                console.log(`Could not read ${file}: ${e.message}`);
+            }
+        };
+
+        const walk = dir => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    walk(full);
+                } else if (entry.name.endsWith('.xml')) {
+                    // JUnit results contain the failure message + stacktrace per spec.
+                    printFile(full);
+                } else if (entry.name.endsWith('.log')) {
+                    // WDIO / selenium-standalone logs -- tail only, they can be large.
+                    printFile(full, 200);
+                }
+            }
+        };
+
+        console.log('\n########## Selenium failure diagnostics ##########');
+        walk(reportsDir);
+        console.log('\n########## End Selenium failure diagnostics ##########');
+    } catch (e) {
+        console.log(`Failed to collect Selenium diagnostics: ${e.message}`);
+    }
+};
+const qpPath = process.env.CI_QP_PATH || '/home/circleci/cq';
+const buildPath = process.env.CI_BUILD_PATH || '/home/circleci/build';
+const qpServerHostname = process.env.QP_SERVER_HOSTNAME || 'localhost';
+const aemLogHost = process.env.AEM_LOG_HOST || 'localhost';
 const { TYPE, BROWSER, COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN, VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD } = process.env;
 
 const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
@@ -28,7 +88,7 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
         pid = 'com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl~' + pid;
     }
 
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/${pid}" \
+    ci.sh(`curl -v "http://${qpServerHostname}:4502/system/console/configMgr/${pid}" \
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "factoryPid=com.adobe.cq.commerce.graphql.client.impl.GraphqlClientImpl" \
@@ -41,7 +101,7 @@ const updateGraphqlClientConfiguration = (pid, ranking = 100) => {
 }
 
 const updateGraphqlProxyServlet = () => {
-    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
+    ci.sh(`curl -v "http://${qpServerHostname}:4502/system/console/configMgr/com.adobe.cq.cif.proxy.GraphQLProxyServlet" \
                 -u "admin:admin" \
                 -d "apply=true" \
                 -d "propertylist=graphQLOriginUrl" \
@@ -58,13 +118,13 @@ try {
 
     ci.dir(qpPath, () => {
         // Connect to QP
-        ci.sh('./qp.sh -v bind --server-hostname localhost --server-port 55555');
+        ci.sh(`./qp.sh -v bind --server-hostname ${qpServerHostname} --server-port 55555`);
 
         let aemCifSdkApiVersion = "LATEST";
         let extras;
         if (classifier == 'classic') {
             // Download latest add-on for AEM 6.5 release from artifactory
-            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
+            ci.sh(`mvn -s ${buildPath}/.github/ci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-650-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-650.zip`);
             extras = ` --install-file ${buildPath}/dependencies/addon-650.zip`;
 
             // The core components are already installed in the Cloud SDK
@@ -73,7 +133,7 @@ try {
 
         } else if (classifier == 'lts') {
             // Download latest add-on for AEM 6.5 LTS release from artifactory
-            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-660-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-660.zip`);
+            ci.sh(`mvn -s ${buildPath}/.github/ci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=commerce-addon-aem-660-all -Dversion=${aemCifSdkApiVersion} -Dtype=zip -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon-660.zip`);
             extras = ` --install-file ${buildPath}/dependencies/addon-660.zip`;
 
             // The core components are already installed in the Cloud SDK
@@ -82,7 +142,7 @@ try {
 
         } else if (classifier == 'cloud') {
             // Download latest add-on release from artifactory
-            ci.sh(`mvn -s ${buildPath}/.circleci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=cif-cloud-ready-feature-pkg -Dversion=LATEST -Dtype=far -Dclassifier=cq-commerce-addon-authorfar -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon.far`);
+            ci.sh(`mvn -s ${buildPath}/.github/ci/settings.xml com.googlecode.maven-download-plugin:download-maven-plugin:1.6.3:artifact -Partifactory-cloud -DgroupId=com.adobe.cq.cif -DartifactId=cif-cloud-ready-feature-pkg -Dversion=LATEST -Dtype=far -Dclassifier=cq-commerce-addon-authorfar -DoutputDirectory=${buildPath}/dependencies -DoutputFileName=addon.far`);
             extras = ` --install-file ${buildPath}/dependencies/addon.far`;
             extras += ` --install-file ${buildPath}/all/target/aem-cif-guides-venia.all-${veniaVersion}.zip`
         }
@@ -127,7 +187,7 @@ try {
             excludedCategory = 'com.venia.it.category.IgnoreOnCloud';
         }
         ci.dir('it.tests', () => {
-            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
+            ci.sh(`mvn clean verify -U -B -Plocal -Dexclude.category=${excludedCategory} -Dit.author.url="http://${qpServerHostname}:4502" -Dit.publish.url="http://${qpServerHostname}:4503" -DCOMMERCE_ENDPOINT="${COMMERCE_ENDPOINT}" -DCOMMERCE_INTEGRATION_TOKEN="${COMMERCE_INTEGRATION_TOKEN}"`); // The -Plocal profile comes from the AEM archetype
         });
     }
     if (TYPE === 'selenium') {
@@ -137,7 +197,13 @@ try {
         chromedriver = chromedriver.length >= 2 ? chromedriver[1] : '';
 
         ci.dir('ui.tests', () => {
-            ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            try {
+                ci.sh(`CHROMEDRIVER=${chromedriver} mvn test -U -B -Pui-tests-local-execution -DAEM_VERSION=${classifier} -DAEM_AUTHOR_URL="http://${qpServerHostname}:4502" -DHEADLESS_BROWSER=true -DSELENIUM-BROWSER=${BROWSER} -DVENIA_ACCOUNT_EMAIL=${VENIA_ACCOUNT_EMAIL} -DVENIA_ACCOUNT_PASSWORD=${VENIA_ACCOUNT_PASSWORD}`);
+            } catch (e) {
+                // Surface the real WDIO error before failing the job.
+                dumpSeleniumFailureDiagnostics();
+                throw e;
+            }
         });
     }
 
@@ -161,9 +227,9 @@ try {
     ci.sh('mkdir logs');
     ci.dir('logs', () => {
         // A webserver running inside the AEM container exposes the logs folder, so we can download log files as needed.
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/error.log');
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stdout.log');
-        ci.sh('curl -O -f http://localhost:3000/crx-quickstart/logs/stderr.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/error.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/stdout.log');
+        ci.sh('curl -O -f http://' + aemLogHost + ':3000/crx-quickstart/logs/stderr.log');
         ci.sh(`find . -name '*.log' -type f -size +32M -exec echo 'Truncating: ' {} \\; -execdir truncate --size 32M {} +`);
     });
 }

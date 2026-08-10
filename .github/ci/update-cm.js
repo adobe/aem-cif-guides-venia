@@ -21,9 +21,10 @@ const doUpdate = () => {
     // it will be force-deleted before the checkout if it exists, be careful
     const LOCAL_BRANCH = "tmp";
     // the target branch that should be updated
-    const TARGET_BRANCH = "main"; // ci.env('CIRCLE_BRANCH');
-    // the revision to update the TARGET_BRANCH to
-    const MERGE_REVISION = ci.env('CIRCLE_TAG'); // ci.env('CIRCLE_SHA1');
+    const TARGET_BRANCH = "main";
+    // the revision to update the TARGET_BRANCH to: the pushed tag name
+    // (the release workflow is triggered on tag pushes, so GITHUB_REF_NAME is the tag).
+    const MERGE_REVISION = ci.env('GITHUB_REF_NAME');
     
     const downstreamRemoteExists = ci.sh(
         'git remote get-url downstream 2>/dev/null || echo "no"', true)
@@ -33,7 +34,7 @@ const doUpdate = () => {
         ci.sh(`git remote add downstream ${ci.env('GIT_REPO')}`);
     }
 
-    // CircleCI checks out GitHub (origin) first; default fetch tells Azure which SHAs we
+    // The workflow checkout populates origin first; a default fetch tells Azure which SHAs we
     // already have and triggers a thin pack that fails in CI (unresolved deltas). noop
     // skips that negotiation so downstream objects are fetched without using origin as the base.
     ci.sh('git -c fetch.negotiationAlgorithm=noop fetch downstream');
@@ -54,5 +55,5 @@ const doUpdate = () => {
 ci.context();
 
 ci.gitCredentials(ci.env('GIT_USER'), ci.env('GIT_PASSWORD'),
-    () => ci.gitImpersonate('CircleCI Builds', 'builds@circleci.com',
+    () => ci.gitImpersonate('GitHub-Actions', 'no-reply@adobe.com',
         () => doUpdate()));
