@@ -1,0 +1,35 @@
+# Build + test on pushes to the mainlines and on every pull request (including forks).
+# The actual build/test jobs live in the reusable test.yml so release.yml can gate on the
+# same suite. Release tags (venia-*) are handled by release.yml, not here.
+#
+# Trigger choice: pull_request (not push-on-all-branches) so fork PRs get built and a branch
+# that has an open PR doesn't build twice. Direct pushes to main/dev still build.
+
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded runs on feature branches / PRs, but never cancel an in-progress build on
+  # main — each mainline commit must get a complete build/test run.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Granted here because the reusable workflow's action-junit-report step needs checks:write.
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+    with:
+      # Fork PRs cannot read repo secrets, so skip the integration/Selenium matrix for them
+      # (build + unit tests still run). Same-repo pushes and same-repo PRs run the full suite.
+      run_integration_tests: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}

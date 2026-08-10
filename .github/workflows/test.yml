@@ -1,0 +1,270 @@
+# Reusable build + test suite, called by:
+#   - ci.yml      on pushes to main/dev and on pull requests
+#   - release.yml before the Maven Central deploy, so a release is gated on the full suite
+#
+# Required GitHub secrets (passed by callers via `secrets: inherit`):
+#   ARTIFACTORY_CLOUD_USER, ARTIFACTORY_CLOUD_PASS
+#   COMMERCE_ENDPOINT, COMMERCE_INTEGRATION_TOKEN
+#   VENIA_ACCOUNT_EMAIL, VENIA_ACCOUNT_PASSWORD
+# Optional: CODECOV_TOKEN
+
+name: test
+
+on:
+  workflow_call:
+    inputs:
+      run_integration_tests:
+        description: >-
+          Run the integration/Selenium matrix, which needs repo secrets (Artifactory + commerce).
+          Callers set this false for fork PRs, whose runs cannot read secrets; the build and unit
+          tests still run so external contributions get basic CI feedback.
+        type: boolean
+        default: true
+
+# mikepenz/action-junit-report writes a full pass/fail summary (every test, with durations) on
+# every run, and annotations for failures.
+permissions:
+  contents: read
+  checks: write
+
+env:
+  ARTIFACTORY_CLOUD_USER: ${{ secrets.ARTIFACTORY_CLOUD_USER }}
+  ARTIFACTORY_CLOUD_PASS: ${{ secrets.ARTIFACTORY_CLOUD_PASS }}
+  COMMERCE_ENDPOINT: ${{ secrets.COMMERCE_ENDPOINT }}
+  COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
+  VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
+  VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+
+jobs:
+  build:
+    name: build
+    # CircleCI executor: cif_executor (cimg/openjdk:11.0-browsers) — not ubuntu + Temurin.
+    runs-on: ubuntu-latest
+    container:
+      image: cimg/openjdk:11.0-browsers
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '12.14.1'
+
+      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v6
+        with:
+          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
+          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
+          # cache action's ~ expands to inside a container job — so cache an absolute path.
+          path: /home/circleci/.m2
+          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
+            maven-repo-v2-${{ runner.os }}-
+            maven-repo-v2-
+
+      - name: Update permissions
+        run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
+
+      # CircleCI build job does NOT configure ~/.m2/settings.xml or -Partifactory-cloud here.
+      # Artifactory settings are only used in it-tests.js (-s .github/ci/settings.xml -Partifactory-cloud).
+
+      - name: Install CIF Components
+        run: bash .github/ci/install-cif-components.sh
+
+      - name: Upload CIF unit test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: cif-surefire-reports
+          if-no-files-found: ignore
+          path: dependencies/aem-core-cif-components/**/target/surefire-reports/
+
+      - name: Build
+        run: |
+          java -version
+          mvn -v
+          # This workflow runs on push (main/dev), pull_request, and via release.yml on tags.
+          # Branch pushes arrive as refs/heads/*; a PR's source branch is GITHUB_HEAD_REF;
+          # anything else (e.g. a release tag) has no branch name.
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            BRANCH_NAME="${GITHUB_HEAD_REF}"
+          elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            BRANCH_NAME="${GITHUB_REF_NAME}"
+          else
+            BRANCH_NAME=""
+          fi
+          if [[ -n "${BRANCH_NAME}" && "${BRANCH_NAME}" != "main" ]]; then
+            mvn -B clean install -PfedDev,classic
+          else
+            mvn -B clean install -Pclassic
+          fi
+
+      - name: Run Unit Tests (Jest)
+        working-directory: ui.frontend
+        run: npm run ci
+
+      # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
+      - name: Save Maven repository cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v6
+        with:
+          # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
+          # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
+          # cache action's ~ expands to inside a container job — so cache an absolute path.
+          path: /home/circleci/.m2
+          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
+
+      - name: Upload coverage to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          fail_ci_if_error: false
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-artifacts
+          if-no-files-found: warn
+          path: |
+            all/target/*.zip
+            classic/all/target/*.zip
+            dependencies/aem-core-cif-components/examples/bundle/target/*.jar
+
+  # The matrix below intentionally does NOT use GitHub Actions' `container:` + `services:` keys.
+  # The QuickProvider RMI protocol used by run-integration-test.sh requires the qp client and the
+  # AEM server to share the same network namespace (traffic is routed back through "localhost",
+  # exactly like CircleCI's machine executor). That means both containers need `--network host`,
+  # but the GitHub Actions runner has a bug where combining `--network host` with a `services:`
+  # container crashes the job before it even starts ("Error: Value cannot be null. (Parameter
+  # 'ContainerId')"). Instead, each matrix job runs directly on the bare runner and manually
+  # `docker run --network host` both images via run-containerized-test.sh, which sidesteps the
+  # runner's service-container orchestration entirely.
+  #
+  # Skipped entirely for fork PRs (run_integration_tests=false): forked runs cannot read the
+  # Artifactory/commerce secrets these jobs require, so they would only fail with auth errors.
+  test:
+    name: ${{ matrix.name }}
+    needs: build
+    if: ${{ inputs.run_integration_tests }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: integration-test-655
+            aem: classic
+            type: integration
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
+            check_name: Tests (integration classic)
+            report_paths: test-reports/**/TEST-*.xml
+            # Only this job saves the shared ~/.m2 cache; the rest are restore-only to avoid the
+            # concurrent-save race that made parallel jobs log "another job may be creating this cache".
+            save_cache: true
+          - name: integration-test-660
+            aem: lts
+            type: integration
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            check_name: Tests (integration lts)
+            report_paths: test-reports/**/TEST-*.xml
+          - name: integration-test-cloudready-with-addon
+            aem: cloud
+            type: integration
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+            check_name: Tests (integration addon)
+            report_paths: test-reports/**/TEST-*.xml
+          - name: selenium-chrome-655
+            aem: classic
+            type: selenium
+            browser: chrome
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
+            check_name: Tests (selenium classic)
+            report_paths: test-reports/**/results-*.xml
+          - name: selenium-chrome-660
+            aem: lts
+            type: selenium
+            browser: chrome
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            check_name: Tests (selenium lts)
+            report_paths: test-reports/**/results-*.xml
+          - name: selenium-chrome-cloudready-with-addon
+            aem: cloud
+            type: selenium
+            browser: chrome
+            qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+            check_name: Tests (selenium addon)
+            report_paths: test-reports/**/results-*.xml
+    env:
+      AEM: ${{ matrix.aem }}
+      TYPE: ${{ matrix.type }}
+      BROWSER: ${{ matrix.browser }}
+      CI_QP_PATH: /home/circleci/cq
+      QP_SERVER_HOSTNAME: localhost
+      AEM_LOG_HOST: localhost
+      QP_IMAGE: ${{ matrix.qp_image }}
+      AEM_IMAGE: ${{ matrix.aem_image }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
+        with:
+          name: build-artifacts
+          path: .
+      # Restore the Maven deps downloaded by the containerized mvn runs. They land on the runner's
+      # ~/.m2 via the bind mount in run-containerized-test.sh. Every matrix job resolves the same
+      # dependency tree and shares ONE cache key; only the save_cache job persists it (below).
+      # Mirrors the test-aem job in aem-core-cif-components.
+      - name: Restore Maven repository cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-repo-its-${{ runner.os }}-
+      - run: bash .github/ci/run-containerized-test.sh
+      # Make the container-written (root-owned) report files readable, then write a full pass/fail
+      # summary to this job's Summary tab — a detailed table of every test (passed and failed) with
+      # execution times — and annotate any failing test(s), via mikepenz/action-junit-report (same
+      # action as graphql, magento, core-cif-components).
+      - name: Make test reports readable
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: sudo chmod -R a+rX test-reports logs 2>/dev/null || true
+      - name: Publish test results
+        if: ${{ !cancelled() }}
+        uses: mikepenz/action-junit-report@v5
+        with:
+          check_name: ${{ matrix.check_name }}
+          report_paths: ${{ matrix.report_paths }}
+          # Always publish a full report: a detailed table of every test (passed and failed),
+          # including passed tests and their execution time.
+          detailed_summary: true
+          include_passed: true
+          include_time_in_summary: true
+          skip_success_summary: false
+          annotate_only: true
+          fail_on_failure: false
+      # Save the shared ~/.m2 cache from the single save_cache job only. Runs even on failure so a
+      # partial download is still persisted.
+      - name: Save Maven repository cache
+        if: ${{ matrix.save_cache && !cancelled() }}
+        uses: actions/cache/save@v6
+        with:
+          path: ~/.m2
+          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+      - name: Upload test results and AEM logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.name }}-reports
+          if-no-files-found: ignore
+          path: |
+            test-reports
+            logs
