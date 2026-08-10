@@ -55,5 +55,5 @@ const doUpdate = () => {
 ci.context();
 
 ci.gitCredentials(ci.env('GIT_USER'), ci.env('GIT_PASSWORD'),
-    () => ci.gitImpersonate('GitHub Actions Builds', 'builds@github.com',
+    () => ci.gitImpersonate('GitHub-Actions', 'no-reply@adobe.com',
         () => doUpdate()));
