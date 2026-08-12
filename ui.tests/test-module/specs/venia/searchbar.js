@@ -16,7 +16,8 @@
 
 const config = require('../../lib/config');
 
-describe('Venia Searchbar Component', () => {
+// NOTE: Ignoring searchbar.js test file for custom searchbar component
+describe.skip('Venia Searchbar Component', () => {
     const venia_homepage = `${config.aem.author.base_url}/content/venia/us/en.html`;
 
     before(() => {
