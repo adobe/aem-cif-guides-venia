@@ -107,3 +107,4 @@ test-reports
 
 # Formatjs
 ui.frontend/i18n/__temp.json
+.clawdea/REPO_STATE.md
