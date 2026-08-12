@@ -193,8 +193,11 @@ try {
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
 
-    // Configure CIF endpoint authoring service (used by product/category pickers)
-    updateCifEndpointConfiguration();
+    // Configure CIF endpoint authoring service (used by product/category pickers).
+    // Only applicable on AEM as a Cloud Service; not available on 6.5 (classic) or LTS.
+    if (classifier == 'cloud') {
+        updateCifEndpointConfiguration();
+    }
 
     // Run integration tests
     if (TYPE === 'integration') {
