@@ -112,8 +112,8 @@ const updateGraphqlProxyServlet = () => {
 const updateCifEndpointConfiguration = () => {
     const formData = {
         apply: true,
-        serviceUrl: 'https://cifonskyline.z6.web.core.windows.net/',
-        version: 'preprod.stable.latest',
+        serviceUrl: 'https://static-cif.adobeaemcloud.com/',
+        version: 'next.latest',
         propertylist: 'serviceUrl,version'
     };
 
