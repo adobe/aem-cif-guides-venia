@@ -251,15 +251,17 @@ browser.addCommand('CIFSelectCategory', function (categoryField, categoryName) {
     const pickerButton = categoryField.$('button[aria-label="Open Picker"]');
     pickerButton.waitForEnabled();
     pickerButton.click();
-    expect($('h3=Add Category')).toBeDisplayed();
+    const dialogTitle = $('.cif-picker-dialog [slot="title"]');
+    dialogTitle.waitForDisplayed({ timeout: 5000 });
+    expect(dialogTitle).toHaveText('Add Category');
 
-    // Select category
-    const categoryRow = $(`//div[contains(text(),"${categoryName}")]`);
+    // Select category by its name cell (role="rowheader")
+    const categoryRow = $(`[role="rowheader"]*=${categoryName}`);
     expect(categoryRow).toBeClickable();
     categoryRow.click();
 
     // Submit dialog
-    const submitButton = $('span=Add').parentElement();
+    const submitButton = $('.cif-picker-add-btn');
     submitButton.waitForEnabled();
     submitButton.click();
 });
@@ -271,15 +273,17 @@ browser.addCommand('CIFSelectProduct', function (productField, productName) {
     const pickerButton = productField.$('button[aria-label="Open Picker"]');
     pickerButton.waitForEnabled();
     pickerButton.click();
-    expect($('h3=Add Product')).toBeDisplayed();
+    const dialogTitle = $('.cif-picker-dialog [slot="title"]');
+    dialogTitle.waitForDisplayed({ timeout: 5000 });
+    expect(dialogTitle).toHaveText('Add Product');
 
-    // Select product
-    const productRow = $(`//div[contains(text(),"${productName}")]`);
+    // Select product by its name cell (role="rowheader")
+    const productRow = $(`[role="rowheader"]*=${productName}`);
     expect(productRow).toBeClickable();
     productRow.click();
 
     // Submit dialog
-    const submitButton = $('span=Add').parentElement();
+    const submitButton = $('.cif-picker-add-btn');
     submitButton.waitForEnabled();
     submitButton.click();
 });

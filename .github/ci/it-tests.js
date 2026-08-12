@@ -109,6 +109,23 @@ const updateGraphqlProxyServlet = () => {
     `)
 }
 
+const updateCifEndpointConfiguration = () => {
+    const formData = {
+        apply: true,
+        serviceUrl: 'https://static-cif.adobeaemcloud.com/',
+        version: 'next.latest',
+        propertylist: 'serviceUrl,version'
+    };
+
+    ci.sh(`curl -v "http://localhost:4502/system/console/configMgr/com.adobe.cq.cif.authoring.impl.CifEndpointServiceImpl" \
+                -u "admin:admin" \
+                -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" \
+                --data-raw '${Object.entries(formData)
+                    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                    .join('&')}'
+    `);
+};
+
 try {
     ci.stage("Integration Tests");
     let veniaVersion = ci.sh('mvn help:evaluate -Dexpression=project.version -q -DforceStdout', true);
@@ -175,6 +192,12 @@ try {
 
     // Configure GraphQL Proxy
     updateGraphqlProxyServlet();
+
+    // Configure CIF endpoint authoring service (used by product/category pickers).
+    // Only applicable on AEM as a Cloud Service; not available on 6.5 (classic) or LTS.
+    if (classifier == 'cloud') {
+        updateCifEndpointConfiguration();
+    }
 
     // Run integration tests
     if (TYPE === 'integration') {
