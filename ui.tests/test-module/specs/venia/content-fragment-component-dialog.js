@@ -190,14 +190,17 @@ describe('Commerce Content Fragment Component Dialog', function () {
         // Open component dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
-        cmpPlaceholder.click();
-        const configureButton = $('button[title="Configure"]');
-        expect(configureButton).toBeDisplayed();
+        const configureButton = cmpPlaceholder.waitAndClickUntilDisplayed('button[title="Configure"]');
         configureButton.click();
         const dialog = $(`coral-dialog[trackingfeature="${trackingId}"]`);
         expect(dialog).toBeDisplayed();
         return dialog;
     };
+
+    // Returns the currently selected panel of the dialog (the Properties tab), so fields can be
+    // located by their stable name attribute rather than by position/count (which changes between
+    // CIF Core Component releases).
+    const propertiesPanel = dialog => dialog.$('coral-tabview coral-panelstack coral-panel.is-selected');
 
     it('opens the initial empty dialog', () => {
         let dialog = openComponentDialog();
@@ -209,46 +212,32 @@ describe('Commerce Content Fragment Component Dialog', function () {
         expect(tabs[0]).toHaveText('Properties');
         expect(tabs[0]).toBeDisplayed();
         expect(tabs[1]).toHaveAttr('hidden');
-        let fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
 
-        // initial empty state
-        expect(fields.length).toEqual(5);
-        expect(fields[0].$('label')).toHaveText('Model');
-        expect(fields[1].$('label')).toHaveText('Link Element *');
-        expect(fields[1].$('coral-select')).toHaveAttr('disabled');
-        expect(fields[2].$('label')).toHaveText('Parent Path');
-        expect(fields[3].$('label')).toHaveText('Display Mode');
-        expect(fields[4].$('label')).toHaveText('ID');
+        // initial empty state: the expected fields are present
+        expect(propertiesPanel(dialog).$('coral-select[name="./modelPath"]')).toBeDisplayed();
+        expect(propertiesPanel(dialog).$('coral-select[name="./linkElement"]')).toHaveAttr('disabled');
+        expect(propertiesPanel(dialog).$('foundation-autocomplete[name="./parentPath"]')).toBeDisplayed();
+        expect(propertiesPanel(dialog).$('input[name="./id"]')).toBeExisting();
         expect(dialog.$('coral-radio[value="multi"][checked]')).toBeDisplayed();
 
-        // select singleText display mode
+        // select singleText display mode: the single element selector appears
         dialog.$('coral-radio[value="singleText"]').click();
-
-        browser.waitUntil(function () {
-            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-            return fields.length === 6;
-        });
-
-        expect(fields[4].$('label')).toHaveText('Element *');
+        propertiesPanel(dialog).$('coral-select[name="./elementNames"]').waitForDisplayed();
         expect(tabs[1]).toBeDisplayed();
         expect(tabs[1]).toHaveText('Paragraph Control');
+
+        // check paragraph control defaults
         tabs[1].click();
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-        expect(fields.length).toBe(3);
-        expect(fields[0].$('coral-radio[checked] input')).toHaveValue('all');
-        expect(fields[1].$('input[name="./paragraphRange"]')).toBeDisabled();
+        expect(dialog.$('coral-panel[selected] coral-radio[name="./paragraphScope"][checked] input')).toHaveValue(
+            'all'
+        );
+        expect(dialog.$('coral-panel[selected] input[name="./paragraphRange"]')).toBeDisabled();
         expect(dialog.$('coral-panel[selected] input[name="./paragraphHeadings"]')).toBeDisabled();
 
-        // select multi display mode
+        // select multi display mode: the elements multifield appears
         tabs[0].click();
         dialog.$('coral-radio[value="multi"]').click();
-
-        browser.waitUntil(function () {
-            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-            return fields.length === 6;
-        });
-
-        expect(fields[4].$('label')).toHaveText('Elements');
+        propertiesPanel(dialog).$('button[coral-multifield-add]').waitForDisplayed();
         expect(tabs[1]).toHaveAttr('hidden');
 
         // close the dialog
@@ -258,39 +247,35 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
     it('saves data in multi display mode', () => {
         let dialog = openComponentDialog();
-        let fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-
-        expect(fields.length).toBe(5);
 
         // select model
-        fields[0].$('coral-select').click();
+        propertiesPanel(dialog).$('coral-select[name="./modelPath"]').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
         let model = $(`coral-popover.is-open coral-selectlist-item[value="${testing_model1}"]`);
         expect(model).toBeClickable();
         model.click();
 
-        browser.waitUntil(function () {
-            fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-            return fields.length === 6;
-        });
+        // link element becomes enabled once a model is selected
+        expect(propertiesPanel(dialog).$('coral-select[name="./linkElement"]')).toBeEnabled();
 
         // try saving with empty mandatory field
-        expect(fields[1].$('coral-select')).toBeEnabled();
         let doneButton = dialog.$('button.cq-dialog-submit[variant="primary"]');
         expect(doneButton).toBeClickable();
         doneButton.click();
         // check error highlighting
-        expect(fields[1].$('coral-select')).toHaveAttr('invalid');
+        expect(propertiesPanel(dialog).$('coral-select[name="./linkElement"]')).toHaveAttr('invalid');
 
         // select value for linkElement
-        fields[1].$('coral-select').click();
+        propertiesPanel(dialog).$('coral-select[name="./linkElement"]').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
         let linkElement = $('coral-popover.is-open coral-selectlist-item[value="productSku"]');
         expect(linkElement).toBeClickable();
         linkElement.click();
 
         // select parentPath
-        let pickerButton = fields[2].$('button[title="Open Selection Dialog"]');
+        let pickerButton = propertiesPanel(dialog).$(
+            'foundation-autocomplete[name="./parentPath"] button[title="Open Selection Dialog"]'
+        );
         expect(pickerButton).toBeClickable();
         pickerButton.click();
         let pickerDialog = $('coral-dialog.foundation-picker-collection[open]');
@@ -302,14 +287,18 @@ describe('Commerce Content Fragment Component Dialog', function () {
         expect(selectButton).toBeEnabled();
         selectButton.waitAndClick();
         expect(pickerDialog.isExisting()).toBe(false);
-        expect(fields[2].$('input[name="./parentPath"]')).toHaveValue('/content/dam/venia');
+        expect(
+            propertiesPanel(dialog).$('foundation-autocomplete[name="./parentPath"] input[name="./parentPath"]')
+        ).toHaveValue('/content/dam/venia');
 
         // select elements to be displayed
-        let addButton = fields[4].$('button[coral-multifield-add]');
+        let addButton = propertiesPanel(dialog).$('button[coral-multifield-add]');
         expect(addButton).toBeClickable();
         addButton.click();
 
-        let elementSelect = fields[4].$('coral-multifield-item[aria-posinset="1"] coral-select[name="./elementNames"]');
+        let elementSelect = propertiesPanel(dialog).$(
+            'coral-multifield-item[aria-posinset="1"] coral-select[name="./elementNames"]'
+        );
         expect(elementSelect).toBeDisplayed();
         expect(elementSelect).toBeClickable();
         elementSelect.click();
@@ -321,7 +310,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
         addButton.click();
 
-        elementSelect = fields[4].$('coral-multifield-item[aria-posinset="2"] coral-select[name="./elementNames"]');
+        elementSelect = propertiesPanel(dialog).$(
+            'coral-multifield-item[aria-posinset="2"] coral-select[name="./elementNames"]'
+        );
         expect(elementSelect).toBeDisplayed();
         expect(elementSelect).toBeClickable();
         elementSelect.click();
@@ -331,7 +322,7 @@ describe('Commerce Content Fragment Component Dialog', function () {
         expect(element).toBeClickable();
         element.click();
 
-        fields[5].$('input[name="./id"]').setValue('anId');
+        propertiesPanel(dialog).$('input[name="./id"]').setValue('anId');
 
         // save the setting and close the dialog
         doneButton.click();
@@ -343,20 +334,20 @@ describe('Commerce Content Fragment Component Dialog', function () {
         dialog = openComponentDialog();
 
         // check the fields
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(6);
-        expect(fields[0].$('input[name="./modelPath"]')).toHaveValue(testing_model1);
-        expect(fields[1].$('coral-select')).toBeEnabled();
-        expect(fields[1].$('input[name="./linkElement"]')).toHaveValue('productSku');
-        expect(fields[2].$('input[name="./parentPath"]')).toHaveValue('/content/dam/venia');
-        expect(fields[4].$$('coral-multifield-item').length).toEqual(2);
-        expect(fields[4].$('coral-multifield-item[aria-posinset="1"] input[name="./elementNames"]')).toHaveValue(
-            'productSku'
-        );
-        expect(fields[4].$('coral-multifield-item[aria-posinset="2"] input[name="./elementNames"]')).toHaveValue(
-            'productSpecs'
-        );
-        expect(fields[5].$('input[name="./id"]')).toHaveValue('anId');
+        expect(propertiesPanel(dialog).$('input[name="./modelPath"]')).toHaveValue(testing_model1);
+        expect(propertiesPanel(dialog).$('coral-select[name="./linkElement"]')).toBeEnabled();
+        expect(propertiesPanel(dialog).$('input[name="./linkElement"]')).toHaveValue('productSku');
+        expect(
+            propertiesPanel(dialog).$('foundation-autocomplete[name="./parentPath"] input[name="./parentPath"]')
+        ).toHaveValue('/content/dam/venia');
+        expect(propertiesPanel(dialog).$$('coral-multifield-item').length).toEqual(2);
+        expect(
+            propertiesPanel(dialog).$('coral-multifield-item[aria-posinset="1"] input[name="./elementNames"]')
+        ).toHaveValue('productSku');
+        expect(
+            propertiesPanel(dialog).$('coral-multifield-item[aria-posinset="2"] input[name="./elementNames"]')
+        ).toHaveValue('productSpecs');
+        expect(propertiesPanel(dialog).$('input[name="./id"]')).toHaveValue('anId');
 
         // close the dialog
         dialog.$('button.cq-dialog-cancel[variant="default"]').waitAndClick();
@@ -365,27 +356,26 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
     it('handles model change warning', () => {
         let dialog = openComponentDialog();
-        let fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
 
         // change model
-        fields[0].$('coral-select').click();
+        propertiesPanel(dialog).$('coral-select[name="./modelPath"]').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
         let model = $(`coral-popover.is-open coral-selectlist-item[value="${testing_model2}"]`);
         expect(model).toBeClickable();
         model.click();
 
-        // check warning dialog adn cancel it
+        // check warning dialog and cancel it
         let warningDialog = $('coral-dialog.is-open[variant="warning"]');
         expect(warningDialog).toBeDisplayed();
         expect(warningDialog.$('button[variant="default"]')).toBeClickable();
         warningDialog.$('button[variant="default"]').click();
 
         expect(warningDialog.isExisting()).toBe(false);
-        expect(fields[0].$('input[name="./modelPath"]')).toHaveValue(testing_model1);
-        expect(fields[1].$('input[name="./linkElement"]')).toHaveValue('productSku');
+        expect(propertiesPanel(dialog).$('input[name="./modelPath"]')).toHaveValue(testing_model1);
+        expect(propertiesPanel(dialog).$('input[name="./linkElement"]')).toHaveValue('productSku');
 
         // change model again
-        fields[0].$('coral-select').click();
+        propertiesPanel(dialog).$('coral-select[name="./modelPath"]').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
         model = $(`coral-popover.is-open coral-selectlist-item[value="${testing_model2}"]`);
         expect(model).toBeClickable();
@@ -398,9 +388,9 @@ describe('Commerce Content Fragment Component Dialog', function () {
         warningDialog.$('button[variant="primary"]').click();
 
         expect(warningDialog.isExisting()).toBe(false);
-        expect(fields[0].$('input[name="./modelPath"]')).toHaveValue(testing_model2);
-        expect(fields[1].$('input[name="./linkElement"]').getValue()).toBeFalsy();
-        expect(fields[4].$$('coral-multifield-item').length).toEqual(0);
+        expect(propertiesPanel(dialog).$('input[name="./modelPath"]')).toHaveValue(testing_model2);
+        expect(propertiesPanel(dialog).$('input[name="./linkElement"]').getValue()).toBeFalsy();
+        expect(propertiesPanel(dialog).$$('coral-multifield-item').length).toEqual(0);
 
         // close the edit dialog
         dialog.$('button.cq-dialog-cancel[variant="default"]').waitAndClick();
@@ -409,25 +399,24 @@ describe('Commerce Content Fragment Component Dialog', function () {
 
     it('saves data in singleText display mode', () => {
         let dialog = openComponentDialog();
-        let fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
 
         // change display mode
-        fields[3].$('input[type="radio"][value="singleText"]').waitAndClick();
+        dialog.$('coral-radio[value="singleText"]').waitAndClick();
         browser.pause(1000);
         // try to save with empty mandatory field for input validation error
         let doneButton = dialog.$('button.cq-dialog-submit[variant="primary"]');
         doneButton.click();
-        expect(fields[4].$('coral-select')).toHaveAttr('invalid');
+        expect(propertiesPanel(dialog).$('coral-select[name="./elementNames"]')).toHaveAttr('invalid');
 
         // select link element
-        fields[1].$('coral-select').click();
+        propertiesPanel(dialog).$('coral-select[name="./linkElement"]').click();
         expect($('coral-popover.is-open')).toBeDisplayed();
         let linkElement = $('coral-popover.is-open coral-selectlist-item[value="productSku"]');
         expect(linkElement).toBeClickable();
         linkElement.click();
 
         // select element
-        fields[4].$('coral-select').waitAndClick();
+        propertiesPanel(dialog).$('coral-select[name="./elementNames"]').waitAndClick();
         expect($('coral-popover.is-open')).toBeDisplayed();
         $('coral-popover.is-open coral-selectlist-item[value="productSpecs"]').waitAndClick();
 
@@ -453,22 +442,24 @@ describe('Commerce Content Fragment Component Dialog', function () {
         dialog = openComponentDialog();
 
         // check state
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel.is-selected .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(6);
-        expect(fields[0].$('input[name="./modelPath"]')).toHaveValue(testing_model1);
-        expect(fields[1].$('coral-select')).toBeEnabled();
-        expect(fields[1].$('input[name="./linkElement"]')).toHaveValue('productSku');
-        expect(fields[2].$('input[name="./parentPath"]')).toHaveValue('/content/dam/venia');
-        expect(fields[3].$('coral-radio[checked]')).toHaveValue('singleText');
-        expect(fields[4].$('coral-select > input[name="./elementNames"]')).toHaveValue('productSpecs');
-        expect(fields[5].$('input[name="./id"]')).toHaveValue('anId');
+        expect(propertiesPanel(dialog).$('input[name="./modelPath"]')).toHaveValue(testing_model1);
+        expect(propertiesPanel(dialog).$('coral-select[name="./linkElement"]')).toBeEnabled();
+        expect(propertiesPanel(dialog).$('input[name="./linkElement"]')).toHaveValue('productSku');
+        expect(
+            propertiesPanel(dialog).$('foundation-autocomplete[name="./parentPath"] input[name="./parentPath"]')
+        ).toHaveValue('/content/dam/venia');
+        expect(propertiesPanel(dialog).$('coral-radio[name="./displayMode"][checked]')).toHaveValue('singleText');
+        expect(
+            propertiesPanel(dialog).$('coral-select[name="./elementNames"] input[name="./elementNames"]')
+        ).toHaveValue('productSpecs');
+        expect(propertiesPanel(dialog).$('input[name="./id"]')).toHaveValue('anId');
         tabs = dialog.$$('coral-tab');
         expect(tabs.length).toEqual(2);
         tabs[1].click();
-        fields = dialog.$$('coral-tabview coral-panelstack coral-panel[selected] .coral-Form-fieldwrapper');
-        expect(fields.length).toBe(3);
-        expect(fields[0].$('coral-radio[checked] input[value="range"]')).toBeDisplayed();
-        expect(fields[1].$('input[name="./paragraphRange"]')).toHaveValue('1;3');
+        expect(
+            dialog.$('coral-panel[selected] coral-radio[name="./paragraphScope"][checked] input[value="range"]')
+        ).toBeDisplayed();
+        expect(dialog.$('coral-panel[selected] input[name="./paragraphRange"]')).toHaveValue('1;3');
         expect(dialog.$('coral-panel[selected] input[name="./paragraphHeadings"]')).toBeChecked();
 
         // close the edit dialog

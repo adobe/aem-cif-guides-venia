@@ -158,7 +158,7 @@ jobs:
             aem: classic
             type: integration
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.25.0-openjdk11
             check_name: Tests (integration classic)
             report_paths: test-reports/**/TEST-*.xml
             # Only this job saves the shared ~/.m2 cache; the rest are restore-only to avoid the
@@ -168,14 +168,14 @@ jobs:
             aem: lts
             type: integration
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.3-openjdk21
             check_name: Tests (integration lts)
             report_paths: test-reports/**/TEST-*.xml
           - name: integration-test-cloudready-with-addon
             aem: cloud
             type: integration
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:27830-v2-openjdk21
             check_name: Tests (integration addon)
             report_paths: test-reports/**/TEST-*.xml
           - name: selenium-chrome-655
@@ -183,7 +183,7 @@ jobs:
             type: selenium
             browser: chrome
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.6-openjdk11
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.24.0-openjdk11
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem:6.5.25.0-openjdk11
             check_name: Tests (selenium classic)
             report_paths: test-reports/**/results-*.xml
           - name: selenium-chrome-660
@@ -191,7 +191,7 @@ jobs:
             type: selenium
             browser: chrome
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.3-openjdk21
             check_name: Tests (selenium lts)
             report_paths: test-reports/**/results-*.xml
           - name: selenium-chrome-cloudready-with-addon
@@ -199,7 +199,7 @@ jobs:
             type: selenium
             browser: chrome
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:26125-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-cloudready:27830-v2-openjdk21
             check_name: Tests (selenium addon)
             report_paths: test-reports/**/results-*.xml
     env:
