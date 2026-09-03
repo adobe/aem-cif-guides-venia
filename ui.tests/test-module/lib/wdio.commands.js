@@ -219,11 +219,9 @@ browser.addCommand(
     function (targetSelector, options = {}) {
         const { timeout = 10000, interval = 500 } = options;
         const target = $(targetSelector);
-        let attempt = 0;
 
         browser.waitUntil(
             () => {
-                attempt++;
                 this.click();
                 return target.isDisplayed();
             },
