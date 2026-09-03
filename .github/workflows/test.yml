@@ -168,7 +168,7 @@ jobs:
             aem: lts
             type: integration
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.3-openjdk21
             check_name: Tests (integration lts)
             report_paths: test-reports/**/TEST-*.xml
           - name: integration-test-cloudready-with-addon
@@ -191,7 +191,7 @@ jobs:
             type: selenium
             browser: chrome
             qp_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-qp:6.4.7-openjdk21
-            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.2-openjdk21
+            aem_image: docker-adobe-cif-release.dr-uw2.adobeitc.com/circleci-aem-lts:6.6.3-openjdk21
             check_name: Tests (selenium lts)
             report_paths: test-reports/**/results-*.xml
           - name: selenium-chrome-cloudready-with-addon
