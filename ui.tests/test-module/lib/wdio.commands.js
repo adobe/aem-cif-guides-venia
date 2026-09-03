@@ -224,7 +224,6 @@ browser.addCommand(
         browser.waitUntil(
             () => {
                 attempt++;
-                console.log(`Clicking element (attempt ${attempt}) to reveal "${targetSelector}"`);
                 this.click();
                 return target.isDisplayed();
             },
