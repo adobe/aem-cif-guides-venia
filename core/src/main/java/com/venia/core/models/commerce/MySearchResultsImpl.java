@@ -41,7 +41,7 @@ import java.util.function.Function;
 /**
  * This class shows how to customize the sort fields of the product search results.
  * As am example we remove the support for sorting by position.
- * See the initModel() method for details.
+ * See the initModel() method for details check.
  */
 @Model(adaptables = SlingHttpServletRequest.class, adapters = SearchResults.class, resourceType = MySearchResultsImpl.RESOURCE_TYPE)
 public class MySearchResultsImpl implements SearchResults , Component {
