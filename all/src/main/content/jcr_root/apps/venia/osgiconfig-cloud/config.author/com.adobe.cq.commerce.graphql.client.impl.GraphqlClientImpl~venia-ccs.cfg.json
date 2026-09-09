@@ -1,0 +1,7 @@
+{
+  "identifier": "venia-ccs",
+  "url": "http://localhost:4502/apps/ccs/graphql",
+  "httpMethod": "GET",
+  "allowHttpProtocol": true,
+  "acceptSelfSignedCertificates": true
+}
