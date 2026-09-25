@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Multifield Description Test"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    trackingFeature="venia:multifielddescriptiontest:v1">
+    <content jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <products jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                fieldLabel="Products"
+                composite="{Boolean}false">
+                <field jcr:primaryType="nt:unstructured"
+                    sling:resourceType="cif/shell/components/productfield/v1/productfield"
+                    name="./product"
+                    fieldLabel="Product"
+                    fieldDescription="Select the product to display in this row."
+                    selectionId="sku"
+                    emptyText="Product SKU"/>
+            </products>
+        </items>
+    </content>
+</jcr:root>

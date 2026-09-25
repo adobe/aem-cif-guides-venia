@@ -173,6 +173,41 @@ browser.addCommand('AEMCreatePage', function (pageOptions) {
     );
 });
 
+/**
+ * Create a component instance directly in a page's content via the Sling POST servlet, without going
+ * through the component browser / drag-and-drop (which is unreliable for lightweight test components).
+ *
+ * @param {string} parentPath parent content path, e.g. /content/.../jcr:content/root/container/container
+ * @param {string} name node name for the new component instance
+ * @param {string} resourceType the sling:resourceType of the component
+ */
+browser.addCommand('AEMCreateComponent', function (parentPath, name, resourceType) {
+    const options = commons.getAuthenticatedRequestOptions(browser);
+    const componentUrl = url.resolve(config.aem.author.base_url, path.posix.join(parentPath, name));
+    const tokenUrl = url.resolve(config.aem.author.base_url, '/libs/granite/csrf/token.json');
+
+    // Fetch a CSRF token first; AEM's CSRF filter requires it on Sling POST write requests. The
+    // referrer filter additionally requires same-origin Referer/Origin headers on the write.
+    return request.get(tokenUrl, options).then(function (body) {
+        const token = JSON.parse(body).token;
+        return request.post(
+            componentUrl,
+            Object.assign({}, options, {
+                headers: {
+                    'CSRF-Token': token,
+                    Referer: config.aem.author.base_url + '/',
+                    Origin: config.aem.author.base_url
+                },
+                formData: {
+                    'jcr:primaryType': 'nt:unstructured',
+                    'sling:resourceType': resourceType,
+                    _charset_: 'utf-8'
+                }
+            })
+        );
+    });
+});
+
 browser.addCommand('AEMSitesSetPageTitle', function (parentPath, name, title) {
     let originalTitle = '';
 
