@@ -76,14 +76,19 @@ describe('Multifield Description Component Dialog', function () {
 
     const openComponentDialog = () => {
         const node = 'multifielddescriptiontest';
-        const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
-        expect(cmpPlaceholder).toBeDisplayed();
+
+        // Reload the editor so the freshly-placed component is decorated with its editable overlay.
+        browser.url(`${editor_page}${testing_page}.html`);
+        browser.AEMEditorLoaded();
+
+        const cmpPlaceholder = $(`[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
+        cmpPlaceholder.waitForDisplayed({ timeout: 10000 });
         cmpPlaceholder.click();
         const configureButton = $('button[title="Configure"]');
-        expect(configureButton).toBeDisplayed();
+        configureButton.waitForDisplayed({ timeout: 10000 });
         configureButton.click();
         const dialog = $('coral-dialog[trackingfeature="venia:multifielddescriptiontest:v1"]');
-        expect(dialog).toBeDisplayed();
+        dialog.waitForDisplayed({ timeout: 10000 });
         return dialog;
     };
 
