@@ -76,7 +76,10 @@ describe('Multifield Description Component Dialog', function () {
         const configureButton = $('button[title="Configure"]');
         configureButton.waitForDisplayed({ timeout: 10000 });
         configureButton.click();
-        const dialog = $('coral-dialog[trackingfeature="venia:multifielddescriptiontest:v1"]');
+        // AEM prefixes the dialog trackingFeature with "aem:sites:components:dialogs:".
+        const dialog = $(
+            'coral-dialog[trackingfeature="aem:sites:components:dialogs:venia:multifielddescriptiontest:v1"]'
+        );
         dialog.waitForDisplayed({ timeout: 10000 });
         return dialog;
     };

@@ -186,13 +186,18 @@ browser.addCommand('AEMCreateComponent', function (parentPath, name, resourceTyp
     const componentUrl = url.resolve(config.aem.author.base_url, path.posix.join(parentPath, name));
     const tokenUrl = url.resolve(config.aem.author.base_url, '/libs/granite/csrf/token.json');
 
-    // Fetch a CSRF token first; AEM's CSRF filter requires it on Sling POST write requests.
+    // Fetch a CSRF token first; AEM's CSRF filter requires it on Sling POST write requests. The
+    // referrer filter additionally requires same-origin Referer/Origin headers on the write.
     return request.get(tokenUrl, options).then(function (body) {
         const token = JSON.parse(body).token;
         return request.post(
             componentUrl,
             Object.assign({}, options, {
-                headers: { 'CSRF-Token': token },
+                headers: {
+                    'CSRF-Token': token,
+                    Referer: config.aem.author.base_url + '/',
+                    Origin: config.aem.author.base_url
+                },
                 formData: {
                     'jcr:primaryType': 'nt:unstructured',
                     'sling:resourceType': resourceType,
