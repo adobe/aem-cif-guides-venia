@@ -97,11 +97,7 @@ describe('Product recommendation', function () {
         productComponent.waitForDisplayed({ timeout: 5000 });
         expect(productComponent).toBeDisplayed();
 
-        productComponent.waitAndClick();
-
-        const configureButton = $('button[title="Configure"]');
-        configureButton.waitForDisplayed({ timeout: 5000 });
-        expect(configureButton).toBeDisplayed();
+        const configureButton = productComponent.waitAndClickUntilDisplayed('button[title="Configure"]');
         configureButton.waitAndClick();
 
         const productField = $('product-field');
@@ -163,9 +159,7 @@ describe('Product recommendation', function () {
     const openComponentDialog = (node = 'productrecommendatio') => {
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
-        cmpPlaceholder.waitAndClick();
-        const configureButton = $('button[title="Configure"]');
-        expect(configureButton).toBeDisplayed();
+        const configureButton = cmpPlaceholder.waitAndClickUntilDisplayed('button[title="Configure"]');
         configureButton.waitAndClick();
     };
 

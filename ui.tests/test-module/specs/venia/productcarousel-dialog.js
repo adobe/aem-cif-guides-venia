@@ -86,9 +86,7 @@ describe('Product Carousel Component Dialog', function () {
         // Open edit dialog
         const cmpPlaceholder = $(`div[data-path="${testing_page}/jcr:content/root/container/container/${node}"]`);
         expect(cmpPlaceholder).toBeDisplayed();
-        cmpPlaceholder.click();
-        const configureButton = $('button[title="Configure"]');
-        expect(configureButton).toBeDisplayed();
+        const configureButton = cmpPlaceholder.waitAndClickUntilDisplayed('button[title="Configure"]');
         configureButton.click();
         const dialog = $(`coral-dialog[trackingfeature="${trackingId}"]`);
         expect(dialog).toBeDisplayed();
