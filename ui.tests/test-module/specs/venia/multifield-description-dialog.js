@@ -46,7 +46,14 @@ describe('Multifield Description Component Dialog', function () {
             template: '/conf/venia/settings/wcm/templates/page-content'
         });
         browser.pause(1000);
-        addComponentToPage();
+
+        // Place the test component directly in the page content. Drag-and-drop from the component
+        // browser is unreliable for lightweight test components, so we create the node via Sling POST.
+        browser.AEMCreateComponent(
+            `${testing_page}/jcr:content/root/container/container`,
+            'multifielddescriptiontest',
+            'venia/components/commerce/multifielddescriptiontest'
+        );
     });
 
     after(function () {
@@ -55,24 +62,6 @@ describe('Multifield Description Component Dialog', function () {
             browser.AEMDeletePage(testing_page);
         }
     });
-
-    const addComponentToPage = (name = 'Multifield Description Test', group = 'Venia - Commerce') => {
-        browser.url(`${editor_page}${testing_page}.html`);
-        browser.AEMEditorLoaded();
-        browser.EditorOpenSidePanel();
-
-        $('coral-tab[title="Components"]').waitAndClick({ x: 1, y: 1 });
-
-        $('#components-filter coral-select button').waitAndClick();
-        browser.pause(200);
-        $(`coral-selectlist-item[value="${group}"]`).waitAndClick();
-        expect($('#components-filter coral-select [handle=label]')).toHaveText(group);
-
-        const testCmp = $(`div[data-title="${name}"]`);
-        expect(testCmp).toBeDisplayed();
-        const dropTarget = $(`div[data-path="${testing_page}/jcr:content/root/container/container/*"]`);
-        testCmp.dragAndDrop(dropTarget, 1000);
-    };
 
     const openComponentDialog = () => {
         const node = 'multifielddescriptiontest';
