@@ -77,9 +77,7 @@ describe('Venia Searchbar Component', () => {
         );
         // open the searchbar edit dialog
         expect(searchBar).toBeDisplayed();
-        searchBar.click();
-        let configureButton = $('button[title="Configure"]');
-        expect(configureButton).toBeDisplayed();
+        let configureButton = searchBar.waitAndClickUntilDisplayed('button[title="Configure"]');
         configureButton.click();
         let dialog = $('coral-dialog[trackingfeature="aem:sites:components:dialogs:cif-core-components:searchbar:v2"]');
         expect(dialog).toBeDisplayed();
@@ -114,8 +112,7 @@ describe('Venia Searchbar Component', () => {
             'div[data-path="/content/experience-fragments/venia/us/en/site/header/master/jcr:content/root/searchbar"]'
         );
         expect(searchBar).toBeDisplayed();
-        searchBar.click();
-        $('button[title="Configure"]').click();
+        searchBar.waitAndClickUntilDisplayed('button[title="Configure"]').click();
         dialog = $('coral-dialog[trackingfeature="aem:sites:components:dialogs:cif-core-components:searchbar:v2"]');
         dialog.$('input[name="./placeholder"]').setValue('');
         dialog.$('.cq-dialog-submit').click();

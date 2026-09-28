@@ -208,6 +208,36 @@ browser.addCommand(
 );
 
 /**
+ * Clicks the element repeatedly (instead of once) until the element matching targetSelector is
+ * displayed. Needed for the AEM editor overlay, where a click on a just-rendered/just-dropped
+ * component can silently miss because the overlay's click handler hasn't attached to it yet -
+ * a single click followed by only waiting/asserting afterwards would then never open the
+ * intended toolbar/action, since there is nothing pending to wait on.
+ */
+browser.addCommand(
+    'waitAndClickUntilDisplayed',
+    function (targetSelector, options = {}) {
+        const { timeout = 10000, interval = 500 } = options;
+        const target = $(targetSelector);
+
+        browser.waitUntil(
+            () => {
+                this.click();
+                return target.isDisplayed();
+            },
+            {
+                timeout,
+                interval,
+                timeoutMsg: `Element matching "${targetSelector}" never appeared after clicking`
+            }
+        );
+
+        return target;
+    },
+    true
+);
+
+/**
  * Opens the side panel in the AEM Sites editor if closed.
  */
 browser.addCommand('EditorOpenSidePanel', function () {
