@@ -34,6 +34,15 @@ env:
   COMMERCE_INTEGRATION_TOKEN: ${{ secrets.COMMERCE_INTEGRATION_TOKEN }}
   VENIA_ACCOUNT_EMAIL: ${{ secrets.VENIA_ACCOUNT_EMAIL }}
   VENIA_ACCOUNT_PASSWORD: ${{ secrets.VENIA_ACCOUNT_PASSWORD }}
+  # Single knob for every Maven repo cache key in this workflow. Bump this (instead of hand-editing
+  # every "maven-repo-*" key below) to force all jobs to start from a clean ~/.m2 — e.g. after a
+  # dependency version bump races a not-yet-published artifact and a failed build's cache slips
+  # through (shouldn't happen now that saves are gated on success(), but this is the fast manual
+  # escape hatch if it ever does).
+  # Sourced from the repo/org "Actions variable" MAVEN_CACHE_KEY (Settings > Secrets and
+  # variables > Actions > Variables) so it can be bumped from GitHub's UI without touching this
+  # file or opening a PR; falls back to 'v3' when that variable isn't set.
+  MAVEN_CACHE_KEY: ${{ vars.MAVEN_CACHE_KEY || 'v3' }}
 
 jobs:
   build:
@@ -49,7 +58,8 @@ jobs:
         with:
           node-version: '12.14.1'
 
-      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key maven-repo-v2-).
+      # CircleCI: restore_cache on ~/.m2 BEFORE install_components (fallback key
+      # maven-repo-${{ env.MAVEN_CACHE_KEY }}-).
       - name: Restore Maven repository cache
         uses: actions/cache/restore@v6
         with:
@@ -57,11 +67,11 @@ jobs:
           # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
           # cache action's ~ expands to inside a container job — so cache an absolute path.
           path: /home/circleci/.m2
-          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
+          key: maven-repo-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-
-            maven-repo-v2-${{ runner.os }}-
-            maven-repo-v2-
+            maven-repo-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-${{ github.ref_name }}-
+            maven-repo-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-
+            maven-repo-${{ env.MAVEN_CACHE_KEY }}-
 
       - name: Update permissions
         run: sudo chown -R "$(whoami)" /usr/local/lib/node_modules || true
@@ -104,16 +114,19 @@ jobs:
         working-directory: ui.frontend
         run: npm run ci
 
-      # CircleCI: save_cache on ~/.m2 after build (same key family as restore).
+      # CircleCI: save_cache on ~/.m2 after build (same key family as restore). Gated on
+      # success() (not just !cancelled()) so a failed dependency resolution — e.g. a version
+      # bump that races a not-yet-published artifact — never gets persisted into the shared
+      # cache and poisons every subsequent run with the same pom.xml hash.
       - name: Save Maven repository cache
-        if: ${{ !cancelled() }}
+        if: ${{ success() }}
         uses: actions/cache/save@v6
         with:
           # cimg/openjdk runs as user "circleci"; Java resolves the Maven local repo from
           # that user's OS home (/home/circleci/.m2), NOT $HOME (/github/home) that the
           # cache action's ~ expands to inside a container job — so cache an absolute path.
           path: /home/circleci/.m2
-          key: maven-repo-v2-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
+          key: maven-repo-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-${{ github.ref_name }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}
@@ -225,9 +238,9 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          key: maven-repo-its-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            maven-repo-its-${{ runner.os }}-
+            maven-repo-its-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-
       - run: bash .github/ci/run-containerized-test.sh
       # Make the container-written (root-owned) report files readable, then write a full pass/fail
       # summary to this job's Summary tab — a detailed table of every test (passed and failed) with
@@ -258,7 +271,7 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: ~/.m2
-          key: maven-repo-its-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          key: maven-repo-its-${{ env.MAVEN_CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
       - name: Upload test results and AEM logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
