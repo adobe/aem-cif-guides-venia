@@ -63,6 +63,12 @@ For detailed configuration options see [Configuring and customizing product and 
 
 [CIF Core Components](https://github.com/adobe/aem-core-cif-components) already have built-in support for [caching GraphQL responses for individual components](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/administering/caching.html). This feature can be used to reduce the number of GraphQL backend calls by a large factor. An effective caching can be achieved especially for repeating queries like retrieving the category tree for a navigation component or fetching all the available aggregations/facets values displayed on the product search and category pages.
 
+### Catalog Page Errors
+
+Venia's `CatalogPageErrorFilter` returns HTTP 503 for commerce transport errors on product and category pages only in disabled WCM mode. Transport errors are identified by the exact `MagentoGraphqlClient.RUNTIME_ERROR_CATEGORY` category after fetching commerce data. GraphQL-only errors (including out-of-range category pagination), missing products or categories without transport errors, and unavailable error lists retain the underlying page handling. Author edit and preview modes bypass this filter's commerce checks.
+
+Keep the filter until Venia depends on a released CIF Core Components version containing equivalent catalog transport-error handling.
+
 ## How to build
 
 To build all the modules, run in the project root directory the following command with Maven 3:
