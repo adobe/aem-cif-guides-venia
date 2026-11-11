@@ -69,6 +69,8 @@ Venia's `CatalogPageErrorFilter` returns HTTP 503 for commerce transport errors 
 
 Keep the filter until Venia depends on a released CIF Core Components version containing equivalent catalog transport-error handling.
 
+Venia's `CatalogPageErrorFilter` (service ranking `-4000`) runs before Core's `CatalogPageNotFoundFilter` (service ranking `-6000`) and sends its own 503 response without a `Retry-After` header. Consequently, Core's optional `retryAfterSeconds` setting has no effect on 503 responses sent by the Venia filter while it remains active.
+
 ## How to build
 
 To build all the modules, run in the project root directory the following command with Maven 3:
