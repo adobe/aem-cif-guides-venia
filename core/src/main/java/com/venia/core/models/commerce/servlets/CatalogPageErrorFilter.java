@@ -1,13 +1,32 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ Copyright 2026 Adobe
+ ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~ you may not use this file except in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software
+ ~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~ See the License for the specific language governing permissions and
+ ~ limitations under the License.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 package com.venia.core.models.commerce.servlets;
 
+import com.adobe.cq.commerce.core.components.client.MagentoGraphqlClient;
 import com.adobe.cq.commerce.core.components.models.common.SiteStructure;
 import com.adobe.cq.commerce.core.components.models.product.Product;
 import com.adobe.cq.commerce.core.components.models.productlist.ProductList;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractCategoryRetriever;
 import com.adobe.cq.commerce.core.components.models.retriever.AbstractProductRetriever;
+import com.adobe.cq.commerce.core.search.models.SearchResultsSet;
+import com.adobe.cq.commerce.magento.graphql.gson.Error;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.PageManagerFactory;
+import com.day.cq.wcm.api.WCMMode;
 import com.venia.core.models.commerce.services.CommerceComponentModelFinder;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -24,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Supplier;
 
 @Component(
         service = {Filter.class},
@@ -64,6 +85,10 @@ public class CatalogPageErrorFilter implements Filter {
         if (servletRequest instanceof SlingHttpServletRequest && servletResponse instanceof SlingHttpServletResponse) {
             SlingHttpServletRequest slingRequest = (SlingHttpServletRequest) servletRequest;
             SlingHttpServletResponse slingResponse = (SlingHttpServletResponse) servletResponse;
+            if (WCMMode.fromRequest(slingRequest) != WCMMode.DISABLED) {
+                filterChain.doFilter(servletRequest, servletResponse);
+                return;
+            }
             PageManager pageManager = pageManagerFactory.getPageManager(slingRequest.getResourceResolver());
             Page currentPage = pageManager.getContainingPage(slingRequest.getResource());
             boolean removeSlingScriptHelperFromBindings = false;
@@ -76,10 +101,12 @@ public class CatalogPageErrorFilter implements Filter {
                     Product product = commerceModelFinder.findProductComponentModel(slingRequest, currentPage.getContentResource());
                     if (product != null) {
                         AbstractProductRetriever productRetriever = product.getProductRetriever();
-                        // force GraphQL query execution
-                        if (productRetriever != null && !product.getFound() && productRetriever.hasErrors()) {
-                            slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
-                            return;
+                        if (productRetriever != null) {
+                            productRetriever.fetchProduct();
+                            if (!product.getFound() && hasTransportErrors(productRetriever::getErrors)) {
+                                slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
+                                return;
+                            }
                         }
                     }
                 } else if (siteStructure.isCategoryPage(currentPage)) {
@@ -91,9 +118,8 @@ public class CatalogPageErrorFilter implements Filter {
                         AbstractCategoryRetriever categoryRetriever = productList.getCategoryRetriever();
                         if ((categoryRetriever != null &&
                                 // force GraphQL query execution for category
-                                categoryRetriever.fetchCategory() == null && categoryRetriever.hasErrors()) ||
-                                // force GraphQL query execution for products
-                                productList.getSearchResultsSet().hasErrors()) {
+                                categoryRetriever.fetchCategory() == null && hasTransportErrors(categoryRetriever::getErrors)) ||
+                                hasSearchTransportErrors(productList)) {
                             slingResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Commerce application not reachable");
                             return;
                         }
@@ -112,6 +138,23 @@ public class CatalogPageErrorFilter implements Filter {
     }
 
     public void destroy() {
+    }
+
+    private static boolean hasSearchTransportErrors(ProductList productList) {
+        SearchResultsSet searchResults = productList.getSearchResultsSet();
+        return searchResults != null && hasTransportErrors(searchResults::getErrors);
+    }
+
+    private static boolean hasTransportErrors(Supplier<List<Error>> errorSupplier) {
+        List<Error> errors;
+        try {
+            errors = errorSupplier.get();
+        } catch (IllegalStateException e) {
+            LOGGER.debug("Commerce errors are unavailable from an uninitialized retriever", e);
+            return false;
+        }
+        return errors != null && errors.stream()
+                .anyMatch(error -> error != null && MagentoGraphqlClient.RUNTIME_ERROR_CATEGORY.equals(error.getCategory()));
     }
 
     /**
