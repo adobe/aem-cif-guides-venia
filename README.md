@@ -65,11 +65,7 @@ For detailed configuration options see [Configuring and customizing product and 
 
 ### Catalog Page Errors
 
-Venia's `CatalogPageErrorFilter` returns HTTP 503 for commerce transport errors on product and category pages only in disabled WCM mode. Transport errors are identified by the exact `MagentoGraphqlClient.RUNTIME_ERROR_CATEGORY` category after fetching commerce data. GraphQL-only errors (including out-of-range category pagination), missing products or categories without transport errors, and unavailable error lists retain the underlying page handling. Author edit and preview modes bypass this filter's commerce checks.
-
-Keep the filter until Venia depends on a released CIF Core Components version containing equivalent catalog transport-error handling.
-
-Venia's `CatalogPageErrorFilter` (service ranking `-4000`) runs before Core's `CatalogPageNotFoundFilter` (service ranking `-6000`) and sends its own 503 response without a `Retry-After` header. Consequently, Core's optional `retryAfterSeconds` setting has no effect on 503 responses sent by the Venia filter while it remains active.
+CIF Core Components (`2.20.0` and later) handle catalog backend transport errors natively in `CatalogPageNotFoundFilter`, returning HTTP 503 on product and category pages in disabled WCM mode when a commerce query fails with `MagentoGraphqlClient.RUNTIME_ERROR_CATEGORY`. No extra Venia filter or configuration is required, and Core's `serviceUnavailableOnBackendError` and `retryAfterSeconds` OSGi settings apply directly.
 
 ## How to build
 

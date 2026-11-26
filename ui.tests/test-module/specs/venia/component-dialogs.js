@@ -173,7 +173,7 @@ describe('Component Dialogs', function () {
         ).toBeDisplayed();
 
         let fields = $$('.cq-dialog-content .coral-Form-fieldwrapper');
-        expect(fields.length).toEqual(8);
+        expect(fields.length).toEqual(9);
         expect(fields[0].$('input[name="./jcr:title"]')).toBeDisplayed();
         expect(fields[1].$('coral-select[name="./titleType"]')).toBeDisplayed();
         expect(fields[2].$('coral-checkbox[name="./linkTarget"]')).toBeDisplayed();
@@ -184,7 +184,9 @@ describe('Component Dialogs', function () {
         expect(fields[5].$('product-field')).toBeDisplayed();
         expect(fields[5].$('input[name="./product"]')).toBeDefined();
         expect(fields[6].$('coral-select[name="./relationType"]')).toBeDisplayed();
-        expect(fields[7].$('input[name="./id"]')).toBeDisplayed();
+        expect(fields[7].$('label')).toHaveText('Maximum number of products');
+        expect(fields[7].$('input[name="./productCount"]')).toExist();
+        expect(fields[8].$('input[name="./id"]')).toBeDisplayed();
     });
 
     it('opens the product recommendations dialog', () => {
