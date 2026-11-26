@@ -63,6 +63,10 @@ For detailed configuration options see [Configuring and customizing product and 
 
 [CIF Core Components](https://github.com/adobe/aem-core-cif-components) already have built-in support for [caching GraphQL responses for individual components](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/content-and-commerce/storefront/administering/caching.html). This feature can be used to reduce the number of GraphQL backend calls by a large factor. An effective caching can be achieved especially for repeating queries like retrieving the category tree for a navigation component or fetching all the available aggregations/facets values displayed on the product search and category pages.
 
+### Catalog Page Errors
+
+CIF Core Components (`2.20.0` and later) handle catalog backend transport errors natively in `CatalogPageNotFoundFilter`, returning HTTP 503 on product and category pages in disabled WCM mode when a commerce query fails with `MagentoGraphqlClient.RUNTIME_ERROR_CATEGORY`. No extra Venia filter or configuration is required, and Core's `serviceUnavailableOnBackendError` and `retryAfterSeconds` OSGi settings apply directly.
+
 ## How to build
 
 To build all the modules, run in the project root directory the following command with Maven 3:
